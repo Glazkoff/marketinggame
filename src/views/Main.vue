@@ -5,6 +5,9 @@
 </template>
 
 <script>
+// import bootstrap from "bootstrap";
+require("bootstrap/dist/css/bootstrap.css");
+// require('bootstrap');
 // @ is an alias to /src
 // import Entrance from "@/components/Entrance.vue";
 
