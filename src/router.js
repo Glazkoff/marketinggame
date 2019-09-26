@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Main from './views/Main.vue'
+import Choose from './components/Choose.vue'
 
 Vue.use(Router)
 
@@ -12,6 +13,11 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/choose',
+      name: 'Choose',
+      component: Choose
     },
     {
       path: '/main',
