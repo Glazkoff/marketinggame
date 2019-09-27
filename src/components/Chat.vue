@@ -41,7 +41,6 @@ export default {
   width: 100%;
   grid-area: 1/1/2/2;
   border-right: 1px solid gray;
-  /* overflow-y: scroll; */
 }
 
 .message {
@@ -64,6 +63,5 @@ export default {
 
 .message {
   width: 100%;
-  /* border: 1px solid black; */
 }
 </style>

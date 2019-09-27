@@ -32,13 +32,13 @@ body {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .slide-leave-active {
-  transform: translateX(110%);
+  transform: translateX(-110%);
 }
 .slide-enter {
-  transform: translateX(-110%);
+  transform: translateX(110%);
 }
 </style>

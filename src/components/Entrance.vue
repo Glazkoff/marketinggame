@@ -10,18 +10,20 @@
           name="name"
           id="name"
           class="form-control form-control-lg"
+          :class="{'is-invalid': errorClass}"
           placeholder="Имя"
-          v-model="name"
+          v-model.trim="name"
+          @blur="clickForm()"
         />
+        <div v-if="errorClass" class="invalid-feedback">Обязательно введите имя!</div>
         <small
-          id
           class="form-text text-muted"
         >Имя необходимо, чтобы другие игроки могли идентифицировать в чате и игре</small>
       </div>
       <button
         class="btn btn-lg btn-primary btn-block"
         @click="changePop()"
-        :disabled="isClicked"
+        :disabled="disabled"
       >Войти</button>
     </form>
   </div>
@@ -37,15 +39,36 @@ export default {
   },
   data() {
     return {
-      isClicked: false,
+      formClicked: false,
       name: ""
     };
   },
+  mounted() {
+    this.name = this.$store.state.ownerName;
+    this.formClicked = true;
+  },
+  computed: {
+    ownerName() {
+      return this.$store.state.ownerName;
+    },
+    errorClass() {
+      let bool = this.name == "" && this.formClicked;
+      return bool;
+    },
+    disabled() {
+      if (!this.formClicked) {
+        return true;
+      } else return this.name == "" && this.formClicked;
+    }
+  },
   methods: {
     changePop() {
-      this.isClicked = true;
       console.log(this.name);
+      this.$store.commit("setName", this.name);
       this.$router.push("choose");
+    },
+    clickForm() {
+      this.formClicked = true;
     }
   }
 };
