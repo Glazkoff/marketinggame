@@ -13,7 +13,7 @@
           :class="{'is-invalid': errorClass}"
           placeholder="Имя"
           v-model.trim="name"
-          @blur="clickForm()"
+          @click="clickForm()"
         />
         <div v-if="errorClass" class="invalid-feedback">Обязательно введите имя!</div>
         <small
@@ -40,16 +40,17 @@ export default {
   data() {
     return {
       formClicked: false,
-      name: ""
+      name: "",
+      wasClicked: false
     };
   },
   mounted() {
-    this.name = this.$store.state.ownerName;
-    this.formClicked = true;
+    this.name = this.$store.state.gamerName;
+    if (this.wasClicked) this.formClicked = true;
   },
   computed: {
-    ownerName() {
-      return this.$store.state.ownerName;
+    gamerName() {
+      return this.$store.state.gamerName;
     },
     errorClass() {
       let bool = this.name == "" && this.formClicked;
@@ -69,6 +70,7 @@ export default {
     },
     clickForm() {
       this.formClicked = true;
+      this.clickForm = true;
     }
   }
 };

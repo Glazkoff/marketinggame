@@ -1,6 +1,6 @@
 <template>
   <div class="card container col-4 mt-5 p-4">
-    <h1 class="mb-1">Привет, {{ownerName}}!</h1>
+    <h1 class="mb-1">Привет, {{gamerName}}!</h1>
     <router-link to="/">Сменить имя</router-link>
 
     <p>Выбери, как ты начнёшь игру</p>
@@ -45,7 +45,7 @@
           class="form-control form-control-lg mb-3"
           placeholder="Введите номер комнаты"
         />
-        <button class="btn btn-lg btn-danger btn-block">Присоединиться</button>
+        <button class="btn btn-lg btn-danger btn-block" @click="enterGame(false)">Присоединиться</button>
       </div>
       <div class v-if="toggle == 'create'">
         <label for="name" class>Напишите номер комнаты</label>
@@ -69,7 +69,7 @@
           class="form-control form-control-lg mb-3"
           placeholder="3"
         />
-        <button class="btn btn-lg btn-danger btn-block">Создать</button>
+        <button class="btn btn-lg btn-danger btn-block" @click="enterGame(true)">Создать</button>
       </div>
     </transition>
   </div>
@@ -86,8 +86,17 @@ export default {
     };
   },
   computed: {
-    ownerName() {
-      return this.$store.state.ownerName;
+    gamerName() {
+      return this.$store.state.gamerName;
+    }
+  },
+  methods: {
+    enterGame(toCreate) {
+      if (toCreate) {
+      }
+      // console.log(this.name);
+      // this.$store.commit("setName", this.name);
+      this.$router.push("main");
     }
   }
 };

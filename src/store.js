@@ -5,14 +5,18 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    ownerName: ''
+    gamerName: '',
+    isOwner: false
   },
   getters: {
 
   },
   mutations: {
     setName(state, name) {
-      state.ownerName = name;
+      state.gamerName = name;
+    },
+    setOwner(state) {
+      state.isOwner = true;
     }
   },
   actions: {

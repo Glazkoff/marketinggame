@@ -1,17 +1,25 @@
 <template>
   <div class="sideBox">
     <h2>Chat</h2>
+    <div class="messageBox">
+      <div class="message" v-for="mess in messages" :key="mess.key">
+        <div class="avatar"></div>
 
-    <div class="message" v-for="mess in messages" :key="mess.key">
-      <div class="avatar"></div>
-      <div class="mess-block">
-        <div class="nickname">{{mess.name}}</div>
-        <div class="messText">{{mess.text}}</div>
+        <div class="mess-block">
+          <div class="nickname">{{mess.name}}</div>
+          <div class="messText">{{mess.text}}</div>
+        </div>
       </div>
     </div>
+
+    <!-- <div class="input-box"> -->
+    <SendBox></SendBox>
+    <!-- </div> -->
   </div>
 </template>
 <script>
+import SendBox from "@/components/SendBox.vue";
+
 export default {
   name: "Chat",
   data() {
@@ -31,12 +39,16 @@ export default {
         }
       ]
     };
+  },
+  components: {
+    SendBox
   }
 };
 </script>
 
 <style>
 .sideBox {
+  position: relative;
   height: 100%;
   width: 100%;
   grid-area: 1/1/2/2;

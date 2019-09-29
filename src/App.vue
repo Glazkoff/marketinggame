@@ -13,21 +13,26 @@
     </div>
   </div>
 </template>
-
+<script>
+export default {};
+</script>
 <style>
 body {
   overflow-x: hidden;
   padding: 0;
   margin: 0;
+  height: 100vh;
 }
-
+#app {
+  height: 100%;
+}
 #nav {
   box-sizing: border-box;
   padding: 8px;
   height: 40px;
 }
 #view {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 40px);
 }
 
 .slide-enter-active,
