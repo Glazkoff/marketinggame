@@ -65,6 +65,7 @@ export default {
   methods: {
     changePop() {
       console.log(this.name);
+      this.$socket.emit("setName", this.name);
       this.$store.commit("setName", this.name);
       this.$router.push("choose");
     },
