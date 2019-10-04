@@ -1,8 +1,5 @@
 <template>
   <div id="app">
-    <ul>
-      <!-- <li v-for="(conn, count) in connections" v-bind:key="count">conn</li> -->
-    </ul>
     <div id="nav">
       <router-link to="/">Вход</router-link>|
       <router-link to="/choose">Создать игру</router-link>|
@@ -24,18 +21,21 @@ export default {
     return {
       user: "",
       message: "",
-      messages: [],
-      connections: []
+      messages: []
       // socket: io("localhost:3001")
     };
   },
   sockets: {
-    connect: function() {
+    connect: function(connections) {
       console.log("Socket connected");
     },
-    connectList: function(connections) {
-      this.connections = connections;
-      console.log(connections);
+    // connectList: function(connections) {
+    //   console.log(connections);
+    //   this.connections = connections;
+    //   this.$store.commit("setConnections", connections);
+    // },
+    newMessage: function(mess) {
+      console.log(`${mess.text}`);
     }
   },
   computed: {},

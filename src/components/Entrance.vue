@@ -13,7 +13,7 @@
           :class="{'is-invalid': errorClass}"
           placeholder="Имя"
           v-model.trim="name"
-          @click="clickForm()"
+          @click="clckForm()"
         />
         <div v-if="errorClass" class="invalid-feedback">Обязательно введите имя!</div>
         <small
@@ -47,6 +47,12 @@ export default {
   mounted() {
     this.name = this.$store.state.gamerName;
     if (this.wasClicked) this.formClicked = true;
+    setInterval(() => {
+      if (this.name != "") {
+        this.formClicked = true;
+        // console.log("13");
+      }
+    }, 100);
   },
   computed: {
     gamerName() {
@@ -69,7 +75,7 @@ export default {
       this.$store.commit("setName", this.name);
       this.$router.push("choose");
     },
-    clickForm() {
+    clckForm() {
       this.formClicked = true;
       this.clickForm = true;
     }

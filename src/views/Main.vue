@@ -1,21 +1,29 @@
 <template>
   <div id="splitScr">
-    <h1>Main</h1>
+    <h1>Room #{{roomNumber}}</h1>
+    <ul>
+      <li v-for="(conn, count) in connections" v-bind:key="count">conn</li>
+    </ul>
     <Chat></Chat>
   </div>
 </template>
 
 <script>
-// import bootstrap from "bootstrap";
 require("bootstrap/dist/css/bootstrap.css");
-// require('bootstrap');
-// @ is an alias to /src
-// import Entrance from "@/components/Entrance.vue";
+
 import Chat from "@/components/Chat.vue";
 export default {
   name: "Main",
   components: {
     Chat
+  },
+  computed: {
+    roomNumber() {
+      return this.$store.state.roomId;
+    },
+    connections() {
+      return this.$store.state.connections;
+    }
   }
 };
 </script>

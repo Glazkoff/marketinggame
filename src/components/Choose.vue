@@ -7,19 +7,6 @@
     <div class="btn-group btn-group-toggle mb-3">
       <label
         class="btn btn-lg"
-        :class="{'btn-outline-info': this.toggle!='create', 'btn-info': this.toggle=='create'}"
-      >
-        <input
-          type="radio"
-          v-model="toggle"
-          value="create"
-          name="toggle"
-          id="toggle2"
-          autocomplete="off"
-        />Создать комнату
-      </label>
-      <label
-        class="btn btn-lg"
         :class="{'btn-outline-info': this.toggle!='join', 'btn-info': this.toggle=='join'}"
       >
         <input
@@ -31,6 +18,19 @@
           autocomplete="off"
         /> Присоединиться к комнате
       </label>
+      <label
+        class="btn btn-lg"
+        :class="{'btn-outline-info': this.toggle!='create', 'btn-info': this.toggle=='create'}"
+      >
+        <input
+          type="radio"
+          v-model="toggle"
+          value="create"
+          name="toggle"
+          id="toggle2"
+          autocomplete="off"
+        />Создать комнату
+      </label>
     </div>
     <transition name="slideUp" mode="out-in" appear>
       <div class v-if="toggle == 'join'">
@@ -39,37 +39,39 @@
         <input
           type="number"
           min="0"
-          v-model.number="roomId"
-          name="name"
-          id="name"
+          v-model.number="roomIdJoin"
+          name="roomIdJoin"
+          id="roomIdJoin"
           class="form-control form-control-lg mb-3"
           placeholder="Введите номер комнаты"
         />
-        <button class="btn btn-lg btn-danger btn-block" @click="enterGame(false)">Присоединиться</button>
+        <button class="btn btn-lg btn-danger btn-block" @click="joinGame()">Присоединиться</button>
       </div>
       <div class v-if="toggle == 'create'">
-        <label for="name" class>Напишите номер комнаты</label>
+        <!-- <label for="name" class>Номер комнаты</label>
         <br />
         <input
           type="number"
-          name="name"
-          id="name"
+          name="roomId"
+          id="roomId"
+          min="0"
+          disabled
           v-model.number="roomId"
           class="form-control form-control-lg mb-2"
-          placeholder="Номер комнаты"
-        />
+          value
+        />-->
         <label for="name" class>Количество месяцев</label>
         <br />
         <input
           type="number"
           min="0"
-          v-model.number="roomMonth"
-          name="name"
-          id="name"
+          v-model.number="roomParams.month"
+          name="month"
+          id="month"
           class="form-control form-control-lg mb-3"
           placeholder="3"
         />
-        <button class="btn btn-lg btn-danger btn-block" @click="enterGame(true)">Создать</button>
+        <button class="btn btn-lg btn-danger btn-block" @click="createGame()">Создать</button>
       </div>
     </transition>
   </div>
@@ -80,9 +82,11 @@ export default {
   name: "Choose",
   data() {
     return {
-      toggle: "create",
-      roomId: "",
-      roomMonth: 3
+      toggle: "join",
+      roomIdJoin: "",
+      roomParams: {
+        month: 3
+      }
     };
   },
   computed: {
@@ -91,11 +95,13 @@ export default {
     }
   },
   methods: {
-    enterGame(toCreate) {
-      if (toCreate) {
-      }
-      // console.log(this.name);
-      // this.$store.commit("setName", this.name);
+    createGame() {
+      this.$socket.emit("createRoom", "");
+      this.$router.push("main");
+    },
+    joinGame() {
+      this.$socket.emit("setRoom", this.roomIdJoin);
+      console.log("//" + this.roomIdJoin);
       this.$router.push("main");
     }
   }
