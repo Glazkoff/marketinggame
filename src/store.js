@@ -11,7 +11,13 @@ export default new Vuex.Store({
     roomParams: {
       month: 3
     },
-    connections: []
+    connections: [],
+    messages: [{
+      id: 1,
+      avatar: 'http://',
+      name: 'Никита',
+      text: 'Привет, ребят! Жесть, здесь так много текста!'
+    }]
   },
   getters: {
 
@@ -35,6 +41,9 @@ export default new Vuex.Store({
     },
     SOCKET_setRoomNumber(state, roomId) {
       state.roomId = roomId
+    },
+    SOCKET_addMessage(state, newMessage) {
+      state.messages.push(newMessage)
     }
 
   },

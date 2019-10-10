@@ -2,9 +2,8 @@
   <div class="sideBox">
     <h2>Chat</h2>
     <div class="messageBox">
-      <div class="message" v-for="mess in messages" :key="mess.key">
+      <div class="message" v-for="(mess, count) in messages" :key="count">
         <div class="avatar"></div>
-
         <div class="mess-block">
           <div class="nickname">{{mess.name}}</div>
           <div class="messText">{{mess.text}}</div>
@@ -24,24 +23,29 @@ export default {
   name: "Chat",
   data() {
     return {
-      messages: [
-        {
-          id: 1,
-          avatar: "http://",
-          name: "Никита",
-          text: "Привет, ребят! Жесть, здесь так много текста!"
-        },
-        {
-          id: 2,
-          avatar: "http://",
-          name: "Никита",
-          text: "Привет, ребят!"
-        }
-      ]
+      // messages: [
+      //   // {
+      //   //   id: 1,
+      //   //   avatar: "http://",
+      //   //   name: "Никита",
+      //   //   text: "Привет, ребят! Жесть, здесь так много текста!"
+      //   // },
+      //   // {
+      //   //   id: 2,
+      //   //   avatar: "http://",
+      //   //   name: "Никита",
+      //   //   text: "Привет, ребят!"
+      //   // }
+      // ]
     };
   },
   components: {
     SendBox
+  },
+  computed: {
+    messages() {
+      return this.$store.state.messages;
+    }
   }
 };
 </script>

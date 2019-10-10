@@ -24,6 +24,7 @@ export default {
     connections() {
       return this.$store.state.connections;
     }
+   
   }
 };
 </script>

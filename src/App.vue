@@ -28,15 +28,15 @@ export default {
   sockets: {
     connect: function(connections) {
       console.log("Socket connected");
-    },
+    }
     // connectList: function(connections) {
     //   console.log(connections);
     //   this.connections = connections;
     //   this.$store.commit("setConnections", connections);
     // },
-    newMessage: function(mess) {
-      console.log(`${mess.text}`);
-    }
+    // newMessage: function(mess) {
+    //   console.log(`${mess.text}`);
+    // }
   },
   computed: {},
   methods: {}
