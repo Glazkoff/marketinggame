@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 // server.listen(process.env.PORT || 3000);
-const server = app.listen(process.env.PORT || 3001, function () {
+const server = app.use((req, res) => res.sendFile(INDEX)).listen(process.env.PORT || 3001, () => {
   console.log("server running on port 3001");
 });
 
