@@ -6,7 +6,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "node ./server/server.js"
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": "10.15.3"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
