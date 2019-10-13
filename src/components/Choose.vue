@@ -44,6 +44,7 @@
           id="roomIdJoin"
           class="form-control form-control-lg mb-3"
           placeholder="Введите номер комнаты"
+          @keypress.enter="joinGame()"
         />
         <button class="btn btn-lg btn-danger btn-block" @click="joinGame()">Присоединиться</button>
       </div>
@@ -70,6 +71,7 @@
           id="month"
           class="form-control form-control-lg mb-3"
           placeholder="3"
+          @keypress.enter="createGame()"
         />
         <button class="btn btn-lg btn-danger btn-block" @click="createGame()">Создать</button>
       </div>

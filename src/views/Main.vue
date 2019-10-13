@@ -1,9 +1,9 @@
 <template>
   <div id="splitScr">
-    <h1>Room #{{roomNumber}}</h1>
-    <ul>
-      <li v-for="(conn, count) in connections" v-bind:key="count">conn</li>
-    </ul>
+    <div class>
+      <h1 class="ml-1 mb-0">Room #{{roomNumber}}</h1>
+      <router-link to="choose" class="mb-2 ml-1">Выйти из комнаты</router-link>
+    </div>
     <Chat></Chat>
   </div>
 </template>
@@ -17,6 +17,27 @@ export default {
   components: {
     Chat
   },
+  methods: {
+    leaveRoom() {
+      console.log("Ушёл из комнаты!");
+      this.$socket.emit("leaveRoom");
+      this.$store.state.messages = [];
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    // вызывается перед переходом от пути, соответствующего текущему компоненту;
+    // имеет доступ к контексту экземпляра компонента `this`.
+    // const answer = window.confirm(
+    //   "Вы хотите уйти? У вас есть несохранённые изменения!"
+    // );
+    this.leaveRoom();
+
+    // if (answer) {
+    next();
+    // } else {
+    //   next(false);
+    // }
+  },
   computed: {
     roomNumber() {
       return this.$store.state.roomId;
@@ -24,7 +45,6 @@ export default {
     connections() {
       return this.$store.state.connections;
     }
-   
   }
 };
 </script>

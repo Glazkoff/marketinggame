@@ -12,12 +12,7 @@ export default new Vuex.Store({
       month: 3
     },
     connections: [],
-    messages: [{
-      id: 1,
-      avatar: 'http://',
-      name: 'Никита',
-      text: 'Привет, ребят! Жесть, здесь так много текста!'
-    }]
+    messages: []
   },
   getters: {
 
@@ -44,6 +39,15 @@ export default new Vuex.Store({
     },
     SOCKET_addMessage(state, newMessage) {
       state.messages.push(newMessage)
+      let messageList = document.querySelector('#messageField');
+      let messBox = document.querySelector('.messageBox');
+      console.log('messageList.scrollHeight = ' + messageList.scrollHeight);
+      console.log('messBox.scrollHeight = ' + messBox.scrollHeight);
+      messageList.scrollTop = messBox.scrollHeight;
+      // messageList.scrollTo({
+      //   top: messageList.height,
+      //   behavior: 'smooth'
+      // })
     }
 
   },

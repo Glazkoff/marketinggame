@@ -32,7 +32,12 @@ io.on("connection", function (socket) {
     }
     console.log(connectedNames);
   });
-
+  socket.on("newMessage", message => {
+    socket.broadcast.emit("addMessage", {
+      name: socket.name,
+      text: `${message}`
+    });
+  });
   socket.on("setRoom", roomId => {
     // СДЕЛАТЬ ПРОВЕРКУ НА СУЩЕСТВОВАНИЕ КОМНАТЫ
     let oldNote = connectedNames.find(element => element.id === socket.id);
@@ -42,8 +47,13 @@ io.on("connection", function (socket) {
         console.log(`Подключено к комнате #${roomId}`);
         console.log("Подключенные имена:");
         console.log(connectedNames);
+        socket.roomId = roomId;
         socket.emit("setRoomNumber", roomId);
-        socket.broadcast.emit("addMessage", {
+        socket.to(roomId).broadcast.emit("addMessage", {
+          name: "Admin",
+          text: `Игрок ${oldNote.name} подключён к комнате ${roomId}!`
+        });
+        socket.emit("addMessage", {
           name: "Admin",
           text: `Игрок ${oldNote.name} подключён к комнате ${roomId}!`
         });
@@ -57,6 +67,7 @@ io.on("connection", function (socket) {
       oldNote.roomId = roomNumb;
       console.log("Подключенные имена:");
       console.log(connectedNames);
+      socket.roomId = roomNumb;
       socket.join(roomNumb, () => {
         // console.log(oldNote.roomId);
         console.log(`Создана комната #${roomNumb}`);
@@ -66,18 +77,29 @@ io.on("connection", function (socket) {
       // СОЗДАТЬ ОБЩИЙ СТЕЙТ КОМНАТЫ
     }
   });
-
+  socket.on("leaveRoom", function () {
+    console.log(`${socket.name} уходит с комнаты!`);
+    let oldNote = connectedNames.find(element => element.id === socket.id);
+    if (oldNote !== undefined) {
+      oldNote.roomId = -1;
+      socket.emit("setRoomNumber", -1);
+    }
+    console.log("Подключенные имена:");
+    console.log(connectedNames);
+  })
   socket.on("disconnect", function () {
     connections.splice(connections.indexOf(socket.id), 1);
-    let old = connectedNames.findIndex(element => element.id === socket.id);
-    console.log(old);
-    if (connectedNames[old].roomId !== -1) {
-      socket.broadcast.emit("addMessage", {
-        author: "Admin",
-        text: `Игрок ${connectedNames[old].name} вышел с сервера!`
-      });
+    let oldNote = connectedNames.findIndex(element => element.id === socket.id);
+    if (oldNote !== -1) {
+      // console.log();
+      if (connectedNames[oldNote].roomId !== -1) {
+        socket.to(socket.roomId).broadcast.emit("addMessage", {
+          name: "Admin",
+          text: `Игрок ${connectedNames[oldNote].name} вышел с сервера!`
+        });
+      }
     }
-    connectedNames.splice(old, 1);
+    connectedNames.splice(oldNote, 1);
     console.log("Подключения:");
     console.log(connections);
     console.log("Подключенные имена:");
