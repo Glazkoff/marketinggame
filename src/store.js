@@ -39,15 +39,10 @@ export default new Vuex.Store({
     },
     SOCKET_addMessage(state, newMessage) {
       state.messages.push(newMessage)
-      let messageList = document.querySelector('#messageField');
-      let messBox = document.querySelector('.messageBox');
-      console.log('messageList.scrollHeight = ' + messageList.scrollHeight);
-      console.log('messBox.scrollHeight = ' + messBox.scrollHeight);
-      messageList.scrollTop = messBox.scrollHeight;
-      // messageList.scrollTo({
-      //   top: messageList.height,
-      //   behavior: 'smooth'
-      // })
+      let messList = document.querySelector("#messageField");
+      if (messList !== null) {
+        messList.scrollTop = messList.scrollHeight;
+      }
     }
 
   },

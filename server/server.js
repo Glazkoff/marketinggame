@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 // server.listen(process.env.PORT || 3000);
-const server = app.use((req, res) => res.sendFile(INDEX)).listen(process.env.PORT || 3001, () => {
-  console.log("server running on port 3001");
-});
+const server = app
+  .use((req, res) => res.sendFile(INDEX))
+  .listen(process.env.PORT || 3001, () => {
+    console.log("server running on port 3001");
+  });
 
 const io = require("socket.io")(server);
 let connections = [];
@@ -12,7 +14,7 @@ let rooms = [];
 let roomsState = [];
 let roomNumb = 10;
 
-io.on("connection", function (socket) {
+io.on("connection", function(socket) {
   connections.push(socket.id);
   console.log("Подключения:");
   console.log(connections);
@@ -78,7 +80,12 @@ io.on("connection", function (socket) {
       // СОЗДАТЬ ОБЩИЙ СТЕЙТ КОМНАТЫ
     }
   });
-  socket.on("leaveRoom", function () {
+
+  socket.on("typing", function() {
+    socket.to(socket.roomId).broadcast.emit("addMessage");
+  });
+
+  socket.on("leaveRoom", function() {
     console.log(`${socket.name} уходит с комнаты!`);
     let oldNote = connectedNames.find(element => element.id === socket.id);
     if (oldNote !== undefined) {
@@ -87,8 +94,8 @@ io.on("connection", function (socket) {
     }
     console.log("Подключенные имена:");
     console.log(connectedNames);
-  })
-  socket.on("disconnect", function () {
+  });
+  socket.on("disconnect", function() {
     connections.splice(connections.indexOf(socket.id), 1);
     let oldNote = connectedNames.findIndex(element => element.id === socket.id);
     if (oldNote !== -1) {

@@ -1,8 +1,11 @@
 <template>
   <div id="splitScr">
-    <div class>
-      <h1 class="ml-1 mb-0">Room #{{roomNumber}}</h1>
-      <router-link to="choose" class="mb-2 ml-1">Выйти из комнаты</router-link>
+    <div class="main-side">
+      <div class="pg-header">
+        <h1 class="ml-1 mb-0">Room #{{roomNumber}}</h1>
+        <router-link to="choose" class="mb-2 ml-1">Выйти из комнаты</router-link>
+      </div>
+      <PlayGround></PlayGround>
     </div>
     <Chat></Chat>
   </div>
@@ -12,10 +15,13 @@
 require("bootstrap/dist/css/bootstrap.css");
 
 import Chat from "@/components/Chat.vue";
+import PlayGround from "@/components/PlayGround.vue";
+
 export default {
   name: "Main",
   components: {
-    Chat
+    Chat,
+    PlayGround
   },
   methods: {
     leaveRoom() {
@@ -56,5 +62,20 @@ export default {
   grid-template-columns: 1fr 4fr;
   width: 100vw;
   height: 100%;
+}
+.main-side {
+  position: relative;
+}
+.pg-header {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: #fff;
+  box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.2);
+}
+.sidebox {
 }
 </style>

@@ -20,6 +20,11 @@ export default {
       message: ""
     };
   },
+  watch: {
+    message(value) {
+      value ? socket.emit("typing", this.username) : socket.emit("stopTyping");
+    }
+  },
   methods: {
     sendMessage() {
       if (this.message !== "") {
@@ -27,16 +32,18 @@ export default {
           this.$store.state.gamerName = "Anonim";
         }
         this.$socket.emit("newMessage", this.message);
-        this.$store.state.messages.push({
+        // this.$store.state.messages.push({
+        //   name: this.$store.state.gamerName,
+        //   text: this.message
+        // });
+        this.$store.commit("SOCKET_addMessage", {
           name: this.$store.state.gamerName,
           text: this.message
         });
+
         this.message = "";
-        let messageList = document.querySelector("#messageField");
-        let messBox = document.querySelector(".messageBox");
-        // messageList.scrollTop =
-        //   messBox.clientHeight - messageList.clientHeight + 140;
-        messageList.scrollTop = messBox.scrollHeight + 140;
+
+        // messBox.scrollTop = messBox.scrollHeight;
       }
     }
   }

@@ -29,6 +29,14 @@ export default {
   },
   computed: {
     messages() {
+      // let messList = document.querySelector("#messageField");
+      // messList.scrollTop = messList.scrollHeight + 150;
+      setTimeout(() => {
+        let messList = document.querySelector("#messageField");
+        if (messList !== null) {
+          messList.scrollTop = messList.scrollHeight;
+        }
+      }, 10);
       return this.$store.state.messages;
     }
   },
@@ -76,6 +84,7 @@ h2#chat {
   /* height: auto; */
   overflow-y: scroll;
   margin-bottom: 70px;
+  overflow-x: auto;
 }
 .chatField {
   /* min-height: calc(90vh - 56px);*/
@@ -86,15 +95,22 @@ h2#chat {
   position: relative;
   height: 100%;
   width: 100%;
+  max-width: 20vw;
   grid-area: 1/1/2/2;
   border-right: 1px solid gray;
   display: flex;
   flex-direction: column;
   /* align-items: center; */
   justify-content: space-between;
+  box-shadow: 2px 80px 2px rgba(0, 0, 0, 0.2);
   /* align-content: middle; */
 }
-
+.mess-block {
+  max-width: 15vw;
+}
+.message:last-child {
+  margin-bottom: 5px;
+}
 .message {
   display: grid;
   grid-template-columns: 1fr 5fr;
@@ -116,5 +132,7 @@ h2#chat {
 
 .message {
   width: 100%;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 </style>
