@@ -45,6 +45,7 @@ export default {
 <style>
 body {
   overflow-x: hidden;
+  overflow-y: hidden;
   padding: 0;
   margin: 0;
   height: 100vh;
