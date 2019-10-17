@@ -1,17 +1,24 @@
 <template>
   <div id="playground">
     <div id="play-field">
-      <div class="play-information" :class="{'dragover': overed}" @dragenter="dragov"></div>
+      <div
+        class="play-information"
+        :class="{'dragstart': dragstart, 'dragover': dragover}"
+        @dragenter.prevent="dragov"
+        @dragover.prevent
+        @drop.prevent="altdrop"
+        @dragleave="dragleave"
+      ></div>
     </div>
     <div id="card-field">
-      <div id="card-wrap">
+      <div id="card-wrap" @mosedown="console.log('WTF>>')">
         <div
           class="card-box"
           v-for="(card, count) in cards"
           :key="count"
-          @mousedown="dragMouseDown"
-          @dragstart.prevent
-          @dragover="dragov"
+          draggable
+          @dragstart.self="altdragstart"
+          @dragend="altdragend"
         >
           <h6 class="card-title text-center">{{card.title}}</h6>
           <div class="card-image"></div>
@@ -24,74 +31,72 @@
 </template>
 
 <script>
+import { log } from "util";
 export default {
   name: "PlayGround",
   data() {
     return {
-      overed: false,
+      dragstart: false,
+      dragover: false,
+      dragnode: undefined,
       cards: [
         {
-          title: "Название карты!",
+          title: "Название карты 1!",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты!",
+          title: "Название карты 2!",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты!",
+          title: "Название карты 3!",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты!",
+          title: "Название карты 4!",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты!",
-          text: "Описание карточки, описание карточки"
-        },
-        {
-          title: "Название карты!",
-          text: "Описание карточки, описание карточки"
-        },
-        {
-          title: "Название карты!",
+          title: "Название карты 5!",
           text: "Описание карточки, описание карточки"
         }
       ]
     };
   },
   methods: {
-    dragov(e) {
+    altdrop(e) {
+      e.preventDefault();
+      console.log("drop");
       console.log(e);
-      console.log("!!!");
+      this.dragovered = false;
+      this.dragstart = false;
+      if (typeof this.dragnode != undefined) {
+        document.getElementById("card-wrap").removeChild(this.dragnode);
+      }
     },
-    dragMouseDown(e) {
-      let card = e.target;
-      if (e.target.className != "card-box") {
-        card = e.target.parentElement;
-      }
-      let shiftX = e.pageX - card.getBoundingClientRect().left;
-      let shiftY = e.pageY - card.getBoundingClientRect().top;
-      card.style.position = "absolute";
-      moveAt(e);
-      document.body.appendChild(card);
-
-      card.style.zIndex = 1000;
-      card.style.minHeight =
-        document.querySelector("#card-field").clientHeight + "px";
-      function moveAt(e) {
-        card.style.left = e.pageX - shiftX / 2 + "px";
-        card.style.top = e.pageY - shiftY / 2 + "px";
-      }
-      document.onmousemove = function(e) {
-        moveAt(e);
-      };
-
-      card.onmouseup = function() {
-        document.onmousemove = null;
-        card.onmouseup = null;
-      };
+    altdragstart(e) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.setData("text/plain", null);
+      e.target.style.opacity = 0.5;
+      e.target.style.transform = "scale(0.8)";
+      this.dragstart = true;
+      this.dragnode = e.target;
+    },
+    altdragend(e) {
+      e.target.style.opacity = "";
+      e.target.style.transform = "";
+      this.dragover = false;
+      this.dragstart = false;
+    },
+    dragov(e) {
+      console.log("over");
+      e.dataTransfer.dropEffect = "move";
+      this.dragover = true;
+    },
+    dragleave(e) {
+      console.log("leave");
+      this.dragover = false;
     }
   }
 };
@@ -120,7 +125,6 @@ export default {
   display: flex;
 }
 #card-field {
-  /* background-color: rgba(44, 244, 32, 0.3); */
   grid-area: 2/1/3/2;
   overflow-x: scroll;
   overflow-y: hidden;
@@ -130,6 +134,7 @@ export default {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
 }
 .play-information {
+  transition: background-color 0.25s;
   width: 96%;
   height: 96%;
   background-color: #fff;
@@ -137,14 +142,19 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
 }
-.dragover {
+.dragstart {
   border: 8px dashed gray;
+}
+.dragover {
+  background-color: #d8d8d8;
 }
 #card-wrap {
   display: flex;
   height: 100%;
+  /* transition: all 0.5s;v -   */
 }
 .card-box {
+  transition: all 0.4s;
   width: 124px;
   min-width: 124px;
   margin-right: 16px;
@@ -155,8 +165,6 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0.2);
   background-color: #fff;
   border-radius: 8px;
-  /* -khtml-user-drag: element;
-  -webkit-user-drag: element; */
 }
 .card-image {
   background-color: rgba(0, 0, 0, 0.3);
