@@ -8,7 +8,7 @@
       @keydown.enter.prevent
       @keydown.enter="sendMessage"
     ></textarea>
-    <button class="btn btn-primary" type="submit" @click="sendMessage" draggable>Отправить</button>
+    <button class="btn btn-primary" type="submit" @click="sendMessage">Отправить</button>
   </form>
 </template>
 

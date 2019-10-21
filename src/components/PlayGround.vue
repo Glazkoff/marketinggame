@@ -8,24 +8,75 @@
         @dragover.prevent
         @drop.prevent="altdrop"
         @dragleave="dragleave"
-      ></div>
-    </div>
-    <div id="card-field">
-      <div id="card-wrap" @mosedown="console.log('WTF>>')">
+      >
         <div
+          class="owner-start-game d-flex align-content-between flex-wrap mt-3"
+          v-if="isOwner & isStart"
+        >
+          <div class="container text-centre">
+            <h1>Начать игру</h1>
+            <p>
+              Если все игроки подключились к комнате, вы можете запустить
+              <mark>первый раунд</mark> в созданной вами комнате.
+            </p>
+            <div class="btn btn-primary btn-lg btn-block mt-3" @click="startGame">Начать</div>
+          </div>
+        </div>
+        <div
+          class="owner-start-game d-flex align-content-between flex-wrap mt-3"
+          v-if="!isOwner & isStart"
+        >
+          <div class="container text-centre">
+            <h1>Ожидайте начала игры</h1>
+            <p>
+              Когда все игроки подключатся к комнате, создатель комнаты запуститт
+              <mark>первый раунд</mark> в созданной комнате.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="card-field" style="transition: all 5s">
+      <div id="card-wrap" style="transition: all 5s">
+        <!-- <div
           class="card-box"
-          v-for="(card, count) in cards"
-          :key="count"
           draggable
           @dragstart.self="altdragstart"
+          v-for="(card, count) in cards"
+          :key="count"
           @dragend="altdragend"
         >
           <h6 class="card-title text-center">{{card.title}}</h6>
           <div class="card-image"></div>
           <small class="card-text text-center">{{card.text}}</small>
-        </div>
+        </div>-->
+        <transition-group
+          mode="out-in"
+          name="cardwrap"
+          id="card-wrap"
+          tag="div"
+          type="transition"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @leave="leave"
+        >
+          <div
+            class="card-box"
+            draggable
+            @dragstart.self="altdragstart"
+            v-for="(card, count) in cards"
+            :key="count"
+            @dragend="altdragend"
+          >
+            <h6 class="card-title text-center">{{card.title}}</h6>
+            <div class="card-image"></div>
+            <small class="card-text text-center">{{card.text}}</small>
+          </div>
+        </transition-group>
       </div>
     </div>
+
     <div id="enemy-field"></div>
   </div>
 </template>
@@ -63,15 +114,41 @@ export default {
       ]
     };
   },
+  computed: {
+    isOwner() {
+      return this.$store.state.isOwner;
+    },
+    isStart() {
+      return this.$store.state.isStart;
+    }
+  },
   methods: {
+    startGame() {
+      this.$socket.emit("startGame", this.$store.state.roomParams);
+      this.$store.state.isOwner = false;
+      this.$store.state.isStart = false;
+    },
+    beforeEnter: function(el) {
+      // el.style.opacity = 0;
+      // el.style.height = 0;
+      console.log("befenterhook");
+    },
+    enter: function(el) {
+      console.log("enterhook");
+    },
+    leave: function(el) {
+      el.style.opacity = 0;
+      el.style.height = 0;
+      console.log("leavehook");
+    },
     altdrop(e) {
       e.preventDefault();
       console.log("drop");
-      console.log(e);
+      console.log();
       this.dragovered = false;
       this.dragstart = false;
-      if (typeof this.dragnode != undefined) {
-        document.getElementById("card-wrap").removeChild(this.dragnode);
+      if (typeof this.dragnode != "undefined") {
+        this.dragnode.parentNode.removeChild(this.dragnode);
       }
     },
     altdragstart(e) {
@@ -103,6 +180,44 @@ export default {
 </script>
 
 <style>
+/* .cardwrap-enter-active,
+.cardwrap-leave-active {
+  transition: all 1s;
+}
+.cardwrap-enter, .cardwrap-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.cardwrap-enter-to,
+.cardwrap-leave {
+  opacity: 1;
+} */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition-delay: 0.2s;
+}
+
+.cardwrap-enter-active,
+.cardwrap-leave-active {
+  transition: all 2s;
+}
+
+.cardwrap-leave-active {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+.cardwrap-enter {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
 #playground {
   background-color: #fff;
   width: 100%;
@@ -151,6 +266,7 @@ export default {
 #card-wrap {
   display: flex;
   height: 100%;
+  transition: all 0.4s;
   /* transition: all 0.5s;v -   */
 }
 .card-box {

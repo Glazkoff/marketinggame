@@ -1,5 +1,5 @@
 <template>
-  <div class="card container col-4 mt-5 p-4">
+  <div class="card container col-5 col-md-4 col-sm-6 col-xs-12 mt-5 p-4">
     <h1 class="mb-1">Привет, {{gamerName}}!</h1>
     <router-link to="/">Сменить имя</router-link>
 
@@ -73,6 +73,18 @@
           placeholder="3"
           @keypress.enter="createGame()"
         />
+        <label for="name" class>Начальный капитал</label>
+        <br />
+        <input
+          type="number"
+          min="0"
+          v-model.number="roomParams.money"
+          name="money"
+          id="money"
+          class="form-control form-control-lg mb-3"
+          placeholder="100000"
+          @keypress.enter="createGame()"
+        />
         <button class="btn btn-lg btn-danger btn-block" @click="createGame()">Создать</button>
       </div>
     </transition>
@@ -87,7 +99,8 @@ export default {
       toggle: "join",
       roomIdJoin: "",
       roomParams: {
-        month: 3
+        month: 3,
+        money: 100000
       }
     };
   },
@@ -100,6 +113,8 @@ export default {
     createGame() {
       this.$socket.emit("createRoom", "");
       this.$router.push("main");
+      this.$store.state.isOwner = true;
+      this.$store.state.roomParams = this.roomParams;
     },
     joinGame() {
       this.$socket.emit("setRoom", this.roomIdJoin);

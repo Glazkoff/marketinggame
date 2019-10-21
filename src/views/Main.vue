@@ -28,6 +28,8 @@ export default {
       console.log("Ушёл из комнаты!");
       this.$socket.emit("leaveRoom");
       this.$store.state.messages = [];
+      this.$store.state.isStart = false;
+      this.$store.state.isOwner = false;
     }
   },
   beforeRouteLeave(to, from, next) {

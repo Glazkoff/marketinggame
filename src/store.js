@@ -7,9 +7,11 @@ export default new Vuex.Store({
   state: {
     gamerName: '',
     isOwner: false,
+    isStart: true,
     roomId: -1,
     roomParams: {
-      month: 3
+      month: 3,
+      money: 100000
     },
     connections: [],
     messages: []
@@ -43,6 +45,10 @@ export default new Vuex.Store({
       if (messList !== null) {
         messList.scrollTop = messList.scrollHeight;
       }
+    },
+    SOCKET_setStartGame(state) {
+      console.log('Старт игры!');
+      state.isStart = false;
     }
 
   },
