@@ -36,7 +36,7 @@ io.on('connection', function (socket) {
     console.log(connectedNames);
   });
   socket.on('newMessage', message => {
-    socket.broadcast.emit('addMessage', {
+    socket.broadcast.to(socket.roomId).emit('addMessage', {
       name: socket.name,
       text: `${message}`
     });
@@ -82,10 +82,12 @@ io.on('connection', function (socket) {
   });
 
   socket.on('startGame', (obj) => {
-    // console.log('Стейт комнаты №' + socket.roomId);
-    // console.log(obj);
-    let roomState = obj;
-    roomState.roomId = socket.roomId;
+    let roomState = {}
+    roomState.roomId = socket.roomId
+    roomState.roomState = obj
+    console.log('Комнаты:');
+    console.log(io.sockets.adapter.rooms[socket.roomId].sockets);
+    // в цикле создать объект данных каждого игрока
     roomsState.push(roomState);
     console.log('Стейт комнат: ');
     console.log(roomsState);

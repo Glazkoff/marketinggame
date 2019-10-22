@@ -34,6 +34,27 @@
             </p>
           </div>
         </div>
+        <div class="gamer-round-data container" v-if="!isStart">
+          <h3>Сейчас у вас ({{gamerName}}) есть:</h3>
+          <ul class="list-group col-10 offset-1 mt-3">
+            <li
+              class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+            >
+              Общий бюджет
+              <span class="badge badge-primarybadge-pill">
+                <h4>100000 ₽</h4>
+              </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Dapibus ac facilisis in
+              <span class="badge badge-primary badge-pill">2</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Morbi leo risus
+              <span class="badge badge-primary badge-pill">1</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -120,6 +141,9 @@ export default {
     },
     isStart() {
       return this.$store.state.isStart;
+    },
+    gamerName() {
+      return this.$store.state.gamerName;
     }
   },
   methods: {
