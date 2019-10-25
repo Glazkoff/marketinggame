@@ -8,6 +8,7 @@ export default new Vuex.Store({
     gamerName: '',
     isOwner: false,
     isStart: true,
+    stepDone: false,
     roomId: -1,
     roomParams: {
       month: 3,
@@ -41,14 +42,15 @@ export default new Vuex.Store({
     },
     SOCKET_addMessage(state, newMessage) {
       state.messages.push(newMessage)
-      let messList = document.querySelector("#messageField");
+      let messList = document.querySelector('#messageField')
       if (messList !== null) {
-        messList.scrollTop = messList.scrollHeight;
+        messList.scrollTop = messList.scrollHeight
       }
     },
-    SOCKET_setStartGame(state) {
-      console.log('Старт игры!');
-      state.isStart = false;
+    SOCKET_setStartGame(state, roomParams) {
+      console.log('Старт игры!')
+      state.isStart = false
+      state.roomParams = roomParams
     }
 
   },

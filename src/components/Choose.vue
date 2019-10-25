@@ -121,6 +121,16 @@ export default {
       console.log("//" + this.roomIdJoin);
       this.$router.push("main");
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    // if (vm.$store.state.roomId == -1) {
+    next(function(vm) {
+      if (vm.$store.state.gamerName == "") {
+        next("/");
+      } else {
+        return true;
+      }
+    });
   }
 };
 </script>

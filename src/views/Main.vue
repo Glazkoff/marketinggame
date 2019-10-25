@@ -32,6 +32,18 @@ export default {
       this.$store.state.isOwner = false;
     }
   },
+  // ################  НЕ УДАЛЯТЬ  ###############
+  beforeRouteEnter(to, from, next) {
+    next(function(vm) {
+      console.log(vm.$store.state.roomId);
+      if (vm.$store.state.roomId == -1) {
+        next("/");
+      } else {
+        return true;
+      }
+    });
+  },
+  // ######################################################
   beforeRouteLeave(to, from, next) {
     // вызывается перед переходом от пути, соответствующего текущему компоненту;
     // имеет доступ к контексту экземпляра компонента `this`.

@@ -10,92 +10,104 @@
         @dragleave="dragleave"
       >
         <div
-          class="owner-start-game d-flex align-content-between flex-wrap mt-3"
+          class="owner-start-game d-flex align-content-between flex-wrap h-100"
           v-if="isOwner & isStart"
         >
-          <div class="container text-centre">
-            <h1>Начать игру</h1>
-            <p>
-              Если все игроки подключились к комнате, вы можете запустить
-              <mark>первый раунд</mark> в созданной вами комнате.
-            </p>
-            <div class="btn btn-primary btn-lg btn-block mt-3" @click="startGame">Начать</div>
+          <div class="container h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+              <div class="col-12">
+                <h1 class="text-center">Начать игру</h1>
+                <p>
+                  Если все игроки подключились к комнате, вы можете запустить
+                  <mark>первый раунд</mark> в созданной вами комнате.
+                </p>
+                <div class="btn btn-primary btn-lg btn-block mt-3" @click="startGame">Начать</div>
+              </div>
+            </div>
           </div>
         </div>
         <div
-          class="owner-start-game d-flex align-content-between flex-wrap mt-3"
+          class="owner-start-game d-flex align-content-between flex-wrap h-100"
           v-if="!isOwner & isStart"
         >
-          <div class="container text-centre">
-            <h1>Ожидайте начала игры</h1>
-            <p>
-              Когда все игроки подключатся к комнате, создатель комнаты запуститт
-              <mark>первый раунд</mark> в созданной комнате.
-            </p>
+          <div class="container text-centre h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+              <div class="col-11 text-center">
+                <h1>Ожидайте начала игры</h1>
+                <p>
+                  Когда все игроки подключатся к комнате, создатель комнаты запустит
+                  <mark>первый раунд</mark> в созданной комнате.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="gamer-round-data container" v-if="!isStart">
-          <h3>Сейчас у вас ({{gamerName}}) есть:</h3>
-          <ul class="list-group col-10 offset-1 mt-3">
-            <li
-              class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
-            >
-              Общий бюджет
-              <span class="badge badge-primarybadge-pill">
-                <h4>100000 ₽</h4>
-              </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Dapibus ac facilisis in
-              <span class="badge badge-primary badge-pill">2</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Morbi leo risus
-              <span class="badge badge-primary badge-pill">1</span>
-            </li>
-          </ul>
+        <div class="gamer-round-data container h-100" v-if="!isStart">
+          <div class="row h-100 justify-content-center align-items-start">
+            <div class="col-12">
+              <h3 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h3>
+              <ul class="list-group col-10 offset-1 mt-3">
+                <li
+                  class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                >
+                  Общий бюджет
+                  <span class="badge badge-primary badge-pill">
+                    <h4>{{gamerParams.money}} ₽</h4>
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Осталось месяцев:
+                  <span
+                    class="badge badge-primary badge-pill"
+                  >{{gamerParams.month}}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Прочие параметры
+                  <span class="badge badge-primary badge-pill">-</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div id="card-field" style="transition: all 5s">
-      <div id="card-wrap" style="transition: all 5s">
-        <!-- <div
+      <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
+        <div class="container h-100 w-100">
+          <div class="row h-100 justify-content-md-center align-content-center">
+            <div class="col-12">
+              <h2 class="text-center">Вы сделали ход!</h2>
+              <small>Ожидайте следующего</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <transition-group
+        mode="out-in"
+        name="cardwrap"
+        id="card-wrap"
+        tag="div"
+        type="transition"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div
           class="card-box"
           draggable
           @dragstart.self="altdragstart"
           v-for="(card, count) in cards"
           :key="count"
           @dragend="altdragend"
+          v-if="!isStart"
         >
-          <h6 class="card-title text-center">{{card.title}}</h6>
+          <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
           <div class="card-image"></div>
           <small class="card-text text-center">{{card.text}}</small>
-        </div>-->
-        <transition-group
-          mode="out-in"
-          name="cardwrap"
-          id="card-wrap"
-          tag="div"
-          type="transition"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @leave="leave"
-        >
-          <div
-            class="card-box"
-            draggable
-            @dragstart.self="altdragstart"
-            v-for="(card, count) in cards"
-            :key="count"
-            @dragend="altdragend"
-          >
-            <h6 class="card-title text-center">{{card.title}}</h6>
-            <div class="card-image"></div>
-            <small class="card-text text-center">{{card.text}}</small>
-          </div>
-        </transition-group>
-      </div>
+          <button class="btn btn-dark pl-2" @click="dropFromBtn(count)">Использовать</button>
+        </div>
+      </transition-group>
     </div>
 
     <div id="enemy-field"></div>
@@ -144,9 +156,20 @@ export default {
     },
     gamerName() {
       return this.$store.state.gamerName;
+    },
+    gamerParams() {
+      return this.$store.state.roomParams;
+    },
+    stepDone() {
+      return this.$store.state.stepDone;
     }
   },
   methods: {
+    makeStep() {},
+    dropFromBtn(index) {
+      this.cards.splice(index, 1);
+      // console.log(e);
+    },
     startGame() {
       this.$socket.emit("startGame", this.$store.state.roomParams);
       this.$store.state.isOwner = false;
@@ -168,11 +191,18 @@ export default {
     altdrop(e) {
       e.preventDefault();
       console.log("drop");
-      console.log();
       this.dragovered = false;
       this.dragstart = false;
       if (typeof this.dragnode != "undefined") {
-        this.dragnode.parentNode.removeChild(this.dragnode);
+        // console.log(this.dragnode.parentNode.childNodes);
+        let i = 0;
+        for (const iterator of this.dragnode.parentNode.childNodes) {
+          if (iterator == this.dragnode) {
+            break;
+          }
+          i++;
+        }
+        this.cards.splice(i, 1);
       }
     },
     altdragstart(e) {
@@ -204,6 +234,12 @@ export default {
 </script>
 
 <style>
+.dark-cover {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.45);
+  user-select: none;
+  color: #fff;
+}
 /* .cardwrap-enter-active,
 .cardwrap-leave-active {
   transition: all 1s;
@@ -218,12 +254,14 @@ export default {
 } */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.2s;
+  transition: all 0.5s;
 }
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
 }
+
 .fade-enter-active {
   transition-delay: 0.2s;
 }
@@ -237,6 +275,7 @@ export default {
   transform: translateX(-20px);
   opacity: 0;
 }
+
 .cardwrap-enter {
   transform: translateX(20px);
   opacity: 0;
@@ -252,17 +291,20 @@ export default {
   grid-template-columns: 3fr 1fr;
   grid-template-rows: 2fr 1fr;
 }
+
 #play-field,
 #card-field {
   margin: auto auto;
   width: 100%;
   height: 100%;
 }
+
 #play-field {
   background-color: rgba(123, 45, 64, 0.3);
   grid-area: 1/1/2/2;
   display: flex;
 }
+
 #card-field {
   grid-area: 2/1/3/2;
   overflow-x: scroll;
@@ -271,7 +313,9 @@ export default {
   height: 96%;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
 }
+
 .play-information {
   transition: background-color 0.25s;
   width: 96%;
@@ -281,19 +325,25 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
 }
+
 .dragstart {
   border: 8px dashed gray;
 }
+
 .dragover {
   background-color: #d8d8d8;
 }
+
 #card-wrap {
   display: flex;
   height: 100%;
   transition: all 0.4s;
   /* transition: all 0.5s;v -   */
 }
+
 .card-box {
+  /* padding-left: 3px; */
+  /* padding-right: 3px; */
   transition: all 0.4s;
   width: 124px;
   min-width: 124px;
@@ -306,6 +356,7 @@ export default {
   background-color: #fff;
   border-radius: 8px;
 }
+
 .card-image {
   background-color: rgba(0, 0, 0, 0.3);
   width: 80%;
@@ -313,6 +364,7 @@ export default {
   min-height: 60px;
   margin: 0 auto;
 }
+
 #enemy-field {
   background-color: rgba(1, 24, 202, 0.3);
   grid-area: 1/2/3/3;
@@ -324,6 +376,7 @@ export default {
   height: 8px;
   background-color: #f5f5f5;
 }
+
 #card-field::-webkit-scrollbar-track {
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.1);
