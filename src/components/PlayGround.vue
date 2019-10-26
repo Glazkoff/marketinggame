@@ -140,23 +140,28 @@ export default {
       dragnode: undefined,
       cards: [
         {
-          title: "Название карты 1!",
+          id: 1,
+          title: "Нанять SMM-менеджера",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты 2!",
+          id: 2,
+          title: "Заказать SEO-оптимизацию",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты 3!",
+          id: 3,
+          title: "Улучшение юзабилити",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты 4!",
+          id: 4,
+          title: "Реклама в соцсетях",
           text: "Описание карточки, описание карточки"
         },
         {
-          title: "Название карты 5!",
+          id: 5,
+          title: "PR-компания компании",
           text: "Описание карточки, описание карточки"
         }
       ]
@@ -176,6 +181,7 @@ export default {
       return this.$store.state.roomParams;
     },
     stepDone() {
+      console.log("132");
       return this.$store.state.stepDone;
     }
   },
@@ -193,13 +199,13 @@ export default {
       }
       return arra1;
     },
-    makeStep() {
+    makeStep(cardId) {
       this.$store.commit("doStep");
+      this.$socket.emit("doStep", cardId);
     },
     dropFromBtn(index) {
+      this.makeStep(this.cards[index].id);
       this.cards.splice(index, 1);
-      this.makeStep();
-      // console.log(e);
     },
     startGame() {
       this.$socket.emit("startGame", this.$store.state.roomParams);
@@ -233,8 +239,8 @@ export default {
             }
             i++;
           }
+          this.makeStep(this.cards[i].id);
           this.cards.splice(i, 1);
-          this.makeStep();
         }
       }
       this.dragnode = undefined;
@@ -270,6 +276,7 @@ export default {
 
 <style>
 .dark-cover {
+  opacity: 0.9;
   position: absolute;
   background: repeating-linear-gradient(
     45deg,
@@ -303,7 +310,7 @@ export default {
 }
 .fade-enter-to {
   transform: scale(1);
-  opacity: 1;
+  opacity: 0.9;
 }
 .fade-enter,
 .fade-leave-to {

@@ -54,7 +54,6 @@ export default new Vuex.Store({
       }
     },
     SOCKET_setStartGame(state, roomParams) {
-      console.log('Старт игры!')
       state.isStart = false
       state.roomParams = roomParams
     }
