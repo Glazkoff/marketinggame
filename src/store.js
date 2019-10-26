@@ -37,6 +37,12 @@ export default new Vuex.Store({
         month
       }
     },
+    doStep(state) {
+      state.stepDone = true
+    },
+    SOCKET_doNextStep(state) {
+      state.stepDone = false
+    },
     SOCKET_setRoomNumber(state, roomId) {
       state.roomId = roomId
     },

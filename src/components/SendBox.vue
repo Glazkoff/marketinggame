@@ -22,7 +22,9 @@ export default {
   },
   watch: {
     message(value) {
-      value ? socket.emit("typing", this.username) : socket.emit("stopTyping");
+      value
+        ? this.$socket.emit("typing", this.username)
+        : this.$socket.emit("stopTyping");
     }
   },
   methods: {

@@ -72,17 +72,25 @@
       </div>
     </div>
 
-    <div id="card-field" style="transition: all 5s">
-      <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
-        <div class="container h-100 w-100">
-          <div class="row h-100 justify-content-md-center align-content-center">
-            <div class="col-12">
-              <h2 class="text-center">Вы сделали ход!</h2>
-              <small>Ожидайте следующего</small>
+    <div
+      id="card-field"
+      style="transition: all 5s"
+      :style="{overflow: stepDone ? 'hidden' : 'scroll-x'}"
+    >
+      <transition mode="out-in" name="fade" id="card-wrap" type="transition">
+        <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
+          <div class="container h-100 w-100">
+            <div class="row h-100 justify-content-md-center align-content-center">
+              <div class="col-12">
+                <h2 class="text-center">Вы сделали ход!</h2>
+                <p class="text-center">
+                  <small>Ожидайте следующего</small>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
       <transition-group
         mode="out-in"
         name="cardwrap"
@@ -105,7 +113,11 @@
           <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
           <div class="card-image"></div>
           <small class="card-text text-center">{{card.text}}</small>
-          <button class="btn btn-dark pl-2" @click="dropFromBtn(count)">Использовать</button>
+          <button
+            class="btn btn-dark pl-2"
+            @click="dropFromBtn(count)"
+            :disabled="stepDone"
+          >Использовать</button>
         </div>
       </transition-group>
     </div>
@@ -118,6 +130,9 @@
 import { log } from "util";
 export default {
   name: "PlayGround",
+  created() {
+    this.cards = this.shuffle(this.cards);
+  },
   data() {
     return {
       dragstart: false,
@@ -165,9 +180,25 @@ export default {
     }
   },
   methods: {
-    makeStep() {},
+    shuffle(arra1) {
+      let ctr = arra1.length,
+        temp,
+        index;
+      while (ctr > 0) {
+        index = Math.floor(Math.random() * ctr);
+        ctr--;
+        temp = arra1[ctr];
+        arra1[ctr] = arra1[index];
+        arra1[index] = temp;
+      }
+      return arra1;
+    },
+    makeStep() {
+      this.$store.commit("doStep");
+    },
     dropFromBtn(index) {
       this.cards.splice(index, 1);
+      this.makeStep();
       // console.log(e);
     },
     startGame() {
@@ -194,16 +225,19 @@ export default {
       this.dragovered = false;
       this.dragstart = false;
       if (typeof this.dragnode != "undefined") {
-        // console.log(this.dragnode.parentNode.childNodes);
-        let i = 0;
-        for (const iterator of this.dragnode.parentNode.childNodes) {
-          if (iterator == this.dragnode) {
-            break;
+        if (this.dragnode.parentNode.id == "card-wrap") {
+          let i = 0;
+          for (const iterator of this.dragnode.parentNode.childNodes) {
+            if (iterator == this.dragnode) {
+              break;
+            }
+            i++;
           }
-          i++;
+          this.cards.splice(i, 1);
+          this.makeStep();
         }
-        this.cards.splice(i, 1);
       }
+      this.dragnode = undefined;
     },
     altdragstart(e) {
       e.dataTransfer.effectAllowed = "move";
@@ -217,6 +251,7 @@ export default {
     altdragend(e) {
       e.target.style.opacity = "";
       e.target.style.transform = "";
+      this.dragnode = undefined;
       this.dragover = false;
       this.dragstart = false;
     },
@@ -236,9 +271,16 @@ export default {
 <style>
 .dark-cover {
   position: absolute;
-  background: rgba(0, 0, 0, 0.45);
+  background: repeating-linear-gradient(
+    45deg,
+    #606dbc,
+    #606dbc 10px,
+    #465298 10px,
+    #465298 20px
+  );
   user-select: none;
   color: #fff;
+  z-index: 1000;
 }
 /* .cardwrap-enter-active,
 .cardwrap-leave-active {
@@ -254,21 +296,28 @@ export default {
 } */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.5s;
+  transition: all 0.6s;
 }
-
+.fade-enter-active {
+  transition-delay: 0.4s;
+}
+.fade-enter-to {
+  transform: scale(1);
+  opacity: 1;
+}
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
 }
 
-.fade-enter-active {
-  transition-delay: 0.2s;
+.fade-enter {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 .cardwrap-enter-active,
 .cardwrap-leave-active {
-  transition: all 2s;
+  transition: all 0.5s;
 }
 
 .cardwrap-leave-active {

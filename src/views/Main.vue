@@ -30,6 +30,7 @@ export default {
       this.$store.state.messages = [];
       this.$store.state.isStart = true;
       this.$store.state.isOwner = false;
+      this.$store.commit("SOCKET_doNextStep");
     }
   },
   // ################  НЕ УДАЛЯТЬ  ###############

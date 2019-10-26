@@ -1,6 +1,6 @@
 <template>
   <div class="sideBox">
-    <h2 id="chat">Chat</h2>
+    <h2 id="chat" class="ml-2">Chat</h2>
     <!-- <div class="chatField"> -->
     <div class="messageField" id="messageField">
       <div class="messageBox">
