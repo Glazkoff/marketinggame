@@ -87,11 +87,7 @@ io.on('connection', function (socket) {
         console.log(connectedNames);
         socket.roomId = roomId;
         socket.emit('setRoomNumber', roomId);
-        socket.to(roomId).broadcast.emit('addMessage', {
-          name: 'Admin',
-          text: `Игрок ${oldNote.name} подключён к комнате ${roomId}!`
-        });
-        socket.emit('addMessage', {
+        io.sockets.to(roomId).emit('addMessage', {
           name: 'Admin',
           text: `Игрок ${oldNote.name} подключён к комнате ${roomId}!`
         });
@@ -183,11 +179,42 @@ io.on('connection', function (socket) {
         room.attackers = room.constAttackers
         room.roomState.month--
         if (room.roomState.month === 0) {
-
+          let gamersRate = [];
+          for (const gamer of gamers) {
+            let position = {
+              id: gamer.id,
+              money: gamer.data.money
+            }
+            gamersRate.push(position)
+          }
+          gamersRate.sort((a, b) => {
+            if (a.money > b.money) {
+              return -1
+            } else if (a.money < b.money) {
+              return 1
+            }
+            return 0
+          })
+          console.log('Рейтинг игроков:');
+          console.log(gamersRate)
+          let winners = {}
+          for (let index = 1; index < 4; index++) {
+            let a = gamersRate.shift();
+            if (typeof a !== 'undefined') {
+              winners[index] = Object.assign(a);
+              winners[index].name = connectedNames.find(el => el.id === a.id).name
+            } else winners[index] = a;
+            // console.log(gamersRate.shift());
+            // console.log(winners[index]);
+            // let gamer = Object.assign(winners[index])
+            // winners[index].name = connectedNames.find(el => el.id === gamer.id).name
+          }
+          console.log(winners)
           io.sockets.to(room.roomId).emit('addMessage', {
             name: 'Admin',
             text: `Финито ля комедиа!`
-          });
+          })
+          io.sockets.to(room.roomId).emit('finish', winners)
         }
       }, 2000);
     }

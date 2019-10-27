@@ -1,11 +1,14 @@
 <template>
   <div id="splitScr">
-    <div class="main-side">
+    <div class="main-side" :style="{display: isFinish ? 'flex' : 'unset'}">
       <div class="pg-header">
-        <h1 class="ml-1 mb-0">Room #{{roomNumber}}</h1>
+        <h1 class="ml-1 mb-0">Комната #{{roomNumber}}</h1>
         <router-link to="choose" class="mb-2 ml-1">Выйти из комнаты</router-link>
       </div>
-      <PlayGround></PlayGround>
+      <transition name="fade" mode="out-in">
+        <PlayGround v-if="!isFinish"></PlayGround>
+        <Finish v-else></Finish>
+      </transition>
     </div>
     <Chat></Chat>
   </div>
@@ -16,12 +19,17 @@ require("bootstrap/dist/css/bootstrap.css");
 
 import Chat from "@/components/Chat.vue";
 import PlayGround from "@/components/PlayGround.vue";
+import Finish from "@/components/Finish.vue";
 
 export default {
   name: "Main",
+  data() {
+    return {};
+  },
   components: {
     Chat,
-    PlayGround
+    PlayGround,
+    Finish
   },
   methods: {
     leaveRoom() {
@@ -30,6 +38,7 @@ export default {
       this.$store.state.messages = [];
       this.$store.state.isStart = true;
       this.$store.state.isOwner = false;
+      this.$store.state.isFinish = false;
       this.$store.commit("SOCKET_doNextStep");
     }
   },
@@ -65,12 +74,35 @@ export default {
     },
     connections() {
       return this.$store.state.connections;
+    },
+    isFinish() {
+      return this.$store.state.isFinish;
     }
   }
 };
 </script>
 
 <style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.4s;
+}
+.fade-enter-active {
+  /* transition-delay: 0.4s; */
+}
+.fade-enter-to {
+  transform: scale(1);
+  opacity: 0.9;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
 #splitScr {
   display: grid;
   grid-template-rows: 1fr;

@@ -6,8 +6,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     gamerName: '',
+    socketId: '',
     isOwner: false,
     isStart: true,
+    isFinish: false,
     stepDone: false,
     roomId: -1,
     roomParams: {
@@ -16,7 +18,8 @@ export default new Vuex.Store({
     },
     connections: [],
     messages: [],
-    gamers: []
+    gamers: [],
+    winners: {}
   },
   getters: {
 
@@ -71,6 +74,10 @@ export default new Vuex.Store({
           break;
         }
       }
+    },
+    SOCKET_finish(state, winnersObj) {
+      state.isFinish = true;
+      state.winners = Object.assign(winnersObj);
     }
   },
   actions: {
