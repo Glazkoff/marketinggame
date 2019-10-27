@@ -121,6 +121,7 @@ io.on('connection', function (socket) {
 
     roomState.roomId = socket.roomId;
     roomState.roomState = obj;
+    let gamerNames = [];
     if (io.sockets.adapter.rooms[socket.roomId] !== undefined) {
       console.log('Комнаты:');
       console.log(io.sockets.adapter.rooms[socket.roomId].sockets);
@@ -129,11 +130,16 @@ io.on('connection', function (socket) {
       );
       let gamers = [];
       let attackers = 0;
-      for (const iterator of gamerIds) {
+      for (const id of gamerIds) {
+        gamerNames.push({
+          name: connectedNames.find(el => el.id === id).name,
+          id,
+          isattacker: false
+        })
         attackers++;
-        console.log(iterator + '---');
+        console.log(id + '---');
         let gamerObj = {
-          id: iterator,
+          id,
           data: Object.assign({}, obj)
         };
         gamers.push(gamerObj);
@@ -146,6 +152,10 @@ io.on('connection', function (socket) {
 
     console.log('Стейт комнат: ');
     console.log(roomsState);
+    let gamerNamesObj = {
+      gamers: gamerNames
+    };
+    io.sockets.to(socket.roomId).emit('setGamers', gamerNamesObj);
     socket.to(socket.roomId).broadcast.emit('setStartGame', obj);
   });
 
@@ -159,7 +169,8 @@ io.on('connection', function (socket) {
     let room = roomsState.find(el => el.roomId === socket.roomId)
     let gamer = room.gamers.find(el => el.id === socket.id)
     gamer.data[card.change] = card.params + gamer.data[card.change]
-    room.attackers -= 1
+    io.sockets.to(socket.roomId).emit('changeGamerStatus', socket.id)
+    room.attackers--
     let gamers = roomsState.find(el => el.roomId === socket.roomId).gamers
     console.log('Игроки без хода: ' + room.attackers)
     if (room.attackers === 0) {

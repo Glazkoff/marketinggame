@@ -84,7 +84,7 @@
               <div class="col-12">
                 <h2 class="text-center">Вы сделали ход!</h2>
                 <p class="text-center">
-                  <small>Ожидайте следующего</small>
+                  <small>Ожидайте следующий</small>
                 </p>
               </div>
             </div>
@@ -122,14 +122,19 @@
       </transition-group>
     </div>
 
-    <div id="enemy-field"></div>
+    <div id="enemy-field">
+      <GamerList></GamerList>
+    </div>
   </div>
 </template>
 
 <script>
-import { log } from "util";
+import GamerList from "@/components/GamerList.vue";
 export default {
   name: "PlayGround",
+  components: {
+    GamerList
+  },
   created() {
     this.cards = this.shuffle(this.cards);
   },
@@ -338,7 +343,6 @@ export default {
 }
 
 #playground {
-  background-color: #fff;
   width: 100%;
   height: 100%;
   position: relative;
@@ -425,6 +429,7 @@ export default {
   background-color: rgba(1, 24, 202, 0.3);
   grid-area: 1/2/3/3;
   height: 100%;
+  display: flex;
 }
 
 #card-field::-webkit-scrollbar {

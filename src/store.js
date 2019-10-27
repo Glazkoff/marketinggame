@@ -15,7 +15,8 @@ export default new Vuex.Store({
       money: 100000
     },
     connections: [],
-    messages: []
+    messages: [],
+    gamers: []
   },
   getters: {
 
@@ -42,6 +43,9 @@ export default new Vuex.Store({
     },
     SOCKET_doNextStep(state) {
       state.stepDone = false
+      for (const gamer of state.gamers) {
+        gamer.isattacker = false;
+      }
     },
     SOCKET_setRoomNumber(state, roomId) {
       state.roomId = roomId
@@ -56,8 +60,18 @@ export default new Vuex.Store({
     SOCKET_setStartGame(state, roomParams) {
       state.isStart = false
       state.roomParams = roomParams
+    },
+    SOCKET_setGamers(state, obj) {
+      state.gamers = [...obj.gamers]
+    },
+    SOCKET_changeGamerStatus(state, id) {
+      for (const gamer of state.gamers) {
+        if (gamer.id == id) {
+          gamer.isattacker = true;
+          break;
+        }
+      }
     }
-
   },
   actions: {
 
