@@ -13,6 +13,31 @@ let connectedNames = [];
 // let rooms = [];
 let roomsState = [];
 let roomNumb = 10;
+let events = [{
+    id: 1,
+    title: 'Выход на рынок нового конкурента',
+    description: 'снижение всех видов трафика на 30%'
+  },
+  {
+    id: 2,
+    title: 'Изменение алгоритма поисковой машины',
+    description: 'падение трафика из органической выдачи в первый месяц после изменения на 50% восстановление трафика к 3-му месяцу на уровень первого месяца'
+  },
+  {
+    id: 3,
+    title: 'Изменение подрядчика по контекстной рекламе',
+    description: 'увеличение реальной стоимости привлечения клиента на 5%, увеличение конверсии от контекстной рекламы на 30%'
+  }, {
+    id: 4,
+    title: 'Ввод в эксплуатацию нового офисного здания рядом',
+    description: 'Увеличение трафика от канала прямого захода в первый месяц после этого в 3 раза и после этого во второй месяц увеличение конверсии в клиента на 5%'
+  },
+  {
+    id: 5,
+    title: 'Появление серии негативных публикаций о компании и руководителе компании',
+    description: 'Снижение конверсии трафика в звонки на 50%'
+  }
+];
 let cards = [{
     id: 1,
     title: 'Нанять SMM-менеджера',
@@ -214,7 +239,16 @@ io.on('connection', function (socket) {
             name: 'Admin',
             text: `Финито ля комедиа!`
           })
+
           io.sockets.to(room.roomId).emit('finish', winners)
+        } else {
+          if (Math.floor(Math.random() * 10) % 2 == 0) {
+            let randomEvent = events[Math.floor(Math.random() * events.length)]
+            console.log('Событие');
+            console.log(randomEvent);
+            socket.emit('gameEvent')
+            io.sockets.to(room.roomId).emit('gameEvent', randomEvent)
+          }
         }
       }, 2000);
     }

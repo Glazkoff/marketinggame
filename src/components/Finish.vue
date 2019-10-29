@@ -3,10 +3,10 @@
     <div class="container mt-4">
       <div class="row" v-if="isLoozer">
         <div class="col-12">
-          <h2 class="text-center h-100">Увы, {{gamerName}},следующий раз должно получиться!</h2>
+          <h2 class="text-center h-100">Увы, {{gamerName}}, следующий раз должно получиться!</h2>
         </div>
       </div>
-      <hr style="margin: 0" />
+      <hr v-if="isLoozer" style="margin: 0" />
       <div class="row" v-if="isLoozer">
         <div class="col-12">
           <h4 class="text-center h-100 mt-2 mb-3">Результаты других игроков:</h4>
@@ -143,7 +143,7 @@
         </div>
       </div>
       <!-- <hr> -->
-      <div class="row">
+      <div class="row mt-2">
         <div class="col-6 align-content-center justify-content-between">
           <router-link
             to="Choose"

@@ -19,7 +19,8 @@ export default new Vuex.Store({
     connections: [],
     messages: [],
     gamers: [],
-    winners: {}
+    winners: {},
+    gameEvent: null
   },
   getters: {
 
@@ -78,9 +79,19 @@ export default new Vuex.Store({
     SOCKET_finish(state, winnersObj) {
       state.isFinish = true;
       state.winners = Object.assign(winnersObj);
+    },
+    SOCKET_setGameEvent(state, eventObj) {
+      state.gameEvent = {};
+      state.gameEvent = Object.assign(eventObj);
     }
   },
   actions: {
-
+    SOCKET_gameEvent(state, eventObj) {
+      console.log(eventObj)
+      state.commit('SOCKET_setGameEvent', eventObj)
+      setTimeout(() => {
+        state.commit('SOCKET_setGameEvent', {})
+      }, 7000)
+    }
   }
 })

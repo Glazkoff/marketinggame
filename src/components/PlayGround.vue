@@ -9,6 +9,41 @@
         @drop.prevent="altdrop"
         @dragleave="dragleave"
       >
+        <transition name="cardwrap">
+          <div class="event-box w-100 h-100" v-if="isEvent && !isStart">
+            <div class="container h-100">
+              <div class="row mt-2">
+                <div class="col-12">
+                  <h4 class="text-center">
+                    Cобытие!
+                    {{event.title}}
+                  </h4>
+                  <hr />
+                </div>
+              </div>
+
+              <div class="row h-25">
+                <div class="col-12 h-100">
+                  <div class="gray-block"></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 mt-2">
+                  <p class="text-center">{{event.description}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6 offset-3">
+                  <button
+                    style="display: block"
+                    class="btn btn-primary w-100"
+                    @click="closeEvent"
+                  >Продолжить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
         <div
           class="owner-start-game d-flex align-content-between flex-wrap h-100"
           v-if="isOwner & isStart"
@@ -21,7 +56,11 @@
                   Если все игроки подключились к комнате, вы можете запустить
                   <mark>первый раунд</mark> в созданной вами комнате.
                 </p>
-                <div class="btn btn-primary btn-lg btn-block mt-3" @click="startGame">Начать</div>
+                <div
+                  class="btn btn-primary btn-lg btn-block mt-3"
+                  style="cursor: pointer"
+                  @click="startGame"
+                >Начать</div>
               </div>
             </div>
           </div>
@@ -173,6 +212,16 @@ export default {
     };
   },
   computed: {
+    isEvent() {
+      let obj = this.$store.state.gameEvent;
+      for (let key in obj) {
+        return true;
+      }
+      return false;
+    },
+    event() {
+      return this.$store.state.gameEvent;
+    },
     isOwner() {
       return this.$store.state.isOwner;
     },
@@ -186,11 +235,13 @@ export default {
       return this.$store.state.roomParams;
     },
     stepDone() {
-      console.log("132");
       return this.$store.state.stepDone;
     }
   },
   methods: {
+    closeEvent() {
+      this.$store.commit("SOCKET_setGameEvent", {});
+    },
     shuffle(arra1) {
       let ctr = arra1.length,
         temp,
@@ -218,8 +269,6 @@ export default {
       this.$store.state.isStart = false;
     },
     beforeEnter: function(el) {
-      // el.style.opacity = 0;
-      // el.style.height = 0;
       console.log("befenterhook");
     },
     enter: function(el) {
@@ -294,6 +343,7 @@ export default {
   color: #fff;
   z-index: 1000;
 }
+
 /* .cardwrap-enter-active,
 .cardwrap-leave-active {
   transition: all 1s;
@@ -310,13 +360,16 @@ export default {
 .fade-leave-active {
   transition: all 0.6s;
 }
+
 .fade-enter-active {
   transition-delay: 0.4s;
 }
+
 .fade-enter-to {
   transform: scale(1);
   opacity: 0.9;
 }
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
@@ -384,6 +437,7 @@ export default {
   margin: auto auto;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
 .dragstart {
@@ -456,5 +510,12 @@ export default {
 
 #card-field::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
+}
+
+.event-box {
+  background: #fff;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 2000;
 }
 </style>
