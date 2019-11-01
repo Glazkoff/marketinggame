@@ -264,7 +264,10 @@ export default {
       this.cards.splice(index, 1);
     },
     startGame() {
-      this.$socket.emit("startGame", this.$store.state.roomParams);
+      console.log("Стейт комнаты");
+      let a = Object.assign(this.$store.state.roomParams);
+      console.log(a);
+      this.$socket.emit("startGame", a);
       this.$store.state.isOwner = false;
       this.$store.state.isStart = false;
     },

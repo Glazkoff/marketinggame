@@ -88,7 +88,7 @@
         </div>
       </div>
       <!-- <hr> -->
-      <div class="row">
+      <div class="row mt-2">
         <div class="col-6" v-if="isSecondPosition">
           <div class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
@@ -195,10 +195,21 @@ export default {
       return this.$socket.id === this.$store.state.winners[3].id;
     },
     isPrizer() {
-      return (
-        this.$socket.id === this.$store.state.winners[2].id ||
-        this.$socket.id === this.$store.state.winners[3].id
-      );
+      if (
+        this.$store.state.winners[2] !== undefined &&
+        this.$store.state.winners[3] == undefined
+      ) {
+        return this.$socket.id === this.$store.state.winners[2].id;
+      }
+      if (
+        this.$store.state.winners[2] !== undefined &&
+        this.$store.state.winners[3] !== undefined
+      ) {
+        return (
+          this.$socket.id === this.$store.state.winners[2].id ||
+          this.$socket.id === this.$store.state.winners[3].id
+        );
+      }
     },
     isLoozer() {
       return !(
