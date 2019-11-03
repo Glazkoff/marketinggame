@@ -83,18 +83,18 @@ export default new Vuex.Store({
         console.log('Тут');
         console.log(state.roomParams);
         let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
-        state.roomParams.clients = clients;
+        state.roomParams.clients = Math.ceil(clients);
         console.log('Клиенты: ' + clients);
         let commCircul = clients * state.roomParams.averageCheck;
         state.roomParams.commCircul = commCircul
         console.log('commCircul: ' + commCircul);
-        let expenses = clients * state.roomParams.realCostAttract;
+        let expenses = Math.ceil(clients * state.roomParams.realCostAttract);
         state.roomParams.expenses = expenses
         console.log('expenses: ' + expenses);
         let result = commCircul - expenses;
         console.log('result: ' + result);
         let resultPerClient = result / clients;
-        state.roomParams.moneyPerClient = resultPerClient
+        state.roomParams.moneyPerClient = Math.ceil(resultPerClient);
       }
       state.roomParams = roomParams;
     },

@@ -43,36 +43,281 @@ let cards = [{
     id: 1,
     title: "Нанять SMM-менеджера",
     text: "Описание карточки, описание карточки",
-    change: "money",
-    params: 100
+    // change: "money",
+    // params: 100,
+    cost: 55000,
+    duration: 3,
+    dataChange: [{
+        param: "smmCount",
+        operation: "*",
+        change: 1.1,
+        when: 2
+      },
+      {
+        param: "smmCount",
+        operation: "*",
+        change: 1.8,
+        when: 3
+      },
+      {
+        param: "socialsCoef",
+        operation: "*",
+        change: 1.5,
+        when: 3
+      },
+      {
+        param: "money",
+        operation: "-",
+        change: 80000,
+        when: 1
+      },
+      {
+        param: "money",
+        operation: "-",
+        change: 80000,
+        when: 2
+      },
+      {
+        param: "money",
+        operation: "-",
+        change: 80000,
+        when: 3
+      }
+    ]
   },
   {
     id: 2,
     title: "Заказать SEO-оптимизацию",
     text: "Описание карточки, описание карточки",
-    change: "money",
-    params: 200
+    // change: "money",
+    // params: 200,
+    cost: 50000,
+    duration: 3,
+    dataChange: [{
+        param: "organicCount",
+        operation: "*",
+        change: 2,
+        when: 3
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.5,
+        when: 1
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 0.3,
+        when: 3
+      }
+    ]
   },
   {
     id: 3,
     title: "Улучшение юзабилити",
     text: "Описание карточки, описание карточки",
-    change: "money",
-    params: -300
+    cost: 20000,
+    // change: "money",
+    // params: -300,
+    duration: 3,
+    dataChange: [{
+        param: "organicCoef",
+        operation: "*",
+        change: 1.1,
+        when: 3
+      },
+      {
+        param: "contextCoef",
+        operation: "*",
+        change: 1.1,
+        when: 3
+      },
+      {
+        param: "socialsCoef",
+        operation: "*",
+        change: 1.1,
+        when: 3
+      },
+      {
+        param: "smmCoef",
+        operation: "*",
+        change: 1.1,
+        when: 3
+      },
+      {
+        param: "straightCoef",
+        operation: "*",
+        change: 1.1,
+        when: 3
+      },
+      {
+        param: "averageCheck",
+        operation: "*",
+        change: 1.5,
+        when: 3
+      },
+      {
+        param: "realCostAttract",
+        operation: "+",
+        change: 150000,
+        when: 1
+      },
+      {
+        param: "realCostAttract",
+        operation: "+",
+        change: 150000,
+        when: 2
+      }
+    ]
   },
   {
     id: 4,
     title: "Реклама в соцсетях",
     text: "Описание карточки, описание карточки",
-    change: "money",
-    params: -400
+    cost: 25000,
+    // change: "money",
+    // params: -400,
+    duration: 3,
+    dataChange: [{
+        param: "socialsCount",
+        operation: "+",
+        change: 4500,
+        when: 1
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.1,
+        when: 1
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.1,
+        when: 2
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.1,
+        when: 3
+      }
+    ]
   },
   {
     id: 5,
     title: "PR-компания компании",
     text: "Описание карточки, описание карточки",
-    change: "money",
-    params: 500
+    // change: "money",
+    // params: 500,
+    cost: 30000,
+    duration: 3,
+    dataChange: [{
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.3,
+        when: 1
+      },
+      {
+        param: "averageCheck",
+        operation: "*",
+        change: 1.1,
+        when: 2
+      },
+      {
+        param: "averageCheck",
+        operation: "*",
+        change: 1.2,
+        when: 3
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "Контекстная рекламная компания",
+    text: "Описание карточки, описание карточки",
+    // change: "money",
+    // params: 500,
+    cost: 35000,
+    duration: 3,
+    dataChange: [{
+        param: "contextCount",
+        operation: "+",
+        change: 6000,
+        when: 1
+      },
+      {
+        param: "contextCount",
+        operation: "*",
+        change: 1.1,
+        when: 2
+      },
+      {
+        param: "contextCount",
+        operation: "*",
+        change: 1.2,
+        when: 3
+      },
+      {
+        param: "contextCoef",
+        operation: "*",
+        change: 1.5,
+        when: 1
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.3,
+        when: 1
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.3,
+        when: 2
+      },
+      {
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.3,
+        when: 3
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: "Размещение информации о компании в справочниках",
+    text: "Описание карточки, описание карточки",
+    // change: "money",
+    // params: 500,
+    cost: 20000,
+    duration: 3,
+    dataChange: [{
+        param: "straightCount",
+        operation: "*",
+        change: 1.2,
+        when: 1
+      },
+      {
+        param: "straightCount",
+        operation: "*",
+        change: 1.2,
+        when: 2
+      },
+      {
+        param: "straightCount",
+        operation: "*",
+        change: 1.2,
+        when: 3
+      },
+      {
+        param: "money",
+        operation: "-",
+        change: 40000,
+        when: 1
+      }
+    ]
   }
 ];
 io.on("connection", function (socket) {
@@ -164,7 +409,8 @@ io.on("connection", function (socket) {
 
         let gamerObj = {
           id,
-          data: Object.assign({}, obj)
+          data: Object.assign({}, obj),
+          changes: []
         };
         console.log("!!!!");
         console.log(gamerObj.data);
@@ -208,7 +454,37 @@ io.on("connection", function (socket) {
     let room = roomsState.find(el => el.roomId === socket.roomId);
     let gamer = room.gamers.find(el => el.id === socket.id);
     // ИЗМЕНЕНИЕ КАРТОЧКИ
-    gamer.data[card.change] = card.params + gamer.data[card.change];
+    // gamer.data[card.change] = card.params + gamer.data[card.change];
+    console.log("Массив карточек");
+    gamer.data.money -= card.cost;
+    for (const changes of card.dataChange) {
+      gamer.changes.push(changes);
+    }
+    let iter = 0;
+    for (const changing of gamer.changes) {
+      if (changing.when == 1) {
+        switch (changing.operation) {
+          case "+":
+            gamer.data[changing.param] += changing.change;
+            break;
+          case "-":
+            gamer.data[changing.param] -= changing.change;
+            break;
+          case "*":
+            gamer.data[changing.param] *= changing.change;
+            break;
+          default:
+            console.log("Что-то не так с операцией карточки по ID " + card.id);
+            break;
+        }
+        console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change);
+
+        gamer.changes.splice(iter, 1);
+      } else {
+        changing.when--;
+        iter++;
+      }
+    }
     console.log("Месяц:");
     console.log(gamer.data.month);
     gamer.data.month = gamer.data.month - 1;
@@ -220,7 +496,7 @@ io.on("connection", function (socket) {
         gamer.data.smmCount * gamer.data.smmCoef +
         gamer.data.straightCount * gamer.data.straightCoef) *
       gamer.data.conversion;
-    gamer.data.clients = clients;
+    gamer.data.clients = Math.ceil(clients);
     console.log("Клиенты:");
     console.log(clients);
     let averageCheck = gamer.data.averageCheck;
@@ -233,11 +509,14 @@ io.on("connection", function (socket) {
     let expenses = clients * realCostAttract;
     gamer.data.expenses = expenses;
     let result = commCircul - expenses;
-    gamer.data.money += result;
+    gamer.data.money = gamer.data.money + Math.ceil(result);
+    console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result));
+
+
     let resultPerClient = result / clients;
-    gamer.data.moneyPerClient = resultPerClient;
+    gamer.data.moneyPerClient = Math.ceil(resultPerClient);
     console.log("---ДАННЫЕ ИГРОКА---");
-    console.log(room.roomState);
+    console.log(gamer.data);
     io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
     room.attackers--;
     let gamers = roomsState.find(el => el.roomId === socket.roomId).gamers;
