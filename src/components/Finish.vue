@@ -54,8 +54,10 @@
               </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              Использовано карточек:
-              <span class="badge badge-primary badge-pill">123</span>
+              Клиентов в месяц:
+              <span
+                class="badge badge-primary badge-pill"
+              >{{gamerRoomParams.clients}}</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -77,8 +79,10 @@
               </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              Использовано карточек:
-              <span class="badge badge-primary badge-pill">123</span>
+              Клиентов в месяц:
+              <span
+                class="badge badge-primary badge-pill"
+              >{{gamerRoomParams.clients}}</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -172,9 +176,13 @@ export default {
   name: "Finish",
   methods: {},
   computed: {
+    gamerRoomParams() {
+      return this.$store.state.roomParams;
+    },
     gamerName() {
       return this.$store.state.gamerName;
     },
+
     isSecondPosition() {
       if (this.$store.state.winners.hasOwnProperty("2")) {
         return true;

@@ -1,5 +1,5 @@
 <template>
-  <div class="card container col-5 col-md-4 col-sm-6 col-xs-12 mt-5 p-4">
+  <div class="card container col-lg-4 col-md-5 col-sm-7 col-xs-8 mt-5 p-4">
     <h1 class="mb-1">Привет, {{gamerName}}!</h1>
     <router-link to="/">Сменить имя</router-link>
 
@@ -65,7 +65,7 @@
         <br />
         <input
           type="number"
-          min="0"
+          min="1"
           v-model.number="roomParams.month"
           name="month"
           id="month"
@@ -98,27 +98,16 @@ export default {
     return {
       toggle: "join",
       roomIdJoin: "",
-      roomParams: {
-        month: 3,
-        money: 100000,
-        organicCount: 7500,
-        contextCount: 9500,
-        socialCount: 1500,
-        smmCount: 1200,
-        straightCount: 300,
-        organicCoef: 0.1,
-        contextCoef: 0.07,
-        socialsCoef: 0.25,
-        smmCoef: 0.05,
-        straightCoef: 0.1,
-        conversion: 0.3
-      }
+      roomParams: {}
     };
   },
   computed: {
     gamerName() {
       return this.$store.state.gamerName;
     }
+  },
+  mounted() {
+    this.roomParams = this.$store.state.firstRoomParams;
   },
   methods: {
     createGame() {

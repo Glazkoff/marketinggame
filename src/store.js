@@ -12,12 +12,14 @@ export default new Vuex.Store({
     isFinish: false,
     stepDone: false,
     roomId: -1,
-    roomParams: {
+    roomParams: {},
+    firstRoomParams: {
+      preset: true,
       month: 3,
-      money: 100000,
+      money: 1000000,
       organicCount: 7500,
       contextCount: 9500,
-      socialCount: 1500,
+      socialsCount: 1500,
       smmCount: 1200,
       straightCount: 300,
       organicCoef: 0.1,
@@ -25,7 +27,10 @@ export default new Vuex.Store({
       socialsCoef: 0.25,
       smmCoef: 0.05,
       straightCoef: 0.1,
-      conversion: 0.3
+      conversion: 0.3,
+      averageCheck: 6500,
+      realCostAttract: 2500,
+      marginalCost: 800
     },
     connections: [],
     messages: [],
@@ -44,7 +49,9 @@ export default new Vuex.Store({
     // setRoomId(state, number) {
     //   state.roomId = number
     // },
-    setRoomParams(state, { month }) {
+    setRoomParams(state, {
+      month
+    }) {
       state.roomParams.month = month;
     },
     doStep(state) {
@@ -70,6 +77,25 @@ export default new Vuex.Store({
       state.isStart = false;
       // console.log("ПРИШЛИ ПАРАМЕТРЫ КОМНАТЫ");
       // console.log(roomParams);
+
+      if (state.roomParams.month == undefined) {
+        state.roomParams = roomParams;
+        console.log('Тут');
+        console.log(state.roomParams);
+        let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
+        state.roomParams.clients = clients;
+        console.log('Клиенты: ' + clients);
+        let commCircul = clients * state.roomParams.averageCheck;
+        state.roomParams.commCircul = commCircul
+        console.log('commCircul: ' + commCircul);
+        let expenses = clients * state.roomParams.realCostAttract;
+        state.roomParams.expenses = expenses
+        console.log('expenses: ' + expenses);
+        let result = commCircul - expenses;
+        console.log('result: ' + result);
+        let resultPerClient = result / clients;
+        state.roomParams.moneyPerClient = resultPerClient
+      }
       state.roomParams = roomParams;
     },
     SOCKET_setGamers(state, obj) {
@@ -90,6 +116,22 @@ export default new Vuex.Store({
     SOCKET_setGameEvent(state, eventObj) {
       state.gameEvent = {};
       state.gameEvent = Object.assign(eventObj);
+    },
+    SOCKET_calcAllParams(state) {
+      let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
+      state.roomParams.clients = clients;
+      console.log('Клиенты: ' + clients);
+      let commCircul = clients * state.roomParams.averageCheck;
+      state.roomParams.commCircul = commCircul
+      console.log('commCircul: ' + commCircul);
+      let expenses = clients * state.roomParams.realCostAttract;
+      state.roomParams.expenses = expenses
+      console.log('expenses: ' + expenses);
+      let result = commCircul - expenses;
+      console.log('result: ' + result);
+      let resultPerClient = result / clients;
+      state.roomParams.moneyPerClient = resultPerClient
+      // state.roomParams.money += result;
     }
   },
   actions: {

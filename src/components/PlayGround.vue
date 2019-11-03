@@ -95,10 +95,20 @@
                   </span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Осталось месяцев:
+                  Месяц:
                   <span
                     class="badge badge-primary badge-pill"
-                  >{{gamerParams.month}}</span>
+                  >{{firstRoomParams.month - gamerParams.month+1}} из {{firstRoomParams.month}}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Клиенты:
+                  <span class="badge badge-primary badge-pill">{{gamerParams.clients}}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Прибыль на клиента:
+                  <span
+                    class="badge badge-primary badge-pill"
+                  >{{gamerParams.moneyPerClient}}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   Прочие параметры
@@ -177,11 +187,14 @@ export default {
   created() {
     this.cards = this.shuffle(this.cards);
   },
+  mounted() {},
   data() {
     return {
+      clientsRendered: true,
       dragstart: false,
       dragover: false,
       dragnode: undefined,
+      params: {},
       cards: [
         {
           id: 1,
@@ -211,6 +224,7 @@ export default {
       ]
     };
   },
+  watch: {},
   computed: {
     isEvent() {
       let obj = this.$store.state.gameEvent;
@@ -232,7 +246,11 @@ export default {
       return this.$store.state.gamerName;
     },
     gamerParams() {
+      let a = this.$store.state.roomParams;
       return this.$store.state.roomParams;
+    },
+    firstRoomParams() {
+      return this.$store.state.firstRoomParams;
     },
     stepDone() {
       return this.$store.state.stepDone;
@@ -268,6 +286,7 @@ export default {
       let a = Object.assign(this.$store.state.roomParams);
       console.log(a);
       this.$socket.emit("startGame", a);
+      this.$store.commit("SOCKET_calcAllParams");
       this.$store.state.isOwner = false;
       this.$store.state.isStart = false;
     },
