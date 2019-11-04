@@ -2,7 +2,7 @@
   <div id="splitScr">
     <div class="main-side" :style="{display: isFinish ? 'flex' : 'unset'}">
       <div class="pg-header">
-        <h1 class="ml-1 mb-0">Комната #{{roomNumber}}</h1>
+        <h3 class="ml-1 mb-0">Комната #{{roomNumber}}</h3>
         <router-link to="choose" class="mb-2 ml-1">Выйти из комнаты</router-link>
       </div>
       <transition name="fade" mode="out-in">
@@ -112,6 +112,7 @@ export default {
 }
 .main-side {
   position: relative;
+  max-height: calc(100vh - 40px);
 }
 .pg-header {
   position: absolute;
@@ -119,10 +120,10 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px;
+  height: 64px;
   background-color: #fff;
   box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.2);
 }
-.sidebox {
-}
+/* .sidebox {
+} */
 </style>

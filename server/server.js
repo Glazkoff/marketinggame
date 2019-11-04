@@ -16,27 +16,97 @@ let roomNumb = 10;
 let events = [{
     id: 1,
     title: "Выход на рынок нового конкурента",
-    description: "снижение всех видов трафика на 30%"
+    description: "Снижение всех видов трафика на 30%",
+    dataChange: [{
+        param: "organicCount",
+        operation: "*",
+        change: 0.7,
+        when: 0
+      },
+      {
+        param: "socialsCount",
+        operation: "*",
+        change: 0.7,
+        when: 0
+      },
+      {
+        param: "smmCount",
+        operation: "*",
+        change: 0.7,
+        when: 0
+      },
+      {
+        param: "straightCount",
+        operation: "*",
+        change: 0.7,
+        when: 0
+      }
+    ]
   },
   {
     id: 2,
     title: "Изменение алгоритма поисковой машины",
-    description: "падение трафика из органической выдачи в первый месяц после изменения на 50% восстановление трафика к 3-му месяцу на уровень первого месяца"
+    description: "Падение трафика из органической выдачи в первый месяц после изменения на 50% восстановление трафика к 3-му месяцу на уровень первого месяца",
+    dataChange: [{
+        param: "organicCount",
+        operation: "*",
+        change: 0.5,
+        when: 0
+      },
+      {
+        param: "organicCount",
+        operation: "*",
+        change: 2,
+        when: 2
+      }
+    ]
   },
   {
     id: 3,
     title: "Изменение подрядчика по контекстной рекламе",
-    description: "увеличение реальной стоимости привлечения клиента на 5%, увеличение конверсии от контекстной рекламы на 30%"
+    description: "Увеличение реальной стоимости привлечения клиента на 5%, увеличение конверсии от контекстной рекламы на 30%",
+    dataChange: [{
+        param: "realCostAttract",
+        operation: "*",
+        change: 1.05,
+        when: 0
+      },
+      {
+        param: "contextCoef",
+        operation: "*",
+        change: 1.3,
+        when: 0
+      }
+    ]
   },
   {
     id: 4,
     title: "Ввод в эксплуатацию нового офисного здания рядом",
-    description: "Увеличение трафика от канала прямого захода в первый месяц после этого в 3 раза и после этого во второй месяц увеличение конверсии в клиента на 5%"
+    description: "Увеличение трафика от канала прямого захода в первый месяц после этого в 3 раза и после этого во второй месяц увеличение конверсии в клиента на 5%",
+    dataChange: [{
+        param: "straightCount",
+        operation: "*",
+        change: 3,
+        when: 1
+      },
+      {
+        param: "conversion",
+        operation: "*",
+        change: 1.05,
+        when: 2
+      }
+    ]
   },
   {
     id: 5,
     title: "Появление серии негативных публикаций о компании и руководителе компании",
-    description: "Снижение конверсии трафика в звонки на 50%"
+    description: "Снижение конверсии трафика в звонки на 50%",
+    dataChange: [{
+      param: "conversion",
+      operation: "*",
+      change: 0.5,
+      when: 0
+    }]
   }
 ];
 let cards = [{
@@ -160,13 +230,13 @@ let cards = [{
       {
         param: "realCostAttract",
         operation: "+",
-        change: 150000,
+        change: 1500,
         when: 1
       },
       {
         param: "realCostAttract",
         operation: "+",
-        change: 150000,
+        change: 1500,
         when: 2
       }
     ]
@@ -578,6 +648,32 @@ io.on("connection", function (socket) {
             let randomEvent = events[Math.floor(Math.random() * events.length)];
             console.log("Событие");
             console.log(randomEvent);
+            for (const eventChange of randomEvent.dataChange) {
+              if (eventChange.when == 0) {
+                for (const gamer of gamers) {
+                  switch (eventChange.operation) {
+                    case "+":
+                      gamer.data[eventChange.param] += eventChange.change;
+                      break;
+                    case "-":
+                      gamer.data[eventChange.param] -= eventChange.change;
+                      break;
+                    case "*":
+                      gamer.data[eventChange.param] *= eventChange.change;
+                      break;
+                    default:
+                      console.log("Что-то не так с событием " + card.id);
+                      break;
+                  }
+
+                }
+                console.log("Событием изменен параметр " + eventChange.param + ' со знаком ' + eventChange.operation + ' на ' + eventChange.change);
+              } else {
+                for (const gamer of gamers) {
+                  gamer.changes.push(eventChange);
+                }
+              }
+            }
             socket.emit("gameEvent");
             io.sockets.to(room.roomId).emit("gameEvent", randomEvent);
           }

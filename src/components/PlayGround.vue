@@ -85,7 +85,8 @@
           <div class="row h-100 justify-content-center align-items-start">
             <div class="col-12">
               <h3 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h3>
-              <ul class="list-group col-10 offset-1 mt-3">
+
+              <ul class="list-group col-12 offset-0 mt-3">
                 <li
                   class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                 >
@@ -94,25 +95,44 @@
                     <h4>{{gamerParams.money}} ₽</h4>
                   </span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Месяц:
-                  <span
-                    class="badge badge-primary badge-pill"
-                  >{{firstRoomParams.month - gamerParams.month+1}} из {{firstRoomParams.month}}</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Клиенты:
-                  <span class="badge badge-primary badge-pill">{{gamerParams.clients}}</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Прибыль на клиента:
-                  <span
-                    class="badge badge-primary badge-pill"
-                  >{{gamerParams.moneyPerClient}}</span>
-                </li>
+                <ul class="list-group list-group-horizontal w-100">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Месяц:
+                    <span class="badge badge-primary badge-pill">
+                      {{firstRoomParams.month - gamerParams.month+1}} из
+                      {{firstRoomParams.month}}
+                    </span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Клиенты:
+                    <span class="badge badge-primary badge-pill">{{gamerParams.clients}}</span>
+                  </li>
+                </ul>
+                <ul class="list-group list-group-horizontal w-100">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Прибыль на клиента:
+                    <span
+                      class="badge badge-primary badge-pill"
+                    >{{gamerParams.moneyPerClient}}</span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Конверсия:
+                    <span
+                      class="badge badge-primary badge-pill"
+                    >{{gamerParams.conversion*100}} %</span>
+                  </li>
+                </ul>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   Прочие параметры
-                  <span class="badge badge-primary badge-pill">-</span>
+                  <span class="badge badge-primary badge-pill">{{animatedNumber}}</span>
                 </li>
               </ul>
             </div>
@@ -124,9 +144,9 @@
     <div
       id="card-field"
       style="transition: all 5s"
-      :style="{overflow: stepDone ? 'hidden' : 'scroll-x'}"
+      :style="{overflowX: stepDone ? 'hidden' : 'scroll'}"
     >
-      <transition mode="out-in" name="fade" id="card-wrap" type="transition">
+      <transition mode="out-in" name="fade" type="transition">
         <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
           <div class="container h-100 w-100">
             <div class="row h-100 justify-content-md-center align-content-center">
@@ -159,7 +179,10 @@
           @dragend="altdragend"
           v-if="!isStart"
         >
-          <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
+          <div class="card-head">
+            <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
+          </div>
+
           <div class="card-image"></div>
           <small class="card-text text-center">{{card.text}}</small>
           <button
@@ -179,6 +202,8 @@
 
 <script>
 import GamerList from "@/components/GamerList.vue";
+import { TweenMax, Power2, TimelineLite, TweenLite } from "gsap/TweenMax";
+
 export default {
   name: "PlayGround",
   components: {
@@ -228,14 +253,26 @@ export default {
         },
         {
           id: 7,
-          title: "Размещение информации о компании в справочниках",
+          title: "Размещение информации в справочниках",
           text: "Описание карточки, описание карточки"
         }
-      ]
+      ],
+      number: 0,
+      tweenedNumber: 0
     };
   },
-  watch: {},
+  mounted() {
+    this.number = this.$store.state.roomParams.money;
+  },
+  watch: {
+    number: function(newValue) {
+      TweenLite.to(this.$data, 1, { tweenedNumber: newValue });
+    }
+  },
   computed: {
+    animatedNumber: function() {
+      return this.tweenedNumber.toFixed(0);
+    },
     isEvent() {
       let obj = this.$store.state.gameEvent;
       for (let key in obj) {
@@ -263,6 +300,10 @@ export default {
       return this.$store.state.firstRoomParams;
     },
     stepDone() {
+      let cardField = document.querySelector("#card-field");
+      if (cardField !== null) {
+        cardField.scrollTo(0, 0);
+      }
       return this.$store.state.stepDone;
     }
   },
@@ -361,6 +402,9 @@ export default {
 </script>
 
 <style>
+.list-group-horizontal li.list-group-item {
+  border-radius: 0 !important;
+}
 .dark-cover {
   opacity: 0.9;
   position: absolute;
@@ -431,10 +475,10 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  padding-top: 80px;
+  padding-top: 64px;
   display: grid;
   grid-template-columns: 3fr 1fr;
-  grid-template-rows: 2fr 1fr;
+  grid-template-rows: 1.8fr 1fr;
 }
 
 #play-field,
@@ -484,15 +528,42 @@ export default {
   display: flex;
   height: 100%;
   transition: all 0.4s;
+  max-height: 100%;
   /* transition: all 0.5s;v -   */
 }
 
+.card-box button {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.card-head {
+  /* padding-top: 4px; */
+  /* display: block; */
+  height: 30%;
+  box-sizing: border-box;
+  margin-bottom: 4px;
+  display: flex;
+}
+
+.card-head h6 {
+  display: block;
+  margin: auto auto !important;
+  font-size: 16px;
+}
+
 .card-box {
+  position: relative;
   /* padding-left: 3px; */
   /* padding-right: 3px; */
+  /* max-height: 100%; */
+  /* overflow-y: hidden; */
   transition: all 0.4s;
-  width: 124px;
-  min-width: 124px;
+  /* width: 160px; */
+  max-width: 220px;
+  width: 30%;
+  min-width: 154px;
   margin-right: 16px;
   user-select: none;
   cursor: pointer;
@@ -506,8 +577,8 @@ export default {
 .card-image {
   background-color: rgba(0, 0, 0, 0.3);
   width: 80%;
-  height: 40%;
-  min-height: 60px;
+  height: 20%;
+  /* min-height: 60px; */
   margin: 0 auto;
 }
 
