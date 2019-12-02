@@ -449,7 +449,6 @@ io.on("connection", function (socket) {
         socket.emit("setRoomNumber", roomNumb);
         roomNumb++;
       });
-      // СОЗДАТЬ ОБЩИЙ СТЕЙТ КОМНАТЫ
     }
   });
 
@@ -490,6 +489,7 @@ io.on("connection", function (socket) {
       roomState.constAttackers = attackers;
       roomState.attackers = attackers;
       roomState.gamers = gamers;
+      roomState.budgetPerMonth = obj.money;
       roomsState.push(roomState);
     }
 
@@ -579,7 +579,8 @@ io.on("connection", function (socket) {
     let expenses = clients * realCostAttract;
     gamer.data.expenses = expenses;
     let result = commCircul - expenses;
-    gamer.data.money = gamer.data.money + Math.ceil(result);
+    // gamer.data.money = gamer.data.money + Math.ceil(result);
+    gamer.data.money += room.budgetPerMonth;
     console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result));
 
 

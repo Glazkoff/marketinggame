@@ -16,7 +16,7 @@ export default new Vuex.Store({
     firstRoomParams: {
       preset: true,
       month: 3,
-      money: 1000000,
+      money: 150000,
       organicCount: 7500,
       contextCount: 9500,
       socialsCount: 1500,
@@ -56,6 +56,11 @@ export default new Vuex.Store({
     },
     doStep(state) {
       state.stepDone = true;
+    },
+    changeMoney(state, change) {
+      if (state.roomParams.money !== undefined) {
+        state.roomParams.money += change
+      }
     },
     SOCKET_doNextStep(state) {
       state.stepDone = false;

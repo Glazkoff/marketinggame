@@ -185,6 +185,7 @@
 
           <div class="card-image"></div>
           <small class="card-text text-center">{{card.text}}</small>
+          <h3 class="card-text text-center">{{card.cost}} ₽</h3>
           <button
             class="btn btn-dark pl-2"
             @click="dropFromBtn(count)"
@@ -224,37 +225,44 @@ export default {
         {
           id: 1,
           title: "Нанять SMM-менеджера",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 55000
         },
         {
           id: 2,
           title: "Заказать SEO-оптимизацию",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 50000
         },
         {
           id: 3,
           title: "Улучшение юзабилити",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 20000
         },
         {
           id: 4,
           title: "Реклама в соцсетях",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 25000
         },
         {
           id: 5,
           title: "PR-компания компании",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 30000
         },
         {
           id: 6,
           title: "Контекстная рекламная компания",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 35000
         },
         {
           id: 7,
           title: "Размещение информации в справочниках",
-          text: "Описание карточки, описание карточки"
+          text: "Описание карточки, описание карточки",
+          cost: 20000
         }
       ],
       number: 0,
@@ -327,6 +335,9 @@ export default {
     makeStep(cardId) {
       this.$store.commit("doStep");
       this.$socket.emit("doStep", cardId);
+      console.log('!!!'+cardId);
+      let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==cardId})].cost;
+      this.$store.commit("changeMoney", change);
     },
     dropFromBtn(index) {
       this.makeStep(this.cards[index].id);
@@ -478,7 +489,7 @@ export default {
   padding-top: 64px;
   display: grid;
   grid-template-columns: 3fr 1fr;
-  grid-template-rows: 1.8fr 1fr;
+  grid-template-rows: 1.6fr 1fr;
 }
 
 #play-field,
@@ -563,7 +574,7 @@ export default {
   /* width: 160px; */
   max-width: 220px;
   width: 30%;
-  min-width: 154px;
+  min-width: 168px;
   margin-right: 16px;
   user-select: none;
   cursor: pointer;
