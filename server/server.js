@@ -522,7 +522,11 @@ io.on("connection", function (socket) {
     );
     let card = cards.find(el => el.id === cardId);
     let room = roomsState.find(el => el.roomId === socket.roomId);
-    let gamer = room.gamers.find(el => el.id === socket.id);
+    let gamer;
+    if (room !== undefined) {
+      gamer = room.gamers.find(el => el.id === socket.id);
+    }
+    
     // ИЗМЕНЕНИЕ КАРТОЧКИ
     // gamer.data[card.change] = card.params + gamer.data[card.change];
     console.log("Массив карточек");

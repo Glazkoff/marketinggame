@@ -198,17 +198,22 @@
     <div id="enemy-field">
       <GamerList></GamerList>
     </div>
+    <div id="effects-field">
+      <Effects></Effects>
+    </div>
   </div>
 </template>
 
 <script>
 import GamerList from "@/components/GamerList.vue";
+import Effects from "@/components/Effects.vue";
 import { TweenMax, Power2, TimelineLite, TweenLite } from "gsap/TweenMax";
 
 export default {
   name: "PlayGround",
   components: {
-    GamerList
+    GamerList,
+    Effects
   },
   created() {
     this.cards = this.shuffle(this.cards);
@@ -485,6 +490,7 @@ export default {
 #playground {
   width: 100%;
   height: 100%;
+  max-height: calc(100vh - 40px);
   position: relative;
   padding-top: 64px;
   display: grid;
@@ -595,8 +601,17 @@ export default {
 
 #enemy-field {
   background-color: rgba(1, 24, 202, 0.3);
-  grid-area: 1/2/3/3;
+  grid-area: 1/2/2/3;
   height: 100%;
+  display: flex;
+}
+
+#effects-field {
+    background-color: rgba(18, 202, 1, 0.438);
+  grid-area: 2/2/3/3;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
   display: flex;
 }
 

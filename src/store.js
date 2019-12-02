@@ -36,7 +36,25 @@ export default new Vuex.Store({
     messages: [],
     gamers: [],
     winners: {},
+    activeEffects: [
+      {
+        name: 'SEO-оптимизация',
+        step: 1,
+        allSteps: 3
+      },
+      {
+        name: 'Рекламная кампания в соцсетях',
+        step: 1,
+        allSteps: 3
+      },
+      {
+        name: 'Рекламная кампания в соцсетях',
+        step: 1,
+        allSteps: 3
+      }
+    ],
     gameEvent: null
+
   },
   getters: {},
   mutations: {
