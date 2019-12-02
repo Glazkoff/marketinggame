@@ -586,8 +586,6 @@ io.on("connection", function (socket) {
     // gamer.data.money = gamer.data.money + Math.ceil(result);
     gamer.data.money += room.budgetPerMonth;
     console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result));
-
-
     let resultPerClient = result / clients;
     gamer.data.moneyPerClient = Math.ceil(resultPerClient);
     console.log("---ДАННЫЕ ИГРОКА---");

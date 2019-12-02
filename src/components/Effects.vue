@@ -10,6 +10,7 @@
         :class="{'list-group-item-info': count % 2 == 1, 'list-group-item-secondary text-body': count % 2 == 0}">
         
         {{effect.name}}
+        <span class="badge  badge-pill" :class="{'badge-info': count % 2 == 1, 'badge-secondary': count % 2 == 0}">Шаг: {{effect.step}} из {{effect.allSteps}}</span>
         <!-- <span
           class="badge badge-primary badge-pill"
           v-if="gamer.isattacker"

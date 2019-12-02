@@ -28,7 +28,7 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-12 mt-2">
+                <div class="col-8 mt-2 offset-2">
                   <p class="text-center">{{event.description}}</p>
                 </div>
               </div>
@@ -84,7 +84,7 @@
         <div class="gamer-round-data container h-100" v-if="!isStart">
           <div class="row h-100 justify-content-center align-items-start">
             <div class="col-12">
-              <h3 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h3>
+              <h4 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h4>
               <ul class="list-group col-12 offset-0 mt-3 w-100" id="main-data">
                 <ul class="list-group list-group-horizontal w-100">
                   <li
@@ -113,14 +113,14 @@
                   >
                     Трафик:
                     <span class="badge badge-primary badge-pill">
-                      {{gamerParams.organicCount+gamerParams.contextCount+gamerParams.socialsCount+gamerParams.smmCount+gamerParams.straightCount}}
+                      {{Math.ceil(gamerParams.organicCount+gamerParams.contextCount+gamerParams.socialsCount+gamerParams.smmCount+gamerParams.straightCount)}} чел.
                     </span>
                   </li>
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center w-50"
                   >
                     Клиенты:
-                    <span class="badge badge-primary badge-pill">{{gamerParams.clients}}</span>
+                    <span class="badge badge-primary badge-pill">{{Math.ceil(gamerParams.clients)}} чел.</span>
                   </li>
                 </ul>
                 
@@ -139,7 +139,7 @@
                     Товарооборот:
                     <span
                       class="badge badge-primary badge-pill"
-                    >{{gamerParams.commCircul}} ₽</span>
+                    >{{Math.ceil(gamerParams.commCircul)}} ₽</span>
                   </li>
                   
                 </ul>
@@ -149,14 +149,14 @@
                   >
                     Средний чек:
                     <span class="badge badge-primary badge-pill">
-                      {{gamerParams.averageCheck}} ₽
+                      {{Math.ceil(gamerParams.averageCheck)}} ₽
                     </span>
                   </li>
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center w-50"
                   >
                     Реальная стоимость привлечения:
-                    <span class="badge badge-primary badge-pill">{{gamerParams.realCostAttract}} ₽</span>
+                    <span class="badge badge-primary badge-pill">{{Math.ceil(gamerParams.realCostAttract)}} ₽</span>
                   </li>
                 </ul>
                 <ul class="list-group list-group-horizontal w-100">
@@ -165,20 +165,20 @@
                   >
                     Затраты:
                     <span class="badge badge-primary badge-pill">
-                      {{gamerParams.realCostAttract * gamerParams.clients}} ₽
+                      {{Math.ceil(gamerParams.realCostAttract * gamerParams.clients)}} ₽
                     </span>
                   </li>
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center col-4"
                   >
                     Доход:
-                    <span class="badge badge-primary badge-pill">{{gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients}} ₽</span>
+                    <span class="badge badge-primary badge-pill">{{Math.ceil(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)}} ₽</span>
                   </li>
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center col-4"
                   >
                     Доход на клиента:
-                    <span class="badge badge-primary badge-pill">{{(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients}} ₽</span>
+                    <span class="badge badge-primary badge-pill">{{Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients) }} ₽</span>
                   </li>
                 </ul>
                 <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -186,7 +186,9 @@
                   <span class="badge badge-primary badge-pill">{{animatedNumber}}</span>
                 </li> -->
               </ul>
+              <button class="btn btn-success mt-2 w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep(1)">Завершить ход</button>
             </div>
+            
           </div>
         </div>
       </div>
@@ -223,7 +225,8 @@
       >
         <div
           class="card-box"
-          draggable
+          
+          :draggable="card.cost<=gamerParams.money"
           @dragstart.self="altdragstart"
           v-for="(card, count) in cards"
           :key="count"
@@ -240,7 +243,8 @@
           <button
             class="btn btn-dark pl-2"
             @click="dropFromBtn(count)"
-            :disabled="stepDone"
+            :disabled="stepDone||(card.cost>gamerParams.money)"
+            
           >Использовать</button>
         </div>
       </transition-group>
@@ -272,11 +276,13 @@ export default {
   mounted() {},
   data() {
     return {
+      usedCards: [],
       clientsRendered: true,
       dragstart: false,
       dragover: false,
       dragnode: undefined,
       params: {},
+      refreshCards: [],
       cards: [
         {
           id: 1,
@@ -389,20 +395,28 @@ export default {
       return arra1;
     },
     makeStep(cardId) {
-      this.$store.commit("doStep");
+      this.$store.commit("doStep"); // 
       this.$socket.emit("doStep", cardId);
-      console.log('!!!'+cardId);
-      let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==cardId})].cost;
-      this.$store.commit("changeMoney", change);
+      this.cards=[...this.refreshCards];
+      // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;
+      // this.$store.commit("changeMoney", change);
+      console.log('-----Index of cards------');
+      console.log(this.usedCards);
+      
+
     },
     dropFromBtn(index) {
-      this.makeStep(this.cards[index].id);
-      this.cards.splice(index, 1);
+      this.usedCards.push(this.cards[index].id);
+      // this.makeStep(this.cards[index].id);
+      let change = -this.cards[index].cost;
+      this.$store.commit("changeMoney", change);
+        this.cards.splice(index, 1);
     },
     startGame() {
       console.log("Стейт комнаты");
       let a = Object.assign(this.$store.state.roomParams);
       console.log(a);
+      this.refreshCards = [...this.cards];
       this.$socket.emit("startGame", a);
       this.$store.commit("SOCKET_calcAllParams");
       this.$store.state.isOwner = false;
@@ -433,7 +447,9 @@ export default {
             }
             i++;
           }
-          this.makeStep(this.cards[i].id);
+          // this.makeStep(this.cards[i].id);
+          let change = -this.cards[i].cost;
+          this.$store.commit("changeMoney", change);
           this.cards.splice(i, 1);
         }
       }
