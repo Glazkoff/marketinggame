@@ -85,24 +85,35 @@
           <div class="row h-100 justify-content-center align-items-start">
             <div class="col-12">
               <h3 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h3>
-
-              <ul class="list-group col-12 offset-0 mt-3">
-                <li
-                  class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+              <ul class="list-group col-12 offset-0 mt-3 w-100" id="main-data">
+                <ul class="list-group list-group-horizontal w-100">
+                  <li
+                  class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                  style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                 >
                   Общий бюджет
                   <span class="badge badge-primary badge-pill">
                     <h4>{{gamerParams.money}} ₽</h4>
                   </span>
                 </li>
+                <li
+                  class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                >
+                  Месяц
+                  <span class="badge badge-primary badge-pill">
+                    <h4>{{firstRoomParams.month - gamerParams.month+1}} из
+                      {{firstRoomParams.month}}</h4>
+                  </span>
+                </li>
+                </ul>
+                
                 <ul class="list-group list-group-horizontal w-100">
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center w-50"
                   >
-                    Месяц:
+                    Трафик:
                     <span class="badge badge-primary badge-pill">
-                      {{firstRoomParams.month - gamerParams.month+1}} из
-                      {{firstRoomParams.month}}
+                      {{gamerParams.organicCount+gamerParams.contextCount+gamerParams.socialsCount+gamerParams.smmCount+gamerParams.straightCount}}
                     </span>
                   </li>
                   <li
@@ -112,15 +123,8 @@
                     <span class="badge badge-primary badge-pill">{{gamerParams.clients}}</span>
                   </li>
                 </ul>
+                
                 <ul class="list-group list-group-horizontal w-100">
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Прибыль на клиента:
-                    <span
-                      class="badge badge-primary badge-pill"
-                    >{{gamerParams.moneyPerClient}}</span>
-                  </li>
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center w-50"
                   >
@@ -129,11 +133,58 @@
                       class="badge badge-primary badge-pill"
                     >{{gamerParams.conversion*100}} %</span>
                   </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Товарооборот:
+                    <span
+                      class="badge badge-primary badge-pill"
+                    >{{gamerParams.commCircul}} ₽</span>
+                  </li>
+                  
                 </ul>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <ul class="list-group list-group-horizontal w-100">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Средний чек:
+                    <span class="badge badge-primary badge-pill">
+                      {{gamerParams.averageCheck}} ₽
+                    </span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center w-50"
+                  >
+                    Реальная стоимость привлечения:
+                    <span class="badge badge-primary badge-pill">{{gamerParams.realCostAttract}} ₽</span>
+                  </li>
+                </ul>
+                <ul class="list-group list-group-horizontal w-100">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center col-4"
+                  >
+                    Затраты:
+                    <span class="badge badge-primary badge-pill">
+                      {{gamerParams.realCostAttract * gamerParams.clients}} ₽
+                    </span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center col-4"
+                  >
+                    Доход:
+                    <span class="badge badge-primary badge-pill">{{gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients}} ₽</span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center col-4"
+                  >
+                    Доход на клиента:
+                    <span class="badge badge-primary badge-pill">{{(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients}} ₽</span>
+                  </li>
+                </ul>
+                <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
                   Прочие параметры
                   <span class="badge badge-primary badge-pill">{{animatedNumber}}</span>
-                </li>
+                </li> -->
               </ul>
             </div>
           </div>
@@ -646,5 +697,8 @@ export default {
   border-radius: 8px;
   position: absolute;
   z-index: 2000;
+}
+#main-data {
+  padding-right: 0;
 }
 </style>
