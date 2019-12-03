@@ -394,9 +394,10 @@ export default {
       }
       return arra1;
     },
-    makeStep(cardId) {
+    makeStep() {
       this.$store.commit("doStep"); // 
-      this.$socket.emit("doStep", cardId);
+      this.$socket.emit("doStep", this.usedCards);
+      this.usedCards = [];
       this.cards=[...this.refreshCards];
       // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;
       // this.$store.commit("changeMoney", change);
