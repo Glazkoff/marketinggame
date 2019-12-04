@@ -397,6 +397,17 @@ export default {
     makeStep() {
       this.$store.commit("doStep"); // 
       this.$socket.emit("doStep", this.usedCards);
+      // Одноразовые карточки (индексы):
+      let oneOffCards = [3, 7]      
+      for (const cardIndex of oneOffCards) {
+        let usedIndex = this.usedCards.findIndex(elem=>elem===cardIndex);
+        console.log('ОДНОРАЗОВЫЕ КАРТОЧКИ');
+        if (usedIndex !== -1) {
+
+          let spliceIndex = this.refreshCards.findIndex(elem=>elem.id===cardIndex)
+          this.refreshCards.splice(spliceIndex, 1)
+        }
+      }
       this.usedCards = [];
       this.cards=[...this.refreshCards];
       // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;

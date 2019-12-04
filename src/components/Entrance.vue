@@ -53,6 +53,7 @@ export default {
         // console.log("13");
       }
     }, 100);
+    this.$store.commit('resetData');
   },
   computed: {
     gamerName() {

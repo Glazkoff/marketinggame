@@ -1,12 +1,12 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    gamerName: "",
-    socketId: "",
+    gamerName: '',
+    socketId: '',
     isOwner: false,
     isStart: true,
     isFinish: false,
@@ -36,134 +36,134 @@ export default new Vuex.Store({
     messages: [],
     gamers: [],
     winners: {},
-    activeEffects: [
-      {
-        name: 'SEO-оптимизация',
-        step: 1,
-        allSteps: 3
-      },
-      {
-        name: 'Рекламная кампания в соцсетях',
-        step: 1,
-        allSteps: 3
-      },
-      {
-        name: 'Рекламная кампания в соцсетях',
-        step: 1,
-        allSteps: 3
-      }
-    ],
+    activeEffects: [],
     gameEvent: null
-
   },
   getters: {},
   mutations: {
-    setName(state, name) {
-      state.gamerName = name;
+    resetData(state) {
+      state.connections = []
+      state.messages = []
+      state.gamers = []
+      state.winners = {}
+      state.activeEffects = []
+      state.gameEvent = null
+      state.isOwner = false
+      state.isStart = true
+      state.isFinish = false
+      state.stepDone = false
+      state.roomId = -1
+      state.roomParams = [...state.firstRoomParams]
     },
-    setOwner(state) {
-      state.isOwner = true;
+    setName (state, name) {
+      state.gamerName = name
+    },
+    setOwner (state) {
+      state.isOwner = true
     },
     // setRoomId(state, number) {
     //   state.roomId = number
     // },
-    setRoomParams(state, {
+    setRoomParams (state, {
       month
     }) {
-      state.roomParams.month = month;
+      state.roomParams.month = month
     },
-    doStep(state) {
-      state.stepDone = true;
+    doStep (state) {
+      state.stepDone = true
     },
-    changeMoney(state, change) {
+    changeMoney (state, change) {
       if (state.roomParams.money !== undefined) {
         state.roomParams.money += change
       }
     },
-    SOCKET_doNextStep(state) {
-      state.stepDone = false;
+    SOCKET_doNextStep (state) {
+      state.stepDone = false
       for (const gamer of state.gamers) {
-        gamer.isattacker = false;
+        gamer.isattacker = false
       }
     },
-    SOCKET_setRoomNumber(state, roomId) {
-      state.roomId = roomId;
+    SOCKET_setRoomNumber (state, roomId) {
+      state.roomId = roomId
     },
-    SOCKET_addMessage(state, newMessage) {
-      state.messages.push(newMessage);
-      let messList = document.querySelector("#messageField");
+    SOCKET_addMessage (state, newMessage) {
+      state.messages.push(newMessage)
+      let messList = document.querySelector('#messageField')
       if (messList !== null) {
-        messList.scrollTop = messList.scrollHeight;
+        messList.scrollTop = messList.scrollHeight
       }
     },
-    SOCKET_setStartGame(state, roomParams) {
-      state.isStart = false;
+    SOCKET_setStartGame (state, roomParams) {
+      state.isStart = false
       // console.log("ПРИШЛИ ПАРАМЕТРЫ КОМНАТЫ");
       // console.log(roomParams);
 
       if (state.roomParams.month == undefined) {
-        state.roomParams = roomParams;
-        console.log('Тут');
-        console.log(state.roomParams);
+        state.roomParams = roomParams
+        console.log('Тут')
+        console.log(state.roomParams)
         let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
-        state.roomParams.clients = Math.ceil(clients);
-        console.log('Клиенты: ' + clients);
-        let commCircul = clients * state.roomParams.averageCheck;
+        state.roomParams.clients = Math.ceil(clients)
+        console.log('Клиенты: ' + clients)
+        let commCircul = clients * state.roomParams.averageCheck
         state.roomParams.commCircul = commCircul
-        console.log('commCircul: ' + commCircul);
-        let expenses = Math.ceil(clients * state.roomParams.realCostAttract);
+        console.log('commCircul: ' + commCircul)
+        let expenses = Math.ceil(clients * state.roomParams.realCostAttract)
         state.roomParams.expenses = expenses
-        console.log('expenses: ' + expenses);
-        let result = commCircul - expenses;
-        console.log('result: ' + result);
-        let resultPerClient = result / clients;
-        state.roomParams.moneyPerClient = Math.ceil(resultPerClient);
+        console.log('expenses: ' + expenses)
+        let result = commCircul - expenses
+        console.log('result: ' + result)
+        let resultPerClient = result / clients
+        state.roomParams.moneyPerClient = Math.ceil(resultPerClient)
       }
-      state.roomParams = roomParams;
+      state.roomParams = roomParams
     },
-    SOCKET_setGamers(state, obj) {
-      state.gamers = [...obj.gamers];
+    SOCKET_setGamers (state, obj) {
+      state.gamers = [...obj.gamers]
     },
-    SOCKET_changeGamerStatus(state, id) {
+    SOCKET_changeGamerStatus (state, id) {
       for (const gamer of state.gamers) {
         if (gamer.id == id) {
-          gamer.isattacker = true;
+          gamer.isattacker = true
           break;
         }
       }
     },
-    SOCKET_finish(state, winnersObj) {
-      state.isFinish = true;
-      state.winners = Object.assign(winnersObj);
+    SOCKET_finish (state, winnersObj) {
+      state.isFinish = true
+      state.winners = Object.assign(winnersObj)
     },
-    SOCKET_setGameEvent(state, eventObj) {
-      state.gameEvent = {};
-      state.gameEvent = Object.assign(eventObj);
+    SOCKET_setGameEvent (state, eventObj) {
+      state.gameEvent = {}
+      state.gameEvent = Object.assign(eventObj)
     },
-    SOCKET_calcAllParams(state) {
+    SOCKET_calcAllParams (state) {
       let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
-      state.roomParams.clients = clients;
-      console.log('Клиенты: ' + clients);
-      let commCircul = clients * state.roomParams.averageCheck;
+      state.roomParams.clients = clients
+      console.log('Клиенты: ' + clients)
+      let commCircul = clients * state.roomParams.averageCheck
       state.roomParams.commCircul = commCircul
-      console.log('commCircul: ' + commCircul);
-      let expenses = clients * state.roomParams.realCostAttract;
+      console.log('commCircul: ' + commCircul)
+      let expenses = clients * state.roomParams.realCostAttract
       state.roomParams.expenses = expenses
-      console.log('expenses: ' + expenses);
-      let result = commCircul - expenses;
-      console.log('result: ' + result);
-      let resultPerClient = result / clients;
+      console.log('expenses: ' + expenses)
+      let result = commCircul - expenses
+      console.log('result: ' + result)
+      let resultPerClient = result / clients
       state.roomParams.moneyPerClient = resultPerClient
       // state.roomParams.money += result;
+    },
+    SOCKET_setEffects (state, effects) {
+      state.activeEffects = [...effects]
     }
   },
   actions: {
-    SOCKET_gameEvent(state, eventObj) {
-      console.log(eventObj);
-      state.commit("SOCKET_setGameEvent", eventObj);
+    SOCKET_gameEvent (state, eventObj) {
+      console.log(eventObj)
+      state.commit('SOCKET_setGameEvent', eventObj)
       setTimeout(() => {
-        state.commit("SOCKET_setGameEvent", {});
-      }, 7000);
+        state.commit('SOCKET_setGameEvent', {})
+      }, 7000)
     }
   }
-});
+})

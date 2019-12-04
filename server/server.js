@@ -524,87 +524,92 @@ io.on('connection', function (socket) {
     }
     let card
     // Начало обработки пришедшего массива с ID карточек
-    for (const cardId of cardArr) {
-      console.log('------------------------------------')
-      console.log(
-        'Сделан шаг "' +
+    if (cardArr.length !== 0) {
+      for (const cardId of cardArr) {
+        console.log('------------------------------------')
+        console.log(
+          'Сделан шаг "' +
         cards.find(el => el.id === cardId).title +
         '" игроком ' +
         socket.name
-      )
-      card = cards.find(el => el.id === cardId)
-      // ИЗМЕНЕНИЕ КАРТОЧКИ
-      console.log('Массив карточек')
-      gamer.data.money -= card.cost
-      for (const changes of card.dataChange) {
-        gamer.changes.push(changes)
-      }
-      // Если эффекта ещё нет (карточка выбрасывается первый раз)
-      let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId)
-      if (effectIndex === -1) {
-        let effectObj = {
-          id: cardId,
-          name: card.title,
-          step: 1,
-          duration: card.duration
+        )
+        card = cards.find(el => el.id === cardId)
+        // ИЗМЕНЕНИЕ КАРТОЧКИ
+        console.log('Массив карточек')
+        gamer.data.money -= card.cost
+        for (const changes of card.dataChange) {
+          gamer.changes.push(changes)
         }
-        gamer.effects.push(effectObj)
-      } else {
-        // Если эффект существует в массиве
-        gamer.effects[effectIndex].step++
-      }
-
-      let iter = 0
-      for (const changing of gamer.changes) {
-        if (changing.when === 1) {
-          switch (changing.operation) {
-            case '+':
-              gamer.data[changing.param] += changing.change
-              break
-            case '-':
-              gamer.data[changing.param] -= changing.change
-              break
-            case '*':
-              gamer.data[changing.param] *= changing.change
-              break
-            default:
-              console.log('Что-то не так с операцией карточки по ID ' + card.id)
-              break
+        // Если эффекта ещё нет (карточка выбрасывается первый раз)
+        let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId)
+        if ((cardId !== 3) && (cardId !== 7)) {
+          if (effectIndex === -1) {
+            let effectObj = {
+              id: cardId,
+              name: card.title,
+              step: 1,
+              duration: card.duration
+            }
+            gamer.effects.push(effectObj)
+          } else {
+          // Если эффект существует в массиве
+            gamer.effects[effectIndex].step++
           }
-          console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
-
-          gamer.changes.splice(iter, 1)
-        } else {
-          iter++
         }
-      }
-      console.log('-------------------------------------')
-      // ------------------------
-      let clients =
+        let iter = 0
+        for (const changing of gamer.changes) {
+          if (changing.when === 1) {
+            switch (changing.operation) {
+              case '+':
+                gamer.data[changing.param] += changing.change
+                break
+              case '-':
+                gamer.data[changing.param] -= changing.change
+                break
+              case '*':
+                gamer.data[changing.param] *= changing.change
+                break
+              default:
+                console.log('Что-то не так с операцией карточки по ID ' + card.id)
+                break
+            }
+            console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+
+            gamer.changes.splice(iter, 1)
+          } else {
+            iter++
+          }
+        }
+        console.log('-------------------------------------')
+        // ------------------------
+        let clients =
         (gamer.data.organicCount * gamer.data.organicCoef +
           gamer.data.contextCount * gamer.data.contextCoef +
           gamer.data.socialsCount * gamer.data.socialsCoef +
           gamer.data.smmCount * gamer.data.smmCoef +
           gamer.data.straightCount * gamer.data.straightCoef) *
         gamer.data.conversion
-      gamer.data.clients = Math.ceil(clients)
-      console.log('Клиенты:')
-      console.log(clients)
-      let averageCheck = gamer.data.averageCheck
+        gamer.data.clients = Math.ceil(clients)
+        console.log('Клиенты:')
+        console.log(clients)
+        let averageCheck = gamer.data.averageCheck
 
-      let realCostAttract = gamer.data.realCostAttract
-      // let marginalCost = gamer.data.marginalCost
+        let realCostAttract = gamer.data.realCostAttract
+        // let marginalCost = gamer.data.marginalCost
 
-      let commCircul = clients * averageCheck
-      gamer.data.commCircul = commCircul
-      let expenses = clients * realCostAttract
-      gamer.data.expenses = expenses
-      let result = commCircul - expenses
-      // gamer.data.money = gamer.data.money + Math.ceil(result);
-      gamer.data.money += room.budgetPerMonth
-      console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-      let resultPerClient = result / clients
-      gamer.data.moneyPerClient = Math.ceil(resultPerClient)
+        let commCircul = clients * averageCheck
+        gamer.data.commCircul = commCircul
+        let expenses = clients * realCostAttract
+        gamer.data.expenses = expenses
+        let result = commCircul - expenses
+        // gamer.data.money = gamer.data.money + Math.ceil(result);
+        gamer.data.money += room.budgetPerMonth
+        console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+        let resultPerClient = result / clients
+        gamer.data.moneyPerClient = Math.ceil(resultPerClient)
+      }
+    } else {
+      // FIX: Просто добавить деньги
     }
     // Конец обработки пришедшего массива
 
@@ -646,7 +651,7 @@ io.on('connection', function (socket) {
           let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
           gamer.effects.splice(effectIndex, 1)
         }
-      }  
+      }
     }
     room.roomState.month--
     console.log('Месяц:')
@@ -731,6 +736,9 @@ io.on('connection', function (socket) {
     }
     console.log('---ДАННЫЕ ИГРОКА---')
     console.log(gamer.data)
+    for (const gamer of gamers) {
+      io.sockets.to(gamer.id).emit('setEffects', gamer.effects)
+    }
   })
   socket.on('leaveRoom', function () {
     console.log(`${socket.name} уходит с комнаты!`)
