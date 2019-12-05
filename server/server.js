@@ -121,37 +121,49 @@ let cards = [{
     param: 'smmCount',
     operation: '*',
     change: 1.1,
-    when: 2
+    when: 2,
+    from: 'Нанять SMM-менеджера 2',
+    id: 1
   },
   {
     param: 'smmCount',
     operation: '*',
     change: 1.8,
-    when: 3
+    when: 3,
+    from: 'Нанять SMM-менеджера 3',
+    id: 1
   },
   {
     param: 'socialsCoef',
     operation: '*',
     change: 1.5,
-    when: 3
+    when: 3,
+    from: 'Нанять SMM-менеджера 3',
+    id: 1
   },
   {
     param: 'money',
     operation: '-',
     change: 80000,
-    when: 1
+    when: 1,
+    from: 'Нанять SMM-менеджера 1',
+    id: 1
   },
   {
     param: 'money',
     operation: '-',
     change: 80000,
-    when: 2
+    when: 2,
+    from: 'Нанять SMM-менеджера 2',
+    id: 1
   },
   {
     param: 'money',
     operation: '-',
     change: 80000,
-    when: 3
+    when: 3,
+    from: 'Нанять SMM-менеджера 3',
+    id: 1
   }
   ]
 },
@@ -167,19 +179,25 @@ let cards = [{
     param: 'organicCount',
     operation: '*',
     change: 2,
-    when: 3
+    when: 3,
+    from: 'Заказать SEO-оптимизацию 3',
+    id: 2
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.5,
-    when: 1
+    when: 1,
+    from: 'Заказать SEO-оптимизацию 1',
+    id: 2
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 0.3,
-    when: 3
+    when: 3,
+    from: 'Заказать SEO-оптимизацию 3',
+    id: 2
   }
   ]
 },
@@ -195,49 +213,65 @@ let cards = [{
     param: 'organicCoef',
     operation: '*',
     change: 1.1,
-    when: 3
+    when: 3,
+    from: 'Улучшение юзабилити 3',
+    id: 3
   },
   {
     param: 'contextCoef',
     operation: '*',
     change: 1.1,
-    when: 3
+    when: 3,
+    from: 'Улучшение юзабилити 3',
+    id: 3
   },
   {
     param: 'socialsCoef',
     operation: '*',
     change: 1.1,
-    when: 3
+    when: 3,
+    from: 'Улучшение юзабилити 3',
+    id: 3
   },
   {
     param: 'smmCoef',
     operation: '*',
     change: 1.1,
-    when: 3
+    when: 3,
+    from: 'Улучшение юзабилити 3',
+    id: 3
   },
   {
     param: 'straightCoef',
     operation: '*',
     change: 1.1,
-    when: 3
+    when: 3,
+    from: 'Улучшение юзабилити 3',
+    id: 3
   },
   {
     param: 'averageCheck',
     operation: '*',
     change: 1.5,
-    when: 3
+    when: 3,
+    from: 'Улучшение юзабилити 3',
+    id: 3
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 0.8,
-    when: 1
+    when: 1,
+    from: 'Улучшение юзабилити 1',
+    id: 3
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 0.8,
-    when: 2
+    when: 2,
+    from: 'Улучшение юзабилити 2',
+    id: 3
   }
   ]
 },
@@ -253,25 +287,33 @@ let cards = [{
     param: 'socialsCount',
     operation: '+',
     change: 4500,
-    when: 1
+    when: 1,
+    from: 'Реклама в соцсетях 1',
+    id: 4
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.1,
-    when: 1
+    when: 1,
+    from: 'Реклама в соцсетях 1',
+    id: 4
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.1,
-    when: 2
+    when: 2,
+    from: 'Реклама в соцсетях 2',
+    id: 4
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.1,
-    when: 3
+    when: 3,
+    from: 'Реклама в соцсетях 3',
+    id: 4
   }
   ]
 },
@@ -287,19 +329,25 @@ let cards = [{
     param: 'realCostAttract',
     operation: '*',
     change: 1.3,
-    when: 1
+    when: 1,
+    from: 'PR-компания компании 1',
+    id: 5
   },
   {
     param: 'averageCheck',
     operation: '*',
     change: 1.1,
-    when: 2
+    when: 2,
+    from: 'PR-компания компании 2',
+    id: 5
   },
   {
     param: 'averageCheck',
     operation: '*',
     change: 1.2,
-    when: 3
+    when: 3,
+    from: 'PR-компания компании 3',
+    id: 5
   }
   ]
 },
@@ -315,43 +363,57 @@ let cards = [{
     param: 'contextCount',
     operation: '+',
     change: 6000,
-    when: 1
+    when: 1,
+    from: 'Контекстная рекламная компания 1',
+    id: 6
   },
   {
     param: 'contextCount',
     operation: '*',
     change: 1.1,
-    when: 2
+    when: 2,
+    from: 'Контекстная рекламная компания 2',
+    id: 6
   },
   {
     param: 'contextCount',
     operation: '*',
     change: 1.2,
-    when: 3
+    when: 3,
+    from: 'Контекстная рекламная компания 3',
+    id: 6
   },
   {
     param: 'contextCoef',
     operation: '*',
     change: 1.5,
-    when: 1
+    when: 1,
+    from: 'Контекстная рекламная компания 1',
+    id: 6
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.3,
-    when: 1
+    when: 1,
+    from: 'Контекстная рекламная компания 1',
+    id: 6
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.3,
-    when: 2
+    when: 2,
+    from: 'Контекстная рекламная компания 2',
+    id: 6
   },
   {
     param: 'realCostAttract',
     operation: '*',
     change: 1.3,
-    when: 3
+    when: 3,
+    from: 'Контекстная рекламная компания 3',
+    id: 6
   }
   ]
 },
@@ -367,25 +429,33 @@ let cards = [{
     param: 'straightCount',
     operation: '*',
     change: 1.2,
-    when: 1
+    when: 1,
+    from: 'Размещение информации о компании в справочниках 1',
+    id: 7
   },
   {
     param: 'straightCount',
     operation: '*',
     change: 1.2,
-    when: 2
+    when: 2,
+    from: 'Размещение информации о компании в справочниках 2',
+    id: 7
   },
   {
     param: 'straightCount',
     operation: '*',
     change: 1.2,
-    when: 3
+    when: 3,
+    from: 'Размещение информации о компании в справочниках 3',
+    id: 7
   },
   {
     param: 'money',
     operation: '-',
     change: 40000,
-    when: 1
+    when: 1,
+    from: 'Размещение информации о компании в справочниках 1',
+    id: 7
   }
   ]
 }
@@ -525,6 +595,20 @@ io.on('connection', function (socket) {
     let card
     // Начало обработки пришедшего массива с ID карточек
     if (cardArr.length !== 0) {
+      for (const effect of gamer.effects) {
+        // Если в пришедшем массиве нет уже существующего эффекта
+        if (effect.step === effect.duration) {
+          let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
+          gamer.effects.splice(effectIndex, 1)
+          console.log('Действие эффекта закончилось')
+        } else {
+          let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
+          if (cardArrIndex === -1) {
+            let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
+            gamer.effects.splice(effectIndex, 1)
+          }
+        }
+      }
       for (const cardId of cardArr) {
         console.log('------------------------------------')
         console.log(
@@ -537,13 +621,15 @@ io.on('connection', function (socket) {
         // ИЗМЕНЕНИЕ КАРТОЧКИ
         console.log('Массив карточек')
         gamer.data.money -= card.cost
-        for (const changes of card.dataChange) {
-          gamer.changes.push(changes)
-        }
+
         // Если эффекта ещё нет (карточка выбрасывается первый раз)
         let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId)
         if ((cardId !== 3) && (cardId !== 7)) {
           if (effectIndex === -1) {
+            // Занести свойства ещё не выброшенной серии
+            for (const changes of card.dataChange) {
+              gamer.changes.push(changes)
+            }
             let effectObj = {
               id: cardId,
               name: card.title,
@@ -555,31 +641,15 @@ io.on('connection', function (socket) {
           // Если эффект существует в массиве
             gamer.effects[effectIndex].step++
           }
-        }
-        let iter = 0
-        for (const changing of gamer.changes) {
-          if (changing.when === 1) {
-            switch (changing.operation) {
-              case '+':
-                gamer.data[changing.param] += changing.change
-                break
-              case '-':
-                gamer.data[changing.param] -= changing.change
-                break
-              case '*':
-                gamer.data[changing.param] *= changing.change
-                break
-              default:
-                console.log('Что-то не так с операцией карточки по ID ' + card.id)
-                break
+        } else {
+          if (effectIndex === -1) {
+            // Занести свойства одноразовых карточек
+            for (const changes of card.dataChange) {
+              gamer.changes.push(changes)
             }
-            console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
-
-            gamer.changes.splice(iter, 1)
-          } else {
-            iter++
           }
         }
+
         console.log('-------------------------------------')
         // ------------------------
         let clients =
@@ -607,10 +677,61 @@ io.on('connection', function (socket) {
         console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
         let resultPerClient = result / clients
         gamer.data.moneyPerClient = Math.ceil(resultPerClient)
-      }
+      } // Конец цикла обработки пришедших карт
     } else {
       // FIX: Просто добавить деньги
+      // gamer.data.money += room.budgetPerMonth
     }
+    let iter = 0
+    
+
+    for (const changing of gamer.changes) {
+      let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
+      console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
+      if ((indexEffArr === -1)) {
+        for (let index = 0; index < gamer.changes.length; index++) {
+          if (gamer.changes[index].id === changing.id) {
+            console.log('УДАЛЯЕТСЯ параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
+            console.log('----!----')
+            console.log(gamer.changes[index])
+            console.log('---- ----')
+            gamer.changes.splice(index, 1)
+          }
+        }
+      }
+      if ((changing.when === 1)) {
+        if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7)) {
+          switch (changing.operation) {
+            case '+':
+              gamer.data[changing.param] += changing.change
+              break
+            case '-':
+              gamer.data[changing.param] -= changing.change
+              break
+            case '*':
+              gamer.data[changing.param] *= changing.change
+              break
+            default:
+              console.log('Что-то не так с операцией карточки по ID ' + card.id)
+              break
+          }
+          console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
+        } else {
+          console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+          for (let index = 0; index < gamer.changes.length; index++) {
+            if (gamer.changes[index].id === changing.id) {
+              console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+              gamer.changes.splice(index, 1)
+            }
+          }
+        }
+        gamer.changes.splice(iter, 1)
+      } else {
+        iter++
+      }
+    }
+    console.log('ИЗМЕНЕНИЯ ИГРОКА')
+    console.log(gamer.changes)
     // Конец обработки пришедшего массива
 
     let gamers = roomsState.find(el => el.roomId === socket.roomId).gamers
@@ -639,20 +760,7 @@ io.on('connection', function (socket) {
         changing.when--
       }
     }
-    for (const effect of gamer.effects) {
-      // Если в пришедшем массиве нет уже существующего эффекта
-      if (effect.step === effect.duration) {
-        let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
-        gamer.effects.splice(effectIndex, 1)
-        console.log('Действие эффекта закончилось')
-      } else {
-        let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
-        if (cardArrIndex === -1) {
-          let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
-          gamer.effects.splice(effectIndex, 1)
-        }
-      }
-    }
+    
     room.roomState.month--
     console.log('Месяц:')
     console.log(gamer.data.month)

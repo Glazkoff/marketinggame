@@ -131,6 +131,7 @@
                     Конверсия:
                     <span
                       class="badge badge-primary badge-pill"
+                      :class="{'badge-danger': (gamerParams.conversion*100)<0}"
                     >{{gamerParams.conversion*100}} %</span>
                   </li>
                   <li
@@ -172,13 +173,16 @@
                     class="list-group-item d-flex justify-content-between align-items-center col-4"
                   >
                     Доход:
-                    <span class="badge badge-primary badge-pill">{{Math.ceil(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)}} ₽</span>
+                    <span class="badge badge-primary badge-pill"
+                    :class="{'badge-danger': (Math.ceil(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients))<0}"
+                    >{{Math.ceil(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)}} ₽</span>
                   </li>
                   <li
                     class="list-group-item d-flex justify-content-between align-items-center col-4"
                   >
                     Доход на клиента:
-                    <span class="badge badge-primary badge-pill">{{Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients) }} ₽</span>
+                    <span class="badge badge-primary badge-pill"
+                    :class="{'badge-danger': (Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients))<0}">{{Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients) }} ₽</span>
                   </li>
                 </ul>
                 <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -186,7 +190,7 @@
                   <span class="badge badge-primary badge-pill">{{animatedNumber}}</span>
                 </li> -->
               </ul>
-              <button class="btn btn-success mt-2 w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep(1)">Завершить ход</button>
+              <button class="btn btn-success mt-2 w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
             </div>
             
           </div>
