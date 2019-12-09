@@ -235,7 +235,7 @@
           :key="count"
           @dragend="altdragend"
           v-if="!isStart"
-          :style="{'margin-left': card.oneOff ? '0px':'20px'}"
+          :class="{'card-ml-0': card.oneOff, 'card-ml-1': !card.oneOff && !isLastEffectStage(card.id), 'card-ml-2': !card.oneOff && !hasThisEffect(card.id)}"
         >
         <div
           class="card-box w-100 h-100 bottom-card bottom-card-1"
@@ -547,6 +547,15 @@ export default {
 </script>
 
 <style>
+.card-ml-0 {
+  margin-left: 0;
+}
+.card-ml-1 {
+  margin-left: 10px;
+}
+.card-ml-2 {
+  margin-left: 20px;
+}
 .bottom-card {
   position: absolute !important;
 }
