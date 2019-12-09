@@ -34,7 +34,7 @@
         return this.$store.state.isStart;
       },
       effects() {
-        return this.$store.state.activeEffects;
+        return  
       }
     }
   }

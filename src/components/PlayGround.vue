@@ -93,7 +93,17 @@
                 >
                   Общий бюджет
                   <span class="badge badge-primary badge-pill">
-                    <h4>{{gamerParams.money}} ₽</h4>
+                    <!-- <h4>{{gamerParams.money}} ₽</h4> -->
+                    <h4>
+                    <number
+                      class="bold transition"
+                      animationPaused
+                      ref="number"
+                      :to="gamerParams.money"
+                      :duration="1.1"
+                      @click="playAnimation"
+                      easing="Power4.easeOut"/>
+                       ₽ </h4>
                   </span>
                 </li>
                 <li
@@ -296,7 +306,7 @@
 <script>
 import GamerList from "@/components/GamerList.vue";
 import Effects from "@/components/Effects.vue";
-import { TweenMax, Power2, TimelineLite, TweenLite } from "gsap/TweenMax";
+
 
 export default {
   name: "PlayGround",
@@ -373,11 +383,16 @@ export default {
   watch: {
     number: function(newValue) {
       TweenLite.to(this.$data, 1, { tweenedNumber: newValue });
+    },
+    money: function(newValue) {
+      let a = setTimeout(() => {
+        this.playAnimation();
+      }, 50);
     }
   },
   computed: {
-    animatedNumber: function() {
-      return this.tweenedNumber.toFixed(0);
+    money() {
+      return this.$store.state.roomParams.money
     },
     isEvent() {
       let obj = this.$store.state.gameEvent;
@@ -418,6 +433,9 @@ export default {
 
   },
   methods: {
+    playAnimation() {
+      this.$refs.number.play()
+    },
     isLastEffectStage(id) {
       let effectId = this.effects.findIndex(elem=>elem.id===id);
       if (effectId !== -1) {

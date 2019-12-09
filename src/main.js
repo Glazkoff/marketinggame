@@ -3,6 +3,7 @@ import store from './store'
 import App from './App.vue'
 import router from './router'
 import VueSocketIO from 'vue-socket.io'
+import VueNumber from 'vue-number-animation'
 Vue.config.productionTip = false
 
 Vue.use(new VueSocketIO({
@@ -14,6 +15,8 @@ Vue.use(new VueSocketIO({
     mutationPrefix: 'SOCKET_'
   }
 }))
+
+Vue.use(VueNumber)
 
 new Vue({
   router,

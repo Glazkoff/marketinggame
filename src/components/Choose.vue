@@ -108,9 +108,16 @@ export default {
   },
   created() {
     this.$store.commit('resetData');
+    this.roomParams = this.$store.state.firstRoomParams;
   },
   beforeMount() {
     this.$store.commit('resetData');
+    this.roomParams = this.$store.state.firstRoomParams;
+  },
+  beforeRouteUpdate (to, from, next) {
+    console.log('ХУУУУК');
+    this.$store.commit('resetData');
+    this.roomParams = this.$store.state.firstRoomParams;
   },
   mounted() {
     this.$store.commit('resetData');
