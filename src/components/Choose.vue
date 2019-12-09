@@ -107,6 +107,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit('resetData');
     this.roomParams = this.$store.state.firstRoomParams;
   },
   methods: {

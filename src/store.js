@@ -41,7 +41,7 @@ export default new Vuex.Store({
   },
   getters: {},
   mutations: {
-    resetData(state) {
+    resetData (state) {
       state.connections = []
       state.messages = []
       state.gamers = []
@@ -53,7 +53,7 @@ export default new Vuex.Store({
       state.isFinish = false
       state.stepDone = false
       state.roomId = -1
-      state.roomParams = [...state.firstRoomParams]
+      state.roomParams = state.firstRoomParams
     },
     setName (state, name) {
       state.gamerName = name
