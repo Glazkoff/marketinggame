@@ -106,6 +106,12 @@ export default {
       return this.$store.state.gamerName;
     }
   },
+  created() {
+    this.$store.commit('resetData');
+  },
+  beforeMount() {
+    this.$store.commit('resetData');
+  },
   mounted() {
     this.$store.commit('resetData');
     this.roomParams = this.$store.state.firstRoomParams;

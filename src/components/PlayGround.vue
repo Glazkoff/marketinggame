@@ -229,14 +229,21 @@
       >
         <div
           class="card-box"
-          
           :draggable="card.cost<=gamerParams.money"
           @dragstart.self="altdragstart"
           v-for="(card, count) in cards"
           :key="count"
           @dragend="altdragend"
           v-if="!isStart"
+          :style="{'margin-left': card.oneOff ? '0px':'20px'}"
         >
+        <div
+          class="card-box w-100 h-100 bottom-card bottom-card-1"
+          v-if="!card.oneOff && !isLastEffectStage(card.id)"></div>
+        <div
+          class="card-box w-100 h-100  bottom-card bottom-card-2"
+          v-if="!card.oneOff && !hasThisEffect(card.id)"
+          ></div>
           <div class="card-head">
             <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
           </div>
@@ -251,6 +258,29 @@
             
           >Использовать</button>
         </div>
+          <!-- <div
+          class="card-box"
+          :draggable="true"
+          @dragstart.self="altdragstart"
+
+          key="1"
+          @dragend="altdragend"
+          v-if="!isStart"
+          
+        >
+        
+          <div class="card-head">
+            <h6 class="card-title text-center pl-2 pr-2 mb-1">title</h6>
+          </div>
+
+          <div class="card-image"></div>
+          <small class="card-text text-center">text</small>
+          <h3 class="card-text text-center">cost ₽</h3>
+          <button
+            class="btn btn-dark pl-2"
+            @click="dropFromBtn()"
+          >Использовать</button>
+        </div> -->
       </transition-group>
     </div>
 
@@ -304,7 +334,8 @@ export default {
           id: 3,
           title: "Улучшение юзабилити",
           text: "Описание карточки, описание карточки",
-          cost: 20000
+          cost: 20000,
+          oneOff: true
         },
         {
           id: 4,
@@ -328,7 +359,8 @@ export default {
           id: 7,
           title: "Размещение информации в справочниках",
           text: "Описание карточки, описание карточки",
-          cost: 20000
+          cost: 20000,
+          oneOff: true
         }
       ],
       number: 0,
@@ -379,9 +411,23 @@ export default {
         cardField.scrollTo(0, 0);
       }
       return this.$store.state.stepDone;
+    },
+    effects() {
+      return this.$store.state.activeEffects;
     }
+
   },
   methods: {
+    isLastEffectStage(id) {
+      let effectId = this.effects.findIndex(elem=>elem.id===id);
+      if (effectId !== -1) {
+        let effect = this.effects[effectId]
+        return (effect.step+1 === effect.duration)
+      } else return false;
+    },
+    hasThisEffect(id) {
+      return (this.effects.findIndex(elem=>elem.id===id) !== -1)
+    },
     closeEvent() {
       this.$store.commit("SOCKET_setGameEvent", {});
     },
@@ -501,6 +547,23 @@ export default {
 </script>
 
 <style>
+.bottom-card {
+  position: absolute !important;
+}
+.bottom-card-1 {
+  width: 100%;
+  height: 100%;
+  transform: translateX(-10px) translateY(10px);
+  z-index: -1 ;
+  background: #f7f7f7 !important;
+}
+.bottom-card-2 {
+  width: 100%;
+  height: 100%;
+  transform: translateX(-20px) translateY(20px);
+  z-index: -2 ;
+  background: #ebebeb !important;
+}
 .list-group-horizontal li.list-group-item {
   border-radius: 0 !important;
 }
@@ -630,6 +693,7 @@ export default {
   transition: all 0.4s;
   max-height: 100%;
   /* transition: all 0.5s;v -   */
+  
 }
 
 .card-box button {
@@ -654,6 +718,7 @@ export default {
 }
 
 .card-box {
+  box-shadow: -1px 4px 3px rgba(0,0,0,.4); 
   position: relative;
   /* padding-left: 3px; */
   /* padding-right: 3px; */
