@@ -2,13 +2,13 @@ const express = require('express')
 const serveStatic = require('serve-static')
 const path = require('path')
 const app = express()
-
+let port = process.env.PORT || 3001
 
 // server.listen(process.env.PORT || 3000);
 const server = app
   .use('/', serveStatic(path.join(__dirname, '../dist')))
-  .listen(process.env.PORT || 3001, () => {
-    console.log('server running on port 3001')
+  .listen(port, () => {
+    console.log(`server running on port ${port}`)
   })
   app.get(/.*/, function (req, res) {
     res.sendFile(path.join(__dirname, '../dist/index.html'))
