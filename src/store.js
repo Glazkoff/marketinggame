@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
@@ -42,6 +42,7 @@ export default new Vuex.Store({
   getters: {},
   mutations: {
     resetData (state) {
+      console.log('RESET!')
       state.connections = []
       state.messages = []
       state.gamers = []
@@ -53,7 +54,7 @@ export default new Vuex.Store({
       state.isFinish = false
       state.stepDone = false
       state.roomId = -1
-      state.roomParams = state.firstRoomParams
+      state.roomParams = Object.assign(state.firstRoomParams)
     },
     setName (state, name) {
       state.gamerName = name

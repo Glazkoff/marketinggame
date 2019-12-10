@@ -98,7 +98,7 @@
                     <number
                       class="bold transition"
                       animationPaused
-                      ref="number"
+                      ref="number1"
                       :to="gamerParams.money"
                       :duration="1.1"
                       @click="playAnimation"
@@ -434,7 +434,7 @@ export default {
   },
   methods: {
     playAnimation() {
-      this.$refs.number.play()
+      this.$refs.number1.play()
     },
     isLastEffectStage(id) {
       let effectId = this.effects.findIndex(elem=>elem.id===id);
@@ -501,11 +501,13 @@ export default {
       this.$store.commit("SOCKET_calcAllParams");
       this.$store.state.isOwner = false;
       this.$store.state.isStart = false;
+  
     },
     beforeEnter: function(el) {
       console.log("befenterhook");
     },
     enter: function(el) {
+      this.playAnimation();
       console.log("enterhook");
     },
     leave: function(el) {

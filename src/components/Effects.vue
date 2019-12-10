@@ -8,7 +8,6 @@
       <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(effect, count) in effects"
         :key="count" 
         :class="{'list-group-item-info': count % 2 == 1, 'list-group-item-secondary text-body': count % 2 == 0}">
-        
         {{effect.name}}
         <span class="badge  badge-pill" :class="{'badge-info': count % 2 == 1, 'badge-secondary': count % 2 == 0}">Шаг: {{effect.step}} из {{effect.duration}}</span>
         <!-- <span
@@ -34,7 +33,7 @@
         return this.$store.state.isStart;
       },
       effects() {
-        return  
+        return this.$store.state.activeEffects;
       }
     }
   }

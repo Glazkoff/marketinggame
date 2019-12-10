@@ -1,12 +1,20 @@
 const express = require('express')
+const serveStatic = require('serve-static')
+const path = require('path')
 const app = express()
+
+
 // server.listen(process.env.PORT || 3000);
 const server = app
-  .use((req, res) => res.sendFile(INDEX))
+  .use('/', serveStatic(path.join(__dirname, '../dist')))
   .listen(process.env.PORT || 3001, () => {
     console.log('server running on port 3001')
   })
-
+  app.get(/.*/, function (req, res) {
+    res.sendFile(path.join(__dirname, '../dist/index.html'))
+  })
+  
+// app.use('/', serveStatic(path.join(__dirname, '/dist')))
 const io = require('socket.io')(server)
 let connections = []
 let connectedNames = []

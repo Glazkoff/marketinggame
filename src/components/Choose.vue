@@ -29,6 +29,7 @@
           name="toggle"
           id="toggle2"
           autocomplete="off"
+          @click="reset"
         />Создать комнату
       </label>
     </div>
@@ -104,36 +105,47 @@ export default {
   computed: {
     gamerName() {
       return this.$store.state.gamerName;
+    },
+    stateFirstParams() {
+      return this.$store.state.firstRoomParams;
     }
   },
   created() {
-    this.$store.commit('resetData');
-    this.roomParams = this.$store.state.firstRoomParams;
+    // this.$store.commit('resetData');
+    // console.log(Object.assign(this.stateFirstParams));
+    this.roomParams = Object.assign(this.stateFirstParams)
   },
   beforeMount() {
-    this.$store.commit('resetData');
-    this.roomParams = this.$store.state.firstRoomParams;
+    // this.$store.commit('resetData');
+    // this.roomParams = this.stateFirstParams
   },
   beforeRouteUpdate (to, from, next) {
-    console.log('ХУУУУК');
-    this.$store.commit('resetData');
-    this.roomParams = this.$store.state.firstRoomParams;
+    // this.$store.commit('resetData');
+    // this.roomParams = this.stateFirstParams
   },
   mounted() {
-    this.$store.commit('resetData');
-    this.roomParams = this.$store.state.firstRoomParams;
+    // this.$store.commit('resetData');
+    // this.roomParams = this.$store.state.firstRoomParams;
   },
   methods: {
     createGame() {
       this.$socket.emit("createRoom", "");
       this.$router.push("main");
       this.$store.state.isOwner = true;
-      this.$store.state.roomParams = this.roomParams;
+      this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     joinGame() {
       this.$socket.emit("setRoom", this.roomIdJoin);
       console.log("//" + this.roomIdJoin);
       this.$router.push("main");
+    },
+    reset() {
+      console.log('!!reset!!');
+      // this.$store.commit('resetData');
+      this.roomParams = [...this.stateFirstParams];
+      console.log(this.roomParams);
+      
+      // this.roomParams = this.stateFirstParams;
     }
   },
   beforeRouteEnter(to, from, next) {
