@@ -142,7 +142,7 @@ export default {
     reset() {
       console.log('!!reset!!');
       // this.$store.commit('resetData');
-      this.roomParams = [...this.stateFirstParams];
+      this.roomParams = Object.assign(this.stateFirstParams);
       console.log(this.roomParams);
       
       // this.roomParams = this.stateFirstParams;
