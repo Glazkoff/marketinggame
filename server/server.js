@@ -546,11 +546,17 @@ io.on('connection', function (socket) {
       let gamers = []
       let attackers = 0
       for (const id of gamerIds) {
-        gamerNames.push({
-          name: connectedNames.find(el => el.id === id).name,
-          id,
-          isattacker: false
-        })
+        let findName;
+        let nameFromConnected = connectedNames.find(el => el.id === id)
+        if (nameFromConnected !== undefined) {
+          findName = nameFromConnected.name
+          gamerNames.push({
+            name: findName,
+            id,
+            isattacker: false
+          })
+        }
+        
         attackers++
         console.log(id + '---')
 

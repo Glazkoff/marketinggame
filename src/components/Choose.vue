@@ -151,11 +151,12 @@ export default {
   beforeRouteEnter(to, from, next) {
     // if (vm.$store.state.roomId == -1) {
     next(function(vm) {
-      if (vm.$store.state.gamerName == "") {
-        next("/");
-      } else {
-        return true;
-      }
+      // if (vm.$store.state.gamerName == "") {
+      //   next("/");
+      // } else {
+      //   return true;
+      // }
+      next("/");
     });
   }
 };
