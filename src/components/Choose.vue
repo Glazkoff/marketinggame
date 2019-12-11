@@ -156,7 +156,7 @@ export default {
       // } else {
       //   return true;
       // }
-      next("/");
+      return true;
     });
   }
 };
