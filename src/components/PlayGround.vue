@@ -316,7 +316,8 @@ export default {
   },
   created() {
     this.cards = this.shuffle(this.cards);
-    this.refreshCards = Object.assign(this.cards);
+    // this.refreshCards = Object.assign(this.cards);
+    this.refreshCards = [...this.cards];
   },
   mounted() {},
   data() {
@@ -487,7 +488,7 @@ export default {
       console.log('VOT TUT ZASADAAAAAAAAA');
       console.log('*');
       console.log(this.refreshCards);
-      this.cards=Object.assign(this.refreshCards);
+      this.cards=[...this.refreshCards];
       console.log(this.cards);
       // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;
       // this.$store.commit("changeMoney", change);
@@ -513,7 +514,7 @@ export default {
       console.log('/');
       console.log('DO ZASADY');
       console.log('*');
-      this.refreshCards = Object.assign(this.cards);
+      // this.refreshCards = Object.assign(this.cards);
       console.log(this.cards);
       console.log(this.refreshCards);
       this.$socket.emit("startGame", a);
