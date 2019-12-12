@@ -598,6 +598,7 @@ io.on('connection', function (socket) {
   // });
 
   socket.on('doStep', function (cardArr) {
+
     // если room.gamers!==undefined
     // Поиск комнаты
     let room = roomsState.find(el => el.roomId === socket.roomId)
@@ -607,8 +608,10 @@ io.on('connection', function (socket) {
       gamer = room.gamers.find(el => el.id === socket.id)
     }
     let card
+
     // Начало обработки пришедшего массива с ID карточек
     if (cardArr.length !== 0) {
+      // ДЛЯ ВСЕХ ЭФФЕКТОВ ИГРОКА
       for (const effect of gamer.effects) {
         // Если в пришедшем массиве нет уже существующего эффекта
         if (effect.step === effect.duration) {
@@ -632,7 +635,7 @@ io.on('connection', function (socket) {
         socket.name
         )
         card = cards.find(el => el.id === cardId)
-        // ИЗМЕНЕНИЕ КАРТОЧКИ
+        // ИЗМЕНЕНИЕ ОТ КАРТОЧКИ
         console.log('Массив карточек')
         gamer.data.money -= card.cost
 
@@ -666,36 +669,39 @@ io.on('connection', function (socket) {
 
         console.log('-------------------------------------')
         // ------------------------
-        let clients =
-        (gamer.data.organicCount * gamer.data.organicCoef +
-          gamer.data.contextCount * gamer.data.contextCoef +
-          gamer.data.socialsCount * gamer.data.socialsCoef +
-          gamer.data.smmCount * gamer.data.smmCoef +
-          gamer.data.straightCount * gamer.data.straightCoef) *
-        gamer.data.conversion
-        gamer.data.clients = Math.ceil(clients)
-        console.log('Клиенты:')
-        console.log(clients)
-        let averageCheck = gamer.data.averageCheck
-
-        let realCostAttract = gamer.data.realCostAttract
-        // let marginalCost = gamer.data.marginalCost
-
-        let commCircul = clients * averageCheck
-        gamer.data.commCircul = commCircul
-        let expenses = clients * realCostAttract
-        gamer.data.expenses = expenses
-        let result = commCircul - expenses
-        // gamer.data.money = gamer.data.money + Math.ceil(result);
-        gamer.data.money += room.budgetPerMonth
-        console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-        let resultPerClient = result / clients
-        gamer.data.moneyPerClient = Math.ceil(resultPerClient)
+        
       } // Конец цикла обработки пришедших карт
     } else {
       // FIX: Просто добавить деньги
       // gamer.data.money += room.budgetPerMonth
     }
+
+    let clients =
+    (gamer.data.organicCount * gamer.data.organicCoef +
+      gamer.data.contextCount * gamer.data.contextCoef +
+      gamer.data.socialsCount * gamer.data.socialsCoef +
+      gamer.data.smmCount * gamer.data.smmCoef +
+      gamer.data.straightCount * gamer.data.straightCoef) *
+    gamer.data.conversion
+    gamer.data.clients = Math.ceil(clients)
+    console.log('Клиенты:')
+    console.log(clients)
+    let averageCheck = gamer.data.averageCheck
+
+    let realCostAttract = gamer.data.realCostAttract
+    // let marginalCost = gamer.data.marginalCost
+
+    let commCircul = clients * averageCheck
+    gamer.data.commCircul = commCircul
+    let expenses = clients * realCostAttract
+    gamer.data.expenses = expenses
+    let result = commCircul - expenses
+    // gamer.data.money = gamer.data.money + Math.ceil(result);
+    gamer.data.money += room.budgetPerMonth
+    console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+    let resultPerClient = result / clients
+    gamer.data.moneyPerClient = Math.ceil(resultPerClient)
+
     let iter = 0
     
 
