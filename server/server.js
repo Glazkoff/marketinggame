@@ -793,6 +793,39 @@ io.on('connection', function (socket) {
         room.attackers = room.constAttackers
         //! !!!!!!!
         //! !!!
+
+        if (Math.floor(Math.random() * 10) % 2 === 0) {
+          let randomEvent = events[Math.floor(Math.random() * events.length)]
+          console.log('Событие')
+          console.log(randomEvent)
+          for (const eventChange of randomEvent.dataChange) {
+            if (eventChange.when === 0) {
+              for (const gamer of gamers) {
+                switch (eventChange.operation) {
+                  case '+':
+                    gamer.data[eventChange.param] += eventChange.change
+                    break
+                  case '-':
+                    gamer.data[eventChange.param] -= eventChange.change
+                    break
+                  case '*':
+                    gamer.data[eventChange.param] *= eventChange.change
+                    break
+                  default:
+                    console.log('Что-то не так с событием ' + card.id)
+                    break
+                }
+              }
+              console.log('Событием изменен параметр ' + eventChange.param + ' со знаком ' + eventChange.operation + ' на ' + eventChange.change)
+            } else {
+              for (const gamer of gamers) {
+                gamer.changes.push(eventChange)
+              }
+            }
+          }
+          socket.emit('gameEvent')
+          io.sockets.to(room.roomId).emit('gameEvent', randomEvent)
+        }
       }, 2000)
     }
     // СЮДА
@@ -852,38 +885,7 @@ io.on('connection', function (socket) {
 
       io.sockets.to(room.roomId).emit('finish', winners)
     } else {
-      if (Math.floor(Math.random() * 10) % 2 === 0) {
-        let randomEvent = events[Math.floor(Math.random() * events.length)]
-        console.log('Событие')
-        console.log(randomEvent)
-        for (const eventChange of randomEvent.dataChange) {
-          if (eventChange.when === 0) {
-            for (const gamer of gamers) {
-              switch (eventChange.operation) {
-                case '+':
-                  gamer.data[eventChange.param] += eventChange.change
-                  break
-                case '-':
-                  gamer.data[eventChange.param] -= eventChange.change
-                  break
-                case '*':
-                  gamer.data[eventChange.param] *= eventChange.change
-                  break
-                default:
-                  console.log('Что-то не так с событием ' + card.id)
-                  break
-              }
-            }
-            console.log('Событием изменен параметр ' + eventChange.param + ' со знаком ' + eventChange.operation + ' на ' + eventChange.change)
-          } else {
-            for (const gamer of gamers) {
-              gamer.changes.push(eventChange)
-            }
-          }
-        }
-        socket.emit('gameEvent')
-        io.sockets.to(room.roomId).emit('gameEvent', randomEvent)
-      }
+     
     }
     console.log('---ДАННЫЕ ИГРОКА---')
     console.log(gamer.data)
