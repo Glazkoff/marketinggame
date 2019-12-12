@@ -99,7 +99,7 @@ export default new Vuex.Store({
       // console.log("ПРИШЛИ ПАРАМЕТРЫ КОМНАТЫ");
       // console.log(roomParams);
 
-      if (state.roomParams.month == undefined) {
+      // if (state.roomParams.month == undefined) {
         state.roomParams = roomParams
         console.log('Тут')
         console.log(state.roomParams)
@@ -116,8 +116,9 @@ export default new Vuex.Store({
         console.log('result: ' + result)
         let resultPerClient = result / clients
         state.roomParams.moneyPerClient = Math.ceil(resultPerClient)
-      }
+      // }
       state.roomParams = roomParams
+
     },
     SOCKET_setGamers (state, obj) {
       state.gamers = [...obj.gamers]
@@ -166,5 +167,9 @@ export default new Vuex.Store({
         state.commit('SOCKET_setGameEvent', {})
       }, 7000)
     }
+    // SOCKET_setStartGame (state, roomParams) {
+    //   console.log('AAAAAACTIONS');
+      
+    // }
   }
 })

@@ -391,6 +391,9 @@ export default {
     }
   },
   computed: {
+    clients() {
+      return this.$store.state.roomParams.clients
+    },
     money() {
       return this.$store.state.roomParams.money
     },
