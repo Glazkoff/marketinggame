@@ -59,7 +59,7 @@
                 <div
                   class="btn btn-primary btn-lg btn-block mt-3"
                   style="cursor: pointer"
-                  @click="startGame"
+                  @click="startGame()"
                 >Начать</div>
               </div>
             </div>
@@ -316,6 +316,7 @@ export default {
   },
   created() {
     this.cards = this.shuffle(this.cards);
+    this.refreshCards = Object.assign(this.cards);
   },
   mounted() {},
   data() {
@@ -474,13 +475,20 @@ export default {
         let usedIndex = this.usedCards.findIndex(elem=>elem===cardIndex);
         console.log('ОДНОРАЗОВЫЕ КАРТОЧКИ');
         if (usedIndex !== -1) {
-
           let spliceIndex = this.refreshCards.findIndex(elem=>elem.id===cardIndex)
           this.refreshCards.splice(spliceIndex, 1)
         }
       }
       this.usedCards = [];
+      console.log('*');
+      console.log('*');
+      console.log('*');
+      console.log('*');
+      console.log('VOT TUT ZASADAAAAAAAAA');
+      console.log('*');
+      console.log(this.refreshCards);
       this.cards=Object.assign(this.refreshCards);
+      console.log(this.cards);
       // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;
       // this.$store.commit("changeMoney", change);
       console.log('-----Index of cards------');
@@ -499,7 +507,15 @@ export default {
       console.log("Стейт комнаты");
       let a = Object.assign(this.$store.state.roomParams);
       console.log(a);
+      console.log('/');
+      console.log('/');
+      console.log('/');
+      console.log('/');
+      console.log('DO ZASADY');
+      console.log('*');
       this.refreshCards = Object.assign(this.cards);
+      console.log(this.cards);
+      console.log(this.refreshCards);
       this.$socket.emit("startGame", a);
       this.$store.commit("SOCKET_calcAllParams");
       this.$store.state.isOwner = false;

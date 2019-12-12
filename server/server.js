@@ -759,6 +759,13 @@ io.on('connection', function (socket) {
     console.log(gamers)
     io.sockets.to(socket.roomId).emit('changeGamerStatus', socket.id)
     room.attackers--
+    console.log('*');
+    console.log('*');
+    console.log('*');
+    console.log('АТАКУЮЩИЕ');
+    console.log(room.attackers);
+    console.log('СОХРАНЁННЫЕ АТАКУЮЩИЕ');
+    console.log(room.constAttackers);  
     console.log('Игроки без хода: ' + room.attackers)
     if (room.attackers === 0) {
       room.roomState.month--
@@ -771,7 +778,6 @@ io.on('connection', function (socket) {
         io.sockets.to(socket.roomId).emit('doNextStep')
         room.attackers = room.constAttackers
         //! !!!!!!!
-
         //! !!!
       }, 2000)
     }
