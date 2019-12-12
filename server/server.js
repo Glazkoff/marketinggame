@@ -761,6 +761,7 @@ io.on('connection', function (socket) {
     room.attackers--
     console.log('Игроки без хода: ' + room.attackers)
     if (room.attackers === 0) {
+      room.roomState.month--
       console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
         for (const gamer of gamers) {
@@ -782,10 +783,11 @@ io.on('connection', function (socket) {
       }
     }
     
-    room.roomState.month--
+
     console.log('Месяц:')
     console.log(gamer.data.month)
-    gamer.data.month = gamer.data.month - 1
+    gamer.data.month--
+    
     if (room.roomState.month === 0) {
       for (const gamer of gamers) {
         io.sockets.to(gamer.id).emit('setStartGame', gamer.data)
