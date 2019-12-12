@@ -507,7 +507,7 @@ io.on('connection', function (socket) {
         socket.roomId = roomId
         socket.emit('setRoomNumber', roomId)
         io.sockets.to(roomId).emit('addMessage', {
-          name: 'Админ',
+          name: 'Admin',
           text: `Игрок ${oldNote.name} подключён к комнате ${roomId}!`
         })
       })
@@ -696,12 +696,8 @@ io.on('connection', function (socket) {
     let result = commCircul - expenses
     // gamer.data.money = gamer.data.money + Math.ceil(result);
     gamer.data.money += room.budgetPerMonth
-    console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+    // console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
     messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-    // io.sockets.to(gamer.id).emit('addMessage', {
-    //   name: 'Админ',
-    //   text: 'Обновлён параметр money со знаком + на ' + Math.ceil(result)
-    // })
 
     let resultPerClient = result / clients
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
@@ -777,11 +773,11 @@ io.on('connection', function (socket) {
     console.log('Игроки без хода: ' + room.attackers)
     if (room.attackers === 0) {
       room.roomState.month--
-      messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+      // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
       if (messageArr.length !== 0) {
         for (let index = 0; index < messageArr.length; index++) {
           io.sockets.to(gamer.id).emit('addMessage', {
-            name: 'Админ',
+            name: 'ОТДЕЛ АНАЛИТИКИ',
             text: messageArr[index]
           })
         }
