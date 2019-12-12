@@ -771,18 +771,18 @@ io.on('connection', function (socket) {
     console.log('СОХРАНЁННЫЕ АТАКУЮЩИЕ');
     console.log(room.constAttackers);  
     console.log('Игроки без хода: ' + room.attackers)
+    if (messageArr.length !== 0) {
+      for (let index = 0; index < messageArr.length; index++) {
+        io.sockets.to(gamer.id).emit('addMessage', {
+          name: 'ОТДЕЛ АНАЛИТИКИ',
+          text: messageArr[index]
+        })
+      }
+      messageArr = []
+    }
     if (room.attackers === 0) {
       room.roomState.month--
       // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-      if (messageArr.length !== 0) {
-        for (let index = 0; index < messageArr.length; index++) {
-          io.sockets.to(gamer.id).emit('addMessage', {
-            name: 'ОТДЕЛ АНАЛИТИКИ',
-            text: messageArr[index]
-          })
-        }
-      }
-
       console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
         for (const gamerUser of gamers) {
