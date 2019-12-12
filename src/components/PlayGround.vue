@@ -480,7 +480,7 @@ export default {
         }
       }
       this.usedCards = [];
-      this.cards=[...this.refreshCards];
+      this.cards=Object.assign(this.refreshCards);
       // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;
       // this.$store.commit("changeMoney", change);
       console.log('-----Index of cards------');
@@ -499,7 +499,7 @@ export default {
       console.log("Стейт комнаты");
       let a = Object.assign(this.$store.state.roomParams);
       console.log(a);
-      this.refreshCards = [...this.cards];
+      this.refreshCards = Object.assign(this.cards);
       this.$socket.emit("startGame", a);
       this.$store.commit("SOCKET_calcAllParams");
       this.$store.state.isOwner = false;
