@@ -507,7 +507,7 @@ io.on('connection', function (socket) {
         socket.roomId = roomId
         socket.emit('setRoomNumber', roomId)
         io.sockets.to(roomId).emit('addMessage', {
-          name: 'Admin',
+          name: 'Админ',
           text: `Игрок ${oldNote.name} подключён к комнате ${roomId}!`
         })
       })
@@ -672,10 +672,8 @@ io.on('connection', function (socket) {
         
       } // Конец цикла обработки пришедших карт
     } else {
-      // FIX: Просто добавить деньги
-      // gamer.data.money += room.budgetPerMonth
     }
-
+    let messageArr = []
     let clients =
     (gamer.data.organicCount * gamer.data.organicCoef +
       gamer.data.contextCount * gamer.data.contextCoef +
@@ -699,11 +697,16 @@ io.on('connection', function (socket) {
     // gamer.data.money = gamer.data.money + Math.ceil(result);
     gamer.data.money += room.budgetPerMonth
     console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+    messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+    // io.sockets.to(gamer.id).emit('addMessage', {
+    //   name: 'Админ',
+    //   text: 'Обновлён параметр money со знаком + на ' + Math.ceil(result)
+    // })
+
     let resultPerClient = result / clients
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
 
     let iter = 0
-    
 
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
@@ -712,6 +715,7 @@ io.on('connection', function (socket) {
         for (let index = 0; index < gamer.changes.length; index++) {
           if (gamer.changes[index].id === changing.id) {
             console.log('УДАЛЯЕТСЯ параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
+            messageArr.push('УДАЛЯЕТСЯ параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
             console.log('----!----')
             console.log(gamer.changes[index])
             console.log('---- ----')
@@ -733,13 +737,17 @@ io.on('connection', function (socket) {
               break
             default:
               console.log('Что-то не так с операцией карточки по ID ' + card.id)
+              messageArr.push('Что-то не так с операцией карточки по ID ' + card.id)
               break
           }
           console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
+          messageArr.push('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
         } else {
           console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+          messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
           for (let index = 0; index < gamer.changes.length; index++) {
             if (gamer.changes[index].id === changing.id) {
+              messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
               console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
               gamer.changes.splice(index, 1)
             }
