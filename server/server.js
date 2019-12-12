@@ -785,8 +785,8 @@ io.on('connection', function (socket) {
 
       console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
-        for (const gamer of gamers) {
-          io.sockets.to(gamer.id).emit('setStartGame', gamer.data)
+        for (const gamerUser of gamers) {
+          io.sockets.to(gamerUser.id).emit('setStartGame', gamerUser.data)
         }
         socket.emit('doNextStep')
         io.sockets.to(socket.roomId).emit('doNextStep')
@@ -800,16 +800,16 @@ io.on('connection', function (socket) {
           console.log(randomEvent)
           for (const eventChange of randomEvent.dataChange) {
             if (eventChange.when === 0) {
-              for (const gamer of gamers) {
+              for (const gamerPos of gamers) {
                 switch (eventChange.operation) {
                   case '+':
-                    gamer.data[eventChange.param] += eventChange.change
+                    gamerPos.data[eventChange.param] += eventChange.change
                     break
                   case '-':
-                    gamer.data[eventChange.param] -= eventChange.change
+                    gamerPos.data[eventChange.param] -= eventChange.change
                     break
                   case '*':
-                    gamer.data[eventChange.param] *= eventChange.change
+                    gamerPos.data[eventChange.param] *= eventChange.change
                     break
                   default:
                     console.log('Что-то не так с событием ' + card.id)
@@ -818,8 +818,8 @@ io.on('connection', function (socket) {
               }
               console.log('Событием изменен параметр ' + eventChange.param + ' со знаком ' + eventChange.operation + ' на ' + eventChange.change)
             } else {
-              for (const gamer of gamers) {
-                gamer.changes.push(eventChange)
+              for (const oneGamer of gamers) {
+                oneGamer.changes.push(eventChange)
               }
             }
           }
