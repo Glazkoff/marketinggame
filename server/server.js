@@ -755,6 +755,7 @@ io.on('connection', function (socket) {
     room.attackers--
     console.log('Игроки без хода: ' + room.attackers)
     if (room.attackers === 0) {
+      console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
         for (const gamer of gamers) {
           io.sockets.to(gamer.id).emit('setStartGame', gamer.data)
