@@ -3,7 +3,7 @@
     <div class="main-side" :style="{display: isFinish ? 'flex' : 'unset'}">
       <div class="pg-header">
         <h3 class="ml-1 mb-0">Комната #{{roomNumber}}</h3>
-        <router-link to="choose" class="mb-2 ml-1">Выйти из комнаты</router-link>
+        <router-link to="choose" class="mb-2 ml-1 mr-2">Выйти из комнаты</router-link>
       </div>
       <transition name="fade" mode="out-in">
         <PlayGround v-if="!isFinish"></PlayGround>
@@ -124,6 +124,18 @@ export default {
   height: 64px;
   background-color: #fff;
   box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+@media screen and (max-width: 320px) {
+  .pg-header {
+    flex-direction: row;
+    height: 40px;
+    justify-content: space-between;
+  }
+  #playground {
+    padding-top: 40px;
+  }
 }
 /* .sidebox {
 } */

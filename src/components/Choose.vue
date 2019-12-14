@@ -1,5 +1,5 @@
 <template>
-  <div class="card container col-lg-4 col-md-5 col-sm-7 col-xs-8 mt-5 p-4">
+  <div class="card container col-lg-4 col-md-5 col-sm-10 col-xs-8 mt-5 p-4">
     <h1 class="mb-1">Привет, {{gamerName}}!</h1>
     <router-link to="/">Сменить имя</router-link>
 
@@ -163,4 +163,15 @@ export default {
 </script>
 
 <style>
+@media screen and (max-width: 320px) {
+  .card.p-4 {
+    padding: 0.7rem !important;
+  }
+}
+@media screen and (max-width: 575px) {
+
+  .card.container {
+    border: 0px !important;
+  }
+}
 </style>

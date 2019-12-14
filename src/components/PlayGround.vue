@@ -83,7 +83,7 @@
         </div>
         <div class="gamer-round-data container h-100" v-if="!isStart">
           <div class="row h-100 justify-content-center align-items-start">
-            <div class="col-12">
+            <div class="col-12 data-wrap">
               <h4 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h4>
               <ul class="list-group col-12 offset-0 mt-3 w-100" id="main-data">
                 <ul class="list-group list-group-horizontal w-100">
@@ -847,4 +847,195 @@ export default {
 #main-data {
   padding-right: 0;
 }
+
+@media screen and (max-width: 1250px){
+  .list-group-item {
+    padding: 8px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+@media screen and (max-width: 1090px){
+  #splitScr {
+    grid-template-rows: 1fr !important;
+    grid-template-columns: 1fr !important;
+    position: relative;
+  }
+  .main-side {
+    grid-area: 1/1/2/2;
+    display: block;
+  }
+  .sideBox {
+    position: absolute;
+    grid-area: unset !important;
+    z-index: 200000;
+    background: #fff;
+    display: none;
+  }
+}
+@media screen and (max-width: 730px){
+
+  .list-group-item {
+    padding: 2px !important;
+    padding-left: 8px !important;
+    padding-right: 2px !important;
+  }
+}
+@media screen and (orientation: portrait) {
+  #playground {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 3fr 2fr 1fr;
+  }
+  #play-field {
+    grid-area: 1/1/2/3
+  }
+  #enemy-field {
+     grid-area: 3/1/4/2
+  }
+  #effects-field {
+    grid-area: 3/2/4/3
+  }
+  #card-field {
+    grid-area: 2/1/3/3
+  }
+}
+@media screen and (max-width: 640px){
+  #playground {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 3fr 2fr 1fr;
+  }
+  #play-field {
+    grid-area: 1/1/2/3
+  }
+  #enemy-field {
+     grid-area: 3/1/4/2
+  }
+  #effects-field {
+    grid-area: 3/2/4/3
+  }
+  #card-field {
+    grid-area: 2/1/3/3
+  }
+}
+@media screen and (max-width: 450px){ 
+  .list-group-item {
+    padding: 2px !important;
+    padding-left: 4px !important;
+    padding-right: 2px !important;
+  }
+      .data-wrap {
+      padding: 0 !important;
+      padding-left: 4px !important;
+      padding-right: 4px !important;
+    }
+        #nav {
+      display: none;
+    }
+    #view {
+      height: 100vh;
+    }
+        #playground {
+      max-height: 100vh;
+      height: 100vh;
+    }
+        #main-data {
+      font-size: 12px;
+      margin-top: 0px !important;
+    }
+    .badge h4 {
+      font-size: 18px;
+    }
+      .card-image {
+    height: 0;
+  }
+}
+@media screen and (max-width: 1100px) and (orientation: landscape) {
+  #nav {
+    display: none;
+  }
+        #view {
+      height: 100vh;
+    }
+        #playground {
+      max-height: 100vh;
+      height: 100vh;
+    }
+}
+@media (orientation: portrait) { 
+    #nav {
+    display: none;
+  }
+      #view {
+      height: 100vh;
+    }
+        #playground {
+      max-height: 100vh;
+      height: 100vh;
+    }
+}
+@media screen and (max-width: 320px) and (orientation: portrait) { 
+
+  .card-box {
+    min-width: 132px;
+  }
+
+   #playground {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 2.4fr 2fr 1.2fr;
+  }
+    #gamerlist h3 {
+      font-size: 16px;
+    }
+    .play-information {
+      /* margin: 0; */
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+
+
+    .main-side {
+      max-height: unset;
+    }
+
+    .play-information h4 {
+      font-size: 14px;
+      margin-top: 4px !important;
+      margin-bottom: 4px !important;
+    }
+
+    .data-wrap button {
+       font-size: 12px !important;
+margin-top: 2px !important;
+font-weight: bold;
+    }
+    .gray-block {
+      height: 0;
+    }
+    .card-head h6 {
+      font-size: 14px;
+      margin-bottom: 8px !important;
+      margin-top: 8px !important;
+    }
+    #effects-head {
+      height: 40px;
+    }
+    #effects-head h6 {
+      margin: 0 !important;
+    }
+    .card-text {
+      padding-top: 2px;
+      line-height: 16px;
+      margin-bottom: 0 !important;
+    }
+    ul.list-group {
+      overflow-x: hidden;
+    }
+    #effects-field #effectslist ul {
+      padding-top: 40px;
+    }
+    h3.card-text {
+      font-size: 22px;
+    }
+  }
 </style>

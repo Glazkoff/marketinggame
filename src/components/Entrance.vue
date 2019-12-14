@@ -1,5 +1,5 @@
 <template>
-  <div class="card container col-4 mt-5 p-4">
+  <div class="card container col-lg-4 col-md-6 col-sm-10 col-xl-4 mt-5 p-4">
     <h1 class="mb-4">Войдите в игру</h1>
     <form action @submit.prevent>
       <div class="form-group">
