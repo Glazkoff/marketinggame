@@ -607,6 +607,10 @@ io.on('connection', function (socket) {
       gamer = room.gamers.find(el => el.id === socket.id)
     }
     let card
+    io.sockets.to(gamer.id).emit('addMessage', {
+      name: 'Admin',
+      text: `Вы сделали ход!`
+    })
 
     // Начало обработки пришедшего массива с ID карточек
     if (cardArr.length !== 0) {
