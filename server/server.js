@@ -10,10 +10,10 @@ const server = app
   .listen(port, () => {
     console.log(`server running on port ${port}`)
   })
-  app.get(/.*/, function (req, res) {
-    res.sendFile(path.join(__dirname, '../dist/index.html'))
-  })
-  
+app.get(/.*/, function (req, res) {
+  res.sendFile(path.join(__dirname, '../dist/index.html'))
+})
+
 // app.use('/', serveStatic(path.join(__dirname, '/dist')))
 const io = require('socket.io')(server)
 let connections = []
@@ -546,7 +546,7 @@ io.on('connection', function (socket) {
       let gamers = []
       let attackers = 0
       for (const id of gamerIds) {
-        let findName;
+        let findName
         let nameFromConnected = connectedNames.find(el => el.id === id)
         if (nameFromConnected !== undefined) {
           findName = nameFromConnected.name
@@ -556,7 +556,7 @@ io.on('connection', function (socket) {
             isattacker: false
           })
         }
-        
+
         attackers++
         console.log(id + '---')
 
@@ -598,7 +598,6 @@ io.on('connection', function (socket) {
   // });
 
   socket.on('doStep', function (cardArr) {
-
     // если room.gamers!==undefined
     // Поиск комнаты
     let room = roomsState.find(el => el.roomId === socket.roomId)
@@ -669,7 +668,6 @@ io.on('connection', function (socket) {
 
         console.log('-------------------------------------')
         // ------------------------
-        
       } // Конец цикла обработки пришедших карт
     } else {
     }
@@ -763,13 +761,13 @@ io.on('connection', function (socket) {
     console.log(gamers)
     io.sockets.to(socket.roomId).emit('changeGamerStatus', socket.id)
     room.attackers--
-    console.log('*');
-    console.log('*');
-    console.log('*');
-    console.log('АТАКУЮЩИЕ');
-    console.log(room.attackers);
-    console.log('СОХРАНЁННЫЕ АТАКУЮЩИЕ');
-    console.log(room.constAttackers);  
+    console.log('*')
+    console.log('*')
+    console.log('*')
+    console.log('АТАКУЮЩИЕ')
+    console.log(room.attackers)
+    console.log('СОХРАНЁННЫЕ АТАКУЮЩИЕ')
+    console.log(room.constAttackers)
     console.log('Игроки без хода: ' + room.attackers)
     if (messageArr.length !== 0) {
       for (let index = 0; index < messageArr.length; index++) {
@@ -835,12 +833,11 @@ io.on('connection', function (socket) {
         changing.when--
       }
     }
-    
 
     console.log('Месяц:')
     console.log(gamer.data.month)
     gamer.data.month--
-    
+
     if (room.roomState.month === 0) {
       for (const gamer of gamers) {
         io.sockets.to(gamer.id).emit('setStartGame', gamer.data)
@@ -885,7 +882,7 @@ io.on('connection', function (socket) {
 
       io.sockets.to(room.roomId).emit('finish', winners)
     } else {
-     
+
     }
     console.log('---ДАННЫЕ ИГРОКА---')
     console.log(gamer.data)
@@ -904,6 +901,7 @@ io.on('connection', function (socket) {
     console.log(connectedNames)
   })
   socket.on('disconnect', function () {
+    this.messageArr = []
     connections.splice(connections.indexOf(socket.id), 1)
     let oldNote = connectedNames.findIndex(element => element.id === socket.id)
     if (oldNote !== -1) {
