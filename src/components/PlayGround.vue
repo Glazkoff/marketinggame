@@ -870,7 +870,11 @@ export default {
     grid-area: unset !important;
     z-index: 200000;
     background: #fff;
-    display: none;
+    box-shadow: 100px 0px 200px rgba(20, 20, 20, 0.8);
+    max-width: 300px;
+  }
+  .chat-btn {
+    display: block;
   }
 }
 @media screen and (max-width: 730px){

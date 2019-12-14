@@ -1,5 +1,8 @@
 <template>
-  <div class="sideBox">
+<transition name="fade">
+  <div class="sideBox" :class="{'chatOpened': chatOpened, 'chatClosed': !chatOpened}">
+    <div class="chat-btn" @click="transformChat()">
+    </div>
     <h2 id="chat" class="ml-2">Чат</h2>
     <!-- <div class="chatField"> -->
     <div class="messageField" id="messageField">
@@ -15,6 +18,7 @@
     </div>
     <SendBox></SendBox>
   </div>
+</transition>
 </template>
 <script>
 import SendBox from "@/components/SendBox.vue";
@@ -22,7 +26,9 @@ import SendBox from "@/components/SendBox.vue";
 export default {
   name: "Chat",
   data() {
-    return {};
+    return {
+      chatOpened: false
+    };
   },
   components: {
     SendBox
@@ -40,11 +46,37 @@ export default {
       return this.$store.state.messages;
     }
   },
-  methods: {}
+  methods: {
+    transformChat() {
+      this.chatOpened = !this.chatOpened
+    }
+  }
 };
 </script>
 
 <style>
+@media screen and (max-width: 1090px){
+  .chatOpened {
+    left: 0px;
+  }
+  .chatClosed {
+    left: -300px;
+    box-shadow: 0px 0px 0px rgba(0,0,0,.0) !important;
+  }
+}
+.chat-btn {
+  display: none;
+  width: 32px;
+  height: 80px;
+  position: absolute;
+  right: -24px;
+  top: calc(50% - 40px);
+  z-index: -200;
+  background-color: rgb(131, 131, 131);
+  border: 1px solid black;
+  border-radius: 8px;
+  /* opacity: 0.8; */
+}
 .adminMess {
   color: rgb(255, 50, 90);
 }
@@ -94,7 +126,7 @@ h2#chat {
 .sideBox {
   position: relative;
   height: 100%;
-  width: 100%;
+  width: 300px;
   max-width: 20vw;
   grid-area: 1/1/2/2;
   border-right: 1px solid gray;
@@ -104,6 +136,8 @@ h2#chat {
   justify-content: space-between;
   box-shadow: 2px 80px 2px rgba(0, 0, 0, 0.2);
   /* align-content: middle; */
+  transition: all 0.5s;
+  /* transition: left box-shadow 0.3s; */
 }
 .mess-block {
   max-width: 15vw;
