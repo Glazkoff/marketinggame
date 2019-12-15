@@ -874,7 +874,7 @@ export default {
     max-width: 300px;
   }
   .chat-btn {
-    display: block;
+    display: flex;
   }
 }
 @media screen and (max-width: 730px){
