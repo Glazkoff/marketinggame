@@ -904,10 +904,11 @@ io.on('connection', function (socket) {
     console.log('Подключенные имена:')
     console.log(connectedNames)
   })
-  socket.on('checkRoom', (id) => {
+  socket.on('checkRoom', function (id) {
     let check = false
     for (const roomState in roomsState) {
       if (roomState.roomId === id) {
+        console.log(roomState.roomId)
         check = true
         break
       } 
