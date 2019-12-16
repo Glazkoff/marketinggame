@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["about"],{"2b3c":function(t,e,n){},e76e:function(t,e,n){"use strict";var c=n("2b3c"),u=n.n(c);u.a},f820:function(t,e,n){"use strict";n.r(e);var c=function(){var t=this,e=t.$createElement;t._self._c;return t._m(0)},u=[function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"about"},[n("h1",[t._v("Это страница об игре и её правилах")])])}],a={},s=a,r=(n("e76e"),n("2877")),i=Object(r["a"])(s,c,u,!1,null,null,null);e["default"]=i.exports}}]);
+//# sourceMappingURL=about.42c9352c.js.map
