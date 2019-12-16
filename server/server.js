@@ -906,19 +906,23 @@ io.on('connection', function (socket) {
   })
   socket.on('checkRoom', function (id) {
     console.log(`Поиск комнаты с номером ${id}`)
+    console.log(connectedNames)
+    console.log(this.connectedNames)
     let check = false
-    for (const gamer in connectedNames) {
-      console.log(gamer.roomId)
-      if (+gamer.roomId === +id) {
-        check = true
-        console.log(`Комната найдена`)
-        break
+    setTimeout(() => {
+      for (const gamer in this.connectedNames) {
+        console.log(gamer.roomId)
+        if (+gamer.roomId === +id) {
+          check = true
+          console.log(`Комната найдена`)
+          break
+        }
       }
-    }
-    if (!check) {
-      console.log(`Комната не найдена`)
-      socket.emit('roomNotFound')
-    }
+      if (!check) {
+        console.log(`Комната не найдена`)
+        socket.emit('roomNotFound')
+      }
+    }, 2000)
   })
   socket.on('disconnect', function () {
     this.messageArr = []
