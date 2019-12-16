@@ -906,11 +906,15 @@ io.on('connection', function (socket) {
   })
   socket.on('checkRoom', function (id) {
     console.log(`Поиск комнаты с номером ${id}`)
+    console.log('cn');
     console.log(connectedNames)
+    console.log('this cn')
     console.log(this.connectedNames)
     let check = false
     setTimeout(() => {
-      for (const gamer in this.connectedNames) {
+      for (const gamer in connectedNames) {
+        console.log('gamer:');
+        console.log(gamer)
         console.log(gamer.roomId)
         if (+gamer.roomId === +id) {
           check = true
