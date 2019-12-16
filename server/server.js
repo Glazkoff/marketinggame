@@ -905,15 +905,18 @@ io.on('connection', function (socket) {
     console.log(connectedNames)
   })
   socket.on('checkRoom', function (id) {
+    console.log(`Поиск комнаты с номером ${id}`)
     let check = false
     for (const roomState in roomsState) {
       if (roomState.roomId === id) {
         console.log(roomState.roomId)
         check = true
+        console.log(`Комната найдена`)
         break
       } 
     }
     if (!check) {
+      console.log(`Комната не найдена`)
       socket.emit('roomNotFound')
     }
   })
