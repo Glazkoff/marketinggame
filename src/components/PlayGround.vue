@@ -583,6 +583,10 @@ export default {
 </script>
 
 <style>
+#main-data .list-group-item {
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+}
 .card-ml-0 {
   margin-left: 0;
 }

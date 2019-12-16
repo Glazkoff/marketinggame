@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from '../src/router'
 
 Vue.use(Vuex)
 
@@ -92,6 +93,9 @@ export default new Vuex.Store({
       if (state.roomParams.money !== undefined) {
         state.roomParams.money += change
       }
+    },
+    SOCKET_roomNotFound () {
+      router.push('/choose')
     },
     SOCKET_doNextStep (state) {
       state.stepDone = false

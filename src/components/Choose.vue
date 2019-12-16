@@ -131,6 +131,7 @@ export default {
       // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     joinGame() {
+      this.$socket.emit("checkRoom", this.roomIdJoin);
       this.$socket.emit("setRoom", this.roomIdJoin);
       console.log("//" + this.roomIdJoin);
       this.$router.push("main");

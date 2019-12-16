@@ -4,7 +4,7 @@
     <div class="chat-btn" @click="transformChat()" :class="{'bg-danger': chatOpened, 'bg-info': !chatOpened}">
       <transition name="fade">
         <img src="../assets/chat-icon.svg" alt="" class="chat-btn-icon" v-if="!chatOpened">
-        <img src="../assets/close-icon.svg" alt="" class="chat-btn-icon" v-if="chatOpened">       
+        <img src="../assets/close-icon.svg" alt="" class="chat-btn-icon" v-if="chatOpened">
       </transition>
        <div class="chat-count" v-if="!messCountIsVoid && !chatOpened">
          <span>{{unreadMessCount}}</span>
@@ -40,7 +40,6 @@ export default {
     };
   },
   created() {
-
     this.$store.watch((state, getters) => state.messages,
       (newValue, oldValue) => {
         if (!this.chatOpened) {

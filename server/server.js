@@ -904,6 +904,18 @@ io.on('connection', function (socket) {
     console.log('Подключенные имена:')
     console.log(connectedNames)
   })
+  socket.on('checkRoom', (id) => {
+    let check = false
+    for (const roomState in roomsState) {
+      if (roomState.roomId === id) {
+        check = true
+        break
+      } 
+    }
+    if (!check) {
+      socket.emit('roomNotFound')
+    }
+  })
   socket.on('disconnect', function () {
     this.messageArr = []
     connections.splice(connections.indexOf(socket.id), 1)
