@@ -111,21 +111,13 @@ export default {
     }
   },
   created() {
-    // this.$store.commit('resetData');
-    // console.log(Object.assign(this.stateFirstParams));
     this.roomParams = Object.assign(this.stateFirstParams)
   },
   beforeMount() {
-    // this.$store.commit('resetData');
-    // this.roomParams = this.stateFirstParams
   },
   beforeRouteUpdate (to, from, next) {
-    // this.$store.commit('resetData');
-    // this.roomParams = this.stateFirstParams
   },
   mounted() {
-    // this.$store.commit('resetData');
-    // this.roomParams = this.$store.state.firstRoomParams;
   },
   methods: {
     createGame() {
@@ -140,22 +132,18 @@ export default {
       this.$router.push("main");
     },
     reset() {
-      console.log('!!reset!!');
-      // this.$store.commit('resetData');
       this.roomParams = Object.assign(this.stateFirstParams);
       console.log(this.roomParams);
-      
-      // this.roomParams = this.stateFirstParams;
     }
   },
   beforeRouteEnter(to, from, next) {
     // if (vm.$store.state.roomId == -1) {
     next(function(vm) {
-      // if (vm.$store.state.gamerName == "") {
-      //   next("/");
-      // } else {
-      //   return true;
-      // }
+      if (vm.$store.state.gamerName == "") {
+        next("/");
+      } else {
+        return true;
+      }
       return true;
     });
   }

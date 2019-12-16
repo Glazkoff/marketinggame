@@ -46,12 +46,15 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(function(vm) {
       console.log(vm.$store.state.roomId);
-      // if (vm.$store.state.roomId == -1) {
-      //   next("/");
-      // } else {
-      //   return true;
-      // }
-      return true
+      let t = setTimeout(() => {
+        if (vm.$store.state.roomId == -1) {
+          next("/choose 1");
+        } else {
+          return true;
+        }
+      }, 2000);
+
+      // return true
     });
   },
   // ######################################################
