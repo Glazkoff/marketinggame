@@ -21,6 +21,7 @@
       <label
         class="btn btn-lg"
         :class="{'btn-outline-info': this.toggle!='create', 'btn-info': this.toggle=='create'}"
+        @click="reset()"
       >
         <input
           type="radio"
@@ -29,7 +30,7 @@
           name="toggle"
           id="toggle2"
           autocomplete="off"
-          @click="reset"
+      
         />Создать комнату
       </label>
     </div>
@@ -104,27 +105,30 @@ export default {
   },
   computed: {
     gamerName() {
-      return this.$store.state.gamerName;
+      return this.$store.state.gamerName
     },
     stateFirstParams() {
-      return this.$store.state.firstRoomParams;
+      return this.$store.state.firstRoomParams
     }
   },
   created() {
-    this.roomParams = Object.assign(this.stateFirstParams)
+    // this.roomParams = Object.assign(this.stateFirstParams)
   },
   beforeMount() {
   },
   beforeRouteUpdate (to, from, next) {
+    
   },
   mounted() {
+    // this.roomParams = Object.assign(this.stateFirstParams)
   },
   methods: {
     createGame() {
-      this.$socket.emit("createRoom", "");
-      this.$router.push("main");
+      this.$socket.emit("createRoom")
+      this.$router.push("main")
       this.$store.state.isOwner = true;
-      this.$store.state.roomParams = Object.assign(this.roomParams);
+      this.$store.commit('copyData', this.roomParams)
+      // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     joinGame() {
       this.$socket.emit("setRoom", this.roomIdJoin);
@@ -132,8 +136,13 @@ export default {
       this.$router.push("main");
     },
     reset() {
+      this.$store.commit('resetData')
+      this.roomParams = {};
       this.roomParams = Object.assign(this.stateFirstParams);
-      console.log(this.roomParams);
+      console.log('RESET FROM BTN')
+      console.log(this.roomParams)
+      console.log('FIRST PARAMS');
+      console.log(Object.assign(this.stateFirstParams))
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -157,7 +166,6 @@ export default {
   }
 }
 @media screen and (max-width: 575px) {
-
   .card.container {
     border: 0px !important;
   }

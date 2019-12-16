@@ -14,6 +14,7 @@ export default new Vuex.Store({
     roomId: -1,
     roomParams: {},
     firstRoomParams: {
+      first: true,
       preset: true,
       month: 3,
       money: 150000,
@@ -54,7 +55,21 @@ export default new Vuex.Store({
       state.isFinish = false
       state.stepDone = false
       state.roomId = -1
-      state.roomParams = Object.assign(state.firstRoomParams)
+      // state.roomParams = Object.assign(state.firstRoomParams)
+      state.roomParams = {}
+      for (var key in state.firstRoomParams) {
+        state.roomParams[key] = state.firstRoomParams[key]
+      }
+    },
+    copyData (state, data) {
+      state.roomParams = {}
+      for (var key in data) {
+        state.roomParams[key] = data[key]
+      }
+    },
+    doAnimation (state, data) {
+      state.roomParams.money++
+      state.roomParams.money--
     },
     setName (state, name) {
       state.gamerName = name

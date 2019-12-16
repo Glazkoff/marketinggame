@@ -828,7 +828,7 @@ io.on('connection', function (socket) {
           socket.emit('gameEvent')
           io.sockets.to(room.roomId).emit('gameEvent', randomEvent)
         }
-      }, 2000)
+      }, 7000)
     }
     // СЮДА
 

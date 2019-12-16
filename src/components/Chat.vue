@@ -14,10 +14,10 @@
     <!-- <div class="chatField"> -->
     <div class="messageField" id="messageField">
       <div class="messageBox">
-        <div class="message" v-for="(mess, count) in messages" :key="count">
+        <div class="message" v-for="(mess, count) in messages" :key="count" :class="{adminBg: mess.name=='Admin'}">
           <div class="avatar"></div>
           <div class="mess-block">
-            <div class="nickname" v-bind:class="{adminMess: mess.name=='Admin'}">{{mess.name}}</div>
+            <div class="nickname" :class="{adminMess: mess.name=='Admin'}">{{mess.name}}</div>
             <div class="messText">{{mess.text}}</div>
           </div>
         </div>
@@ -84,6 +84,9 @@ export default {
 </script>
 
 <style>
+.adminBg {
+  background: rgba(226, 226, 226, 0.329)
+}
 .chat-count {
   min-width: 20px;
   height: 20px;

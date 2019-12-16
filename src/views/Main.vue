@@ -40,6 +40,7 @@ export default {
       this.$store.state.isOwner = false;
       this.$store.state.isFinish = false;
       this.$store.commit("SOCKET_doNextStep");
+      this.$store.commit('resetData')
     }
   },
   // ################  НЕ УДАЛЯТЬ  ###############

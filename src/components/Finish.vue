@@ -176,11 +176,11 @@ export default {
   name: "Finish",
   methods: {},
   computed: {
-    gamerRoomParams() {
-      return this.$store.state.roomParams;
+    gamerRoomParams () {
+      return this.$store.state.roomParams
     },
-    gamerName() {
-      return this.$store.state.gamerName;
+    gamerName () {
+      return this.$store.state.gamerName
     },
 
     isSecondPosition() {

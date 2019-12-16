@@ -93,7 +93,6 @@
                 >
                   Общий бюджет
                   <span class="badge badge-primary badge-pill">
-                    <!-- <h4>{{gamerParams.money}} ₽</h4> -->
                     <h4>
                     <number
                       class="bold transition"
@@ -195,10 +194,6 @@
                     :class="{'badge-danger': (Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients))<0}">{{Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients) }} ₽</span>
                   </li>
                 </ul>
-                <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Прочие параметры
-                  <span class="badge badge-primary badge-pill">{{animatedNumber}}</span>
-                </li> -->
               </ul>
               <button class="btn btn-success mt-2 w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
             </div>
@@ -318,8 +313,8 @@ export default {
     this.cards = this.shuffle(this.cards);
     // this.refreshCards = Object.assign(this.cards);
     this.refreshCards = [...this.cards];
+    this.$store.commit('doAnimation')
   },
-  mounted() {},
   data() {
     return {
       usedCards: [],
@@ -381,15 +376,17 @@ export default {
   },
   mounted() {
     this.number = this.$store.state.roomParams.money;
+    this.$store.commit('doAnimation')
   },
   watch: {
     number: function(newValue) {
       TweenLite.to(this.$data, 1, { tweenedNumber: newValue });
     },
-    money: function(newValue) {
+    money: function (newValue) {
       let a = setTimeout(() => {
-        this.playAnimation();
-      }, 50);
+        this.playAnimation()
+        // this.$store.commit('doAnimation')
+      }, 50)
     }
   },
   computed: {
@@ -439,7 +436,13 @@ export default {
   },
   methods: {
     playAnimation() {
-      this.$refs.number1.play()
+      if (this.$refs.number1 !== undefined) {
+        this.$refs.number1.play()
+        setTimeout(() => {
+          this.$refs.number1.play()
+        }, 100);
+      }
+      this.$store.commit('doAnimation')
     },
     isLastEffectStage(id) {
       let effectId = this.effects.findIndex(elem=>elem.id===id);
@@ -481,28 +484,19 @@ export default {
         }
       }
       this.usedCards = [];
-      console.log('*');
-      console.log('*');
-      console.log('*');
-      console.log('*');
-      console.log('VOT TUT ZASADAAAAAAAAA');
-      console.log('*');
       console.log(this.refreshCards);
-      this.cards=[...this.refreshCards];
+      this.cards = [...this.refreshCards];
       console.log(this.cards);
-      // let change = -this.cards[this.cards.findIndex(elem=>{return elem.id==index})].cost;
-      // this.$store.commit("changeMoney", change);
       console.log('-----Index of cards------');
       console.log(this.usedCards);
-      
-
     },
     dropFromBtn(index) {
       this.usedCards.push(this.cards[index].id);
       // this.makeStep(this.cards[index].id);
       let change = -this.cards[index].cost;
       this.$store.commit("changeMoney", change);
-        this.cards.splice(index, 1);
+      this.cards.splice(index, 1);
+      this.playAnimation()
     },
     startGame() {
       console.log("Стейт комнаты");
@@ -521,7 +515,7 @@ export default {
       this.$store.commit("SOCKET_calcAllParams");
       this.$store.state.isOwner = false;
       this.$store.state.isStart = false;
-  
+      this.playAnimation()
     },
     beforeEnter: function(el) {
       console.log("befenterhook");
@@ -534,6 +528,7 @@ export default {
       el.style.opacity = 0;
       el.style.height = 0;
       console.log("leavehook");
+      this.$store.commit('doAnimation')
     },
     altdrop(e) {
       e.preventDefault();
@@ -556,6 +551,7 @@ export default {
         }
       }
       this.dragnode = undefined;
+      this.playAnimation()
     },
     altdragstart(e) {
       e.dataTransfer.effectAllowed = "move";
@@ -630,19 +626,6 @@ export default {
   color: #fff;
   z-index: 1000;
 }
-
-/* .cardwrap-enter-active,
-.cardwrap-leave-active {
-  transition: all 1s;
-}
-.cardwrap-enter, .cardwrap-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
-}
-.cardwrap-enter-to,
-.cardwrap-leave {
-  opacity: 1;
-} */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.6s;
@@ -741,8 +724,6 @@ export default {
   height: 100%;
   transition: all 0.4s;
   max-height: 100%;
-  /* transition: all 0.5s;v -   */
-  
 }
 
 .card-box button {
@@ -752,8 +733,6 @@ export default {
 }
 
 .card-head {
-  /* padding-top: 4px; */
-  /* display: block; */
   height: 30%;
   box-sizing: border-box;
   margin-bottom: 4px;
@@ -769,12 +748,7 @@ export default {
 .card-box {
   box-shadow: -1px 4px 3px rgba(0,0,0,.4); 
   position: relative;
-  /* padding-left: 3px; */
-  /* padding-right: 3px; */
-  /* max-height: 100%; */
-  /* overflow-y: hidden; */
   transition: all 0.4s;
-  /* width: 160px; */
   max-width: 220px;
   width: 30%;
   min-width: 168px;
@@ -792,7 +766,6 @@ export default {
   background-color: rgba(0, 0, 0, 0.3);
   width: 80%;
   height: 20%;
-  /* min-height: 60px; */
   margin: 0 auto;
 }
 
@@ -804,7 +777,7 @@ export default {
 }
 
 #effects-field {
-    background-color: rgba(18, 202, 1, 0.438);
+  background-color: rgba(18, 202, 1, 0.438);
   grid-area: 2/2/3/3;
   height: 100%;
   min-height: 100%;
@@ -873,12 +846,14 @@ export default {
     box-shadow: 100px 0px 200px rgba(20, 20, 20, 0.8);
     max-width: 300px;
   }
+  .mess-block {
+    max-width: unset;
+  }
   .chat-btn {
     display: flex;
   }
 }
 @media screen and (max-width: 730px){
-
   .list-group-item {
     padding: 2px !important;
     padding-left: 8px !important;
@@ -996,8 +971,6 @@ export default {
       height: 100%;
       border-radius: 0;
     }
-
-
     .main-side {
       max-height: unset;
     }
@@ -1007,7 +980,6 @@ export default {
       margin-top: 4px !important;
       margin-bottom: 4px !important;
     }
-
     .data-wrap button {
        font-size: 12px !important;
 margin-top: 2px !important;
