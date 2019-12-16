@@ -906,10 +906,11 @@ io.on('connection', function (socket) {
   })
   socket.on('checkRoom', function (id) {
     console.log(`Поиск комнаты с номером ${id}`)
+    console.log(roomsState);
     let check = false
     for (const roomState in roomsState) {
+      console.log(roomState.roomId)
       if (roomState.roomId === id) {
-        console.log(roomState.roomId)
         check = true
         console.log(`Комната найдена`)
         break
