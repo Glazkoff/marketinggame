@@ -908,12 +908,10 @@ io.on('connection', function (socket) {
     console.log(`Поиск комнаты с номером ${id}`)
     console.log('cn');
     console.log(connectedNames)
-    console.log('this cn')
-    console.log(this.connectedNames)
     let check = false
     setTimeout(() => {
-      for (const gamer in connectedNames) {
-        console.log('gamer:');
+      for (const gamer of connectedNames) {
+        console.log('gamer:')
         console.log(gamer)
         console.log(gamer.roomId)
         if (+gamer.roomId === +id) {
