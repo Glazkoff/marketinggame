@@ -909,7 +909,7 @@ io.on('connection', function (socket) {
     let check = false
     for (const gamer in connectedNames) {
       console.log(gamer.roomId)
-      if (gamer.roomId === id) {
+      if (+gamer.roomId === +id) {
         check = true
         console.log(`Комната найдена`)
         break
