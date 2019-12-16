@@ -102,6 +102,9 @@ export default {
   font-weight: bold;
 }
 @media screen and (max-width: 1090px){
+  .mess-block {
+    max-width: unset;
+  }
   .chatOpened {
     left: 0px;
   }
