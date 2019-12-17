@@ -583,14 +583,8 @@ io.on('connection', function (socket) {
     let gamerNamesObj = {
       gamers: gamerNames
     }
-    // obj.message = "smth";
     io.sockets.to(socket.roomId).emit('setGamers', gamerNamesObj)
     socket.to(socket.roomId).broadcast.emit('setStartGame', obj)
-    // for (const id of gamerIds) {
-
-    // socket.to(socket.roomId).broadcast.emit("calcAllParams");
-
-    // }
   })
 
   // socket.on('typing', function () {
@@ -689,17 +683,14 @@ io.on('connection', function (socket) {
     let averageCheck = gamer.data.averageCheck
 
     let realCostAttract = gamer.data.realCostAttract
-    // let marginalCost = gamer.data.marginalCost
 
     let commCircul = clients * averageCheck
     gamer.data.commCircul = commCircul
     let expenses = clients * realCostAttract
     gamer.data.expenses = expenses
     let result = commCircul - expenses
-    // gamer.data.money = gamer.data.money + Math.ceil(result);
     gamer.data.money += room.budgetPerMonth
     console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-    // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
 
     let resultPerClient = result / clients
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
@@ -931,7 +922,6 @@ io.on('connection', function (socket) {
     connections.splice(connections.indexOf(socket.id), 1)
     let oldNote = connectedNames.findIndex(element => element.id === socket.id)
     if (oldNote !== -1) {
-      // console.log();
       if (connectedNames[oldNote].roomId !== -1) {
         io.sockets.to(socket.roomId).emit('addMessage', {
           name: 'Admin',

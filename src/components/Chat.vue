@@ -11,7 +11,6 @@
         </div>
     </div>
     <h2 id="chat" class="ml-2">Чат</h2>
-    <!-- <div class="chatField"> -->
     <div class="messageField" id="messageField">
       <div class="messageBox">
         <div class="message" v-for="(mess, count) in messages" :key="count" :class="{adminBg: mess.name=='Admin'}">
@@ -32,14 +31,14 @@ import SendBox from "@/components/SendBox.vue";
 
 export default {
   name: "Chat",
-  data() {
+  data () {
     return {
       chatOpened: false,
       unreadMessCount: 0,
       readCount: 0
-    };
+    }
   },
-  created() {
+  created () {
     this.$store.watch((state, getters) => state.messages,
       (newValue, oldValue) => {
         if (!this.chatOpened) {
@@ -55,8 +54,6 @@ export default {
   },
   computed: {
     messages() {
-      // let messList = document.querySelector("#messageField");
-      // messList.scrollTop = messList.scrollHeight + 150;
       setTimeout(() => {
         let messList = document.querySelector("#messageField");
         if (messList !== null) {
@@ -111,7 +108,6 @@ export default {
     left: 0px;
   }
   .chatOpened .chat-btn {
-    /* background: #dc3545; */
     border-radius: 0;
   }
   .chatClosed {
@@ -129,7 +125,6 @@ export default {
   top: calc(50% - 20px);
   z-index: -200;
   background-color: #F8F9FA;
-  /* border: 1px solid black; */
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
   border-radius: 8px;
 }
@@ -173,17 +168,13 @@ h2#chat {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
 .messageField {
-  /* min-height: calc(100% - 70px);*/
   min-height: calc(100vh - 150px);
   max-height: calc(100vh - 150px);
-  /* height: auto; */
   overflow-y: scroll;
   margin-bottom: 70px;
   overflow-x: auto;
 }
 .chatField {
-  /* min-height: calc(90vh - 56px);*/
-  /* height: calc(90vh - 140px); */
   height: auto;
 }
 .sideBox {
@@ -195,12 +186,9 @@ h2#chat {
   border-right: 1px solid gray;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
   justify-content: space-between;
   box-shadow: 2px 80px 2px rgba(0, 0, 0, 0.2);
-  /* align-content: middle; */
   transition: all 0.5s;
-  /* transition: left box-shadow 0.3s; */
 }
 .mess-block {
   max-width: 15vw;
@@ -211,7 +199,6 @@ h2#chat {
 .message {
   display: grid;
   grid-template-columns: 1fr 5fr;
-  /* grid-template-columns: 1fr; */
   grid-template-rows: 1fr;
 }
 .nickname {
