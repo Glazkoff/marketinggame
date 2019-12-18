@@ -180,7 +180,7 @@ h2#chat {
 .sideBox {
   position: relative;
   height: 100%;
-  width: 300px;
+  /* width: 300px; */
   max-width: 20vw;
   grid-area: 1/1/2/2;
   border-right: 1px solid gray;

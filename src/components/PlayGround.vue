@@ -82,8 +82,8 @@
           </div>
         </div>
         <div class="gamer-round-data container h-100" v-if="!isStart">
-          <div class="row h-100 justify-content-center align-items-start">
-            <div class="col-12 data-wrap">
+          <div class="row h-100 justify-content-center align-items-start d-flex">
+            <div class="col-12 data-wrap" style="margin: auto auto;">
               <div class="row">
                 <div class="col-5 d-flex align-content-center" style="vertical-align: middle">
                   <h4 class="mb-0 d-block">Сейчас у вас ({{gamerName}}) есть:</h4>
@@ -121,120 +121,7 @@
                 </div>
               </div>
               <DataTable></DataTable>
-<!-- -------------------СТАРАЯ ТАБЛИЦА ------------------------------------------ -->
-              <!-- <h4 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h4>
-              <ul class="list-group col-12 offset-0 mt-3 w-100" id="main-data">
-                <ul class="list-group list-group-horizontal w-100">
-                  <li
-                  class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
-                  style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
-                >
-                  Общий бюджет
-                  <span class="badge badge-primary badge-pill">
-                    <h4>
-                    <number
-                      class="bold transition"
-                      animationPaused
-                      ref="number1"
-                      :to="gamerParams.money"
-                      :duration="1.1"
-                      @click="playAnimation"
-                      easing="Power4.easeOut"/>
-                       ₽ </h4>
-                  </span>
-                </li>
-                <li
-                  class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
-                >
-                  Месяц
-                  <span class="badge badge-primary badge-pill">
-                    <h4>{{firstRoomParams.month - gamerParams.month+1}} из
-                      {{firstRoomParams.month}}</h4>
-                  </span>
-                </li>
-                </ul>
-                
-                <ul class="list-group list-group-horizontal w-100">
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Трафик:
-                    <span class="badge badge-primary badge-pill">
-                      {{Math.ceil(gamerParams.organicCount+gamerParams.contextCount+gamerParams.socialsCount+gamerParams.smmCount+gamerParams.straightCount)}} чел.
-                    </span>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Клиенты:
-                    <span class="badge badge-primary badge-pill">{{Math.ceil(gamerParams.clients)}} чел.</span>
-                  </li>
-                </ul>
-                
-                <ul class="list-group list-group-horizontal w-100">
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Конверсия:
-                    <span
-                      class="badge badge-primary badge-pill"
-                      :class="{'badge-danger': (gamerParams.conversion*100)<0}"
-                    >{{gamerParams.conversion*100}} %</span>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Товарооборот:
-                    <span
-                      class="badge badge-primary badge-pill"
-                    >{{Math.ceil(gamerParams.commCircul)}} ₽</span>
-                  </li>
-                  
-                </ul>
-                <ul class="list-group list-group-horizontal w-100">
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Средний чек:
-                    <span class="badge badge-primary badge-pill">
-                      {{Math.ceil(gamerParams.averageCheck)}} ₽
-                    </span>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center w-50"
-                  >
-                    Реальная стоимость привлечения:
-                    <span class="badge badge-primary badge-pill">{{Math.ceil(gamerParams.realCostAttract)}} ₽</span>
-                  </li>
-                </ul>
-                <ul class="list-group list-group-horizontal w-100">
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center col-4"
-                  >
-                    Затраты:
-                    <span class="badge badge-primary badge-pill">
-                      {{Math.ceil(gamerParams.realCostAttract * gamerParams.clients)}} ₽
-                    </span>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center col-4"
-                  >
-                    Доход:
-                    <span class="badge badge-primary badge-pill"
-                    :class="{'badge-danger': (Math.ceil(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients))<0}"
-                    >{{Math.ceil(gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)}} ₽</span>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-items-center col-4"
-                  >
-                    Доход на клиента:
-                    <span class="badge badge-primary badge-pill"
-                    :class="{'badge-danger': (Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients))<0}">{{Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients) }} ₽</span>
-                  </li>
-                </ul>
-              </ul> -->
-<!-- -------------------СТАРАЯ ТАБЛИЦА ------------------------------------------ -->
-              <button class="btn btn-success w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
+              <button class="btn btn-success w-100 mt-1 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
             </div>
             
           </div>

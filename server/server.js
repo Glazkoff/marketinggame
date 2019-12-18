@@ -712,7 +712,7 @@ io.on('connection', function (socket) {
           }
         }
       }
-      if ((changing.when === 1)) {
+      if ((changing.when === 0)) {
         if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7)) {
           switch (changing.operation) {
             case '+':
