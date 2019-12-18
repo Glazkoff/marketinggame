@@ -177,7 +177,9 @@ export default {
   thead tr th {
     text-align: center;
   }
-
+.table {
+  margin-bottom: 0 !important;
+}
   .table th,
   .table td {
     padding: 0.2rem !important;
@@ -192,6 +194,6 @@ export default {
 
   .table tr:last-child td,
   .table tr:last-child th[scope="row"] {
-    padding-top: 1.5rem;
+    padding-top: 0.5rem !important;
   }
 </style>

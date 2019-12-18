@@ -84,6 +84,42 @@
         <div class="gamer-round-data container h-100" v-if="!isStart">
           <div class="row h-100 justify-content-center align-items-start">
             <div class="col-12 data-wrap">
+              <div class="row">
+                <div class="col-5 d-flex align-content-center" style="vertical-align: middle">
+                  <h4 class="mb-0 d-block">Сейчас у вас ({{gamerName}}) есть:</h4>
+                </div>
+                <div class="col-7 data-group">
+                  <ul class="list-group list-group-horizontal w-100">
+                    <li
+                    class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                    style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
+                    >
+                    Бюджет
+                    <span class="badge badge-primary badge-pill">
+                      <h4>
+                      <number
+                        class="bold transition"
+                        animationPaused
+                        ref="number1"
+                        :to="gamerParams.money"
+                        :duration="1.1"
+                        @click="playAnimation"
+                        easing="Power4.easeOut"/>
+                        ₽ </h4>
+                    </span>
+                  </li>
+                  <li
+                    class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                  >
+                    Месяц
+                    <span class="badge badge-primary badge-pill">
+                      <h4>{{firstRoomParams.month - gamerParams.month+1}} из
+                        {{firstRoomParams.month}}</h4>
+                    </span>
+                  </li>
+                </ul>
+                </div>
+              </div>
               <DataTable></DataTable>
 <!-- -------------------СТАРАЯ ТАБЛИЦА ------------------------------------------ -->
               <!-- <h4 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h4>
@@ -198,7 +234,7 @@
                 </ul>
               </ul> -->
 <!-- -------------------СТАРАЯ ТАБЛИЦА ------------------------------------------ -->
-              <button class="btn btn-success mt-2 w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
+              <button class="btn btn-success w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
             </div>
             
           </div>
@@ -827,7 +863,12 @@ export default {
 #main-data {
   padding-right: 0;
 }
-
+.data-group .list-group-horizontal .list-group-item {
+  padding: 0.1rem 0.5rem;
+}
+.data-group .list-group-horizontal .list-group-item h4 {
+  margin-bottom: 0;
+}
 @media screen and (max-width: 1250px){
   .list-group-item {
     padding: 8px !important;

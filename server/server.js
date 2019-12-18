@@ -700,7 +700,7 @@ io.on('connection', function (socket) {
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
-      if ((indexEffArr === -1)) {
+      if ((indexEffArr === -1) && (changing.id !== 3) && (changing.id !== 7)) {
         for (let index = 0; index < gamer.changes.length; index++) {
           if (gamer.changes[index].id === changing.id) {
             console.log('УДАЛЯЕТСЯ параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
@@ -898,7 +898,7 @@ io.on('connection', function (socket) {
   })
   socket.on('checkRoom', function (id) {
     console.log(`Поиск комнаты с номером ${id}`)
-    console.log('cn');
+    console.log('cn')
     console.log(connectedNames)
     let check = false
     setTimeout(() => {
