@@ -778,15 +778,6 @@ io.on('connection', function (socket) {
       // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
       console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
-        for (const gamerUser of gamers) {
-          io.sockets.to(gamerUser.id).emit('setStartGame', gamerUser.data)
-        }
-        socket.emit('doNextStep')
-        io.sockets.to(socket.roomId).emit('doNextStep')
-        room.attackers = room.constAttackers
-        //! !!!!!!!
-        //! !!!
-
         if (Math.floor(Math.random() * 10) % 2 === 0) {
           let randomEvent = events[Math.floor(Math.random() * events.length)]
           console.log('Событие')
@@ -823,6 +814,12 @@ io.on('connection', function (socket) {
             text: `${randomEvent.description}`
           })
         }
+        for (const gamerUser of gamers) {
+          io.sockets.to(gamerUser.id).emit('setStartGame', gamerUser.data)
+        }
+        socket.emit('doNextStep')
+        io.sockets.to(socket.roomId).emit('doNextStep')
+        room.attackers = room.constAttackers
       }, 1000)
     }
     // СЮДА
