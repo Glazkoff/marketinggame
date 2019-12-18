@@ -691,14 +691,11 @@ io.on('connection', function (socket) {
     let result = commCircul - expenses
     gamer.data.money += room.budgetPerMonth
     console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-
+    messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
     let resultPerClient = result / clients
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
 
     let iter = 0
-    console.log('¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬')
-    console.log(gamer.changes)
-    console.log('¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬')  
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
@@ -714,6 +711,7 @@ io.on('connection', function (socket) {
           }
         }
       }
+      // ***********************************************************************
       if ((changing.when === 1)) {
         if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7)) {
           switch (changing.operation) {
@@ -733,6 +731,11 @@ io.on('connection', function (socket) {
           }
           console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
           messageArr.push('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
+          let indForDelete = gamer.changes.findIndex(elem => { return (elem.id == changing.id) && (elem.change == changing.change) && (elem.param == changing.param) })
+          if (indForDelete !== -1) {
+            gamer.changes.splice(indForDelete, 1)
+            console.log('Удалилась позиция ' + indForDelete)
+          }
         } else {
           console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
           messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
@@ -749,6 +752,7 @@ io.on('connection', function (socket) {
         iter++
       }
     }
+    //* **************************************************************
     console.log('ИЗМЕНЕНИЯ ИГРОКА')
     console.log(gamer.changes)
     // Конец обработки пришедшего массива
@@ -775,9 +779,10 @@ io.on('connection', function (socket) {
       }
       messageArr = []
     }
+
+    // Если все в комнате завершили ход
     if (room.attackers === 0) {
       room.roomState.month--
-      // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
       console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
         if (Math.floor(Math.random() * 10) % 2 === 0) {
@@ -835,7 +840,6 @@ io.on('connection', function (socket) {
     console.log('Месяц:')
     console.log(gamer.data.month)
     gamer.data.month--
-
     if (room.roomState.month === 0) {
       for (const gamer of gamers) {
         io.sockets.to(gamer.id).emit('setStartGame', gamer.data)
