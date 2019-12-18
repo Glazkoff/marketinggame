@@ -696,7 +696,9 @@ io.on('connection', function (socket) {
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
 
     let iter = 0
-
+    console.log('¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬')
+    console.log(gamer.changes)
+    console.log('¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬')  
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
