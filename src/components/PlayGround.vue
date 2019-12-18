@@ -84,7 +84,9 @@
         <div class="gamer-round-data container h-100" v-if="!isStart">
           <div class="row h-100 justify-content-center align-items-start">
             <div class="col-12 data-wrap">
-              <h4 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h4>
+              <DataTable></DataTable>
+<!-- -------------------СТАРАЯ ТАБЛИЦА ------------------------------------------ -->
+              <!-- <h4 class="mt-3">Сейчас у вас ({{gamerName}}) есть:</h4>
               <ul class="list-group col-12 offset-0 mt-3 w-100" id="main-data">
                 <ul class="list-group list-group-horizontal w-100">
                   <li
@@ -194,7 +196,8 @@
                     :class="{'badge-danger': (Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients))<0}">{{Math.ceil((gamerParams.commCircul - gamerParams.realCostAttract * gamerParams.clients)/gamerParams.clients) }} ₽</span>
                   </li>
                 </ul>
-              </ul>
+              </ul> -->
+<!-- -------------------СТАРАЯ ТАБЛИЦА ------------------------------------------ -->
               <button class="btn btn-success mt-2 w-100 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
             </div>
             
@@ -301,13 +304,14 @@
 <script>
 import GamerList from "@/components/GamerList.vue";
 import Effects from "@/components/Effects.vue";
-
+import DataTable from '@/components/DataTable.vue'
 
 export default {
   name: "PlayGround",
   components: {
     GamerList,
-    Effects
+    Effects,
+    DataTable
   },
   created() {
     this.cards = this.shuffle(this.cards);
@@ -432,7 +436,6 @@ export default {
     effects() {
       return this.$store.state.activeEffects;
     }
-
   },
   methods: {
     playAnimation() {

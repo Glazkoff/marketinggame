@@ -818,6 +818,10 @@ io.on('connection', function (socket) {
           }
           socket.emit('gameEvent')
           io.sockets.to(room.roomId).emit('gameEvent', randomEvent)
+          io.sockets.to(room.roomId).emit('addMessage', {
+            name: 'СОБЫТИЕ!',
+            text: `${randomEvent.description}`
+          })
         }
       }, 7000)
     }
@@ -915,7 +919,7 @@ io.on('connection', function (socket) {
         console.log(`Комната не найдена`)
         socket.emit('roomNotFound')
       }
-    }, 2000)
+    }, 200)
   })
   socket.on('disconnect', function () {
     this.messageArr = []
