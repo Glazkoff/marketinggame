@@ -823,7 +823,7 @@ io.on('connection', function (socket) {
             text: `${randomEvent.description}`
           })
         }
-      }, 7000)
+      }, 1000)
     }
     // СЮДА
 
