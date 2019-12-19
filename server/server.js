@@ -689,9 +689,9 @@ io.on('connection', function (socket) {
     let expenses = clients * realCostAttract
     gamer.data.expenses = expenses
     let result = commCircul - expenses
-    gamer.data.money += room.budgetPerMonth
-    console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
-    messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+    // gamer.data.money += room.budgetPerMonth
+    // console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
+    // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
     let resultPerClient = result / clients
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
 
