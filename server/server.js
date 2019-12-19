@@ -713,7 +713,7 @@ io.on('connection', function (socket) {
       }
       // ***********************************************************************
       if ((changing.when === 1)) {
-        if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7)) {
+        if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7) || (gamer.effects.findIndex(elem => elem.id === changing.id) === -1)) {
           switch (changing.operation) {
             case '+':
               gamer.data[changing.param] += changing.change
