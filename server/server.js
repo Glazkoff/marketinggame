@@ -724,6 +724,9 @@ io.on('connection', function (socket) {
       }
       // ***********************************************************************
       if ((changing.when === 1)) {
+        console.log('*****************************************************')
+        console.log(changing)
+        console.log('*****************************************************')
         if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7) || changing.event) {
           switch (changing.operation) {
             case '+':
