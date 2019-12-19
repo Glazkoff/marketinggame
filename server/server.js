@@ -733,8 +733,8 @@ io.on('connection', function (socket) {
           messageArr.push('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
           let indForDelete = gamer.changes.findIndex(elem => { return (elem.id == changing.id) && (elem.change == changing.change) && (elem.param == changing.param) })
           if (indForDelete !== -1) {
-            gamer.changes.splice(indForDelete, 1)
-            console.log('Удалилась позиция ' + indForDelete)
+            // console.log('Удалилась позиция ' + indForDelete)
+            // gamer.changes.splice(indForDelete, 1)
           }
         } else {
           console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
