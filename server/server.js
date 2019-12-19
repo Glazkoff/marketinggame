@@ -29,25 +29,29 @@ let events = [{
     param: 'organicCount',
     operation: '*',
     change: 0.7,
-    when: 0
+    when: 0,
+    event: true
   },
   {
     param: 'socialsCount',
     operation: '*',
     change: 0.7,
-    when: 0
+    when: 0,
+    event: true
   },
   {
     param: 'smmCount',
     operation: '*',
     change: 0.7,
-    when: 0
+    when: 0,
+    event: true
   },
   {
     param: 'straightCount',
     operation: '*',
     change: 0.7,
-    when: 0
+    when: 0,
+    event: true
   }
   ]
 },
@@ -59,13 +63,15 @@ let events = [{
     param: 'organicCount',
     operation: '*',
     change: 0.5,
-    when: 0
+    when: 0,
+    event: true
   },
   {
     param: 'organicCount',
     operation: '*',
     change: 2,
-    when: 2
+    when: 2,
+    event: true
   }
   ]
 },
@@ -77,13 +83,15 @@ let events = [{
     param: 'realCostAttract',
     operation: '*',
     change: 1.05,
-    when: 0
+    when: 0,
+    event: true
   },
   {
     param: 'contextCoef',
     operation: '*',
     change: 1.3,
-    when: 0
+    when: 0,
+    event: true
   }
   ]
 },
@@ -95,13 +103,15 @@ let events = [{
     param: 'straightCount',
     operation: '*',
     change: 3,
-    when: 1
+    when: 1,
+    event: true
   },
   {
     param: 'conversion',
     operation: '*',
     change: 1.05,
-    when: 2
+    when: 2,
+    event: true
   }
   ]
 },
@@ -113,7 +123,8 @@ let events = [{
     param: 'conversion',
     operation: '*',
     change: 0.5,
-    when: 0
+    when: 0,
+    event: true
   }]
 }
 ]
@@ -713,7 +724,7 @@ io.on('connection', function (socket) {
       }
       // ***********************************************************************
       if ((changing.when === 1)) {
-        if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7) || (gamer.effects.findIndex(elem => elem.id === changing.id) === -1)) {
+        if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7) || changing.event) {
           switch (changing.operation) {
             case '+':
               gamer.data[changing.param] += changing.change
