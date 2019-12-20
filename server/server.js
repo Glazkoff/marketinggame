@@ -719,10 +719,10 @@ io.on('connection', function (socket) {
 
     let iter = 0
     // ********** ОТЛАДКА ***********************//
-    // io.sockets.to(gamer.id).emit('addMessage', {
-    //   name: 'ИЗМЕНЕНИЯ',
-    //   text: `${JSON.stringify(gamer.changes)}`
-    // })
+    io.sockets.to(gamer.id).emit('addMessage', {
+      name: 'ИЗМЕНЕНИЯ',
+      text: `${JSON.stringify(gamer.changes)}`
+    })
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
@@ -787,11 +787,7 @@ io.on('connection', function (socket) {
         iter++
       }
     }
-    // ********** ОТЛАДКА ***********************//
-    io.sockets.to(gamer.id).emit('addMessage', {
-      name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
-      text: `${JSON.stringify(gamer.changes)}`
-    })
+
     console.log('ИЗМЕНЕНИЯ ИГРОКА')
     console.log(gamer.changes)
     // Конец обработки пришедшего массива
@@ -860,6 +856,11 @@ io.on('connection', function (socket) {
             text: `${randomEvent.description}`
           })
         }
+        // ********** ОТЛАДКА ***********************//
+        io.sockets.to(gamer.id).emit('addMessage', {
+          name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
+          text: `${JSON.stringify(gamer.changes)}`
+        })
         for (const gamerUser of gamers) {
           io.sockets.to(gamerUser.id).emit('setStartGame', gamerUser.data)
         }
