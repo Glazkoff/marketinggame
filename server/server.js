@@ -726,18 +726,19 @@ io.on('connection', function (socket) {
 
     let iter = 0
     // ********** ОТЛАДКА ***********************//
-    io.sockets.to(gamer.id).emit('addMessage', {
-      name: 'ИЗМЕНЕНИЯ',
-      text: `${JSON.stringify(gamer.changes)}`
-    })
+    // io.sockets.to(gamer.id).emit('addMessage', {
+    //   name: 'ИЗМЕНЕНИЯ',
+    //   text: `${JSON.stringify(gamer.changes)}`
+    // })
     let indexEffArr
     for (let index = 0; index < gamer.changes.length; index++) {
       let changing = gamer.changes[index]
       indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
-      io.sockets.to(gamer.id).emit('addMessage', {
-        name: 'ИНДЕКС ЭФФЕКТА',
-        text: `Для ID изменения ${changing.id} индекс в м.эфф. равен ${indexEffArr}; ${JSON.stringify(changing)}`
-      })
+      // *********** ОТЛАДКА ******************************
+      // io.sockets.to(gamer.id).emit('addMessage', {
+      //   name: 'ИНДЕКС ЭФФЕКТА',
+      //   text: `Для ID изменения ${changing.id} индекс в м.эфф. равен ${indexEffArr}; ${JSON.stringify(changing)}`
+      // })
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
       if ((indexEffArr === -1) && (changing.id !== 3) && (changing.id !== 7) && (changing.event === undefined)) {
         for (let index = 0; index < gamer.changes.length; index++) {
@@ -755,10 +756,10 @@ io.on('connection', function (socket) {
       // ***********************************************************************
       if ((changing.when === 1)) {
         // ********** ОТЛАДКА ***********************//
-        io.sockets.to(gamer.id).emit('addMessage', {
-          name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
-          text: `${JSON.stringify(changing.param)}`
-        })
+        // io.sockets.to(gamer.id).emit('addMessage', {
+        //   name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
+        //   text: `${JSON.stringify(changing.param)}`
+        // })
         console.log('*****************************************************')
         console.log(changing)
         console.log('*****************************************************')
@@ -871,10 +872,10 @@ io.on('connection', function (socket) {
           })
         }
         // ********** ОТЛАДКА ***********************//
-        io.sockets.to(gamer.id).emit('addMessage', {
-          name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
-          text: `${JSON.stringify(gamer.changes)}`
-        })
+        // io.sockets.to(gamer.id).emit('addMessage', {
+        //   name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
+        //   text: `${JSON.stringify(gamer.changes)}`
+        // })
         for (const gamerUser of gamers) {
           io.sockets.to(gamerUser.id).emit('setStartGame', gamerUser.data)
         }
