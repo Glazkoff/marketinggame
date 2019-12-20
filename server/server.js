@@ -507,7 +507,6 @@ io.on('connection', function (socket) {
     })
   })
   socket.on('setRoom', roomId => {
-    // СДЕЛАТЬ ПРОВЕРКУ НА СУЩЕСТВОВАНИЕ КОМНАТЫ
     let oldNote = connectedNames.find(element => element.id === socket.id)
     if (oldNote !== undefined) {
       oldNote.roomId = roomId
@@ -533,7 +532,6 @@ io.on('connection', function (socket) {
       console.log(connectedNames)
       socket.roomId = roomNumb
       socket.join(roomNumb, () => {
-        // console.log(oldNote.roomId);
         console.log(`Создана комната #${roomNumb}`)
         socket.emit('setRoomNumber', roomNumb)
         roomNumb++
@@ -609,8 +607,7 @@ io.on('connection', function (socket) {
     // Поиск игрока
     let gamer
     if (room !== undefined) {
-      // ААААААААААААААААААААААААААААААААААААААААААААА
-      // !!!!!!!!!!!!!!!!!НЕПРАВИЛЬНО"!!!!!!!!!!Ё!!!!
+      // !!!!!!!!!!!!!!!!!Спорно!!!!!!!!!!!!!!
       gamer = room.gamers.find(el => el.id === socket.id)
     }
     let card
@@ -631,6 +628,7 @@ io.on('connection', function (socket) {
     if (cardArr.length !== 0) {
       // ДЛЯ ВСЕХ ЭФФЕКТОВ ИГРОКА
       for (const effect of gamer.effects) {
+        // ********** ОТЛАДКА ***********************//
         // io.sockets.to(gamer.id).emit('addMessage', {
         //   name: 'Эффект',
         //   text: `${JSON.stringify(effect)}`
@@ -720,10 +718,11 @@ io.on('connection', function (socket) {
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
 
     let iter = 0
-    io.sockets.to(gamer.id).emit('addMessage', {
-      name: 'ИЗМЕНЕНИЯ',
-      text: `${JSON.stringify(gamer.changes)}`
-    })
+    // ********** ОТЛАДКА ***********************//
+    // io.sockets.to(gamer.id).emit('addMessage', {
+    //   name: 'ИЗМЕНЕНИЯ',
+    //   text: `${JSON.stringify(gamer.changes)}`
+    // })
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
@@ -741,10 +740,11 @@ io.on('connection', function (socket) {
       }
       // ***********************************************************************
       if ((changing.when === 1)) {
-        io.sockets.to(gamer.id).emit('addMessage', {
-          name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
-          text: `${JSON.stringify(changing.param)}`
-        })
+        // ********** ОТЛАДКА ***********************//
+        // io.sockets.to(gamer.id).emit('addMessage', {
+        //   name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
+        //   text: `${JSON.stringify(changing.param)}`
+        // })
         console.log('*****************************************************')
         console.log(changing)
         console.log('*****************************************************')
@@ -787,14 +787,11 @@ io.on('connection', function (socket) {
         iter++
       }
     }
-    io.sockets.to(gamer.id).emit('addMessage', {
-      name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
-      text: `${JSON.stringify(gamer.changes)}`
-    })
-    //* **************************************************************
-    //
-    // ГДЕ-ТО УДАЛЯЕТ НЕПРАВИЛЬНО ИЗ МАССИВА ИЗМЕНЕНИЙ ИГРОКА
-    //
+    // ********** ОТЛАДКА ***********************//
+    // io.sockets.to(gamer.id).emit('addMessage', {
+    //   name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
+    //   text: `${JSON.stringify(gamer.changes)}`
+    // })
     console.log('ИЗМЕНЕНИЯ ИГРОКА')
     console.log(gamer.changes)
     // Конец обработки пришедшего массива
