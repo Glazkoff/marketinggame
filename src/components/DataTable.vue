@@ -125,7 +125,7 @@
               {{Math.ceil(gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion)+Math.ceil(gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion)+Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion)+Math.ceil(gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion)+Math.ceil(gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion) }}
             </td>
             <td></td>
-            <td class="font-weight-bold">
+            <td class="font-weight-bold" nowrap>
               {{(Math.ceil(gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion)+Math.ceil(gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion)+Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion)+Math.ceil(gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion)+Math.ceil(gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion))*gamerParams.averageCheck | formatNumber}}
               ₽</td>
           </tr>

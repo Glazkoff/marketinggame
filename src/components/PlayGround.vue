@@ -172,7 +172,7 @@
           v-if="!card.oneOff && !isLastEffectStage(card.id)"></div>
         <div
           class="card-box w-100 h-100  bottom-card bottom-card-2"
-          v-if="!card.oneOff && !hasThisEffect(card.id)"
+          v-if="!card.oneOff && !hasThisEffect(card.id) || isLastStep(card.id)"
           ></div>
           <div class="card-head">
             <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
@@ -377,6 +377,14 @@ export default {
     },
     hasThisEffect (id) {
       return (this.effects.findIndex(elem => elem.id === id) !== -1)
+    },
+    isLastStep (id) {
+      let effect = this.effects.find(elem => elem.id === id)
+      if (effect !== undefined) {
+        return (effect.step === effect.duration)
+      } else {
+        return false
+      }
     },
     closeEvent () {
       this.$store.commit('SOCKET_setGameEvent', {})
@@ -779,6 +787,8 @@ export default {
     background: #fff;
     box-shadow: 100px 0px 200px rgba(20, 20, 20, 0.8);
     max-width: 300px;
+    width: 300px;
+    min-height: 100vh;
   }
   .mess-block {
     max-width: unset;
