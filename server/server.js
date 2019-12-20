@@ -731,7 +731,8 @@ io.on('connection', function (socket) {
       text: `${JSON.stringify(gamer.changes)}`
     })
     let indexEffArr
-    for (const changing of gamer.changes) {
+    for (let index = 0; index < gamer.changes.length; index++) {
+      let changing = gamer.changes[index]
       indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       io.sockets.to(gamer.id).emit('addMessage', {
         name: 'ИНДЕКС ЭФФЕКТА',
@@ -747,6 +748,7 @@ io.on('connection', function (socket) {
             console.log(gamer.changes[index])
             console.log('---- ----')
             gamer.changes.splice(index, 1)
+            index--
           }
         }
       }
