@@ -665,7 +665,7 @@ io.on('connection', function (socket) {
           if (effectIndex === -1) {
             // Занести свойства ещё не выброшенной серии
             for (const changes of card.dataChange) {
-              gamer.changes.push(changes)
+              gamer.changes.push(Object.assign(changes))
             }
             let effectObj = {
               id: cardId,
