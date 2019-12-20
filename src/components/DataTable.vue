@@ -23,7 +23,7 @@
           </tr>
           <tr>
             <th scope="row">Органика</th>
-            <td>{{gamerParams.organicCount}}<div class="arrow" :class="{'arrow-up': gamerParams.organicCount>prevParams.organicCount, 'arrow-down': gamerParams.organicCount<prevParams.organicCount}"></div>
+            <td>{{Math.ceil(gamerParams.organicCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.organicCount>prevParams.organicCount, 'arrow-down': gamerParams.organicCount<prevParams.organicCount}"></div>
             </td>
             <td>{{(gamerParams.organicCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.organicCoef>prevParams.organicCoef, 'arrow-down': gamerParams.organicCoef<prevParams.organicCoef}"></div>
             </td>
@@ -42,7 +42,7 @@
           </tr>
           <tr>
             <th scope="row">Реклама: контекст</th>
-            <td>{{gamerParams.contextCount}}<div class="arrow" :class="{'arrow-up': gamerParams.contextCount>prevParams.contextCount, 'arrow-down': gamerParams.contextCount<prevParams.contextCount}"></div>
+            <td>{{Math.ceil(gamerParams.contextCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.contextCount>prevParams.contextCount, 'arrow-down': gamerParams.contextCount<prevParams.contextCount}"></div>
             </td>
             <td>{{(gamerParams.contextCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.contextCoef>prevParams.contextCoef, 'arrow-down': gamerParams.contextCoef<prevParams.contextCoef}"></div>
             </td>
@@ -60,7 +60,7 @@
           </tr>
           <tr>
             <th scope="row">Реклама: соцсети</th>
-            <td>{{gamerParams.socialsCount}}<div class="arrow" :class="{'arrow-up': gamerParams.socialsCount>prevParams.socialsCount, 'arrow-down': gamerParams.socialsCount<prevParams.socialsCount}"></div>
+            <td>{{Math.ceil(gamerParams.socialsCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.socialsCount>prevParams.socialsCount, 'arrow-down': gamerParams.socialsCount<prevParams.socialsCount}"></div>
             </td>
             <td>{{(gamerParams.socialsCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.socialsCoef>prevParams.socialsCoef, 'arrow-down': gamerParams.socialsCoef<prevParams.socialsCoef}"></div>
             </td>
@@ -78,7 +78,7 @@
           </tr>
           <tr>
             <th scope="row">Соц. медиа</th>
-            <td>{{gamerParams.smmCount}}<div class="arrow" :class="{'arrow-up': gamerParams.smmCount>prevParams.smmCount, 'arrow-down': gamerParams.smmCount<prevParams.smmCount}"></div>
+            <td>{{Math.ceil(gamerParams.smmCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.smmCount>prevParams.smmCount, 'arrow-down': gamerParams.smmCount<prevParams.smmCount}"></div>
             </td>
             <td>{{(gamerParams.smmCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.smmCoef>prevParams.smmCoef, 'arrow-down': gamerParams.smmCoef<prevParams.smmCoef}"></div>
             </td>
@@ -95,7 +95,7 @@
           </tr>
           <tr>
             <th scope="row">Прямой заход</th>
-            <td>{{gamerParams.straightCount}}<div class="arrow" :class="{'arrow-up': gamerParams.straightCount>prevParams.straightCount, 'arrow-down': gamerParams.straightCount<prevParams.straightCount}"></div>
+            <td>{{Math.ceil(gamerParams.straightCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.straightCount>prevParams.straightCount, 'arrow-down': gamerParams.straightCount<prevParams.straightCount}"></div>
             </td>
             <td>{{(gamerParams.straightCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.straightCoef>prevParams.straightCoef, 'arrow-down': gamerParams.straightCoef<prevParams.straightCoef}"></div>
             </td>

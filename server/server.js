@@ -609,6 +609,8 @@ io.on('connection', function (socket) {
     // Поиск игрока
     let gamer
     if (room !== undefined) {
+      // ААААААААААААААААААААААААААААААААААААААААААААА
+      // !!!!!!!!!!!!!!!!!НЕПРАВИЛЬНО"!!!!!!!!!!Ё!!!!
       gamer = room.gamers.find(el => el.id === socket.id)
     }
     let card
@@ -618,20 +620,32 @@ io.on('connection', function (socket) {
     })
 
     // Начало обработки пришедшего массива с ID карточек
+
+    for (const effect of gamer.effects) {
+      let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
+      if (cardArrIndex === -1) {
+        let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
+        gamer.effects.splice(effectIndex, 1)
+      }
+    }
     if (cardArr.length !== 0) {
       // ДЛЯ ВСЕХ ЭФФЕКТОВ ИГРОКА
       for (const effect of gamer.effects) {
+        // io.sockets.to(gamer.id).emit('addMessage', {
+        //   name: 'Эффект',
+        //   text: `${JSON.stringify(effect)}`
+        // })
         // Если в пришедшем массиве нет уже существующего эффекта
+        let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
+        if (cardArrIndex === -1) {
+          let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
+          gamer.effects.splice(effectIndex, 1)
+        }
         if (effect.step === effect.duration) {
           let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
           gamer.effects.splice(effectIndex, 1)
           console.log('Действие эффекта закончилось')
         } else {
-          let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
-          if (cardArrIndex === -1) {
-            let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
-            gamer.effects.splice(effectIndex, 1)
-          }
         }
       }
       for (const cardId of cardArr) {
@@ -678,7 +692,6 @@ io.on('connection', function (socket) {
         console.log('-------------------------------------')
         // ------------------------
       } // Конец цикла обработки пришедших карт
-    } else {
     }
     let messageArr = []
     let clients =
@@ -700,17 +713,21 @@ io.on('connection', function (socket) {
     let expenses = clients * realCostAttract
     gamer.data.expenses = expenses
     let result = commCircul - expenses
-    // gamer.data.money += room.budgetPerMonth
+    gamer.data.money += room.budgetPerMonth
     // console.log('Обновлён параметр money со знаком + на ' + Math.ceil(result))
     // messageArr.push('Обновлён параметр money со знаком + на ' + Math.ceil(result))
     let resultPerClient = result / clients
     gamer.data.moneyPerClient = Math.ceil(resultPerClient)
 
     let iter = 0
+    io.sockets.to(gamer.id).emit('addMessage', {
+      name: 'ИЗМЕНЕНИЯ',
+      text: `${JSON.stringify(gamer.changes)}`
+    })
     for (const changing of gamer.changes) {
       let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
-      if ((indexEffArr === -1) && (changing.id !== 3) && (changing.id !== 7) && (!changing.event)) {
+      if ((indexEffArr === -1) && (changing.id !== 3) && (changing.id !== 7) && (changing.event === undefined)) {
         for (let index = 0; index < gamer.changes.length; index++) {
           if (gamer.changes[index].id === changing.id) {
             console.log('УДАЛЯЕТСЯ параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
@@ -724,6 +741,10 @@ io.on('connection', function (socket) {
       }
       // ***********************************************************************
       if ((changing.when === 1)) {
+        io.sockets.to(gamer.id).emit('addMessage', {
+          name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
+          text: `${JSON.stringify(changing.param)}`
+        })
         console.log('*****************************************************')
         console.log(changing)
         console.log('*****************************************************')
@@ -751,8 +772,8 @@ io.on('connection', function (socket) {
             // gamer.changes.splice(indForDelete, 1)
           }
         } else {
-          console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
-          messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+            // console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+            // messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
           for (let index = 0; index < gamer.changes.length; index++) {
             if (gamer.changes[index].id === changing.id) {
               messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
@@ -766,7 +787,14 @@ io.on('connection', function (socket) {
         iter++
       }
     }
+    io.sockets.to(gamer.id).emit('addMessage', {
+      name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
+      text: `${JSON.stringify(gamer.changes)}`
+    })
     //* **************************************************************
+    //
+    // ГДЕ-ТО УДАЛЯЕТ НЕПРАВИЛЬНО ИЗ МАССИВА ИЗМЕНЕНИЙ ИГРОКА
+    //
     console.log('ИЗМЕНЕНИЯ ИГРОКА')
     console.log(gamer.changes)
     // Конец обработки пришедшего массива
@@ -846,9 +874,7 @@ io.on('connection', function (socket) {
     // СЮДА
 
     for (const changing of gamer.changes) {
-      if (changing.when !== 1) {
-        changing.when--
-      }
+      changing.when--
     }
 
     console.log('Месяц:')
@@ -913,6 +939,17 @@ io.on('connection', function (socket) {
       oldNote.roomId = -1
       socket.emit('setRoomNumber', -1)
     }
+    for (let index = 0; index < roomsState.length; index++) {
+      let gamerThereIndex = roomsState[index].gamers.findIndex(el => el.id === socket.id)
+      if (gamerThereIndex !== -1) {
+        roomsState[index].gamers.splice(gamerThereIndex, 1)
+      }
+    }
+    // if (room !== undefined) {
+    //   // ААААААААААААААААААААААААААААААААААААААААААААА
+    //   // !!!!!!!!!!!!!!!!!НЕПРАВИЛЬНО"!!!!!!!!!!Ё!!!!
+    //   gamer = room.gamers.find(el => el.id === socket.id)
+    // }
     console.log('Подключенные имена:')
     console.log(connectedNames)
   })
