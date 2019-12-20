@@ -123,7 +123,6 @@
               <DataTable></DataTable>
               <button class="btn btn-success w-100 mt-1 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
             </div>
-            
           </div>
         </div>
       </div>
@@ -186,7 +185,6 @@
             class="btn btn-dark pl-2"
             @click="dropFromBtn(count)"
             :disabled="stepDone||(card.cost>gamerParams.money)"
-            
           >Использовать</button>
         </div>
           <!-- <div
@@ -197,9 +195,9 @@
           key="1"
           @dragend="altdragend"
           v-if="!isStart"
-          
+
         >
-        
+
           <div class="card-head">
             <h6 class="card-title text-center pl-2 pr-2 mb-1">title</h6>
           </div>
@@ -225,24 +223,24 @@
 </template>
 
 <script>
-import GamerList from "@/components/GamerList.vue";
-import Effects from "@/components/Effects.vue";
+import GamerList from '@/components/GamerList.vue'
+import Effects from '@/components/Effects.vue'
 import DataTable from '@/components/DataTable.vue'
 
 export default {
-  name: "PlayGround",
+  name: 'PlayGround',
   components: {
     GamerList,
     Effects,
     DataTable
   },
-  created() {
-    this.cards = this.shuffle(this.cards);
+  created () {
+    this.cards = this.shuffle(this.cards)
     // this.refreshCards = Object.assign(this.cards);
-    this.refreshCards = [...this.cards];
+    this.refreshCards = [...this.cards]
     this.$store.commit('doAnimation')
   },
-  data() {
+  data () {
     return {
       usedCards: [],
       clientsRendered: true,
@@ -254,60 +252,60 @@ export default {
       cards: [
         {
           id: 1,
-          title: "Нанять SMM-менеджера",
-          text: "Описание карточки, описание карточки",
+          title: 'Нанять SMM-менеджера',
+          text: 'Описание карточки, описание карточки',
           cost: 55000
         },
         {
           id: 2,
-          title: "Заказать SEO-оптимизацию",
-          text: "Описание карточки, описание карточки",
+          title: 'Заказать SEO-оптимизацию',
+          text: 'Описание карточки, описание карточки',
           cost: 50000
         },
         {
           id: 3,
-          title: "Улучшение юзабилити",
-          text: "Описание карточки, описание карточки",
+          title: 'Улучшение юзабилити',
+          text: 'Описание карточки, описание карточки',
           cost: 20000,
           oneOff: true
         },
         {
           id: 4,
-          title: "Реклама в соцсетях",
-          text: "Описание карточки, описание карточки",
+          title: 'Реклама в соцсетях',
+          text: 'Описание карточки, описание карточки',
           cost: 25000
         },
         {
           id: 5,
-          title: "PR-компания компании",
-          text: "Описание карточки, описание карточки",
+          title: 'PR-компания компании',
+          text: 'Описание карточки, описание карточки',
           cost: 30000
         },
         {
           id: 6,
-          title: "Контекстная рекламная компания",
-          text: "Описание карточки, описание карточки",
+          title: 'Контекстная рекламная компания',
+          text: 'Описание карточки, описание карточки',
           cost: 35000
         },
         {
           id: 7,
-          title: "Размещение информации в справочниках",
-          text: "Описание карточки, описание карточки",
+          title: 'Размещение информации в справочниках',
+          text: 'Описание карточки, описание карточки',
           cost: 20000,
           oneOff: true
         }
       ],
       number: 0,
       tweenedNumber: 0
-    };
+    }
   },
-  mounted() {
-    this.number = this.$store.state.roomParams.money;
+  mounted () {
+    this.number = this.$store.state.roomParams.money
     this.$store.commit('doAnimation')
   },
   watch: {
-    number: function(newValue) {
-      TweenLite.to(this.$data, 1, { tweenedNumber: newValue });
+    number: function (newValue) {
+      TweenLite.to(this.$data, 1, { tweenedNumber: newValue })
     },
     money: function (newValue) {
       let a = setTimeout(() => {
@@ -317,195 +315,196 @@ export default {
     }
   },
   computed: {
-    clients() {
+    clients () {
       return this.$store.state.roomParams.clients
     },
-    money() {
+    money () {
       return this.$store.state.roomParams.money
     },
-    isEvent() {
-      let obj = this.$store.state.gameEvent;
+    isEvent () {
+      let obj = this.$store.state.gameEvent
       for (let key in obj) {
-        return true;
+        return true
       }
-      return false;
+      return false
     },
-    event() {
-      return this.$store.state.gameEvent;
+    event () {
+      return this.$store.state.gameEvent
     },
-    isOwner() {
-      return this.$store.state.isOwner;
+    isOwner () {
+      return this.$store.state.isOwner
     },
-    isStart() {
-      return this.$store.state.isStart;
+    isStart () {
+      return this.$store.state.isStart
     },
-    gamerName() {
-      return this.$store.state.gamerName;
+    gamerName () {
+      return this.$store.state.gamerName
     },
-    gamerParams() {
-      let a = this.$store.state.roomParams;
-      return this.$store.state.roomParams;
+    gamerParams () {
+      let a = this.$store.state.roomParams
+      return this.$store.state.roomParams
     },
-    firstRoomParams() {
-      return this.$store.state.firstRoomParams;
+    firstRoomParams () {
+      return this.$store.state.firstRoomParams
     },
-    stepDone() {
-      let cardField = document.querySelector("#card-field");
+    stepDone () {
+      let cardField = document.querySelector('#card-field')
       if (cardField !== null) {
-        cardField.scrollTo(0, 0);
+        cardField.scrollTo(0, 0)
       }
-      return this.$store.state.stepDone;
+      return this.$store.state.stepDone
     },
-    effects() {
-      return this.$store.state.activeEffects;
+    effects () {
+      return this.$store.state.activeEffects
     }
   },
   methods: {
-    playAnimation() {
+    playAnimation () {
       if (this.$refs.number1 !== undefined) {
         this.$refs.number1.play()
         setTimeout(() => {
           this.$refs.number1.play()
-        }, 100);
+        }, 100)
       }
       this.$store.commit('doAnimation')
     },
-    isLastEffectStage(id) {
-      let effectId = this.effects.findIndex(elem=>elem.id===id);
+    isLastEffectStage (id) {
+      let effectId = this.effects.findIndex(elem => elem.id === id)
       if (effectId !== -1) {
         let effect = this.effects[effectId]
-        return (effect.step+1 === effect.duration)
-      } else return false;
+        return (effect.step + 1 === effect.duration)
+      } else return false
     },
-    hasThisEffect(id) {
-      return (this.effects.findIndex(elem=>elem.id===id) !== -1)
+    hasThisEffect (id) {
+      return (this.effects.findIndex(elem => elem.id === id) !== -1)
     },
-    closeEvent() {
-      this.$store.commit("SOCKET_setGameEvent", {});
+    closeEvent () {
+      this.$store.commit('SOCKET_setGameEvent', {})
     },
-    shuffle(arra1) {
-      let ctr = arra1.length,
-        temp,
-        index;
+    shuffle (arra1) {
+      let ctr = arra1.length
+      let temp
+      let index
       while (ctr > 0) {
-        index = Math.floor(Math.random() * ctr);
-        ctr--;
-        temp = arra1[ctr];
-        arra1[ctr] = arra1[index];
-        arra1[index] = temp;
+        index = Math.floor(Math.random() * ctr)
+        ctr--
+        temp = arra1[ctr]
+        arra1[ctr] = arra1[index]
+        arra1[index] = temp
       }
-      return arra1;
+      return arra1
     },
-    makeStep() {
-      this.$store.commit("doStep"); // 
-      this.$socket.emit("doStep", this.usedCards);
+    makeStep () {
+      this.$store.commit('doStep') //
+      this.$socket.emit('doStep', this.usedCards)
       // Одноразовые карточки (индексы):
-      let oneOffCards = [3, 7]      
+      let oneOffCards = [3, 7]
       for (const cardIndex of oneOffCards) {
-        let usedIndex = this.usedCards.findIndex(elem=>elem===cardIndex);
-        console.log('ОДНОРАЗОВЫЕ КАРТОЧКИ');
+        let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex)
+        console.log('ОДНОРАЗОВЫЕ КАРТОЧКИ')
         if (usedIndex !== -1) {
-          let spliceIndex = this.refreshCards.findIndex(elem=>elem.id===cardIndex)
+          let spliceIndex = this.refreshCards.findIndex(elem => elem.id === cardIndex)
           this.refreshCards.splice(spliceIndex, 1)
         }
       }
-      this.usedCards = [];
-      console.log(this.refreshCards);
-      this.cards = [...this.refreshCards];
-      console.log(this.cards);
-      console.log('-----Index of cards------');
-      console.log(this.usedCards);
+      this.usedCards = []
+      console.log(this.refreshCards)
+      this.cards = [...this.refreshCards]
+      console.log(this.cards)
+      console.log('-----Index of cards------')
+      console.log(this.usedCards)
     },
-    dropFromBtn(index) {
-      this.usedCards.push(this.cards[index].id);
+    dropFromBtn (index) {
+      this.usedCards.push(this.cards[index].id)
       // this.makeStep(this.cards[index].id);
-      let change = -this.cards[index].cost;
-      this.$store.commit("changeMoney", change);
-      this.cards.splice(index, 1);
+      let change = -this.cards[index].cost
+      this.$store.commit('changeMoney', change)
+      this.cards.splice(index, 1)
       this.playAnimation()
     },
-    startGame() {
-      console.log("Стейт комнаты");
-      let a = Object.assign(this.$store.state.roomParams);
-      console.log(a);
-      console.log('/');
-      console.log('/');
-      console.log('/');
-      console.log('/');
-      console.log('DO ZASADY');
-      console.log('*');
+    startGame () {
+      console.log('Стейт комнаты')
+      let a = Object.assign(this.$store.state.roomParams)
+      console.log(a)
+      console.log('/')
+      console.log('/')
+      console.log('/')
+      console.log('/')
+      console.log('DO ZASADY')
+      console.log('*')
       // this.refreshCards = Object.assign(this.cards);
-      console.log(this.cards);
-      console.log(this.refreshCards);
-      this.$socket.emit("startGame", a);
-      this.$store.commit("SOCKET_calcAllParams");
-      this.$store.state.isOwner = false;
-      this.$store.state.isStart = false;
+      console.log(this.cards)
+      console.log(this.refreshCards)
+      this.$socket.emit('startGame', a)
+      this.$store.commit('SOCKET_calcAllParams')
+      this.$store.state.isOwner = false
+      this.$store.state.isStart = false
       this.playAnimation()
     },
-    beforeEnter: function(el) {
-      console.log("befenterhook");
+    beforeEnter: function (el) {
+      console.log('befenterhook')
     },
-    enter: function(el) {
-      this.playAnimation();
-      console.log("enterhook");
+    enter: function (el) {
+      this.playAnimation()
+      console.log('enterhook')
     },
-    leave: function(el) {
-      el.style.opacity = 0;
-      el.style.height = 0;
-      console.log("leavehook");
+    leave: function (el) {
+      el.style.opacity = 0
+      el.style.height = 0
+      console.log('leavehook')
       this.$store.commit('doAnimation')
     },
-    altdrop(e) {
-      e.preventDefault();
-      console.log("drop");
-      this.dragovered = false;
-      this.dragstart = false;
-      if (typeof this.dragnode != "undefined") {
-        if (this.dragnode.parentNode.id == "card-wrap") {
-          let i = 0;
+    altdrop (e) {
+      e.preventDefault()
+      console.log('drop')
+      this.dragovered = false
+      this.dragstart = false
+      if (typeof this.dragnode !== 'undefined') {
+        if (this.dragnode.parentNode.id == 'card-wrap') {
+          let i = 0
           for (const iterator of this.dragnode.parentNode.childNodes) {
             if (iterator == this.dragnode) {
-              break;
+              break
             }
-            i++;
+            i++
           }
           // this.makeStep(this.cards[i].id);
-          let change = -this.cards[i].cost;
-          this.$store.commit("changeMoney", change);
-          this.cards.splice(i, 1);
+          this.usedCards.push(this.cards[i].id)
+          let change = -this.cards[i].cost
+          this.$store.commit('changeMoney', change)
+          this.cards.splice(i, 1)
         }
       }
-      this.dragnode = undefined;
+      this.dragnode = undefined
       this.playAnimation()
     },
-    altdragstart(e) {
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.dropEffect = "move";
-      e.dataTransfer.setData("text/plain", null);
-      e.target.style.opacity = 0.5;
-      e.target.style.transform = "scale(0.8)";
-      this.dragstart = true;
-      this.dragnode = e.target;
+    altdragstart (e) {
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('text/plain', null)
+      e.target.style.opacity = 0.5
+      e.target.style.transform = 'scale(0.8)'
+      this.dragstart = true
+      this.dragnode = e.target
     },
-    altdragend(e) {
-      e.target.style.opacity = "";
-      e.target.style.transform = "";
-      this.dragnode = undefined;
-      this.dragover = false;
-      this.dragstart = false;
+    altdragend (e) {
+      e.target.style.opacity = ''
+      e.target.style.transform = ''
+      this.dragnode = undefined
+      this.dragover = false
+      this.dragstart = false
     },
-    dragov(e) {
-      console.log("over");
-      e.dataTransfer.dropEffect = "move";
-      this.dragover = true;
+    dragov (e) {
+      console.log('over')
+      e.dataTransfer.dropEffect = 'move'
+      this.dragover = true
     },
-    dragleave(e) {
-      console.log("leave");
-      this.dragover = false;
+    dragleave (e) {
+      console.log('leave')
+      this.dragover = false
     }
   }
-};
+}
 </script>
 
 <style>
@@ -676,7 +675,7 @@ export default {
 }
 
 .card-box {
-  box-shadow: -1px 4px 3px rgba(0,0,0,.4); 
+  box-shadow: -1px 4px 3px rgba(0,0,0,.4);
   position: relative;
   transition: all 0.4s;
   max-width: 220px;
@@ -831,7 +830,7 @@ export default {
     grid-area: 2/1/3/3
   }
 }
-@media screen and (max-width: 450px){ 
+@media screen and (max-width: 450px){
   .list-group-item {
     padding: 2px !important;
     padding-left: 4px !important;
@@ -875,7 +874,7 @@ export default {
       height: 100vh;
     }
 }
-@media (orientation: portrait) { 
+@media (orientation: portrait) {
     #nav {
     display: none;
   }
@@ -887,7 +886,7 @@ export default {
       height: 100vh;
     }
 }
-@media screen and (max-width: 320px) and (orientation: portrait) { 
+@media screen and (max-width: 320px) and (orientation: portrait) {
 
   .card-box {
     min-width: 132px;
