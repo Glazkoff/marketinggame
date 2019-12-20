@@ -989,5 +989,12 @@ io.on('connection', function (socket) {
     console.log(connections)
     console.log('Подключенные имена:')
     console.log(connectedNames)
+    console.log(`${socket.name} уходит с комнаты!`)
+    for (let index = 0; index < roomsState.length; index++) {
+      let gamerThereIndex = roomsState[index].gamers.findIndex(el => el.id === socket.id)
+      if (gamerThereIndex !== -1) {
+        roomsState[index].gamers.splice(gamerThereIndex, 1)
+      }
+    }
   })
 })
