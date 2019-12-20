@@ -741,10 +741,10 @@ io.on('connection', function (socket) {
       // ***********************************************************************
       if ((changing.when === 1)) {
         // ********** ОТЛАДКА ***********************//
-        // io.sockets.to(gamer.id).emit('addMessage', {
-        //   name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
-        //   text: `${JSON.stringify(changing.param)}`
-        // })
+        io.sockets.to(gamer.id).emit('addMessage', {
+          name: 'ТЕКУЩЕЕ ИЗМЕНЕНИЕ',
+          text: `${JSON.stringify(changing.param)}`
+        })
         console.log('*****************************************************')
         console.log(changing)
         console.log('*****************************************************')
@@ -788,10 +788,10 @@ io.on('connection', function (socket) {
       }
     }
     // ********** ОТЛАДКА ***********************//
-    // io.sockets.to(gamer.id).emit('addMessage', {
-    //   name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
-    //   text: `${JSON.stringify(gamer.changes)}`
-    // })
+    io.sockets.to(gamer.id).emit('addMessage', {
+      name: 'ИЗМЕНЕНИЯ ПОСЛЕ',
+      text: `${JSON.stringify(gamer.changes)}`
+    })
     console.log('ИЗМЕНЕНИЯ ИГРОКА')
     console.log(gamer.changes)
     // Конец обработки пришедшего массива
