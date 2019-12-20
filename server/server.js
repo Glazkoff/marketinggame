@@ -730,8 +730,13 @@ io.on('connection', function (socket) {
       name: 'ИЗМЕНЕНИЯ',
       text: `${JSON.stringify(gamer.changes)}`
     })
+    let indexEffArr
     for (const changing of gamer.changes) {
-      let indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
+      indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id)
+      io.sockets.to(gamer.id).emit('addMessage', {
+        name: 'ИНДЕКС ЭФФЕКТА',
+        text: `Для ID изменения ${changing.id} индекс в м.эфф. равен ${indexEffArr}; ${JSON.stringify(changing)}`
+      })
       console.log('Для ID изменения ' + changing.id + ' индекс в м.эфф. равен ' + indexEffArr)
       if ((indexEffArr === -1) && (changing.id !== 3) && (changing.id !== 7) && (changing.event === undefined)) {
         for (let index = 0; index < gamer.changes.length; index++) {
