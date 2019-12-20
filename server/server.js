@@ -682,7 +682,7 @@ io.on('connection', function (socket) {
           if (effectIndex === -1) {
             // Занести свойства одноразовых карточек
             for (const changes of card.dataChange) {
-              gamer.changes.push(changes)
+              gamer.changes.push(Object.assign(changes))
             }
           }
         }
@@ -772,8 +772,8 @@ io.on('connection', function (socket) {
             // gamer.changes.splice(indForDelete, 1)
           }
         } else {
-            // console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
-            // messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+          // console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
+          // messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
           for (let index = 0; index < gamer.changes.length; index++) {
             if (gamer.changes[index].id === changing.id) {
               messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
