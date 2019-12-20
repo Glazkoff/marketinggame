@@ -33,6 +33,13 @@ let events = [{
     event: true
   },
   {
+    param: 'contextCount',
+    operation: '*',
+    change: 0.7,
+    when: 0,
+    event: true
+  },
+  {
     param: 'socialsCount',
     operation: '*',
     change: 0.7,
@@ -120,7 +127,35 @@ let events = [{
   title: 'Появление серии негативных публикаций о компании и руководителе компании',
   description: 'Снижение конверсии трафика в звонки на 50%',
   dataChange: [{
-    param: 'conversion',
+    param: 'organicCoef',
+    operation: '*',
+    change: 0.5,
+    when: 0,
+    event: true
+  },
+  {
+    param: 'socialsCoef',
+    operation: '*',
+    change: 0.5,
+    when: 0,
+    event: true
+  },
+  {
+    param: 'contextCoef',
+    operation: '*',
+    change: 0.5,
+    when: 0,
+    event: true
+  },
+  {
+    param: 'smmCoef',
+    operation: '*',
+    change: 0.5,
+    when: 0,
+    event: true
+  },
+  {
+    param: 'straightCoef',
     operation: '*',
     change: 0.5,
     when: 0,
