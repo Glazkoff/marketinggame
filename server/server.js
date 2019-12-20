@@ -665,7 +665,11 @@ io.on('connection', function (socket) {
           if (effectIndex === -1) {
             // Занести свойства ещё не выброшенной серии
             for (const changes of card.dataChange) {
-              gamer.changes.push(Object.assign(changes))
+              let changeObj
+              for (var key in changes) {
+                changeObj[key] = changes[key]
+              }
+              gamer.changes.push(changeObj)
             }
             let effectObj = {
               id: cardId,
@@ -682,7 +686,11 @@ io.on('connection', function (socket) {
           if (effectIndex === -1) {
             // Занести свойства одноразовых карточек
             for (const changes of card.dataChange) {
-              gamer.changes.push(Object.assign(changes))
+              let changeObj
+              for (var k in changes) {
+                changeObj[k] = changes[k]
+              }
+              gamer.changes.push(Object.assign(changeObj))
             }
           }
         }
