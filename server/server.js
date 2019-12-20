@@ -885,8 +885,13 @@ io.on('connection', function (socket) {
     }
     // СЮДА
 
-    for (const changing of gamer.changes) {
+    for (let index = 0; index < gamer.changes.length; index++) {
+      const changing = gamer.changes[index]
       changing.when--
+      if (changing.when < 1) {
+        gamer.changes.splice(index, 1)
+        index--
+      }
     }
 
     console.log('Месяц:')
