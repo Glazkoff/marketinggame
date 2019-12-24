@@ -1,6 +1,7 @@
 <template>
   <div id="entr">
-    <svg id="path" width="1340" height="373" class="col-lg-4 col-md-6 col-sm-10 col-xl-4 mt-4 mb-4" viewBox="0 0 1340 373" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <AnimBG></AnimBG>
+    <svg id="path" width="1340" height="373" class="col-lg-4 col-md-6 col-sm-10 col-xl-4 mt-4 pl-3 pr-3 pb-2" viewBox="0 0 1340 373" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M2.18401 9.18399H76.344V32.8H65.4V19.12H45.096L44.808 84.064H58.488V94H19.608V84.064H33.288L33.432 19.12H13.128V32.8H2.18401V9.18399Z"
         fill="black" />
@@ -102,7 +103,7 @@
 <script>
 import Router from 'vue-router'
 import anime from 'animejs/lib/anime.es.js'
-
+import AnimBG from './AnimBG'
 export default {
   name: 'Entrance',
   props: {
@@ -115,6 +116,9 @@ export default {
       wasClicked: false
     }
   },
+  components: {
+    AnimBG
+  },
   created () {
   },
   mounted () {
@@ -126,25 +130,26 @@ export default {
       }
     }, 100)
     this.$store.commit('resetData')
-    anime({
-      targets: '#path path',
-      strokeDashoffset: [anime.setDashoffset, 0],
-      easing: 'easeInOutSine',
-      duration: 500,
-      delay: function (el, i) {
-        return i * 100
-      },
-      direction: 'alternate'
-    })
-    anime.timeline({
-      targets: '#path path',
-      delay: 2700,
-      duration: 400,
-      endDelay: 400,
-      easing: 'easeInOutSine'
-    }).add({
-      fill: '#000'
-    })
+    // anime({
+    //   targets: '#path path',
+    //   strokeDashoffset: [anime.setDashoffset, 0],
+    //   easing: 'easeInOutSine',
+    //   duration: 500,
+    //   delay: function (el, i) {
+    //     return i * 100
+    //   },
+    //   direction: 'alternate'
+    // })
+    // anime.timeline({
+    //   targets: '#path path',
+    //   delay: 2700,
+    //   duration: 400,
+    //   endDelay: 400,
+    //   easing: 'easeInOutSine'
+    // }).add({
+    //   fill: '#000'
+    // })
+    this.startTimeline()
   },
   computed: {
     gamerName () {
@@ -170,6 +175,106 @@ export default {
     clckForm () {
       this.formClicked = true
       this.clickForm = true
+    },
+    startTimeline () {
+      anime.timeline({
+        targets: '#path path',
+        strokeDashoffset: [anime.setDashoffset, 0],
+        easing: 'easeInOutSine',
+        duration: 1100,
+        delay: function (el, i) {
+          return i * 100
+        }
+      })
+
+        .add({
+          targets: '#path path',
+          delay: 2700,
+          duration: 400,
+          // endDelay: 400,
+          easing: 'easeInOutSine'
+        })
+        .add({
+          fill: '#000'
+        })
+        .add({
+          targets: '#my-div .el',
+          fill: '#000',
+          direction: 'alternate',
+          scale: [{
+            value: 0.4,
+            easing: 'easeOutSine',
+            duration: 500
+          },
+          {
+            value: 1,
+            easing: 'easeInOutQuad',
+            duration: 1200
+          }
+          ],
+          translateX: anime.stagger([10, 0], {
+            grid: [11, 6],
+            from: 'center',
+            axis: 'x'
+          }),
+          translateY: anime.stagger([10, 0], {
+            grid: [11, 6],
+            from: 'center',
+            axis: 'y'
+          }),
+          rotateZ: anime.stagger([0, 90, 0], {
+            grid: [11, 6],
+            from: 'center',
+            axis: 'x'
+          }),
+          delay: anime.stagger(200, {
+            grid: [11, 6],
+            from: 'center',
+            easing: 'easeOutQuad'
+          })
+        })
+      anime({
+        targets: '.el path',
+        delay: 2900,
+        duration: 3000,
+        fill: '#7e7e7e'
+      })
+      anime({
+        targets: '#my-div .el',
+        direction: 'alternate',
+        scale: [{
+          value: 0.2,
+          easing: 'easeOutSine',
+          duration: 500
+        },
+        {
+          value: 1,
+          easing: 'easeInOutQuad',
+          duration: 1200
+        }
+        ],
+        translateX: anime.stagger([10, 0], {
+          grid: [11, 6],
+          from: 'center',
+          axis: 'x'
+        }),
+        translateY: anime.stagger([10, 0], {
+          grid: [11, 6],
+          from: 'center',
+          axis: 'y'
+        }),
+        rotateZ: anime.stagger([0, 90, 0], {
+          grid: [11, 6],
+          from: 'center',
+          axis: 'x'
+        }),
+        delay: anime.stagger(100, {
+          grid: [11, 6],
+          from: 'center',
+          start: 3000,
+          easing: 'easeOutQuad'
+        })
+      })
     }
   }
 }
@@ -180,13 +285,18 @@ export default {
 #entr {
   display: flex;
   flex-direction: column;
+  /* height: 100vh; */
 }
  #path {
       height: 100px;
       margin: auto;
-      padding: 0 !important;
+      /* padding: 0 !important; */
+      background: #fff;
  }
   #path path {
     stroke: black;
+  }
+  #my-div .el path {
+
   }
 </style>
