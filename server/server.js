@@ -194,31 +194,31 @@ let cards = [{
     when: 3,
     from: 'Нанять SMM-менеджера 3',
     id: 1
-  },
-  {
-    param: 'money',
-    operation: '-',
-    change: 80000,
-    when: 1,
-    from: 'Нанять SMM-менеджера 1',
-    id: 1
-  },
-  {
-    param: 'money',
-    operation: '-',
-    change: 80000,
-    when: 2,
-    from: 'Нанять SMM-менеджера 2',
-    id: 1
-  },
-  {
-    param: 'money',
-    operation: '-',
-    change: 80000,
-    when: 3,
-    from: 'Нанять SMM-менеджера 3',
-    id: 1
   }
+  // {
+  //   param: 'money',
+  //   operation: '-',
+  //   change: 80000,
+  //   when: 1,
+  //   from: 'Нанять SMM-менеджера 1',
+  //   id: 1
+  // },
+  // {
+  //   param: 'money',
+  //   operation: '-',
+  //   change: 80000,
+  //   when: 2,
+  //   from: 'Нанять SMM-менеджера 2',
+  //   id: 1
+  // },
+  // {
+  //   param: 'money',
+  //   operation: '-',
+  //   change: 80000,
+  //   when: 3,
+  //   from: 'Нанять SMM-менеджера 3',
+  //   id: 1
+  // }
   ]
 },
 {
