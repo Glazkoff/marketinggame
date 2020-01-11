@@ -130,6 +130,16 @@
               {{(Math.ceil(gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion)+Math.ceil(gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion)+Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion)+Math.ceil(gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion)+Math.ceil(gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion))*gamerParams.averageCheck | formatNumber}}
               ₽</td>
           </tr>
+          <tr v-if="isFinishTable">
+            <th scope="row">ДО</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="light-gray" nowrap>{{(Math.ceil(firstParams.organicCount*firstParams.organicCoef*firstParams.conversion)+Math.ceil(firstParams.contextCount*firstParams.contextCoef*firstParams.conversion)+Math.ceil(firstParams.socialsCount*firstParams.socialsCoef*firstParams.conversion)+Math.ceil(firstParams.smmCount*firstParams.smmCoef*firstParams.conversion)+Math.ceil(firstParams.straightCount*firstParams.straightCoef*firstParams.conversion))*gamerParams.averageCheck | formatNumber}} ₽</td>
+          </tr>
         </tbody>
       </table>
 </template>
