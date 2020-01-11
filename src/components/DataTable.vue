@@ -23,17 +23,18 @@
           </tr>
           <tr>
             <th scope="row">Органика</th>
-            <td>{{Math.ceil(gamerParams.organicCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.organicCount>prevParams.organicCount, 'arrow-down': gamerParams.organicCount<prevParams.organicCount}"></div>
+            <td>{{Math.ceil(gamerParams.organicCount)}}<div class="arrow" :class="{'arrow-up': (gamerParams.organicCount>prevParams.organicCount && !isFinishTable) || (gamerParams.organicCount>firstParams.organicCount && isFinishTable), 'arrow-down': (gamerParams.organicCount<prevParams.organicCount && !isFinishTable) || (gamerParams.organicCount<firstParams.organicCount && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.organicCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.organicCoef>prevParams.organicCoef, 'arrow-down': gamerParams.organicCoef<prevParams.organicCoef}"></div>
+            <td>{{(gamerParams.organicCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': (gamerParams.organicCoef>prevParams.organicCoef && !isFinishTable) || (gamerParams.organicCoef>firstParams.organicCoef && isFinishTable), 'arrow-down':(gamerParams.organicCoef<prevParams.organicCoef && !isFinishTable) || (gamerParams.organicCoef<firstParams.organicCoef && isFinishTable)}"></div>
             </td>
-            <td>{{Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)}}<div class="arrow" :class="{'arrow-up': Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)>Math.ceil(prevParams.organicCount*prevParams.organicCoef), 'arrow-down': Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)<Math.ceil(prevParams.organicCount*prevParams.organicCoef)}"></div>
+            <td>{{Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)}}<div class="arrow" :class="{'arrow-up': (Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)>Math.ceil(prevParams.organicCount*prevParams.organicCoef) && !isFinishTable) || (Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)>Math.ceil(firstParams.organicCount*firstParams.organicCoef) && isFinishTable), 'arrow-down':(Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)<Math.ceil(prevParams.organicCount*prevParams.organicCoef) && !isFinishTable) || (Math.ceil(gamerParams.organicCount*gamerParams.organicCoef)<Math.ceil(firstParams.organicCount*firstParams.organicCoef) && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': gamerParams.conversion>prevParams.conversion, 'arrow-down': gamerParams.conversion<prevParams.conversion}"></div>
+            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': (gamerParams.conversion>prevParams.conversion && !isFinishTable) || (gamerParams.conversion>firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.conversion<prevParams.conversion && !isFinishTable) || (gamerParams.conversion<firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td>{{Math.ceil(gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion)}}<div
                 class="arrow"
-                :class="{'arrow-up': gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion>prevParams.organicCount*prevParams.organicCoef*prevParams.conversion, 'arrow-down': gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion<prevParams.organicCount*prevParams.organicCoef*prevParams.conversion}"></div>
+                :class="{'arrow-up': (gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion>prevParams.organicCount*prevParams.organicCoef*prevParams.conversion && !isFinishTable) || (gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion>firstParams.organicCount*firstParams.organicCoef*firstParams.conversion && isFinishTable)
+                , 'arrow-down': (gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion<prevParams.organicCount*prevParams.organicCoef*prevParams.conversion && !isFinishTable) || (gamerParams.organicCount*gamerParams.organicCoef*gamerParams.conversion<firstParams.organicCount*firstParams.organicCoef*firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td>{{gamerParams.averageCheck | formatNumber}}</td>
             <td>
@@ -42,16 +43,16 @@
           </tr>
           <tr>
             <th scope="row">Реклама: контекст</th>
-            <td>{{Math.ceil(gamerParams.contextCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.contextCount>prevParams.contextCount, 'arrow-down': gamerParams.contextCount<prevParams.contextCount}"></div>
+            <td>{{Math.ceil(gamerParams.contextCount)}}<div class="arrow" :class="{'arrow-up': (gamerParams.contextCount>prevParams.contextCount && !isFinishTable) || (gamerParams.contextCount>firstParams.contextCount && isFinishTable), 'arrow-down': (gamerParams.contextCount<prevParams.contextCount && !isFinishTable) || (gamerParams.contextCount<firstParams.contextCount && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.contextCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.contextCoef>prevParams.contextCoef, 'arrow-down': gamerParams.contextCoef<prevParams.contextCoef}"></div>
+            <td>{{(gamerParams.contextCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': (gamerParams.contextCoef>prevParams.contextCoef && !isFinishTable) || (gamerParams.contextCoef>firstParams.contextCoef && isFinishTable), 'arrow-down': (gamerParams.contextCoef<prevParams.contextCoef && !isFinishTable) || (gamerParams.contextCoef<firstParams.contextCoef && isFinishTable)}"></div>
             </td>
-            <td>{{Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)}}<div class="arrow" :class="{'arrow-up': Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)>Math.ceil(prevParams.contextCount*prevParams.contextCoef), 'arrow-down': Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)<Math.ceil(prevParams.contextCount*prevParams.contextCoef)}"></div>
+            <td>{{Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)}}<div class="arrow" :class="{'arrow-up': (Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)>Math.ceil(prevParams.contextCount*prevParams.contextCoef) && !isFinishTable) || (Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)>Math.ceil(firstParams.contextCount*firstParams.contextCoef) && isFinishTable), 'arrow-down': (Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)<Math.ceil(prevParams.contextCount*prevParams.contextCoef) && !isFinishTable) || (Math.ceil(gamerParams.contextCount*gamerParams.contextCoef)<Math.ceil(firstParams.contextCount*firstParams.contextCoef) && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': gamerParams.conversion>prevParams.conversion, 'arrow-down': gamerParams.conversion<prevParams.conversion}"></div>
+            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': (gamerParams.conversion>prevParams.conversion && !isFinishTable) || (gamerParams.conversion>firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.conversion<prevParams.conversion && !isFinishTable) || (gamerParams.conversion<firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td>{{Math.ceil(gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion)}}<div
-                class="arrow" :class="{'arrow-up': gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion>prevParams.contextCount*prevParams.contextCoef*prevParams.conversion, 'arrow-down': gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion<prevParams.contextCount*prevParams.contextCoef*prevParams.conversion}"></div>
+                class="arrow" :class="{'arrow-up': (gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion>prevParams.contextCount*prevParams.contextCoef*prevParams.conversion && !isFinishTable) || (gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion>firstParams.contextCount*firstParams.contextCoef*firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion<prevParams.contextCount*prevParams.contextCoef*prevParams.conversion && !isFinishTable) || (gamerParams.contextCount*gamerParams.contextCoef*gamerParams.conversion<firstParams.contextCount*firstParams.contextCoef*firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td></td>
             <td>
@@ -60,16 +61,16 @@
           </tr>
           <tr>
             <th scope="row">Реклама: соцсети</th>
-            <td>{{Math.ceil(gamerParams.socialsCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.socialsCount>prevParams.socialsCount, 'arrow-down': gamerParams.socialsCount<prevParams.socialsCount}"></div>
+            <td>{{Math.ceil(gamerParams.socialsCount)}}<div class="arrow" :class="{'arrow-up': (gamerParams.socialsCount>prevParams.socialsCount && !isFinishTable) || (gamerParams.socialsCount>firstParams.socialsCount && isFinishTable), 'arrow-down': (gamerParams.socialsCount<prevParams.socialsCount && !isFinishTable) || (gamerParams.socialsCount<firstParams.socialsCount && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.socialsCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.socialsCoef>prevParams.socialsCoef, 'arrow-down': gamerParams.socialsCoef<prevParams.socialsCoef}"></div>
+            <td>{{(gamerParams.socialsCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': (gamerParams.socialsCoef>prevParams.socialsCoef && !isFinishTable) || (gamerParams.socialsCoef>firstParams.socialsCoef && isFinishTable), 'arrow-down': (gamerParams.socialsCoef<prevParams.socialsCoef && !isFinishTable) || (gamerParams.socialsCoef<firstParams.socialsCoef && isFinishTable)}"></div>
             </td>
-            <td>{{Math.ceil(gamerParams.socialsCoef*gamerParams.socialsCount)}}<div class="arrow" :class="{'arrow-up': Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef)>Math.ceil(prevParams.socialsCount*prevParams.socialsCoef), 'arrow-down': Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef)<Math.ceil(prevParams.socialsCount*prevParams.socialsCoef)}"></div>
+            <td>{{Math.ceil(gamerParams.socialsCoef*gamerParams.socialsCount)}}<div class="arrow" :class="{'arrow-up': (Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef)>Math.ceil(prevParams.socialsCount*prevParams.socialsCoef) && !isFinishTable) || (Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef)>Math.ceil(firstParams.socialsCount*firstParams.socialsCoef) && isFinishTable), 'arrow-down': (Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef)<Math.ceil(prevParams.socialsCount*prevParams.socialsCoef) && !isFinishTable) || (Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef)<Math.ceil(firstParams.socialsCount*firstParams.socialsCoef) && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': gamerParams.conversion>prevParams.conversion, 'arrow-down': gamerParams.conversion<prevParams.conversion}"></div>
+            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': (gamerParams.conversion>prevParams.conversion && !isFinishTable) || (gamerParams.conversion>firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.conversion<prevParams.conversion && !isFinishTable) || (gamerParams.conversion<firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td>{{Math.ceil(gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion)}}<div
-                class="arrow" :class="{'arrow-up': gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion>prevParams.socialsCount*prevParams.socialsCoef*prevParams.conversion, 'arrow-down': gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion<prevParams.socialsCount*prevParams.socialsCoef*prevParams.conversion}"></div>
+                class="arrow" :class="{'arrow-up': (gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion>prevParams.socialsCount*prevParams.socialsCoef*prevParams.conversion && !isFinishTable) || (gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion>firstParams.socialsCount*firstParams.socialsCoef*firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion<prevParams.socialsCount*prevParams.socialsCoef*prevParams.conversion && !isFinishTable) || (gamerParams.socialsCount*gamerParams.socialsCoef*gamerParams.conversion<firstParams.socialsCount*firstParams.socialsCoef*firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td></td>
             <td>
@@ -78,15 +79,15 @@
           </tr>
           <tr>
             <th scope="row">Соц. медиа</th>
-            <td>{{Math.ceil(gamerParams.smmCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.smmCount>prevParams.smmCount, 'arrow-down': gamerParams.smmCount<prevParams.smmCount}"></div>
+            <td>{{Math.ceil(gamerParams.smmCount)}}<div class="arrow" :class="{'arrow-up': (gamerParams.smmCount>prevParams.smmCount && !isFinishTable) || (gamerParams.smmCount>firstParams.smmCount && isFinishTable), 'arrow-down': (gamerParams.smmCount<prevParams.smmCount && !isFinishTable) || (gamerParams.smmCount<firstParams.smmCount && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.smmCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.smmCoef>prevParams.smmCoef, 'arrow-down': gamerParams.smmCoef<prevParams.smmCoef}"></div>
+            <td>{{(gamerParams.smmCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': (gamerParams.smmCoef>prevParams.smmCoef && !isFinishTable) || (gamerParams.smmCoef>firstParams.smmCoef && isFinishTable), 'arrow-down': (gamerParams.smmCoef<prevParams.smmCoef && !isFinishTable) || (gamerParams.smmCoef<firstParams.smmCoef && isFinishTable)}"></div>
             </td>
-            <td>{{Math.ceil(gamerParams.smmCoef*gamerParams.smmCount)}}<div class="arrow" :class="{'arrow-up': Math.ceil(gamerParams.smmCount*gamerParams.smmCoef)>Math.ceil(prevParams.smmCount*prevParams.smmCoef), 'arrow-down': Math.ceil(gamerParams.smmCount*gamerParams.smmCoef)<Math.ceil(prevParams.smmCount*prevParams.smmCoef)}"></div>
+            <td>{{Math.ceil(gamerParams.smmCoef*gamerParams.smmCount)}}<div class="arrow" :class="{'arrow-up': (Math.ceil(gamerParams.smmCount*gamerParams.smmCoef)>Math.ceil(prevParams.smmCount*prevParams.smmCoef) && !isFinishTable) || (Math.ceil(gamerParams.smmCount*gamerParams.smmCoef)>Math.ceil(firstParams.smmCount*firstParams.smmCoef) && isFinishTable), 'arrow-down': (Math.ceil(gamerParams.smmCount*gamerParams.smmCoef)<Math.ceil(prevParams.smmCount*prevParams.smmCoef) && !isFinishTable) || (Math.ceil(gamerParams.smmCount*gamerParams.smmCoef)<Math.ceil(firstParams.smmCount*firstParams.smmCoef) && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': gamerParams.conversion>prevParams.conversion, 'arrow-down': gamerParams.conversion<prevParams.conversion}"></div>
+            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': (gamerParams.conversion>prevParams.conversion && !isFinishTable) || (gamerParams.conversion>firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.conversion<prevParams.conversion && !isFinishTable) || (gamerParams.conversion<firstParams.conversion && isFinishTable)}"></div>
             </td>
-            <td>{{Math.ceil(gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion)}}<div class="arrow" :class="{'arrow-up': gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion>prevParams.smmCount*prevParams.smmCoef*prevParams.conversion, 'arrow-down': gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion<prevParams.smmCount*prevParams.smmCoef*prevParams.conversion}"></div>
+            <td>{{Math.ceil(gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion)}}<div class="arrow" :class="{'arrow-up': (gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion>prevParams.smmCount*prevParams.smmCoef*prevParams.conversion && !isFinishTable) || (gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion>firstParams.smmCount*firstParams.smmCoef*firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion<prevParams.smmCount*prevParams.smmCoef*prevParams.conversion && !isFinishTable) || (gamerParams.smmCount*gamerParams.smmCoef*gamerParams.conversion<firstParams.smmCount*firstParams.smmCoef*firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td></td>
             <td>
@@ -95,16 +96,16 @@
           </tr>
           <tr>
             <th scope="row">Прямой заход</th>
-            <td>{{Math.ceil(gamerParams.straightCount)}}<div class="arrow" :class="{'arrow-up': gamerParams.straightCount>prevParams.straightCount, 'arrow-down': gamerParams.straightCount<prevParams.straightCount}"></div>
+            <td>{{Math.ceil(gamerParams.straightCount)}}<div class="arrow" :class="{'arrow-up': (gamerParams.straightCount>prevParams.straightCount && !isFinishTable) || (gamerParams.straightCount>firstParams.straightCount && isFinishTable), 'arrow-down': (gamerParams.straightCount<prevParams.straightCount && !isFinishTable) || (gamerParams.straightCount<firstParams.straightCount && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.straightCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': gamerParams.straightCoef>prevParams.straightCoef, 'arrow-down': gamerParams.straightCoef<prevParams.straightCoef}"></div>
+            <td>{{(gamerParams.straightCoef*100).toFixed(2)}}<div class="arrow" :class="{'arrow-up': (gamerParams.straightCoef>prevParams.straightCoef && !isFinishTable) || (gamerParams.straightCoef>firstParams.straightCoef && isFinishTable), 'arrow-down': (gamerParams.straightCoef<prevParams.straightCoef && !isFinishTable) || (gamerParams.straightCoef<firstParams.straightCoef && isFinishTable)}"></div>
             </td>
-            <td>{{Math.ceil(gamerParams.straightCoef*gamerParams.straightCount)}}<div class="arrow" :class="{'arrow-up': Math.ceil(gamerParams.straightCount*gamerParams.straightCoef)>Math.ceil(prevParams.straightCount*prevParams.straightCoef), 'arrow-down': Math.ceil(gamerParams.straightCount*gamerParams.straightCoef)<Math.ceil(prevParams.straightCount*prevParams.straightCoef)}"></div>
+            <td>{{Math.ceil(gamerParams.straightCoef*gamerParams.straightCount)}}<div class="arrow" :class="{'arrow-up': (Math.ceil(gamerParams.straightCount*gamerParams.straightCoef)>Math.ceil(prevParams.straightCount*prevParams.straightCoef) && !isFinishTable) || (Math.ceil(gamerParams.straightCount*gamerParams.straightCoef)>Math.ceil(firstParams.straightCount*firstParams.straightCoef) && isFinishTable), 'arrow-down': (Math.ceil(gamerParams.straightCount*gamerParams.straightCoef)<Math.ceil(prevParams.straightCount*prevParams.straightCoef) && !isFinishTable) || (Math.ceil(gamerParams.straightCount*gamerParams.straightCoef)< Math.ceil(firstParams.straightCount*firstParams.straightCoef) && isFinishTable)}"></div>
             </td>
-            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': gamerParams.conversion>prevParams.conversion, 'arrow-down': gamerParams.conversion<prevParams.conversion}"></div>
+            <td>{{(gamerParams.conversion*100).toFixed(2)}} %<div class="arrow" :class="{'arrow-up': (gamerParams.conversion>prevParams.conversion && !isFinishTable) || (gamerParams.conversion>firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.conversion<prevParams.conversion && !isFinishTable) || (gamerParams.conversion<firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td>{{Math.ceil(gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion)}}<div
-                class="arrow" :class="{'arrow-up': gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion>prevParams.straightCount*prevParams.straightCoef*prevParams.conversion, 'arrow-down': gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion<prevParams.straightCount*prevParams.straightCoef*prevParams.conversion}"></div>
+                class="arrow" :class="{'arrow-up': (gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion>prevParams.straightCount*prevParams.straightCoef*prevParams.conversion && !isFinishTable) || (gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion>firstParams.straightCount*firstParams.straightCoef*firstParams.conversion && isFinishTable), 'arrow-down': (gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion<prevParams.straightCount*prevParams.straightCoef*prevParams.conversion && !isFinishTable) || (gamerParams.straightCount*gamerParams.straightCoef*gamerParams.conversion<firstParams.straightCount*firstParams.straightCoef*firstParams.conversion && isFinishTable)}"></div>
             </td>
             <td></td>
             <td>
@@ -154,6 +155,9 @@ export default {
     },
     prevParams () {
       return this.$store.state.prevRoomParams
+    },
+    firstParams () {
+      return this.$store.state.firstRoomParams
     }
   }
 }

@@ -363,7 +363,9 @@ export default {
       if (this.$refs.number1 !== undefined) {
         this.$refs.number1.play()
         setTimeout(() => {
-          this.$refs.number1.play()
+          if (this.$refs.number1 !== undefined) {
+            this.$refs.number1.play()
+          }
         }, 100)
       }
       this.$store.commit('doAnimation')
