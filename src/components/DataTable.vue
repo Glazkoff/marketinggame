@@ -147,6 +147,7 @@ export default {
 
     }
   },
+  props: ['isFinishTable'],
   computed: {
     gamerParams () {
       return this.$store.state.roomParams

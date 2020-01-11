@@ -41,6 +41,7 @@ export default new Vuex.Store({
     gamers: [],
     winners: {},
     activeEffects: [],
+    steps: [],
     gameEvent: null
   },
   getters: {},
@@ -58,6 +59,7 @@ export default new Vuex.Store({
       state.isFinish = false
       state.stepDone = false
       state.roomId = -1
+      state.steps = []
       state.havePrevData = false
       // state.roomParams = Object.assign(state.firstRoomParams)
       state.roomParams = {}
@@ -65,6 +67,14 @@ export default new Vuex.Store({
       for (var key in state.firstRoomParams) {
         state.roomParams[key] = state.firstRoomParams[key]
       }
+    },
+    addSteps (state, data) {
+      let monthArr = []
+      for (var val of data) {
+        console.log(val)
+        monthArr.push(val)
+      }
+      state.steps.push(monthArr)
     },
     copyData (state, data) {
       state.roomParams = {}

@@ -939,9 +939,10 @@ io.on('connection', function (socket) {
       }
       let gamersRate = []
       for (const gamer of gamers) {
+
         let position = {
           id: gamer.id,
-          money: gamer.data.money
+          money: (Math.ceil(gamer.data.organicCount * gamer.data.organicCoef * gamer.data.conversion) + Math.ceil(gamer.data.contextCount * gamer.data.contextCoef * gamer.data.conversion) + Math.ceil(gamer.data.socialsCount * gamer.data.socialsCoef * gamer.data.conversion) + Math.ceil(gamer.data.smmCount * gamer.data.smmCoef * gamer.data.conversion) + Math.ceil(gamer.data.straightCount * gamer.data.straightCoef * gamer.data.conversion)) * gamer.data.averageCheck
         }
         gamersRate.push(position)
       }

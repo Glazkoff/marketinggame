@@ -1,6 +1,6 @@
 <template>
   <div id="finish-screen">
-    <div class="container mt-4">
+    <div class="container mt-2">
       <div class="row" v-if="isLoozer">
         <div class="col-12">
           <h2 class="text-center h-100">Увы, {{gamerName}}, следующий раз должно получиться!</h2>
@@ -14,7 +14,7 @@
       </div>
       <div class="row" v-if="isLoozer">
         <div class="col-6 offset-3">
-          <div class="card mb-3" style="max-width: 540px;">
+          <div class="card" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
                 <div class="gray-block"></div>
@@ -28,7 +28,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em>{{firstPosition!==undefined ? firstPosition.money : ''}} ₽</em>
+                    <em>{{firstPosition!==undefined ? firstPosition.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck) : ''}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -40,24 +40,30 @@
         <div class="col-4">
           <div class="gray-block"></div>
         </div>
-        <div class="col-8 text-center mt-3" v-if="isWinner">
-          <h3>Поздравляю, {{gamerData!==undefined ? gamerData.name : ''}}!</h3>
-          <h1>Вы - победитель</h1>
-          <p>Вам удалось заработать:</p>
+        <div class="col-8 text-center mt-0" v-if="isWinner">
+          <h5 class="mb-0">Поздравляю, {{gamerData!==undefined ? gamerData.name : ''}}!</h5>
+          <h3 class="mb-0">Вы - победитель</h3>
+          <p class="mb-0">Вам удалось заработать:</p>
           <ul class="list-group col-10 offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
-              Общий бюджет
+              Выручка за игру:
               <span class="badge badge-primary badge-pill">
-                <h4>{{gamerData!==undefined ? gamerData.money : ''}} ₽</h4>
+                <h4>{{gamerData!==undefined ? Math.ceil(gamerData.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck)) : '' | formatNumber}} ₽</h4>
               </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              Клиентов в месяц:
+              Клиентов за игру:
               <span
                 class="badge badge-primary badge-pill"
               >{{gamerRoomParams.clients}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Потрачено на продвижение:
+              <span
+                class="badge badge-primary badge-pill"
+              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}} ₽</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -94,7 +100,7 @@
       <!-- <hr> -->
       <div class="row mt-2">
         <div class="col-6" v-if="isSecondPosition">
-          <div class="card mb-3" style="max-width: 540px;">
+          <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
                 <div class="gray-block"></div>
@@ -112,7 +118,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em>{{secondPosition!==undefined ? secondPosition.money : ''}} ₽</em>
+                    <em>{{secondPosition!==undefined ? secondPosition.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck) : ''}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -120,7 +126,7 @@
           </div>
         </div>
         <div class="col-6" v-if="isThirdPosition">
-          <div class="card mb-3" style="max-width: 540px;">
+          <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
                 <div class="gray-block"></div>
@@ -138,7 +144,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em>{{thirdPosition!==undefined ? thirdPosition.money : ''}} ₽</em>
+                    <em>{{thirdPosition!==undefined ? thirdPosition.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck) : ''}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -147,6 +153,25 @@
         </div>
       </div>
       <!-- <hr> -->
+      <div class="row">
+        <div class="col-8 align-content-center justify-content-between pr-0 finish-table">
+          <DataTable is-finish-table="true"></DataTable>
+        </div>
+        <div class="col-4 align-content-center justify-content-between steps" id="stepsBox">
+          <h6 class="">Ваши ходы:</h6>
+          <div class="row mt-1" v-for="(step, count) in steps" v-bind:key="count">
+            <div class="col-4 align-content-center justify-content-between">
+              <p class="mb-0 h-100 w-100 text-center font-weight-bold">{{count+1}} месяц</p>
+            </div>
+            <div class="col-8 pl-0" v-if="step.length!==0">
+              <p class="mb-0" v-for="(card, num) in step" v-bind:key="num" >-{{card.title}}</p>
+            </div>
+            <div class="col-8 pl-0" v-else>
+              <p class="mb-0">-</p>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="row mt-2">
         <div class="col-6 align-content-center justify-content-between">
           <router-link
@@ -172,12 +197,23 @@
 </template>
 
 <script>
+import DataTable from '@/components/DataTable.vue'
+
 export default {
   name: "Finish",
   methods: {},
+  components: {
+    DataTable
+  },
   computed: {
+    steps () {
+      return this.$store.state.steps
+    },
     gamerRoomParams () {
       return this.$store.state.roomParams
+    },
+    firstRoomParams () {
+      return this.$store.state.firstRoomParams
     },
     gamerName () {
       return this.$store.state.gamerName
@@ -288,5 +324,81 @@ export default {
   height: calc(96% - 80px);
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+}
+.finish-table .table td {
+  font-size: 0.7rem;
+} 
+#finish-screen .list-group-item:first-child {
+  font-size: 1.1rem;
+}
+#finish-screen .list-group-item {
+  padding-top: 0.3rem !important;
+ padding-bottom: 0.3rem !important;
+  font-size: 0.9rem;
+}
+#finish-screen .list-group-item:first-child span h4 {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+#finish-screen ul {
+  margin-top: 4px !important;
+}
+#finish-screen .table thead th, .table td, .table th {
+  white-space: nowrap;
+}
+.gamer-round-data .table th {
+   white-space: unset;
+}
+.gamer-round-data h4 {
+  font-size: 1.1rem;
+}
+#finish-screen .container {
+  max-width: unset;
+  margin-top: 0 ;
+}
+.steps {
+  overflow-y: scroll;
+  overflow-x: auto;
+  max-height: 300px;
+}
+.steps p {
+  font-size: 0.9rem;
+  /* white-space: nowrap; */
+}
+#finish-screen .card-body {
+  padding: 0.45rem;
+  padding-left: 0.8rem;
+}
+#finish-screen .card-body h5 {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+#finish-screen .card-body p {
+  font-size: 0.8rem;
+}
+
+#stepsBox::-webkit-scrollbar {
+  width: 4px;
+  height: 8px;
+  background-color: #f5f5f5;
+}
+
+#stepsBox::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+#stepsBox::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: linear-gradient(top, #fff, #e4e4e4);
+  border: 1px solid #aaa;
+}
+
+#stepsBox::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
+
+#stepsBox::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(left, #0079fb, #1e98ba);
 }
 </style>

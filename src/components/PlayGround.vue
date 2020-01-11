@@ -121,7 +121,7 @@
                 </div>
               </div>
               <DataTable></DataTable>
-              <button class="btn btn-success w-100 mt-1 pr-2 btn-block" :disabled="isStart" @click="makeStep()">Завершить ход</button>
+              <button class="btn btn-success w-100 mt-1 pr-2 btn-block" :disabled="isStart || stepDone" @click="makeStep()">Завершить ход</button>
             </div>
           </div>
         </div>
@@ -405,6 +405,20 @@ export default {
     makeStep () {
       this.$store.commit('doStep') //
       this.$socket.emit('doStep', this.usedCards)
+      let stepArr = []
+      for (const val of this.usedCards) {
+        console.log(val)
+        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        console.log(this.refreshCards.find(el => el.id === val))
+        let cardObj = {
+          id: val,
+          title: this.refreshCards.find(el => el.id === val).title
+        }
+        console.log('!!!!!!!!!!!!!')
+        console.log(cardObj)
+        stepArr.push(cardObj)
+      }
+      this.$store.commit('addSteps', stepArr)
       // Одноразовые карточки (индексы):
       let oneOffCards = [3, 7]
       for (const cardIndex of oneOffCards) {
