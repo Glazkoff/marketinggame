@@ -868,9 +868,10 @@ io.on('connection', function (socket) {
     // Если все в комнате завершили ход
     if (room.attackers === 0) {
       room.roomState.month--
+      console.log(room.roomState.month)
       console.log('Обновление данных для ВСЕХ')
       setTimeout(() => {
-        if (Math.floor(Math.random() * 10) % 2 === 0) {
+        if ((Math.floor(Math.random() * 10) % 2 === 0) && (room.roomState.month > 0)) {
           let randomEvent = events[Math.floor(Math.random() * events.length)]
           console.log('Событие')
           console.log(randomEvent)
