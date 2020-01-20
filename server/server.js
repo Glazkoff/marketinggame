@@ -962,9 +962,12 @@ io.on('connection', function (socket) {
         let a = gamersRate.shift()
         if (typeof a !== 'undefined') {
           winners[index] = Object.assign(a)
-          winners[index].name = connectedNames.find(
+          let person = connectedNames.find(
             el => el.id === a.id
-          ).name
+          )
+          if (typeof person !== 'undefined') {
+            winners[index].name = person.name
+          }
         } else winners[index] = a
         // console.log(gamersRate.shift());
         // console.log(winners[index]);
