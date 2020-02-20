@@ -174,13 +174,13 @@
           class="card-box w-100 h-100  bottom-card bottom-card-2"
           v-if="!card.oneOff && !hasThisEffect(card.id) || isLastStep(card.id)"
           ></div>
-          <div class="card-head">
-            <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
+          <div class="inner-card-wrap">
+            <div class="card-head">
+              <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
+            </div>
+            <small class="card-text text-center">{{card.text}}</small>
+            <h3 class="card-text text-center">{{card.cost}} ₽</h3>
           </div>
-
-          <div class="card-image"></div>
-          <small class="card-text text-center">{{card.text}}</small>
-          <h3 class="card-text text-center">{{card.cost}} ₽</h3>
           <button
             class="btn btn-dark pl-2"
             @click="dropFromBtn(count)"
@@ -253,44 +253,44 @@ export default {
         {
           id: 1,
           title: 'Нанять SMM-менеджера',
-          text: 'Описание карточки, описание карточки',
+          text: 'Трафик из соц.медиа: 2й мес - к-т 1,1, 3й - 1,8. Конверсия в звонки по соц.сетям: 3й мес - 1,5',
           cost: 55000
         },
         {
           id: 2,
           title: 'Заказать SEO-оптимизацию',
-          text: 'Описание карточки, описание карточки',
+          text: 'Органика растет в 2 раза на 3й мес применения. 1й мес просто стоимости привлечения - 1,5, 3й мес падение - 0.3  ',
           cost: 50000
         },
         {
           id: 3,
           title: 'Улучшение юзабилити',
-          text: 'Описание карточки, описание карточки',
+          text: 'Конверсия в звонки по всем каналам: 3й - 1,1. Стоимость привлечения: 1 и 2й - 0,8. Средний чек: 3й - 1,5',
           cost: 20000,
           oneOff: true
         },
         {
           id: 4,
           title: 'Реклама в соцсетях',
-          text: 'Описание карточки, описание карточки',
+          text: 'Трафик по рекламе: 1й мес +4500. Стоимость привлечения: 1-3 мес - 1,1',
           cost: 25000
         },
         {
           id: 5,
           title: 'PR-компания компании',
-          text: 'Описание карточки, описание карточки',
+          text: 'Стоимость привелечения: 1й - 1,3, 2й - 1,1, 3й - 1,2',
           cost: 30000
         },
         {
           id: 6,
           title: 'Контекстная рекламная компания',
-          text: 'Описание карточки, описание карточки',
+          text: 'Трафик из контекста: 1й мес- +6000 визитов, 2 и 3й - 1,1. Конверсия в звонки: 1й - 1,5. Стоимость привлечения: кажды мес -  1,3',
           cost: 35000
         },
         {
           id: 7,
           title: 'Размещение информации в справочниках',
-          text: 'Описание карточки, описание карточки',
+          text: 'Трафик type-in: 1-3й - 1,2. ',
           cost: 20000,
           oneOff: true
         }
@@ -704,7 +704,7 @@ export default {
   transition: all 0.4s;
   max-width: 220px;
   width: 30%;
-  min-width: 168px;
+  min-width: 180px;
   margin-right: 16px;
   user-select: none;
   cursor: pointer;
@@ -778,6 +778,19 @@ export default {
 }
 .data-group .list-group-horizontal .list-group-item h4 {
   margin-bottom: 0;
+}
+.inner-card-wrap {
+  height: 85%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.inner-card-wrap small {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.inner-card-wrap h3 {
+  padding-bottom: 8px;
 }
 @media screen and (max-width: 1250px){
   .list-group-item {

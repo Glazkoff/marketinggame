@@ -67,7 +67,8 @@
         <br />
         <input
           type="number"
-          min="1"
+          min="3"
+          step="3"
           v-model.number="roomParams.month"
           name="month"
           id="month"

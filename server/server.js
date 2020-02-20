@@ -646,11 +646,12 @@ io.on('connection', function (socket) {
       gamer = room.gamers.find(el => el.id === socket.id)
     }
     let card
-    io.sockets.to(gamer.id).emit('addMessage', {
-      name: 'Admin',
-      text: `Вы сделали ход!`
-    })
-
+    if (gamer !== undefined) {
+      io.sockets.to(gamer.id).emit('addMessage', {
+        name: 'Admin',
+        text: `Вы сделали ход!`
+      })
+    }
     // Начало обработки пришедшего массива с ID карточек
 
     for (const effect of gamer.effects) {
@@ -814,8 +815,31 @@ io.on('connection', function (socket) {
               messageArr.push('Что-то не так с операцией карточки по ID ' + card.id)
               break
           }
-          console.log('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
-          messageArr.push('Обновлён параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')')
+          let analyticsString = 'Обновлён  '
+          switch (changing.param) {
+            case 'organicCount':
+              analyticsString += 'параметр "Органика"'
+              break
+            case 'contextCount':
+              analyticsString += 'параметр "Реклама: контекст"'
+              break
+            case 'socialsCount':
+              analyticsString += 'параметр "Реклама: соцсети"'
+              break
+            case 'smmCount':
+              analyticsString += 'параметр "Соц. медиа"'
+              break
+            case 'straightCount':
+              analyticsString += 'параметр "Прямой заход"'
+              break
+          
+            default:
+              analyticsString += 'параметр ' + changing.param
+              break
+          }
+          analyticsString += ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')'
+          console.log(analyticsString)
+          messageArr.push(analyticsString)
           let indForDelete = gamer.changes.findIndex(elem => { return (elem.id == changing.id) && (elem.change == changing.change) && (elem.param == changing.param) })
           if (indForDelete !== -1) {
             // console.log('Удалилась позиция ' + indForDelete)
