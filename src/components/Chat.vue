@@ -187,7 +187,7 @@ h2#chat {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 2px 80px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 60px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.5s;
 }
 .mess-block {

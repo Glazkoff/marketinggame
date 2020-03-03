@@ -72,23 +72,29 @@
           </ul>
         </div>
         <div class="col-8 text-center mt-3" v-else-if="isPrizer">
-          <h3>Поздравляю, {{gamerData.name}}!</h3>
-          <h1>Вы на {{isSecondWinner ? 'втором' : 'третьем'}} месте</h1>
-          <p>Вам удалось заработать:</p>
+          <h5 class="mb-0">Поздравляю, {{gamerData.name}}!</h5>
+          <h3 class="mb-0">Вы на {{isSecondWinner ? 'втором' : 'третьем'}} месте</h3>
+          <p class="mb-0">Вам удалось заработать:</p>
           <ul class="list-group col-10 offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
-              Общий бюджет
+              Выручка за игру:
               <span class="badge badge-primary badge-pill">
-                <h4>{{gamerData!==undefined ? gamerData.money : ''}} ₽</h4>
+                <h4>{{gamerData!==undefined ? Math.ceil(gamerData.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck)) : '' | formatNumber}} ₽</h4>
               </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              Клиентов в месяц:
+              Привлечено клиентов:
               <span
                 class="badge badge-primary badge-pill"
-              >{{gamerRoomParams.clients}}</span>
+              >{{(gamerRoomParams !== undefined ? (Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)) : '')}} × {{firstRoomParams.month}} мес. = {{((Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)))*firstRoomParams.month}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Потрачено на продвижение:
+              <span
+                class="badge badge-primary badge-pill"
+              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}}  × {{firstRoomParams.month}} мес. = {{(firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money))*firstRoomParams.month | formatNumber}} ₽</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры

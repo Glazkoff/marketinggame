@@ -608,7 +608,8 @@ io.on('connection', function (socket) {
           id,
           data: Object.assign({}, obj),
           changes: [],
-          effects: []
+          effects: [],
+          usedCards: []
         }
         console.log('!!!!')
         console.log(gamerObj.data)
@@ -660,6 +661,17 @@ io.on('connection', function (socket) {
         if (cardArrIndex === -1) {
           let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
           gamer.effects.splice(effectIndex, 1)
+          // !!! добавление в !!!
+          // Добавление в массив использованных карточек
+          if (typeof gamer.usedCards[effect.id] === 'undefined') {
+            gamer.usedCards[effect.id] = 1
+          } else {
+            gamer.usedCards[effect.id]++
+          }
+          io.sockets.to(gamer.id).emit('addMessage', {
+            name: 'ТЕСТ',
+            text: `вот ${gamer.usedCards[effect.id]}`
+          })
         }
       }
     }
@@ -681,6 +693,7 @@ io.on('connection', function (socket) {
           let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
           gamer.effects.splice(effectIndex, 1)
           console.log('Действие эффекта закончилось')
+          
         } else {
         }
       }
@@ -802,21 +815,39 @@ io.on('connection', function (socket) {
         console.log(changing)
         console.log('*****************************************************')
         if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7) || changing.event) {
-          switch (changing.operation) {
-            case '+':
-              gamer.data[changing.param] += changing.change
-              break
-            case '-':
-              gamer.data[changing.param] -= changing.change
-              break
-            case '*':
-              gamer.data[changing.param] *= changing.change
-              break
-            default:
-              console.log('Что-то не так с операцией карточки по ID ' + card.id)
-              messageArr.push('Что-то не так с операцией карточки по ID ' + card.id)
-              break
-          }
+          if (gamer.usedCards[changing.id] < 1) {
+            switch (changing.operation) {
+              case '+':
+                gamer.data[changing.param] += changing.change
+                break
+              case '-':
+                gamer.data[changing.param] -= changing.change
+                break
+              case '*':
+                gamer.data[changing.param] *= changing.change
+                break
+              default:
+                console.log('Что-то не так с операцией карточки по ID ' + card.id)
+                messageArr.push('Что-то не так с операцией карточки по ID ' + card.id)
+                break
+            }
+          } else {
+            switch (changing.operation) {
+              case '+':
+                gamer.data[changing.param] += (changing.change / Math.pow(2, gamer.usedCards[changing.id]))
+                break
+              case '-':
+                gamer.data[changing.param] -= (changing.change / Math.pow(2, gamer.usedCards[changing.id]))
+                break
+              case '*':
+                gamer.data[changing.param] *= (changing.change / Math.pow(2, gamer.usedCards[changing.id]))
+                break
+              default:
+                console.log('Что-то не так с операцией карточки по ID ' + card.id)
+                messageArr.push('Что-то не так с операцией карточки по ID ' + card.id)
+                break
+            }
+          }      
           let analyticsString = 'Обновлён  '
           switch (changing.param) {
             case 'organicCount':
@@ -839,7 +870,11 @@ io.on('connection', function (socket) {
               analyticsString += 'параметр ' + changing.param
               break
           }
-          analyticsString += ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')'
+          if (gamer.usedCards[changing.id] >= 1) {
+            analyticsString += ' со знаком ' + changing.operation + ' на ' + (changing.change / Math.pow(2, gamer.usedCards[changing.id])) + ' (' + changing.from + ')'
+          } else {
+            analyticsString += ' со знаком ' + changing.operation + ' на ' + changing.change + ' (' + changing.from + ')'
+          }
           console.log(analyticsString)
           messageArr.push(analyticsString)
           let indForDelete = gamer.changes.findIndex(elem => { return (elem.id == changing.id) && (elem.change == changing.change) && (elem.param == changing.param) })
@@ -1011,6 +1046,8 @@ io.on('connection', function (socket) {
     }
     console.log('---ДАННЫЕ ИГРОКА---')
     console.log(gamer.data)
+    console.log('---ЭФФЕКТЫ ИГРОКА---')
+    console.log(gamer.effects)
     for (const gamer of gamers) {
       io.sockets.to(gamer.id).emit('setEffects', gamer.effects)
     }
@@ -1030,7 +1067,7 @@ io.on('connection', function (socket) {
     }
     // if (room !== undefined) {
     //   // ААААААААААААААААААААААААААААААААААААААААААААА
-    //   // !!!!!!!!!!!!!!!!!НЕПРАВИЛЬНО"!!!!!!!!!!Ё!!!!
+    //   // !!!!!!!!!!!!!!!!!НЕПРАВИЛЬНО"!!!!!!!!!!!!!!
     //   gamer = room.gamers.find(el => el.id === socket.id)
     // }
     console.log('Подключенные имена:')
