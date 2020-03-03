@@ -629,12 +629,7 @@ io.on('connection', function (socket) {
     }
 
     io.sockets.to(socket.roomId).emit('setGamers', gamerNamesObj)
-    socket.to(socket.roomId).broadcast.emit('setStartGame', obj)
-
-    io.sockets.to(socket.roomId).emit('addMessage', {
-      name: 'Admin',
-      text: JSON.stringify(obj)
-    })
+    socket.to(socket.roomId).emit('setStartGame', obj)
   })
 
   // socket.on('typing', function () {
