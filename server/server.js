@@ -169,7 +169,7 @@ let cards = [{
   text: 'Описание карточки, описание карточки',
   // change: "money",
   // params: 100,
-  cost: 55000,
+  cost: 80000,
   duration: 3,
   dataChange: [{
     param: 'smmCount',
@@ -502,15 +502,15 @@ let cards = [{
     when: 3,
     from: 'Размещение информации о компании в справочниках 3',
     id: 7
-  },
-  {
-    param: 'money',
-    operation: '-',
-    change: 40000,
-    when: 1,
-    from: 'Размещение информации о компании в справочниках 1',
-    id: 7
   }
+  // {
+  //   param: 'money',
+  //   operation: '-',
+  //   change: 40000,
+  //   when: 1,
+  //   from: 'Размещение информации о компании в справочниках 1',
+  //   id: 7
+  // }
   ]
 }
 ]
@@ -612,7 +612,6 @@ io.on('connection', function (socket) {
         }
         console.log('!!!!')
         console.log(gamerObj.data)
-
         gamers.push(gamerObj)
       }
       roomState.constAttackers = attackers
@@ -624,11 +623,18 @@ io.on('connection', function (socket) {
 
     console.log('Стейт комнат: ')
     console.log(roomsState)
+
     let gamerNamesObj = {
       gamers: gamerNames
     }
+
     io.sockets.to(socket.roomId).emit('setGamers', gamerNamesObj)
     socket.to(socket.roomId).broadcast.emit('setStartGame', obj)
+
+    io.sockets.to(socket.roomId).emit('addMessage', {
+      name: 'Admin',
+      text: JSON.stringify(obj)
+    })
   })
 
   // socket.on('typing', function () {
@@ -653,12 +659,13 @@ io.on('connection', function (socket) {
       })
     }
     // Начало обработки пришедшего массива с ID карточек
-
-    for (const effect of gamer.effects) {
-      let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
-      if (cardArrIndex === -1) {
-        let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
-        gamer.effects.splice(effectIndex, 1)
+    if (typeof gamer !== 'undefined') {
+      for (const effect of gamer.effects) {
+        let cardArrIndex = cardArr.findIndex(elem => elem === effect.id)
+        if (cardArrIndex === -1) {
+          let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
+          gamer.effects.splice(effectIndex, 1)
+        }
       }
     }
     if (cardArr.length !== 0) {
@@ -832,7 +839,7 @@ io.on('connection', function (socket) {
             case 'straightCount':
               analyticsString += 'параметр "Прямой заход"'
               break
-          
+
             default:
               analyticsString += 'параметр ' + changing.param
               break
@@ -964,7 +971,6 @@ io.on('connection', function (socket) {
       }
       let gamersRate = []
       for (const gamer of gamers) {
-
         let position = {
           id: gamer.id,
           money: (Math.ceil(gamer.data.organicCount * gamer.data.organicCoef * gamer.data.conversion) + Math.ceil(gamer.data.contextCount * gamer.data.contextCoef * gamer.data.conversion) + Math.ceil(gamer.data.socialsCount * gamer.data.socialsCoef * gamer.data.conversion) + Math.ceil(gamer.data.smmCount * gamer.data.smmCoef * gamer.data.conversion) + Math.ceil(gamer.data.straightCount * gamer.data.straightCoef * gamer.data.conversion)) * gamer.data.averageCheck

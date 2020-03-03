@@ -54,16 +54,16 @@
               </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              Клиентов за игру:
+              Привлечено клиентов:
               <span
                 class="badge badge-primary badge-pill"
-              >{{gamerRoomParams.clients}}</span>
+              >{{(gamerRoomParams !== undefined ? (Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)) : '')}} × {{firstRoomParams.month}} мес. = {{((Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)))*firstRoomParams.month}}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               Потрачено на продвижение:
               <span
                 class="badge badge-primary badge-pill"
-              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}} ₽</span>
+              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}}  × {{firstRoomParams.month}} мес. = {{(firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money))*firstRoomParams.month | formatNumber}} ₽</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -152,7 +152,6 @@
           </div>
         </div>
       </div>
-      <!-- <hr> -->
       <div class="row">
         <div class="col-8 align-content-center justify-content-between pr-0 finish-table">
           <DataTable is-finish-table="true"></DataTable>
@@ -200,7 +199,7 @@
 import DataTable from '@/components/DataTable.vue'
 
 export default {
-  name: "Finish",
+  name: 'Finish',
   methods: {},
   components: {
     DataTable
@@ -219,31 +218,31 @@ export default {
       return this.$store.state.gamerName
     },
 
-    isSecondPosition() {
-      if (this.$store.state.winners.hasOwnProperty("2")) {
-        return true;
-      } else return false;
+    isSecondPosition () {
+      if (this.$store.state.winners.hasOwnProperty('2')) {
+        return true
+      } else return false
     },
-    isThirdPosition() {
-      if (this.$store.state.winners.hasOwnProperty("3")) {
-        return true;
-      } else return false;
+    isThirdPosition () {
+      if (this.$store.state.winners.hasOwnProperty('3')) {
+        return true
+      } else return false
     },
-    isWinner() {
-      return this.$socket.id === this.$store.state.winners[1].id;
+    isWinner () {
+      return this.$socket.id === this.$store.state.winners[1].id
     },
-    isSecondWinner() {
-      return this.$socket.id === this.$store.state.winners[2].id;
+    isSecondWinner () {
+      return this.$socket.id === this.$store.state.winners[2].id
     },
-    isThirdWinner() {
-      return this.$socket.id === this.$store.state.winners[3].id;
+    isThirdWinner () {
+      return this.$socket.id === this.$store.state.winners[3].id
     },
-    isPrizer() {
+    isPrizer () {
       if (
         this.$store.state.winners[2] !== undefined &&
         this.$store.state.winners[3] == undefined
       ) {
-        return this.$socket.id === this.$store.state.winners[2].id;
+        return this.$socket.id === this.$store.state.winners[2].id
       }
       if (
         this.$store.state.winners[2] !== undefined &&
@@ -252,62 +251,62 @@ export default {
         return (
           this.$socket.id === this.$store.state.winners[2].id ||
           this.$socket.id === this.$store.state.winners[3].id
-        );
+        )
       }
     },
-    isLoozer() {
+    isLoozer () {
       return !(
         this.$socket.id === this.$store.state.winners[1].id ||
         this.$socket.id === this.$store.state.winners[2].id ||
         this.$socket.id === this.$store.state.winners[3].id
-      );
+      )
     },
-    isSomeWinner() {
+    isSomeWinner () {
       return (
         this.$socket.id === this.$store.state.winners[1].id ||
         this.$socket.id === this.$store.state.winners[2].id ||
         this.$socket.id === this.$store.state.winners[3].id
-      );
+      )
     },
-    gamerData() {
+    gamerData () {
       if (this.isWinner) {
-        return this.$store.state.winners[1];
+        return this.$store.state.winners[1]
       } else if (this.$socket.id === this.$store.state.winners[2].id) {
-        return this.$store.state.winners[2];
+        return this.$store.state.winners[2]
       } else if (this.$socket.id === this.$store.state.winners[3].id) {
-        return this.$store.state.winners[3];
+        return this.$store.state.winners[3]
       }
     },
-    firstPosition() {
-      return this.$store.state.winners[1];
+    firstPosition () {
+      return this.$store.state.winners[1]
     },
-    secondPosition() {
-      if (this.$store.state.winners.hasOwnProperty("2")) {
+    secondPosition () {
+      if (this.$store.state.winners.hasOwnProperty('2')) {
         if (this.isWinner || this.isLoozer) {
-          return this.$store.state.winners[2];
+          return this.$store.state.winners[2]
         } else if (
           this.$socket.id === this.$store.state.winners[2].id ||
           this.$socket.id === this.$store.state.winners[3].id
         ) {
-          return this.$store.state.winners[1];
+          return this.$store.state.winners[1]
         }
-      } else return false;
+      } else return false
     },
-    thirdPosition() {
-      if (this.$store.state.winners.hasOwnProperty("3")) {
+    thirdPosition () {
+      if (this.$store.state.winners.hasOwnProperty('3')) {
         if (
           this.isWinner ||
           this.$socket.id === this.$store.state.winners[2].id ||
           this.isLoozer
         ) {
-          return this.$store.state.winners[3];
+          return this.$store.state.winners[3]
         } else if (this.$socket.id === this.$store.state.winners[3].id) {
-          return this.$store.state.winners[2];
+          return this.$store.state.winners[2]
         }
-      } else return false;
+      } else return false
     }
   }
-};
+}
 </script>
 <style>
 .gray-block {
@@ -327,7 +326,7 @@ export default {
 }
 .finish-table .table td {
   font-size: 0.7rem;
-} 
+}
 #finish-screen .list-group-item:first-child {
   font-size: 1.1rem;
 }

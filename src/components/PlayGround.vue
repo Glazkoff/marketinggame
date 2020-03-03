@@ -9,6 +9,7 @@
         @drop.prevent="altdrop"
         @dragleave="dragleave"
       >
+      <!-- Обёртка случайного события с сервера -->
         <transition name="cardwrap">
           <div class="event-box w-100 h-100" v-if="isEvent && !isStart">
             <div class="container h-100">
@@ -44,6 +45,8 @@
             </div>
           </div>
         </transition>
+        <!-- Конец обёртки -->
+        <!-- Начальный экран владельца комнаты -->
         <div
           class="owner-start-game d-flex align-content-between flex-wrap h-100"
           v-if="isOwner & isStart"
@@ -65,6 +68,8 @@
             </div>
           </div>
         </div>
+        <!-- Конец начального экрана владельца комнаты -->
+        <!-- Экран для обычного пользователя -->
         <div
           class="owner-start-game d-flex align-content-between flex-wrap h-100"
           v-if="!isOwner & isStart"
@@ -81,6 +86,8 @@
             </div>
           </div>
         </div>
+        <!-- Конец экрана для обычного пользователя -->
+        <!-- Основной экран -->
         <div class="gamer-round-data container h-100" v-if="!isStart">
           <div class="row h-100 justify-content-center align-items-start d-flex">
             <div class="col-12 data-wrap" style="margin: auto auto;">
@@ -113,7 +120,7 @@
                   >
                     Месяц
                     <span class="badge badge-primary badge-pill">
-                      <h4>{{firstRoomParams.month - gamerParams.month+1}} из
+                      <h4>{{firstRoomParams.month - gamerParams.month}} из
                         {{firstRoomParams.month}}</h4>
                     </span>
                   </li>
@@ -125,9 +132,10 @@
             </div>
           </div>
         </div>
+        <!-- Конец экрана для обычного пользователя -->
       </div>
     </div>
-
+<!-- Поле для карточек -->
     <div
       id="card-field"
       style="transition: all 5s"
@@ -212,13 +220,17 @@
         </div> -->
       </transition-group>
     </div>
-
+    <!-- Конец Поле для карточек -->
+    <!-- Список игроков -->
     <div id="enemy-field">
       <GamerList></GamerList>
     </div>
+    <!-- Конец список игроков -->
+    <!-- Спиок действующих эффектов -->
     <div id="effects-field">
       <Effects></Effects>
     </div>
+    <!-- Конец списка действующих игроков -->
   </div>
 </template>
 
@@ -254,7 +266,7 @@ export default {
           id: 1,
           title: 'Нанять SMM-менеджера',
           text: 'Трафик из соц.медиа: 2й мес - к-т 1,1, 3й - 1,8. Конверсия в звонки по соц.сетям: 3й мес - 1,5',
-          cost: 55000
+          cost: 80000
         },
         {
           id: 2,
@@ -450,12 +462,6 @@ export default {
       console.log('Стейт комнаты')
       let a = Object.assign(this.$store.state.roomParams)
       console.log(a)
-      console.log('/')
-      console.log('/')
-      console.log('/')
-      console.log('/')
-      console.log('DO ZASADY')
-      console.log('*')
       // this.refreshCards = Object.assign(this.cards);
       console.log(this.cards)
       console.log(this.refreshCards)

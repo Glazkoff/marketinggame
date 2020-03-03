@@ -125,6 +125,7 @@ export default {
   },
   methods: {
     createGame() {
+      // this.roomParams.month++
       this.$socket.emit("createRoom")
       this.$router.push("main")
       this.$store.state.isOwner = true;

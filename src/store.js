@@ -98,6 +98,7 @@ export default new Vuex.Store({
     setRoomParams (state, {
       month
     }) {
+      console.log('MONTH STATE', month)
       state.roomParams.month = month
     },
     doStep (state) {
