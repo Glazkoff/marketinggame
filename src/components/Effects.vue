@@ -2,11 +2,11 @@
   <div id="effectslist">
     <li v-if="!isStart" class="list-group-item d-flex justify-content-between align-items-center active bg-info w-100" id="effects-head">
         <h6>Длительные события</h6>
-      </li> 
+      </li>
     <ul class="list-group" v-if="!isStart" >
-       
+
       <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(effect, count) in effects"
-        :key="count" 
+        :key="count"
         :class="{'list-group-item-info': count % 2 == 1, 'list-group-item-secondary text-body': count % 2 == 0}">
         {{effect.name}}
         <span class="badge  badge-pill" :class="{'badge-info': count % 2 == 1, 'badge-secondary': count % 2 == 0}">Шаг: {{effect.step}} из {{effect.duration}}</span>
@@ -21,22 +21,22 @@
 </template>
 
 <script>
-  export default {
-    name: 'Effects',
-    data() {
-      return {
+export default {
+  name: 'Effects',
+  data () {
+    return {
 
-      }
+    }
+  },
+  computed: {
+    isStart () {
+      return this.$store.state.isStart
     },
-    computed: {
-      isStart() {
-        return this.$store.state.isStart;
-      },
-      effects() {
-        return this.$store.state.activeEffects;
-      }
+    effects () {
+      return this.$store.state.activeEffects
     }
   }
+}
 
 </script>
 
@@ -46,7 +46,7 @@
     margin: auto auto;
     width: 96%;
     height: 97%;
-    
+
     max-height: 97%;
     min-height: 97%;
     border-radius: 8px;
@@ -55,7 +55,7 @@
     position: relative;
   }
 #effectslist ul {
-    
+
     padding-top: 64px;
 }
 #effects-head {
@@ -90,5 +90,5 @@
   #effectslist::-webkit-scrollbar-thumb:active {
     background: linear-gradient(left, #0079fb, #1e98ba);
   }
-  
+
 </style>
