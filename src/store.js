@@ -42,7 +42,8 @@ export default new Vuex.Store({
     winners: {},
     activeEffects: [],
     steps: [],
-    gameEvent: null
+    gameEvent: null,
+    completedSessions: []
   },
   getters: {},
   mutations: {
@@ -53,6 +54,7 @@ export default new Vuex.Store({
       state.gamers = []
       state.winners = {}
       state.activeEffects = []
+      state.completedSessions = []
       state.gameEvent = null
       state.isOwner = false
       state.isStart = true
@@ -161,7 +163,7 @@ export default new Vuex.Store({
     },
     SOCKET_changeGamerStatus (state, id) {
       for (const gamer of state.gamers) {
-        if (gamer.id == id) {
+        if (gamer.id === id) {
           gamer.isattacker = true
           break
         }
@@ -192,6 +194,16 @@ export default new Vuex.Store({
       // state.roomParams.money += result;
     },
     SOCKET_setEffects (state, effects) {
+      console.log('/////////////////////////')
+      console.log('/////////////////////////')
+      effects.forEach(el => {
+        if (el.step === el.duration) {
+          state.completedSessions.push(el.id)
+        }
+      })
+      console.log(state.completedSessions)
+      console.log('/////////////////////////')
+      console.log('/////////////////////////')
       state.activeEffects = [...effects]
     }
   },

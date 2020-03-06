@@ -693,7 +693,6 @@ io.on('connection', function (socket) {
           let effectIndex = gamer.effects.findIndex(elem => elem.id === effect.id)
           gamer.effects.splice(effectIndex, 1)
           console.log('Действие эффекта закончилось')
-          
         } else {
         }
       }
@@ -815,7 +814,7 @@ io.on('connection', function (socket) {
         console.log(changing)
         console.log('*****************************************************')
         if ((gamer.effects.findIndex(elem => elem.id === changing.id) !== -1) || (changing.id === 3) || (changing.id === 7) || changing.event) {
-          if (gamer.usedCards[changing.id] < 1) {
+          if (gamer.usedCards[changing.id] < 1 || (typeof gamer.usedCards[changing.id] === 'undefined')) {
             switch (changing.operation) {
               case '+':
                 gamer.data[changing.param] += changing.change
@@ -847,7 +846,7 @@ io.on('connection', function (socket) {
                 messageArr.push('Что-то не так с операцией карточки по ID ' + card.id)
                 break
             }
-          }      
+          }
           let analyticsString = 'Обновлён  '
           switch (changing.param) {
             case 'organicCount':
@@ -877,7 +876,7 @@ io.on('connection', function (socket) {
           }
           console.log(analyticsString)
           messageArr.push(analyticsString)
-          let indForDelete = gamer.changes.findIndex(elem => { return (elem.id == changing.id) && (elem.change == changing.change) && (elem.param == changing.param) })
+          let indForDelete = gamer.changes.findIndex(elem => { return (elem.id === changing.id) && (elem.change === changing.change) && (elem.param === changing.param) })
           if (indForDelete !== -1) {
             // console.log('Удалилась позиция ' + indForDelete)
             // gamer.changes.splice(indForDelete, 1)

@@ -247,6 +247,28 @@ export default {
     DataTable
   },
   created () {
+    this.$store.watch((state) => state.completedSessions, (newValue, oldValue) => {
+      // ИЗМЕНЕНИЕ КОЭФФИЦИЕНТОВ КАРТОЧЕК ПОСЛЕ СЕССИЙ
+      this.completedSessions.forEach(el => {
+        let cardIndex = this.refreshCards.findIndex(card => { return card.id === el })
+        if (cardIndex !== -1) {
+          this.refreshCards[cardIndex].coefs = this.refreshCards[cardIndex].coefs.map(coef => { return coef / 2 })
+        } else {
+          console.error('Что-то не так с изменением карточек после сессий')
+        }
+      })
+
+      // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
+      this.refreshCards.forEach(el => {
+        if ((typeof el.coefs !== 'undefined') && (typeof el.templateText !== 'undefined')) {
+          el.text = el.templateText
+          for (let i = 0; i < el.coefs.length; i++) {
+            let regexp = new RegExp(/@coef[0-9]/)
+            el.text = el.text.replace(regexp, (match, p1, offset, string) => { return el.coefs[i] })
+          }
+        }
+      })
+    })
     this.cards = this.shuffle(this.cards)
     // this.refreshCards = Object.assign(this.cards);
     this.refreshCards = [...this.cards]
@@ -378,6 +400,9 @@ export default {
     },
     effects () {
       return this.$store.state.activeEffects
+    },
+    completedSessions () {
+      return this.$store.state.completedSessions
     }
   },
   methods: {
@@ -455,18 +480,33 @@ export default {
       }
       this.usedCards = []
       console.log(this.refreshCards)
-      // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
 
-      this.refreshCards.forEach(el => {
-        if ((typeof el.coefs !== 'undefined') && (typeof el.templateText !== 'undefined')) {
-          el.text = el.templateText
-          for (let i = 0; i < el.coefs.length; i++) {
-            console.log(i)
-            let regexp = new RegExp(/@coef[0-9]/)
-            el.text = el.text.replace(regexp, (match, p1, offset, string) => { return el.coefs[i] })
-          }
-        }
-      })
+      // // ИЗМЕНЕНИЕ КОЭФФИЦИЕНТОВ КАРТОЧЕК ПОСЛЕ СЕССИЙ
+      // this.completedSessions.forEach(el => {
+      //   console.log('^^^^^^^^^^^^^^^^^^')
+      //   let cardIndex = this.refreshCards.findIndex(card => { return card.id === el })
+      //   console.log('^^^^^^^^^^^^^^^^^^')
+      //   console.log(cardIndex)
+      //   console.log('^^^^^^^^^^^^^^^^^^')
+      //   if (cardIndex !== -1) {
+      //     console.log(`Изменяем коэффициенты карточки с ID ${this.refreshCards[cardIndex].id}`)
+      //     this.refreshCards[cardIndex].coefs = this.refreshCards[cardIndex].coefs.map(coef => { return coef / 2 })
+      //   } else {
+      //     console.error('Что-то не так с изменением карточек после сессий')
+      //   }
+      // })
+
+      // // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
+      // this.refreshCards.forEach(el => {
+      //   if ((typeof el.coefs !== 'undefined') && (typeof el.templateText !== 'undefined')) {
+      //     el.text = el.templateText
+      //     for (let i = 0; i < el.coefs.length; i++) {
+      //       console.log(i)
+      //       let regexp = new RegExp(/@coef[0-9]/)
+      //       el.text = el.text.reckplace(regexp, (match, p1, offset, string) => { return el.coefs[i] })
+      //     }
+      //   }
+      // })
       this.cards = [...this.refreshCards]
       console.log(this.cards)
 
@@ -521,7 +561,6 @@ export default {
             }
             i++
           }
-          // this.makeStep(this.cards[i].id);
           this.usedCards.push(this.cards[i].id)
           let change = -this.cards[i].cost
           this.$store.commit('changeMoney', change)

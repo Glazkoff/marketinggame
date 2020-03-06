@@ -244,10 +244,7 @@ export default {
       return this.$socket.id === this.$store.state.winners[3].id
     },
     isPrizer () {
-      if (
-        this.$store.state.winners[2] !== undefined &&
-        this.$store.state.winners[3] == undefined
-      ) {
+      if (this.$store.state.winners[2] !== undefined && this.$store.state.winners[3] == undefined) {
         return this.$socket.id === this.$store.state.winners[2].id
       }
       if (
