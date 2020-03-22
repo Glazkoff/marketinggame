@@ -63,7 +63,7 @@
               Потрачено на продвижение:
               <span
                 class="badge badge-primary badge-pill"
-              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}}  × {{firstRoomParams.month}} мес. = {{(firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money))*firstRoomParams.month | formatNumber}} ₽</span>
+              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}} ₽ из {{firstRoomParams.money*firstRoomParams.month | formatNumber}} ₽</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -94,7 +94,7 @@
               Потрачено на продвижение:
               <span
                 class="badge badge-primary badge-pill"
-              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}}  × {{firstRoomParams.month}} мес. = {{(firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money))*firstRoomParams.month | formatNumber}} ₽</span>
+              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}} ₽ из {{firstRoomParams.money*firstRoomParams.month | formatNumber}} ₽</span>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -163,13 +163,13 @@
           <DataTable is-finish-table="true"></DataTable>
         </div>
         <div class="col-4 align-content-center justify-content-between steps" id="stepsBox">
-          <h6 class="">Ваши ходы:</h6>
+          <h6 class>Ваши ходы:</h6>
           <div class="row mt-1" v-for="(step, count) in steps" v-bind:key="count">
             <div class="col-4 align-content-center justify-content-between">
               <p class="mb-0 h-100 w-100 text-center font-weight-bold">{{count+1}} месяц</p>
             </div>
             <div class="col-8 pl-0" v-if="step.length!==0">
-              <p class="mb-0" v-for="(card, num) in step" v-bind:key="num" >-{{card.title}}</p>
+              <p class="mb-0" v-for="(card, num) in step" v-bind:key="num">-{{card.title}}</p>
             </div>
             <div class="col-8 pl-0" v-else>
               <p class="mb-0">-</p>
@@ -202,50 +202,53 @@
 </template>
 
 <script>
-import DataTable from '@/components/DataTable.vue'
+import DataTable from "@/components/DataTable.vue";
 
 export default {
-  name: 'Finish',
+  name: "Finish",
   methods: {},
   components: {
     DataTable
   },
   computed: {
-    steps () {
-      return this.$store.state.steps
+    steps() {
+      return this.$store.state.steps;
     },
-    gamerRoomParams () {
-      return this.$store.state.roomParams
+    gamerRoomParams() {
+      return this.$store.state.roomParams;
     },
-    firstRoomParams () {
-      return this.$store.state.firstRoomParams
+    firstRoomParams() {
+      return this.$store.state.firstRoomParams;
     },
-    gamerName () {
-      return this.$store.state.gamerName
+    gamerName() {
+      return this.$store.state.gamerName;
     },
 
-    isSecondPosition () {
-      if (this.$store.state.winners.hasOwnProperty('2')) {
-        return true
-      } else return false
+    isSecondPosition() {
+      if (this.$store.state.winners.hasOwnProperty("2")) {
+        return true;
+      } else return false;
     },
-    isThirdPosition () {
-      if (this.$store.state.winners.hasOwnProperty('3')) {
-        return true
-      } else return false
+    isThirdPosition() {
+      if (this.$store.state.winners.hasOwnProperty("3")) {
+        return true;
+      } else return false;
     },
-    isWinner () {
-      return this.$socket.id === this.$store.state.winners[1].id
+    isWinner() {
+      return this.$socket.id === this.$store.state.winners[1].id;
     },
-    isSecondWinner () {
-      return this.$socket.id === this.$store.state.winners[2].id
+    isSecondWinner() {
+      return this.$socket.id === this.$store.state.winners[2].id;
     },
-    isThirdWinner () {
-      return this.$socket.id === this.$store.state.winners[3].id
+    isThirdWinner() {
+      return this.$socket.id === this.$store.state.winners[3].id;
     },
-    isPrizer () {
-      if (this.$store.state.winners[2] !== undefined && this.$store.state.winners[3] == undefined) {
-        return this.$socket.id === this.$store.state.winners[2].id
+    isPrizer() {
+      if (
+        this.$store.state.winners[2] !== undefined &&
+        this.$store.state.winners[3] == undefined
+      ) {
+        return this.$socket.id === this.$store.state.winners[2].id;
       }
       if (
         this.$store.state.winners[2] !== undefined &&
@@ -254,62 +257,62 @@ export default {
         return (
           this.$socket.id === this.$store.state.winners[2].id ||
           this.$socket.id === this.$store.state.winners[3].id
-        )
+        );
       }
     },
-    isLoozer () {
+    isLoozer() {
       return !(
         this.$socket.id === this.$store.state.winners[1].id ||
         this.$socket.id === this.$store.state.winners[2].id ||
         this.$socket.id === this.$store.state.winners[3].id
-      )
+      );
     },
-    isSomeWinner () {
+    isSomeWinner() {
       return (
         this.$socket.id === this.$store.state.winners[1].id ||
         this.$socket.id === this.$store.state.winners[2].id ||
         this.$socket.id === this.$store.state.winners[3].id
-      )
+      );
     },
-    gamerData () {
+    gamerData() {
       if (this.isWinner) {
-        return this.$store.state.winners[1]
+        return this.$store.state.winners[1];
       } else if (this.$socket.id === this.$store.state.winners[2].id) {
-        return this.$store.state.winners[2]
+        return this.$store.state.winners[2];
       } else if (this.$socket.id === this.$store.state.winners[3].id) {
-        return this.$store.state.winners[3]
+        return this.$store.state.winners[3];
       }
     },
-    firstPosition () {
-      return this.$store.state.winners[1]
+    firstPosition() {
+      return this.$store.state.winners[1];
     },
-    secondPosition () {
-      if (this.$store.state.winners.hasOwnProperty('2')) {
+    secondPosition() {
+      if (this.$store.state.winners.hasOwnProperty("2")) {
         if (this.isWinner || this.isLoozer) {
-          return this.$store.state.winners[2]
+          return this.$store.state.winners[2];
         } else if (
           this.$socket.id === this.$store.state.winners[2].id ||
           this.$socket.id === this.$store.state.winners[3].id
         ) {
-          return this.$store.state.winners[1]
+          return this.$store.state.winners[1];
         }
-      } else return false
+      } else return false;
     },
-    thirdPosition () {
-      if (this.$store.state.winners.hasOwnProperty('3')) {
+    thirdPosition() {
+      if (this.$store.state.winners.hasOwnProperty("3")) {
         if (
           this.isWinner ||
           this.$socket.id === this.$store.state.winners[2].id ||
           this.isLoozer
         ) {
-          return this.$store.state.winners[3]
+          return this.$store.state.winners[3];
         } else if (this.$socket.id === this.$store.state.winners[3].id) {
-          return this.$store.state.winners[2]
+          return this.$store.state.winners[2];
         }
-      } else return false
+      } else return false;
     }
   }
-}
+};
 </script>
 <style>
 .gray-block {
@@ -335,28 +338,30 @@ export default {
 }
 #finish-screen .list-group-item {
   padding-top: 0.3rem !important;
- padding-bottom: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
   font-size: 0.9rem;
 }
 #finish-screen .list-group-item:first-child span h4 {
-    font-size: 1rem;
-    margin-bottom: 0;
+  font-size: 1rem;
+  margin-bottom: 0;
 }
 #finish-screen ul {
   margin-top: 4px !important;
 }
-#finish-screen .table thead th, .table td, .table th {
+#finish-screen .table thead th,
+.table td,
+.table th {
   white-space: nowrap;
 }
 .gamer-round-data .table th {
-   white-space: unset;
+  white-space: unset;
 }
 .gamer-round-data h4 {
   font-size: 1.1rem;
 }
 #finish-screen .container {
   max-width: unset;
-  margin-top: 0 ;
+  margin-top: 0;
 }
 .steps {
   overflow-y: scroll;
