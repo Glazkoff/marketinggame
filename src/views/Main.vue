@@ -125,11 +125,11 @@ export default {
 .main-side {
   position: relative;
   max-height: calc(100vh - 40px);
-  z-index: -1;
+  /* z-index: -1; */
 }
 .pg-header {
   position: absolute;
-  z-index: -1;
+  z-index: 100;
   top: 0;
   left: 0;
   width: 100%;

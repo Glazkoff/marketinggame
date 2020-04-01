@@ -1,21 +1,21 @@
 <template>
   <div id="app">
-    <div id="nav" :class="{'admin-show': adminNav, 'admin-hide': !adminNav}">
+    <button
+      class="admin-btn"
+      @click="changeAdminNav"
+      title="Доступ администратора"
+      :disabled="!isAdmin"
+    >
+      <span v-if="!adminNav">↓</span>
+      <span v-else>↑</span>
+    </button>
+    <div id="nav" :class="{ 'admin-show': adminNav, 'admin-hide': !adminNav }">
       <router-link to="/">Вход</router-link>|
       <router-link to="/choose">Создать игру</router-link>|
       <router-link to="/main">Главный экран</router-link>|
       <router-link to="/about">Об игре</router-link>
-      <button
-        class="admin-btn"
-        @click="changeAdminNav"
-        title="Доступ администратора"
-        :disabled="!isAdmin"
-      >
-        <span v-if="!adminNav">↓</span>
-        <span v-else>↑</span>
-      </button>
     </div>
-    <div id="view" :class="{'full-screen': !adminNav}">
+    <div id="view" :class="{ 'full-screen': !adminNav }">
       <transition name="slide" mode="out-in" appear>
         <router-view></router-view>
       </transition>
@@ -74,6 +74,7 @@ body {
 }
 #app {
   height: 100%;
+  position: relative;
 }
 #nav {
   box-sizing: border-box;
@@ -113,7 +114,7 @@ body {
   box-sizing: border-box;
   padding: 5px 10px;
   font-size: 1.4rem;
-  z-index: 100;
+  z-index: 1000;
 }
 .admin-btn[disabled] {
   background-color: #6bb3ff;
