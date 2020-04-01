@@ -30,7 +30,6 @@
           name="toggle"
           id="toggle2"
           autocomplete="off"
-      
         />Создать комнату
       </label>
     </div>
@@ -76,7 +75,7 @@
           placeholder="3"
           @keypress.enter="createGame()"
         />
-        <label for="name" class>Начальный капитал</label>
+        <label for="name" class>Бюджет за месяц</label>
         <br />
         <input
           type="number"
@@ -106,30 +105,27 @@ export default {
   },
   computed: {
     gamerName() {
-      return this.$store.state.gamerName
+      return this.$store.state.gamerName;
     },
     stateFirstParams() {
-      return this.$store.state.firstRoomParams
+      return this.$store.state.firstRoomParams;
     }
   },
   created() {
     // this.roomParams = Object.assign(this.stateFirstParams)
   },
-  beforeMount() {
-  },
-  beforeRouteUpdate (to, from, next) {
-    
-  },
+  beforeMount() {},
+  beforeRouteUpdate(to, from, next) {},
   mounted() {
     // this.roomParams = Object.assign(this.stateFirstParams)
   },
   methods: {
     createGame() {
       // this.roomParams.month++
-      this.$socket.emit("createRoom")
-      this.$router.push("main")
+      this.$socket.emit("createRoom");
+      this.$router.push("main");
       this.$store.state.isOwner = true;
-      this.$store.commit('copyData', this.roomParams)
+      this.$store.commit("copyData", this.roomParams);
       // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     joinGame() {
@@ -139,13 +135,13 @@ export default {
       this.$router.push("main");
     },
     reset() {
-      this.$store.commit('resetData')
+      this.$store.commit("resetData");
       this.roomParams = {};
       this.roomParams = Object.assign(this.stateFirstParams);
-      console.log('RESET FROM BTN')
-      console.log(this.roomParams)
-      console.log('FIRST PARAMS');
-      console.log(Object.assign(this.stateFirstParams))
+      console.log("RESET FROM BTN");
+      console.log(this.roomParams);
+      console.log("FIRST PARAMS");
+      console.log(Object.assign(this.stateFirstParams));
     }
   },
   beforeRouteEnter(to, from, next) {

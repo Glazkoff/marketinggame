@@ -1,5 +1,5 @@
 <template>
-  <div id="playground">
+  <div id="playground" :class="{'full-screen': !adminNav}">
     <div id="play-field">
       <div
         class="play-information"
@@ -9,7 +9,7 @@
         @drop.prevent="altdrop"
         @dragleave="dragleave"
       >
-      <!-- Обёртка случайного события с сервера -->
+        <!-- Обёртка случайного события с сервера -->
         <transition name="cardwrap">
           <div class="event-box w-100 h-100" v-if="isEvent && !isStart">
             <div class="container h-100">
@@ -98,44 +98,51 @@
                 <div class="col-7 data-group">
                   <ul class="list-group list-group-horizontal w-100">
                     <li
-                    class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
-                    style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                     >
-                    Бюджет
-                    <span class="badge badge-primary badge-pill">
-                      <h4>
-                      <number
-                        class="bold transition"
-                        animationPaused
-                        ref="number1"
-                        :to="gamerParams.money"
-                        :duration="1.1"
-                        @click="playAnimation"
-                        easing="Power4.easeOut"/>
-                        ₽ </h4>
-                    </span>
-                  </li>
-                  <li
-                    class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
-                  >
-                    Месяц
-                    <span class="badge badge-primary badge-pill">
-                      <h4>{{firstRoomParams.month - gamerParams.month}} из
-                        {{firstRoomParams.month}}</h4>
-                    </span>
-                  </li>
-                </ul>
+                      Бюджет
+                      <span class="badge badge-primary badge-pill">
+                        <h4>
+                          <number
+                            class="bold transition"
+                            animationPaused
+                            ref="number1"
+                            :to="gamerParams.money"
+                            :duration="1.1"
+                            @click="playAnimation"
+                            easing="Power4.easeOut"
+                          />₽
+                        </h4>
+                      </span>
+                    </li>
+                    <li
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                    >
+                      Месяц
+                      <span class="badge badge-primary badge-pill">
+                        <h4>
+                          {{firstRoomParams.month - gamerParams.month}} из
+                          {{firstRoomParams.month}}
+                        </h4>
+                      </span>
+                    </li>
+                  </ul>
                 </div>
               </div>
               <DataTable></DataTable>
-              <button class="btn btn-success w-100 mt-1 pr-2 btn-block" :disabled="isStart || stepDone" @click="makeStep()">Завершить ход</button>
+              <button
+                class="btn btn-success w-100 mt-1 pr-2 btn-block"
+                :disabled="isStart || stepDone"
+                @click="makeStep()"
+              >Завершить ход</button>
             </div>
           </div>
         </div>
         <!-- Конец экрана для обычного пользователя -->
       </div>
     </div>
-<!-- Поле для карточек -->
+    <!-- Поле для карточек -->
     <div
       id="card-field"
       style="transition: all 5s"
@@ -175,19 +182,20 @@
           v-if="!isStart"
           :class="{'card-ml-0': card.oneOff, 'card-ml-1': !card.oneOff && !isLastEffectStage(card.id), 'card-ml-2': !card.oneOff && !hasThisEffect(card.id)}"
         >
-        <div
-          class="card-box w-100 h-100 bottom-card bottom-card-1"
-          v-if="!card.oneOff && !isLastEffectStage(card.id)"></div>
-        <div
-          class="card-box w-100 h-100  bottom-card bottom-card-2"
-          v-if="!card.oneOff && !hasThisEffect(card.id) || isLastStep(card.id)"
+          <div
+            class="card-box w-100 h-100 bottom-card bottom-card-1"
+            v-if="!card.oneOff && !isLastEffectStage(card.id)"
+          ></div>
+          <div
+            class="card-box w-100 h-100 bottom-card bottom-card-2"
+            v-if="!card.oneOff && !hasThisEffect(card.id) || isLastStep(card.id)"
           ></div>
           <div class="inner-card-wrap">
             <div class="card-head">
               <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
             </div>
             <small class="card-text text-center">{{card.text}}</small>
-            <h3 class="card-text text-center">{{card.cost}} ₽</h3>
+            <h3 class="card-text text-center">{{card.cost | formatNumber}} ₽</h3>
           </div>
           <button
             class="btn btn-dark pl-2"
@@ -195,7 +203,7 @@
             :disabled="stepDone||(card.cost>gamerParams.money)"
           >Использовать</button>
         </div>
-          <!-- <div
+        <!-- <div
           class="card-box"
           :draggable="true"
           @dragstart.self="altdragstart"
@@ -217,7 +225,7 @@
             class="btn btn-dark pl-2"
             @click="dropFromBtn()"
           >Использовать</button>
-        </div> -->
+        </div>-->
       </transition-group>
     </div>
     <!-- Конец Поле для карточек -->
@@ -235,46 +243,64 @@
 </template>
 
 <script>
-import GamerList from '@/components/GamerList.vue'
-import Effects from '@/components/Effects.vue'
-import DataTable from '@/components/DataTable.vue'
-
+import GamerList from "@/components/GamerList.vue";
+import Effects from "@/components/Effects.vue";
+import DataTable from "@/components/DataTable.vue";
+import numeral from "numeral";
+import Vue from "vue";
+Vue.filter("formatNumber", function(value) {
+  return numeral(value).format("0,0");
+});
 export default {
-  name: 'PlayGround',
+  name: "PlayGround",
   components: {
     GamerList,
     Effects,
     DataTable
   },
-  created () {
-    this.$store.watch((state) => state.completedSessions, (newValue, oldValue) => {
-      // ИЗМЕНЕНИЕ КОЭФФИЦИЕНТОВ КАРТОЧЕК ПОСЛЕ СЕССИЙ
-      this.completedSessions.forEach(el => {
-        let cardIndex = this.refreshCards.findIndex(card => { return card.id === el })
-        if (cardIndex !== -1) {
-          this.refreshCards[cardIndex].coefs = this.refreshCards[cardIndex].coefs.map(coef => { return coef / 2 })
-        } else {
-          console.error('Что-то не так с изменением карточек после сессий')
-        }
-      })
-
-      // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
-      this.refreshCards.forEach(el => {
-        if ((typeof el.coefs !== 'undefined') && (typeof el.templateText !== 'undefined')) {
-          el.text = el.templateText
-          for (let i = 0; i < el.coefs.length; i++) {
-            let regexp = new RegExp(/@coef[0-9]/)
-            el.text = el.text.replace(regexp, (match, p1, offset, string) => { return el.coefs[i] })
+  created() {
+    this.$store.watch(
+      state => state.completedSessions,
+      (newValue, oldValue) => {
+        // ИЗМЕНЕНИЕ КОЭФФИЦИЕНТОВ КАРТОЧЕК ПОСЛЕ СЕССИЙ
+        this.completedSessions.forEach(el => {
+          let cardIndex = this.refreshCards.findIndex(card => {
+            return card.id === el;
+          });
+          if (cardIndex !== -1) {
+            this.refreshCards[cardIndex].coefs = this.refreshCards[
+              cardIndex
+            ].coefs.map(coef => {
+              return Math.round(coef / 2);
+            });
+          } else {
+            console.error("Что-то не так с изменением карточек после сессий");
           }
-        }
-      })
-    })
-    this.cards = this.shuffle(this.cards)
+        });
+
+        // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
+        this.refreshCards.forEach(el => {
+          if (
+            typeof el.coefs !== "undefined" &&
+            typeof el.templateText !== "undefined"
+          ) {
+            el.text = el.templateText;
+            for (let i = 0; i < el.coefs.length; i++) {
+              let regexp = new RegExp(/@coef[0-9]/);
+              el.text = el.text.replace(regexp, (match, p1, offset, string) => {
+                return el.coefs[i];
+              });
+            }
+          }
+        });
+      }
+    );
+    this.cards = this.shuffle(this.cards);
     // this.refreshCards = Object.assign(this.cards);
-    this.refreshCards = [...this.cards]
-    this.$store.commit('doAnimation')
+    this.refreshCards = [...this.cards];
+    this.$store.commit("doAnimation");
   },
-  data () {
+  data() {
     return {
       usedCards: [],
       clientsRendered: true,
@@ -286,200 +312,214 @@ export default {
       cards: [
         {
           id: 1,
-          title: 'Нанять SMM-менеджера',
+          title: "Нанять SMM-менеджера",
           text: `Трафик из соц.медиа: 2й мес - к-т 1.1, 3й - 1.8. Конверсия в звонки по соц.сетям: 3й мес - 1.5`,
           coefs: [1.1, 1.8, 1.5],
-          templateText: 'Трафик из соц.медиа: 2й мес - к-т @coef0, 3й - @coef1. Конверсия в звонки по соц.сетям: 3й мес - @coef2',
+          templateText:
+            "Трафик из соц.медиа: 2й мес - к-т @coef0, 3й - @coef1. Конверсия в звонки по соц.сетям: 3й мес - @coef2",
           cost: 80000
         },
         {
           id: 2,
-          title: 'Заказать SEO-оптимизацию',
-          text: 'Органика растет в 2 раза на 3й мес применения. 1й мес просто стоимости привлечения - 1.5, 3й мес падение - 0.3',
+          title: "Заказать SEO-оптимизацию",
+          text:
+            "Органика растет в 2 раза на 3й мес применения. 1й мес просто стоимости привлечения - 1.5, 3й мес падение - 0.3",
           coefs: [2, 1.5, 0.3],
-          templateText: 'Органика растет в @coef0 раза на 3й мес применения. 1й мес просто стоимости привлечения - @coef1, 3й мес падение - @coef2',
+          templateText:
+            "Органика растет в @coef0 раза на 3й мес применения. 1й мес просто стоимости привлечения - @coef1, 3й мес падение - @coef2",
           cost: 50000
         },
         {
           id: 3,
-          title: 'Улучшение юзабилити',
-          text: 'Конверсия в звонки по всем каналам: 3й - 1.1. Стоимость привлечения: 1 и 2й - 0.8. Средний чек: 3й - 1.5',
+          title: "Улучшение юзабилити",
+          text:
+            "Конверсия в звонки по всем каналам: 3й - 1.1. Стоимость привлечения: 1 и 2й - 0.8. Средний чек: 3й - 1.5",
           cost: 20000,
           oneOff: true
         },
         {
           id: 4,
-          title: 'Реклама в соцсетях',
-          text: 'Трафик по рекламе: 1й мес +4500. Стоимость привлечения: 1-3 мес - 1.1',
+          title: "Реклама в соцсетях",
+          text:
+            "Трафик по рекламе: 1й мес +4500. Стоимость привлечения: 1-3 мес - 1.1",
           coefs: [4500, 1.1],
-          templateText: 'Трафик по рекламе: 1й мес +@coef0. Стоимость привлечения: 1-3 мес - @coef1',
+          templateText:
+            "Трафик по рекламе: 1й мес +@coef0. Стоимость привлечения: 1-3 мес - @coef1",
           cost: 25000
         },
         {
           id: 5,
-          title: 'PR-компания компании',
-          text: 'Стоимость привелечения: 1й - 1.3, 2й - 1.1, 3й - 1.2',
+          title: "PR-компания компании",
+          text: "Стоимость привелечения: 1й - 1.3, 2й - 1.1, 3й - 1.2",
           coefs: [1.3, 1.1, 1.2],
-          templateText: 'Стоимость привелечения: 1й - @coef0, 2й - @coef1, 3й - @coef2',
+          templateText:
+            "Стоимость привелечения: 1й - @coef0, 2й - @coef1, 3й - @coef2",
           cost: 30000
         },
         {
           id: 6,
-          title: 'Контекстная рекламная компания',
-          text: 'Трафик из контекста: 1й мес- +6000 визитов, 2 и 3й - 1.1. Конверсия в звонки: 1й - 1.5. Стоимость привлечения: каждый мес -  1.3',
+          title: "Контекстная рекламная компания",
+          text:
+            "Трафик из контекста: 1й мес- +6000 визитов, 2 и 3й - 1.1. Конверсия в звонки: 1й - 1.5. Стоимость привлечения: каждый мес -  1.3",
           coefs: [6000, 1.1, 1.5, 1.3],
-          templateText: 'Трафик из контекста: 1й мес - +@coef0 визитов, 2 и 3й - @coef1. Конверсия в звонки: 1й - @coef2. Стоимость привлечения: каждый мес - @coef3',
+          templateText:
+            "Трафик из контекста: 1й мес - +@coef0 визитов, 2 и 3й - @coef1. Конверсия в звонки: 1й - @coef2. Стоимость привлечения: каждый мес - @coef3",
           cost: 35000
         },
         {
           id: 7,
-          title: 'Размещение информации в справочниках',
-          text: 'Трафик type-in: 1-3й - 1,2. ',
+          title: "Размещение информации в справочниках",
+          text: "Трафик type-in: 1-3й - 1,2. ",
           cost: 20000,
           oneOff: true
         }
       ],
       number: 0,
       tweenedNumber: 0
-    }
+    };
   },
-  mounted () {
-    this.number = this.$store.state.roomParams.money
-    this.$store.commit('doAnimation')
+  mounted() {
+    this.number = this.$store.state.roomParams.money;
+    this.$store.commit("doAnimation");
   },
   watch: {
-    number: function (newValue) {
+    number: function(newValue) {
       // TweenLite.to(this.$data, 1, { tweenedNumber: newValue })
     },
-    money: function (newValue) {
+    money: function(newValue) {
       let a = setTimeout(() => {
-        this.playAnimation()
+        this.playAnimation();
         // this.$store.commit('doAnimation')
-      }, 50)
+      }, 50);
     }
   },
   computed: {
-    clients () {
-      return this.$store.state.roomParams.clients
+    clients() {
+      return this.$store.state.roomParams.clients;
     },
-    money () {
-      return this.$store.state.roomParams.money
+    money() {
+      return this.$store.state.roomParams.money;
     },
-    isEvent () {
-      let obj = this.$store.state.gameEvent
+    isEvent() {
+      let obj = this.$store.state.gameEvent;
       for (let key in obj) {
-        return true
+        return true;
       }
-      return false
+      return false;
     },
-    event () {
-      return this.$store.state.gameEvent
+    event() {
+      return this.$store.state.gameEvent;
     },
-    isOwner () {
-      return this.$store.state.isOwner
+    isOwner() {
+      return this.$store.state.isOwner;
     },
-    isStart () {
-      return this.$store.state.isStart
+    isStart() {
+      return this.$store.state.isStart;
     },
-    gamerName () {
-      return this.$store.state.gamerName
+    gamerName() {
+      return this.$store.state.gamerName;
     },
-    gamerParams () {
-      let a = this.$store.state.roomParams
-      return this.$store.state.roomParams
+    gamerParams() {
+      let a = this.$store.state.roomParams;
+      return this.$store.state.roomParams;
     },
-    firstRoomParams () {
-      return this.$store.state.firstRoomParams
+    firstRoomParams() {
+      return this.$store.state.firstRoomParams;
     },
-    stepDone () {
-      let cardField = document.querySelector('#card-field')
+    stepDone() {
+      let cardField = document.querySelector("#card-field");
       if (cardField !== null) {
-        cardField.scrollTo(0, 0)
+        cardField.scrollTo(0, 0);
       }
-      return this.$store.state.stepDone
+      return this.$store.state.stepDone;
     },
-    effects () {
-      return this.$store.state.activeEffects
+    effects() {
+      return this.$store.state.activeEffects;
     },
-    completedSessions () {
-      return this.$store.state.completedSessions
+    completedSessions() {
+      return this.$store.state.completedSessions;
+    },
+    adminNav() {
+      return this.$store.state.adminNav;
     }
   },
   methods: {
-    playAnimation () {
+    playAnimation() {
       if (this.$refs.number1 !== undefined) {
-        this.$refs.number1.play()
+        this.$refs.number1.play();
         setTimeout(() => {
           if (this.$refs.number1 !== undefined) {
-            this.$refs.number1.play()
+            this.$refs.number1.play();
           }
-        }, 100)
+        }, 100);
       }
-      this.$store.commit('doAnimation')
+      this.$store.commit("doAnimation");
     },
-    isLastEffectStage (id) {
-      let effectId = this.effects.findIndex(elem => elem.id === id)
+    isLastEffectStage(id) {
+      let effectId = this.effects.findIndex(elem => elem.id === id);
       if (effectId !== -1) {
-        let effect = this.effects[effectId]
-        return (effect.step + 1 === effect.duration)
-      } else return false
+        let effect = this.effects[effectId];
+        return effect.step + 1 === effect.duration;
+      } else return false;
     },
-    hasThisEffect (id) {
-      return (this.effects.findIndex(elem => elem.id === id) !== -1)
+    hasThisEffect(id) {
+      return this.effects.findIndex(elem => elem.id === id) !== -1;
     },
-    isLastStep (id) {
-      let effect = this.effects.find(elem => elem.id === id)
+    isLastStep(id) {
+      let effect = this.effects.find(elem => elem.id === id);
       if (effect !== undefined) {
-        return (effect.step === effect.duration)
+        return effect.step === effect.duration;
       } else {
-        return false
+        return false;
       }
     },
-    closeEvent () {
-      this.$store.commit('SOCKET_setGameEvent', {})
+    closeEvent() {
+      this.$store.commit("SOCKET_setGameEvent", {});
     },
-    shuffle (arra1) {
-      let ctr = arra1.length
-      let temp
-      let index
+    shuffle(arra1) {
+      let ctr = arra1.length;
+      let temp;
+      let index;
       while (ctr > 0) {
-        index = Math.floor(Math.random() * ctr)
-        ctr--
-        temp = arra1[ctr]
-        arra1[ctr] = arra1[index]
-        arra1[index] = temp
+        index = Math.floor(Math.random() * ctr);
+        ctr--;
+        temp = arra1[ctr];
+        arra1[ctr] = arra1[index];
+        arra1[index] = temp;
       }
-      return arra1
+      return arra1;
     },
-    makeStep () {
-      this.$store.commit('doStep') //
-      this.$socket.emit('doStep', this.usedCards)
-      let stepArr = []
+    makeStep() {
+      this.$store.commit("doStep"); //
+      this.$socket.emit("doStep", this.usedCards);
+      let stepArr = [];
       for (const val of this.usedCards) {
-        console.log(val)
-        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-        console.log(this.refreshCards.find(el => el.id === val))
+        console.log(val);
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        console.log(this.refreshCards.find(el => el.id === val));
         let cardObj = {
           id: val,
           title: this.refreshCards.find(el => el.id === val).title
-        }
-        console.log('!!!!!!!!!!!!!')
-        console.log(cardObj)
-        stepArr.push(cardObj)
+        };
+        console.log("!!!!!!!!!!!!!");
+        console.log(cardObj);
+        stepArr.push(cardObj);
       }
-      this.$store.commit('addSteps', stepArr)
+      this.$store.commit("addSteps", stepArr);
       // Одноразовые карточки (индексы):
-      let oneOffCards = [3, 7]
+      let oneOffCards = [3, 7];
       for (const cardIndex of oneOffCards) {
-        let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex)
-        console.log('ОДНОРАЗОВЫЕ КАРТОЧКИ')
+        let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex);
+        console.log("ОДНОРАЗОВЫЕ КАРТОЧКИ");
         if (usedIndex !== -1) {
-          let spliceIndex = this.refreshCards.findIndex(elem => elem.id === cardIndex)
-          this.refreshCards.splice(spliceIndex, 1)
+          let spliceIndex = this.refreshCards.findIndex(
+            elem => elem.id === cardIndex
+          );
+          this.refreshCards.splice(spliceIndex, 1);
         }
       }
-      this.usedCards = []
-      console.log(this.refreshCards)
+      this.usedCards = [];
+      console.log(this.refreshCards);
 
       // // ИЗМЕНЕНИЕ КОЭФФИЦИЕНТОВ КАРТОЧЕК ПОСЛЕ СЕССИЙ
       // this.completedSessions.forEach(el => {
@@ -507,96 +547,96 @@ export default {
       //     }
       //   }
       // })
-      this.cards = [...this.refreshCards]
-      console.log(this.cards)
+      this.cards = [...this.refreshCards];
+      console.log(this.cards);
 
-      console.log('-----Index of cards------')
-      console.log(this.usedCards)
+      console.log("-----Index of cards------");
+      console.log(this.usedCards);
     },
-    dropFromBtn (index) {
-      this.usedCards.push(this.cards[index].id)
+    dropFromBtn(index) {
+      this.usedCards.push(this.cards[index].id);
       // this.makeStep(this.cards[index].id);
-      let change = -this.cards[index].cost
-      this.$store.commit('changeMoney', change)
-      this.cards.splice(index, 1)
-      this.playAnimation()
+      let change = -this.cards[index].cost;
+      this.$store.commit("changeMoney", change);
+      this.cards.splice(index, 1);
+      this.playAnimation();
     },
-    startGame () {
-      console.log('Стейт комнаты')
-      let a = Object.assign(this.$store.state.roomParams)
-      console.log(a)
+    startGame() {
+      console.log("Стейт комнаты");
+      let a = Object.assign(this.$store.state.roomParams);
+      console.log(a);
       // this.refreshCards = Object.assign(this.cards);
-      console.log(this.cards)
-      console.log(this.refreshCards)
-      this.$socket.emit('startGame', a)
-      this.$store.commit('SOCKET_calcAllParams')
-      this.$store.state.isOwner = false
-      this.$store.state.isStart = false
-      this.playAnimation()
+      console.log(this.cards);
+      console.log(this.refreshCards);
+      this.$socket.emit("startGame", a);
+      this.$store.commit("SOCKET_calcAllParams");
+      this.$store.state.isOwner = false;
+      this.$store.state.isStart = false;
+      this.playAnimation();
     },
-    beforeEnter: function (el) {
-      console.log('befenterhook')
+    beforeEnter: function(el) {
+      console.log("befenterhook");
     },
-    enter: function (el) {
-      this.playAnimation()
-      console.log('enterhook')
+    enter: function(el) {
+      this.playAnimation();
+      console.log("enterhook");
     },
-    leave: function (el) {
-      el.style.opacity = 0
-      el.style.height = 0
-      console.log('leavehook')
-      this.$store.commit('doAnimation')
+    leave: function(el) {
+      el.style.opacity = 0;
+      el.style.height = 0;
+      console.log("leavehook");
+      this.$store.commit("doAnimation");
     },
-    altdrop (e) {
-      e.preventDefault()
-      console.log('drop')
-      this.dragovered = false
-      this.dragstart = false
-      if (typeof this.dragnode !== 'undefined') {
-        if (this.dragnode.parentNode.id == 'card-wrap') {
-          let i = 0
+    altdrop(e) {
+      e.preventDefault();
+      console.log("drop");
+      this.dragovered = false;
+      this.dragstart = false;
+      if (typeof this.dragnode !== "undefined") {
+        if (this.dragnode.parentNode.id == "card-wrap") {
+          let i = 0;
           for (const iterator of this.dragnode.parentNode.childNodes) {
             if (iterator == this.dragnode) {
-              break
+              break;
             }
-            i++
+            i++;
           }
-          this.usedCards.push(this.cards[i].id)
-          let change = -this.cards[i].cost
-          this.$store.commit('changeMoney', change)
-          this.cards.splice(i, 1)
+          this.usedCards.push(this.cards[i].id);
+          let change = -this.cards[i].cost;
+          this.$store.commit("changeMoney", change);
+          this.cards.splice(i, 1);
         }
       }
-      this.dragnode = undefined
-      this.playAnimation()
+      this.dragnode = undefined;
+      this.playAnimation();
     },
-    altdragstart (e) {
-      e.dataTransfer.effectAllowed = 'move'
-      e.dataTransfer.dropEffect = 'move'
-      e.dataTransfer.setData('text/plain', null)
-      e.target.style.opacity = 0.5
-      e.target.style.transform = 'scale(0.8)'
-      this.dragstart = true
-      this.dragnode = e.target
+    altdragstart(e) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.setData("text/plain", null);
+      e.target.style.opacity = 0.5;
+      e.target.style.transform = "scale(0.8)";
+      this.dragstart = true;
+      this.dragnode = e.target;
     },
-    altdragend (e) {
-      e.target.style.opacity = ''
-      e.target.style.transform = ''
-      this.dragnode = undefined
-      this.dragover = false
-      this.dragstart = false
+    altdragend(e) {
+      e.target.style.opacity = "";
+      e.target.style.transform = "";
+      this.dragnode = undefined;
+      this.dragover = false;
+      this.dragstart = false;
     },
-    dragov (e) {
-      console.log('over')
-      e.dataTransfer.dropEffect = 'move'
-      this.dragover = true
+    dragov(e) {
+      console.log("over");
+      e.dataTransfer.dropEffect = "move";
+      this.dragover = true;
     },
-    dragleave (e) {
-      console.log('leave')
-      this.dragover = false
+    dragleave(e) {
+      console.log("leave");
+      this.dragover = false;
     }
   }
-}
+};
 </script>
 
 <style>
@@ -620,14 +660,14 @@ export default {
   width: 100%;
   height: 100%;
   transform: translateX(-10px) translateY(10px);
-  z-index: -1 ;
+  z-index: -1;
   background: #f7f7f7 !important;
 }
 .bottom-card-2 {
   width: 100%;
   height: 100%;
   transform: translateX(-20px) translateY(20px);
-  z-index: -2 ;
+  z-index: -2;
   background: #ebebeb !important;
 }
 .list-group-horizontal li.list-group-item {
@@ -767,7 +807,7 @@ export default {
 }
 
 .card-box {
-  box-shadow: -1px 4px 3px rgba(0,0,0,.4);
+  box-shadow: -1px 4px 3px rgba(0, 0, 0, 0.4);
   position: relative;
   transition: all 0.4s;
   max-width: 220px;
@@ -808,7 +848,7 @@ export default {
 
 #card-field::-webkit-scrollbar {
   width: 4px;
-  height: 8px;
+  height: 16px;
   background-color: #f5f5f5;
 }
 
@@ -856,18 +896,22 @@ export default {
 .inner-card-wrap small {
   padding-right: 10px;
   padding-left: 10px;
+  font-size: 0.7rem;
 }
 .inner-card-wrap h3 {
   padding-bottom: 8px;
 }
-@media screen and (max-width: 1250px){
+.inner-card-wrap h6 {
+  font-size: 0.9rem;
+}
+@media screen and (max-width: 1250px) {
   .list-group-item {
     padding: 8px !important;
     padding-left: 12px !important;
     padding-right: 12px !important;
   }
 }
-@media screen and (max-width: 1090px){
+@media screen and (max-width: 1090px) {
   #splitScr {
     grid-template-rows: 1fr !important;
     grid-template-columns: 1fr !important;
@@ -894,7 +938,7 @@ export default {
     display: flex;
   }
 }
-@media screen and (max-width: 730px){
+@media screen and (max-width: 730px) {
   .list-group-item {
     padding: 2px !important;
     padding-left: 8px !important;
@@ -907,65 +951,65 @@ export default {
     grid-template-rows: 3fr 2fr 1fr;
   }
   #play-field {
-    grid-area: 1/1/2/3
+    grid-area: 1/1/2/3;
   }
   #enemy-field {
-     grid-area: 3/1/4/2
+    grid-area: 3/1/4/2;
   }
   #effects-field {
-    grid-area: 3/2/4/3
+    grid-area: 3/2/4/3;
   }
   #card-field {
-    grid-area: 2/1/3/3
+    grid-area: 2/1/3/3;
   }
 }
-@media screen and (max-width: 640px){
+@media screen and (max-width: 640px) {
   #playground {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 3fr 2fr 1fr;
   }
   #play-field {
-    grid-area: 1/1/2/3
+    grid-area: 1/1/2/3;
   }
   #enemy-field {
-     grid-area: 3/1/4/2
+    grid-area: 3/1/4/2;
   }
   #effects-field {
-    grid-area: 3/2/4/3
+    grid-area: 3/2/4/3;
   }
   #card-field {
-    grid-area: 2/1/3/3
+    grid-area: 2/1/3/3;
   }
 }
-@media screen and (max-width: 450px){
+@media screen and (max-width: 450px) {
   .list-group-item {
     padding: 2px !important;
     padding-left: 4px !important;
     padding-right: 2px !important;
   }
-      .data-wrap {
-      padding: 0 !important;
-      padding-left: 4px !important;
-      padding-right: 4px !important;
-    }
-        #nav {
-      display: none;
-    }
-    #view {
-      height: 100vh;
-    }
-        #playground {
-      max-height: 100vh;
-      height: 100vh;
-    }
-        #main-data {
-      font-size: 12px;
-      margin-top: 0px !important;
-    }
-    .badge h4 {
-      font-size: 18px;
-    }
-      .card-image {
+  .data-wrap {
+    padding: 0 !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  #nav {
+    display: none;
+  }
+  #view {
+    height: 100vh;
+  }
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
+  #main-data {
+    font-size: 12px;
+    margin-top: 0px !important;
+  }
+  .badge h4 {
+    font-size: 18px;
+  }
+  .card-image {
     height: 0;
   }
 }
@@ -973,86 +1017,85 @@ export default {
   #nav {
     display: none;
   }
-        #view {
-      height: 100vh;
-    }
-        #playground {
-      max-height: 100vh;
-      height: 100vh;
-    }
+  #view {
+    height: 100vh;
+  }
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
 }
 @media (orientation: portrait) {
-    #nav {
+  #nav {
     display: none;
   }
-      #view {
-      height: 100vh;
-    }
-        #playground {
-      max-height: 100vh;
-      height: 100vh;
-    }
+  #view {
+    height: 100vh;
+  }
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
 }
 @media screen and (max-width: 320px) and (orientation: portrait) {
-
   .card-box {
     min-width: 132px;
   }
 
-   #playground {
+  #playground {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 2.4fr 2fr 1.2fr;
   }
-    #gamerlist h3 {
-      font-size: 16px;
-    }
-    .play-information {
-      /* margin: 0; */
-      width: 100%;
-      height: 100%;
-      border-radius: 0;
-    }
-    .main-side {
-      max-height: unset;
-    }
-
-    .play-information h4 {
-      font-size: 14px;
-      margin-top: 4px !important;
-      margin-bottom: 4px !important;
-    }
-    .data-wrap button {
-       font-size: 12px !important;
-margin-top: 2px !important;
-font-weight: bold;
-    }
-    .gray-block {
-      height: 0;
-    }
-    .card-head h6 {
-      font-size: 14px;
-      margin-bottom: 8px !important;
-      margin-top: 8px !important;
-    }
-    #effects-head {
-      height: 40px;
-    }
-    #effects-head h6 {
-      margin: 0 !important;
-    }
-    .card-text {
-      padding-top: 2px;
-      line-height: 16px;
-      margin-bottom: 0 !important;
-    }
-    ul.list-group {
-      overflow-x: hidden;
-    }
-    #effects-field #effectslist ul {
-      padding-top: 40px;
-    }
-    h3.card-text {
-      font-size: 22px;
-    }
+  #gamerlist h3 {
+    font-size: 16px;
   }
+  .play-information {
+    /* margin: 0; */
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+  .main-side {
+    max-height: unset;
+  }
+
+  .play-information h4 {
+    font-size: 14px;
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+  }
+  .data-wrap button {
+    font-size: 12px !important;
+    margin-top: 2px !important;
+    font-weight: bold;
+  }
+  .gray-block {
+    height: 0;
+  }
+  .card-head h6 {
+    font-size: 14px;
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;
+  }
+  #effects-head {
+    height: 40px;
+  }
+  #effects-head h6 {
+    margin: 0 !important;
+  }
+  .card-text {
+    padding-top: 2px;
+    line-height: 16px;
+    margin-bottom: 0 !important;
+  }
+  ul.list-group {
+    overflow-x: hidden;
+  }
+  #effects-field #effectslist ul {
+    padding-top: 40px;
+  }
+  h3.card-text {
+    font-size: 22px;
+  }
+}
 </style>

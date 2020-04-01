@@ -1,6 +1,10 @@
 <template>
   <div id="splitScr">
-    <div class="main-side" :style="{display: isFinish ? 'flex' : 'unset'}">
+    <div
+      class="main-side"
+      :style="{display: isFinish ? 'flex' : 'unset'}"
+      :class="{'full-screen': !adminNav}"
+    >
       <div class="pg-header">
         <h3 class="ml-1 mb-0">Комната #{{roomNumber}}</h3>
         <router-link to="choose" class="mb-2 ml-1 mr-2">Выйти из комнаты</router-link>
@@ -15,16 +19,16 @@
 </template>
 
 <script>
-import Chat from '@/components/Chat.vue'
-import PlayGround from '@/components/PlayGround.vue'
-import Finish from '@/components/Finish.vue'
+import Chat from "@/components/Chat.vue";
+import PlayGround from "@/components/PlayGround.vue";
+import Finish from "@/components/Finish.vue";
 
-require('bootstrap/dist/css/bootstrap.css')
+require("bootstrap/dist/css/bootstrap.css");
 
 export default {
-  name: 'Main',
-  data () {
-    return {}
+  name: "Main",
+  data() {
+    return {};
   },
   components: {
     Chat,
@@ -32,59 +36,62 @@ export default {
     Finish
   },
   methods: {
-    leaveRoom () {
-      console.log('Ушёл из комнаты!')
-      this.$socket.emit('leaveRoom')
-      this.$store.state.messages = []
-      this.$store.state.isStart = true
-      this.$store.state.isOwner = false
-      this.$store.state.isFinish = false
-      this.$store.commit('SOCKET_doNextStep')
-      this.$store.commit('resetData')
+    leaveRoom() {
+      console.log("Ушёл из комнаты!");
+      this.$socket.emit("leaveRoom");
+      this.$store.state.messages = [];
+      this.$store.state.isStart = true;
+      this.$store.state.isOwner = false;
+      this.$store.state.isFinish = false;
+      this.$store.commit("SOCKET_doNextStep");
+      this.$store.commit("resetData");
     }
   },
   // ################  НЕ УДАЛЯТЬ  ###############
-  beforeRouteEnter (to, from, next) {
-    next(function (vm) {
-      console.log(vm.$store.state.roomId)
+  beforeRouteEnter(to, from, next) {
+    next(function(vm) {
+      console.log(vm.$store.state.roomId);
       let t = setTimeout(() => {
         if (vm.$store.state.roomId == -1) {
-          next('/choose 1')
+          next("/choose 1");
         } else {
-          return true
+          return true;
         }
-      }, 2000)
+      }, 2000);
 
       // return true
-    })
+    });
   },
   // ######################################################
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     // вызывается перед переходом от пути, соответствующего текущему компоненту;
     // имеет доступ к контексту экземпляра компонента `this`.
     // const answer = window.confirm(
     //   "Вы хотите уйти? У вас есть несохранённые изменения!"
     // );
-    this.leaveRoom()
+    this.leaveRoom();
 
     // if (answer) {
-    next()
+    next();
     // } else {
     //   next(false);
     // }
   },
   computed: {
-    roomNumber () {
-      return this.$store.state.roomId
+    roomNumber() {
+      return this.$store.state.roomId;
     },
-    connections () {
-      return this.$store.state.connections
+    connections() {
+      return this.$store.state.connections;
     },
-    isFinish () {
-      return this.$store.state.isFinish
+    isFinish() {
+      return this.$store.state.isFinish;
+    },
+    adminNav() {
+      return this.$store.state.adminNav;
     }
   }
-}
+};
 </script>
 
 <style>
@@ -118,10 +125,11 @@ export default {
 .main-side {
   position: relative;
   max-height: calc(100vh - 40px);
+  z-index: -1;
 }
 .pg-header {
   position: absolute;
-  z-index: 1000;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100%;

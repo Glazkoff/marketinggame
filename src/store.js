@@ -8,6 +8,8 @@ export default new Vuex.Store({
   state: {
     gamerName: '',
     socketId: '',
+    isAdmin: false,
+    adminNav: false,
     isOwner: false,
     isStart: true,
     isFinish: false,
@@ -47,7 +49,7 @@ export default new Vuex.Store({
   },
   getters: {},
   mutations: {
-    resetData (state) {
+    resetData(state) {
       console.log('RESET!')
       state.connections = []
       state.messages = []
@@ -70,7 +72,13 @@ export default new Vuex.Store({
         state.roomParams[key] = state.firstRoomParams[key]
       }
     },
-    addSteps (state, data) {
+    changeAdminNav(state) {
+      state.adminNav = !state.adminNav
+    },
+    changeAdminStatus(state) {
+      state.isAdmin = !state.isAdmin
+    },
+    addSteps(state, data) {
       let monthArr = []
       for (var val of data) {
         console.log(val)
@@ -78,64 +86,67 @@ export default new Vuex.Store({
       }
       state.steps.push(monthArr)
     },
-    copyData (state, data) {
+    copyData(state, data) {
       state.roomParams = {}
       for (var key in data) {
         state.roomParams[key] = data[key]
       }
     },
-    doAnimation (state, data) {
+    doAnimation(state, data) {
       state.roomParams.money++
       state.roomParams.money--
     },
-    setName (state, name) {
+    setName(state, name) {
       state.gamerName = name
     },
-    setOwner (state) {
+    setOwner(state) {
       state.isOwner = true
     },
     // setRoomId(state, number) {
     //   state.roomId = number
     // },
-    setRoomParams (state, {
+    setRoomParams(state, {
       month
     }) {
       console.log('MONTH STATE', month)
       state.roomParams.month = month
     },
-    doStep (state) {
+    doStep(state) {
       state.stepDone = true
     },
-    changeMoney (state, change) {
+    changeMoney(state, change) {
       if (state.roomParams.money !== undefined) {
         state.roomParams.money += change
       }
     },
-    SOCKET_roomNotFound () {
+    SOCKET_roomNotFound() {
       router.push('/choose')
     },
-    SOCKET_doNextStep (state) {
+    SOCKET_doNextStep(state) {
       state.stepDone = false
       for (const gamer of state.gamers) {
         gamer.isattacker = false
       }
     },
-    SOCKET_setRoomNumber (state, roomId) {
+    SOCKET_setRoomNumber(state, roomId) {
       state.roomId = roomId
     },
-    SOCKET_addMessage (state, newMessage) {
+    SOCKET_addMessage(state, newMessage) {
       state.messages.push(newMessage)
       let messList = document.querySelector('#messageField')
       if (messList !== null) {
         messList.scrollTop = messList.scrollHeight
       }
     },
-    SOCKET_setStartGame (state, roomParams) {
+    SOCKET_setStartGame(state, roomParams) {
       for (var key in state.roomParams) {
         state.prevRoomParams[key] = state.roomParams[key]
       }
       console.log('~~~~~~~PREV~~~~~~')
       console.log(state.prevRoomParams)
+      if (state.isStart) {
+        state.firstRoomParams.month = roomParams.month + 0
+      }
       state.isStart = false
       // if (state.roomParams.month == undefined) {
       state.roomParams = roomParams
@@ -157,11 +168,11 @@ export default new Vuex.Store({
       // }
       state.roomParams = roomParams
     },
-    SOCKET_setGamers (state, obj) {
+    SOCKET_setGamers(state, obj) {
       state.gamers = [...obj.gamers]
       state.prevRoomParams = {}
     },
-    SOCKET_changeGamerStatus (state, id) {
+    SOCKET_changeGamerStatus(state, id) {
       for (const gamer of state.gamers) {
         if (gamer.id === id) {
           gamer.isattacker = true
@@ -169,15 +180,15 @@ export default new Vuex.Store({
         }
       }
     },
-    SOCKET_finish (state, winnersObj) {
+    SOCKET_finish(state, winnersObj) {
       state.isFinish = true
       state.winners = Object.assign(winnersObj)
     },
-    SOCKET_setGameEvent (state, eventObj) {
+    SOCKET_setGameEvent(state, eventObj) {
       state.gameEvent = {}
       state.gameEvent = Object.assign(eventObj)
     },
-    SOCKET_calcAllParams (state) {
+    SOCKET_calcAllParams(state) {
       let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
       state.roomParams.clients = clients
       console.log('Клиенты: ' + clients)
@@ -193,7 +204,7 @@ export default new Vuex.Store({
       state.roomParams.moneyPerClient = resultPerClient
       // state.roomParams.money += result;
     },
-    SOCKET_setEffects (state, effects) {
+    SOCKET_setEffects(state, effects) {
       console.log('/////////////////////////')
       console.log('/////////////////////////')
       effects.forEach(el => {
@@ -208,7 +219,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    SOCKET_gameEvent (state, eventObj) {
+    SOCKET_gameEvent(state, eventObj) {
       console.log(eventObj)
       state.commit('SOCKET_setGameEvent', eventObj)
       setTimeout(() => {
