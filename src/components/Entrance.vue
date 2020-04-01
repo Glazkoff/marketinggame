@@ -217,6 +217,7 @@ export default {
       console.log(this.name);
       if (this.name[0] == "/") {
         this.name = this.name.slice(1, this.name.length);
+        // Чит-коды с префиксом '/'
         switch (this.name) {
           case "swadmin":
             this.$store.commit("changeAdminStatus");
