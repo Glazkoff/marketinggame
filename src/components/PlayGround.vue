@@ -1,9 +1,9 @@
 <template>
-  <div id="playground" :class="{'full-screen': !adminNav}">
+  <div id="playground" :class="{ 'full-screen': !adminNav }">
     <div id="play-field">
       <div
         class="play-information"
-        :class="{'dragstart': dragstart, 'dragover': dragover}"
+        :class="{ dragstart: dragstart, dragover: dragover }"
         @dragenter.prevent="dragov"
         @dragover.prevent
         @drop.prevent="altdrop"
@@ -17,7 +17,7 @@
                 <div class="col-12">
                   <h4 class="text-center">
                     Cобытие!
-                    {{event.title}}
+                    {{ event.title }}
                   </h4>
                   <hr />
                 </div>
@@ -30,7 +30,7 @@
               </div>
               <div class="row">
                 <div class="col-8 mt-2 offset-2">
-                  <p class="text-center">{{event.description}}</p>
+                  <p class="text-center">{{ event.description }}</p>
                 </div>
               </div>
               <div class="row">
@@ -39,7 +39,9 @@
                     style="display: block"
                     class="btn btn-primary w-100"
                     @click="closeEvent"
-                  >Продолжить</button>
+                  >
+                    Продолжить
+                  </button>
                 </div>
               </div>
             </div>
@@ -63,7 +65,9 @@
                   class="btn btn-primary btn-lg btn-block mt-3"
                   style="cursor: pointer"
                   @click="startGame()"
-                >Начать</div>
+                >
+                  Начать
+                </div>
               </div>
             </div>
           </div>
@@ -79,7 +83,8 @@
               <div class="col-11 text-center">
                 <h1>Ожидайте начала игры</h1>
                 <p>
-                  Когда все игроки подключатся к комнате, создатель комнаты запустит
+                  Когда все игроки подключатся к комнате, создатель комнаты
+                  запустит
                   <mark>первый раунд</mark> в созданной комнате.
                 </p>
               </div>
@@ -89,11 +94,18 @@
         <!-- Конец экрана для обычного пользователя -->
         <!-- Основной экран -->
         <div class="gamer-round-data container h-100" v-if="!isStart">
-          <div class="row h-100 justify-content-center align-items-start d-flex">
+          <div
+            class="row h-100 justify-content-center align-items-start d-flex"
+          >
             <div class="col-12 data-wrap" style="margin: auto auto;">
               <div class="row">
-                <div class="col-5 d-flex align-content-center" style="vertical-align: middle">
-                  <h4 class="mb-0 d-block">Сейчас у вас ({{gamerName}}) есть:</h4>
+                <div
+                  class="col-5 d-flex align-content-center"
+                  style="vertical-align: middle"
+                >
+                  <h4 class="mb-0 d-block">
+                    Сейчас у вас ({{ gamerName }}) есть:
+                  </h4>
                 </div>
                 <div class="col-7 data-group">
                   <ul class="list-group list-group-horizontal w-100">
@@ -122,8 +134,8 @@
                       Месяц
                       <span class="badge badge-primary badge-pill">
                         <h4>
-                          {{firstRoomParams.month - gamerParams.month}} из
-                          {{firstRoomParams.month}}
+                          {{ firstRoomParams.month - gamerParams.month }} из
+                          {{ firstRoomParams.month }}
                         </h4>
                       </span>
                     </li>
@@ -135,7 +147,9 @@
                 class="btn btn-success w-100 mt-1 pr-2 btn-block"
                 :disabled="isStart || stepDone"
                 @click="makeStep()"
-              >Завершить ход</button>
+              >
+                Завершить ход
+              </button>
             </div>
           </div>
         </div>
@@ -146,12 +160,14 @@
     <div
       id="card-field"
       style="transition: all 5s"
-      :style="{overflowX: stepDone ? 'hidden' : 'scroll'}"
+      :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
     >
       <transition mode="out-in" name="fade" type="transition">
         <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
           <div class="container h-100 w-100">
-            <div class="row h-100 justify-content-md-center align-content-center">
+            <div
+              class="row h-100 justify-content-md-center align-content-center"
+            >
               <div class="col-12">
                 <h2 class="text-center">Вы сделали ход!</h2>
                 <p class="text-center">
@@ -174,13 +190,17 @@
       >
         <div
           class="card-box"
-          :draggable="card.cost<=gamerParams.money"
+          :draggable="card.cost <= gamerParams.money"
           @dragstart.self="altdragstart"
           v-for="(card, count) in cards"
           :key="count"
           @dragend="altdragend"
           v-if="!isStart"
-          :class="{'card-ml-0': card.oneOff, 'card-ml-1': !card.oneOff && !isLastEffectStage(card.id), 'card-ml-2': !card.oneOff && !hasThisEffect(card.id)}"
+          :class="{
+            'card-ml-0': card.oneOff,
+            'card-ml-1': !card.oneOff && !isLastEffectStage(card.id),
+            'card-ml-2': !card.oneOff && !hasThisEffect(card.id)
+          }"
         >
           <div
             class="card-box w-100 h-100 bottom-card bottom-card-1"
@@ -188,20 +208,28 @@
           ></div>
           <div
             class="card-box w-100 h-100 bottom-card bottom-card-2"
-            v-if="!card.oneOff && !hasThisEffect(card.id) || isLastStep(card.id)"
+            v-if="
+              (!card.oneOff && !hasThisEffect(card.id)) || isLastStep(card.id)
+            "
           ></div>
           <div class="inner-card-wrap">
             <div class="card-head">
-              <h6 class="card-title text-center pl-2 pr-2 mb-1">{{card.title}}</h6>
+              <h6 class="card-title text-center pl-2 pr-2 mb-1">
+                {{ card.title }}
+              </h6>
             </div>
-            <small class="card-text text-center">{{card.text}}</small>
-            <h3 class="card-text text-center">{{card.cost | formatNumber}} ₽</h3>
+            <small class="card-text text-center">{{ card.text }}</small>
+            <h3 class="card-text text-center">
+              {{ card.cost | formatNumber }} ₽
+            </h3>
           </div>
           <button
             class="btn btn-dark pl-2"
             @click="dropFromBtn(count)"
-            :disabled="stepDone||(card.cost>gamerParams.money)"
-          >Использовать</button>
+            :disabled="stepDone || card.cost > gamerParams.money"
+          >
+            Использовать
+          </button>
         </div>
         <!-- <div
           class="card-box"
@@ -494,15 +522,15 @@ export default {
       this.$socket.emit("doStep", this.usedCards);
       let stepArr = [];
       for (const val of this.usedCards) {
-        console.log(val);
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        console.log(this.refreshCards.find(el => el.id === val));
+        // console.log(val);
+        // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        // console.log(this.refreshCards.find(el => el.id === val));
         let cardObj = {
           id: val,
           title: this.refreshCards.find(el => el.id === val).title
         };
-        console.log("!!!!!!!!!!!!!");
-        console.log(cardObj);
+        // console.log("!!!!!!!!!!!!!");
+        // console.log(cardObj);
         stepArr.push(cardObj);
       }
       this.$store.commit("addSteps", stepArr);
@@ -519,43 +547,14 @@ export default {
         }
       }
       this.usedCards = [];
-      console.log(this.refreshCards);
-
-      // // ИЗМЕНЕНИЕ КОЭФФИЦИЕНТОВ КАРТОЧЕК ПОСЛЕ СЕССИЙ
-      // this.completedSessions.forEach(el => {
-      //   console.log('^^^^^^^^^^^^^^^^^^')
-      //   let cardIndex = this.refreshCards.findIndex(card => { return card.id === el })
-      //   console.log('^^^^^^^^^^^^^^^^^^')
-      //   console.log(cardIndex)
-      //   console.log('^^^^^^^^^^^^^^^^^^')
-      //   if (cardIndex !== -1) {
-      //     console.log(`Изменяем коэффициенты карточки с ID ${this.refreshCards[cardIndex].id}`)
-      //     this.refreshCards[cardIndex].coefs = this.refreshCards[cardIndex].coefs.map(coef => { return coef / 2 })
-      //   } else {
-      //     console.error('Что-то не так с изменением карточек после сессий')
-      //   }
-      // })
-
-      // // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
-      // this.refreshCards.forEach(el => {
-      //   if ((typeof el.coefs !== 'undefined') && (typeof el.templateText !== 'undefined')) {
-      //     el.text = el.templateText
-      //     for (let i = 0; i < el.coefs.length; i++) {
-      //       console.log(i)
-      //       let regexp = new RegExp(/@coef[0-9]/)
-      //       el.text = el.text.reckplace(regexp, (match, p1, offset, string) => { return el.coefs[i] })
-      //     }
-      //   }
-      // })
+      // console.log(this.refreshCards);
       this.cards = [...this.refreshCards];
-      console.log(this.cards);
-
-      console.log("-----Index of cards------");
-      console.log(this.usedCards);
+      // console.log(this.cards);
+      // console.log("-----Index of cards------");
+      // console.log(this.usedCards);
     },
     dropFromBtn(index) {
       this.usedCards.push(this.cards[index].id);
-      // this.makeStep(this.cards[index].id);
       let change = -this.cards[index].cost;
       this.$store.commit("changeMoney", change);
       this.cards.splice(index, 1);

@@ -37,6 +37,8 @@ export default {
   },
   sockets: {
     connect: function(connections) {
+      this.$store.state.socketId = this.$socket.id;
+      console.log(this.$socket.id);
       console.log("Socket connected");
     }
     // connectList: function(connections) {
@@ -46,6 +48,24 @@ export default {
     // },
     // newMessage: function(mess) {
     //   console.log(`${mess.text}`);
+    // }
+  },
+  beforeCreate() {
+    console.log("setStateFromLS");
+    this.$store.commit("setStateFromLS");
+    if (this.$store.state.gamerName) {
+      this.$socket.emit("setName", this.$store.state.gamerName);
+    }
+    if (this.$store.state.roomId) {
+      this.$socket.emit("setRoom", this.$store.state.roomId);
+    }
+    // if (this.$socket.id) {
+    console.log("SEND RESRESH!");
+    this.$socket.emit(
+      "refreshSocketID",
+      this.$store.state.socketId,
+      this.$store.state.roomId
+    );
     // }
   },
   computed: {},

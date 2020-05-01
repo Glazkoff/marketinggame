@@ -4,7 +4,7 @@ import router from '../src/router'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     gamerName: '',
     socketId: '',
@@ -71,6 +71,7 @@ export default new Vuex.Store({
       for (var key in state.firstRoomParams) {
         state.roomParams[key] = state.firstRoomParams[key]
       }
+      localStorage.removeItem('store')
     },
     changeAdminNav(state) {
       state.adminNav = !state.adminNav
@@ -136,6 +137,15 @@ export default new Vuex.Store({
       let messList = document.querySelector('#messageField')
       if (messList !== null) {
         messList.scrollTop = messList.scrollHeight
+      }
+    },
+    setStateFromLS(state) {
+      let stateLS = localStorage.getItem('store')
+      console.log('store', stateLS)
+      if (stateLS) {
+        this.replaceState(
+          Object.assign(state, JSON.parse(localStorage.getItem('store')))
+        )
       }
     },
     SOCKET_setStartGame(state, roomParams) {
@@ -222,9 +232,9 @@ export default new Vuex.Store({
     SOCKET_gameEvent(state, eventObj) {
       console.log(eventObj)
       state.commit('SOCKET_setGameEvent', eventObj)
-      setTimeout(() => {
-        state.commit('SOCKET_setGameEvent', {})
-      }, 7000)
+      // setTimeout(() => {
+      //   state.commit('SOCKET_setGameEvent', {})
+      // }, 7000)
     }
     // SOCKET_setStartGame (state, roomParams) {
     //   console.log('AAAAAACTIONS');
@@ -232,3 +242,8 @@ export default new Vuex.Store({
     // }
   }
 })
+store.subscribe((mutation, state) => {
+  // Сохраняем состояние как JSON-строку
+  localStorage.setItem('store', JSON.stringify(state))
+})
+export default store

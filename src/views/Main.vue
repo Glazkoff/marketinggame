@@ -2,12 +2,14 @@
   <div id="splitScr">
     <div
       class="main-side"
-      :style="{display: isFinish ? 'flex' : 'unset'}"
-      :class="{'full-screen': !adminNav}"
+      :style="{ display: isFinish ? 'flex' : 'unset' }"
+      :class="{ 'full-screen': !adminNav }"
     >
       <div class="pg-header">
-        <h3 class="ml-1 mb-0">Комната #{{roomNumber}}</h3>
-        <router-link to="choose" class="mb-2 ml-1 mr-2">Выйти из комнаты</router-link>
+        <h3 class="ml-1 mb-0">Комната #{{ roomNumber }}</h3>
+        <router-link to="choose" class="mb-2 ml-1 mr-2"
+          >Выйти из комнаты</router-link
+        >
       </div>
       <transition name="fade" mode="out-in">
         <PlayGround v-if="!isFinish"></PlayGround>
@@ -51,6 +53,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(function(vm) {
       console.log(vm.$store.state.roomId);
+      vm.$store.commit("setStateFromLS");
       let t = setTimeout(() => {
         if (vm.$store.state.roomId == -1) {
           next("/choose 1");

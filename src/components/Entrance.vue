@@ -54,7 +54,10 @@
         d="M550.996 219.736C543.604 219.736 537.844 217.624 533.716 213.4C529.684 209.08 527.668 202.504 527.668 193.672V165.592H515.716V152.632H527.668V140.248L543.508 135.496V152.632H560.932V165.592H543.508V189.064C543.508 200.68 546.724 206.488 553.156 206.488C555.748 206.488 558.964 205.528 562.804 203.608L565.828 215.704C560.26 218.392 555.316 219.736 550.996 219.736Z"
         fill="black"
       />
-      <path d="M573.155 177.976H620.243V191.224H573.155V177.976Z" fill="black" />
+      <path
+        d="M573.155 177.976H620.243V191.224H573.155V177.976Z"
+        fill="black"
+      />
       <path
         d="M633.339 203.896H645.291V168.472L631.611 164.152L635.931 150.904L656.379 157.528C659.259 155.128 662.571 153.256 666.315 151.912C670.059 150.568 673.803 149.896 677.547 149.896C681.579 149.896 685.275 150.616 688.635 152.056C691.995 153.4 694.731 155.368 696.843 157.96C703.755 152.584 710.907 149.896 718.299 149.896C727.323 149.896 733.851 152.104 737.883 156.52C741.915 160.84 743.931 167.992 743.931 177.976V203.896H756.171V217H721.899V203.896H727.515V178.84C727.515 173.464 726.651 169.672 724.923 167.464C723.195 165.16 720.219 164.008 715.995 164.008C713.883 164.008 711.579 164.488 709.083 165.448C706.587 166.312 704.523 167.416 702.891 168.76V203.896H708.507V217H680.715V203.896H686.475V178.84C686.475 173.464 685.611 169.672 683.883 167.464C682.155 165.16 679.179 164.008 674.955 164.008C672.843 164.008 670.539 164.488 668.043 165.448C665.547 166.312 663.435 167.416 661.707 168.76V203.896H667.611V217H633.339V203.896Z"
         fill="black"
@@ -127,12 +130,14 @@
             name="name"
             id="name"
             class="form-control form-control-lg"
-            :class="{'is-invalid': errorClass}"
+            :class="{ 'is-invalid': errorClass }"
             placeholder="Имя"
             v-model.trim="name"
             @click="clckForm()"
           />
-          <div v-if="errorClass" class="invalid-feedback">Обязательно введите имя!</div>
+          <div v-if="errorClass" class="invalid-feedback">
+            Обязательно введите имя!
+          </div>
           <small class="form-text text-muted">
             Имя необходимо, чтобы другие игроки могли идентифицировать в чате и
             игре
@@ -142,7 +147,9 @@
           class="btn btn-lg btn-primary btn-block"
           @click="changePop()"
           :disabled="disabled"
-        >Войти</button>
+        >
+          Войти
+        </button>
       </form>
     </div>
   </div>
@@ -154,9 +161,9 @@ import anime from "animejs/lib/anime.es.js";
 import AnimBG from "./AnimBG";
 export default {
   name: "Entrance",
-  props: {
-    msg: String
-  },
+  // props: {
+  //   msg: String
+  // },
   data() {
     return {
       formClicked: false,
@@ -177,25 +184,6 @@ export default {
       }
     }, 100);
     this.$store.commit("resetData");
-    // anime({
-    //   targets: '#path path',
-    //   strokeDashoffset: [anime.setDashoffset, 0],
-    //   easing: 'easeInOutSine',
-    //   duration: 500,
-    //   delay: function (el, i) {
-    //     return i * 100
-    //   },
-    //   direction: 'alternate'
-    // })
-    // anime.timeline({
-    //   targets: '#path path',
-    //   delay: 2700,
-    //   duration: 400,
-    //   endDelay: 400,
-    //   easing: 'easeInOutSine'
-    // }).add({
-    //   fill: '#000'
-    // })
     this.startTimeline();
   },
   computed: {
@@ -250,7 +238,6 @@ export default {
           targets: "#path path",
           delay: 2700,
           duration: 400,
-          // endDelay: 400,
           easing: "easeInOutSine"
         })
         .add({
@@ -345,12 +332,10 @@ export default {
 #entr {
   display: flex;
   flex-direction: column;
-  /* height: 100vh; */
 }
 #path {
   height: 100px;
   margin: auto;
-  /* padding: 0 !important; */
   background: #fff;
 }
 #path path {
