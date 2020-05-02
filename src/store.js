@@ -73,6 +73,9 @@ const store = new Vuex.Store({
       }
       localStorage.removeItem('store')
     },
+    SOCKET_resetData(state) {
+      this.commit('resetData');
+    },
     changeAdminNav(state) {
       state.adminNav = !state.adminNav
     },
@@ -103,6 +106,10 @@ const store = new Vuex.Store({
     setOwner(state) {
       state.isOwner = true
     },
+    notNotOwner(state) {
+      state.isOwner = !state.isOwner
+      state.isOwner = !state.isOwner
+    },
     // setRoomId(state, number) {
     //   state.roomId = number
     // },
@@ -121,6 +128,7 @@ const store = new Vuex.Store({
       }
     },
     SOCKET_roomNotFound() {
+      this.commit('resetData');
       router.push('/choose')
     },
     SOCKET_doNextStep(state) {
@@ -147,6 +155,10 @@ const store = new Vuex.Store({
           Object.assign(state, JSON.parse(localStorage.getItem('store')))
         )
       }
+    },
+    SOCKET_kickUser() {
+
+      router.push('/choose')
     },
     SOCKET_setStartGame(state, roomParams) {
       for (var key in state.roomParams) {

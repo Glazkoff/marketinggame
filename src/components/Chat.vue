@@ -1,53 +1,82 @@
 <template>
-<transition name="fade">
-  <div class="sideBox" :class="{'chatOpened': chatOpened, 'chatClosed': !chatOpened}">
-    <div class="chat-btn" @click="transformChat()" :class="{'bg-danger': chatOpened, 'bg-info': !chatOpened}">
-      <transition name="fade">
-        <img src="../assets/chat-icon.svg" alt="" class="chat-btn-icon" v-if="!chatOpened">
-        <img src="../assets/close-icon.svg" alt="" class="chat-btn-icon" v-if="chatOpened">
-      </transition>
-       <div class="chat-count" v-if="!messCountIsVoid && !chatOpened">
-         <span>{{unreadMessCount}}</span>
+  <transition name="fade">
+    <div
+      class="sideBox"
+      :class="{ chatOpened: chatOpened, chatClosed: !chatOpened }"
+    >
+      <div
+        class="chat-btn"
+        @click="transformChat()"
+        :class="{ 'bg-danger': chatOpened, 'bg-info': !chatOpened }"
+      >
+        <transition name="fade">
+          <img
+            src="../assets/chat-icon.svg"
+            alt=""
+            class="chat-btn-icon"
+            v-if="!chatOpened"
+          />
+          <img
+            src="../assets/close-icon.svg"
+            alt=""
+            class="chat-btn-icon"
+            v-if="chatOpened"
+          />
+        </transition>
+        <div class="chat-count" v-if="!messCountIsVoid && !chatOpened">
+          <span>{{ unreadMessCount }}</span>
         </div>
-    </div>
-    <h2 id="chat" class="ml-2">Чат</h2>
-    <div class="messageField" id="messageField">
-      <div class="messageBox">
-        <div class="message" v-for="(mess, count) in messages" :key="count" :class="{adminBg: mess.name=='Admin'}">
-          <div class="avatar"></div>
-          <div class="mess-block">
-            <div class="nickname" :class="{adminMess: mess.name=='Admin'}">{{mess.name}}</div>
-            <div class="messText">{{mess.text}}</div>
+      </div>
+      <h2 id="chat" class="ml-2">Чат</h2>
+      <div class="messageField" id="messageField">
+        <div class="messageBox">
+          <div
+            class="message"
+            v-for="(mess, count) in messages"
+            :key="count"
+            :class="{ adminBg: mess.name == 'Admin' }"
+          >
+            <div class="avatar"></div>
+            <div class="mess-block">
+              <div
+                class="nickname"
+                :class="{ adminMess: mess.name == 'Admin' }"
+              >
+                {{ mess.name }}
+              </div>
+              <div class="messText">{{ mess.text }}</div>
+            </div>
           </div>
         </div>
       </div>
+      <SendBox></SendBox>
     </div>
-    <SendBox></SendBox>
-  </div>
-</transition>
+  </transition>
 </template>
 <script>
 import SendBox from "@/components/SendBox.vue";
 
 export default {
   name: "Chat",
-  data () {
+  data() {
     return {
       chatOpened: false,
       unreadMessCount: 0,
       readCount: 0
-    }
+    };
   },
-  created () {
-    this.$store.watch((state, getters) => state.messages,
+  created() {
+    this.$store.watch(
+      (state, getters) => state.messages,
       (newValue, oldValue) => {
         if (!this.chatOpened) {
           console.log(newValue.length);
-          this.unreadMessCount = newValue.length - this.readCount
+          this.unreadMessCount = newValue.length - this.readCount;
         } else {
-          this.readCount = newValue.length
+          this.readCount = newValue.length;
         }
-      })
+      }
+    );
   },
   components: {
     SendBox
@@ -63,17 +92,15 @@ export default {
       return this.$store.state.messages;
     },
     messCountIsVoid() {
-      return this.unreadMessCount===0
+      return this.unreadMessCount === 0;
     }
   },
-  watch: {
-
-  },
+  watch: {},
   methods: {
     transformChat() {
-      this.chatOpened = !this.chatOpened
-      this.unreadMessCount = 0
-      this.readCount = this.$store.state.messages.length
+      this.chatOpened = !this.chatOpened;
+      this.unreadMessCount = 0;
+      this.readCount = this.$store.state.messages.length;
     }
   }
 };
@@ -81,7 +108,7 @@ export default {
 
 <style>
 .adminBg {
-  background: rgba(226, 226, 226, 0.329)
+  background: rgba(226, 226, 226, 0.329);
 }
 .chat-count {
   min-width: 20px;
@@ -100,7 +127,7 @@ export default {
   margin: auto auto;
   font-weight: bold;
 }
-@media screen and (max-width: 1090px){
+@media screen and (max-width: 1090px) {
   .mess-block {
     max-width: unset;
   }
@@ -112,10 +139,11 @@ export default {
   }
   .chatClosed {
     left: -300px;
-    box-shadow: 0px 0px 0px rgba(0,0,0,.0) !important;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
   }
 }
 .chat-btn {
+  cursor: pointer;
   transition-duration: 0.5s;
   display: none;
   width: 40px;
@@ -124,7 +152,7 @@ export default {
   right: -32px;
   top: calc(50% - 20px);
   z-index: -200;
-  background-color: #F8F9FA;
+  background-color: #f8f9fa;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
   border-radius: 8px;
 }
@@ -168,8 +196,8 @@ h2#chat {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
 .messageField {
-  min-height: calc(100vh - 150px);
-  max-height: calc(100vh - 150px);
+  min-height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
   overflow-y: scroll;
   margin-bottom: 70px;
   overflow-x: auto;

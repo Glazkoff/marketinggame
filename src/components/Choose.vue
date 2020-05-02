@@ -1,13 +1,16 @@
 <template>
   <div class="card container col-lg-4 col-md-5 col-sm-10 col-xs-8 mt-5 p-4">
-    <h1 class="mb-1">Привет, {{gamerName}}!</h1>
+    <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <router-link to="/">Сменить имя</router-link>
 
     <p>Выбери, как ты начнёшь игру</p>
     <div class="btn-group btn-group-toggle mb-3">
       <label
         class="btn btn-lg"
-        :class="{'btn-outline-info': this.toggle!='join', 'btn-info': this.toggle=='join'}"
+        :class="{
+          'btn-outline-info': this.toggle != 'join',
+          'btn-info': this.toggle == 'join'
+        }"
       >
         <input
           type="radio"
@@ -16,11 +19,15 @@
           name="toggle"
           id="toggle1"
           autocomplete="off"
-        /> Присоединиться к комнате
+        />
+        Присоединиться к комнате
       </label>
       <label
         class="btn btn-lg"
-        :class="{'btn-outline-info': this.toggle!='create', 'btn-info': this.toggle=='create'}"
+        :class="{
+          'btn-outline-info': this.toggle != 'create',
+          'btn-info': this.toggle == 'create'
+        }"
         @click="reset()"
       >
         <input
@@ -47,7 +54,9 @@
           placeholder="Введите номер комнаты"
           @keypress.enter="joinGame()"
         />
-        <button class="btn btn-lg btn-danger btn-block" @click="joinGame()">Присоединиться</button>
+        <button class="btn btn-lg btn-danger btn-block" @click="joinGame()">
+          Присоединиться
+        </button>
       </div>
       <div class v-if="toggle == 'create'">
         <!-- <label for="name" class>Номер комнаты</label>
@@ -87,7 +96,9 @@
           placeholder="100000"
           @keypress.enter="createGame()"
         />
-        <button class="btn btn-lg btn-danger btn-block" @click="createGame()">Создать</button>
+        <button class="btn btn-lg btn-danger btn-block" @click="createGame()">
+          Создать
+        </button>
       </div>
     </transition>
   </div>
@@ -122,10 +133,12 @@ export default {
   methods: {
     createGame() {
       // this.roomParams.month++
+      // this.$store.state.isOwner = true;
+      this.$store.commit("setOwner");
+      console.log("IS OWNER", this.$store.state.isOwner);
       this.$socket.emit("createRoom");
-      this.$router.push("main");
-      this.$store.state.isOwner = true;
       this.$store.commit("copyData", this.roomParams);
+      this.$router.push("main");
       // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     joinGame() {

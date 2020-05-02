@@ -3,13 +3,17 @@
     <div class="container mt-2">
       <div class="row" v-if="isLoozer">
         <div class="col-12">
-          <h2 class="text-center h-100">Увы, {{gamerName}}, следующий раз должно получиться!</h2>
+          <h2 class="text-center h-100">
+            Увы, {{ gamerName }}, следующий раз должно получиться!
+          </h2>
         </div>
       </div>
       <hr v-if="isLoozer" style="margin: 0" />
       <div class="row" v-if="isLoozer">
         <div class="col-12">
-          <h4 class="text-center h-100 mt-2 mb-3">Результаты других игроков:</h4>
+          <h4 class="text-center h-100 mt-2 mb-3">
+            Результаты других игроков:
+          </h4>
         </div>
       </div>
       <div class="row" v-if="isLoozer">
@@ -23,12 +27,49 @@
                 <div class="card-body">
                   <h5 class="card-title">
                     Первое место -
-                    <strong>{{firstPosition!==undefined ? firstPosition.name : ''}}</strong>
+                    <strong>{{
+                      firstPosition !== undefined ? firstPosition.name : ""
+                    }}</strong>
                   </h5>
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em>{{firstPosition!==undefined ? firstPosition.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck) : ''}} ₽</em>
+                    <em
+                      >{{
+                        firstPosition !== undefined
+                          ? Math.ceil(
+                              firstPosition.money -
+                                (Math.ceil(
+                                  firstRoomParams.organicCount *
+                                    firstRoomParams.organicCoef *
+                                    firstRoomParams.conversion
+                                ) +
+                                  Math.ceil(
+                                    firstRoomParams.contextCount *
+                                      firstRoomParams.contextCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.socialsCount *
+                                      firstRoomParams.socialsCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.smmCount *
+                                      firstRoomParams.smmCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.straightCount *
+                                      firstRoomParams.straightCoef *
+                                      firstRoomParams.conversion
+                                  )) *
+                                  firstRoomParams.averageCheck
+                            )
+                          : ""
+                      }}
+                      ₽</em
+                    >
                   </p>
                 </div>
               </div>
@@ -41,7 +82,9 @@
           <div class="gray-block"></div>
         </div>
         <div class="col-8 text-center mt-0" v-if="isWinner">
-          <h5 class="mb-0">Поздравляю, {{gamerData!==undefined ? gamerData.name : ''}}!</h5>
+          <h5 class="mb-0">
+            Поздравляю, {{ gamerData !== undefined ? gamerData.name : "" }}!
+          </h5>
           <h3 class="mb-0">Вы - победитель</h3>
           <p class="mb-0">Вам удалось заработать:</p>
           <ul class="list-group col-10 offset-1 mt-3">
@@ -50,20 +93,175 @@
             >
               Выручка за игру:
               <span class="badge badge-primary badge-pill">
-                <h4>{{gamerData!==undefined ? Math.ceil(gamerData.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck)) : '' | formatNumber}} ₽</h4>
+                <h4>
+                  {{
+                    gamerData !== undefined
+                      ? Math.ceil(
+                          gamerData.money -
+                            (Math.ceil(
+                              firstRoomParams.organicCount *
+                                firstRoomParams.organicCoef *
+                                firstRoomParams.conversion
+                            ) +
+                              Math.ceil(
+                                firstRoomParams.contextCount *
+                                  firstRoomParams.contextCoef *
+                                  firstRoomParams.conversion
+                              ) +
+                              Math.ceil(
+                                firstRoomParams.socialsCount *
+                                  firstRoomParams.socialsCoef *
+                                  firstRoomParams.conversion
+                              ) +
+                              Math.ceil(
+                                firstRoomParams.smmCount *
+                                  firstRoomParams.smmCoef *
+                                  firstRoomParams.conversion
+                              ) +
+                              Math.ceil(
+                                firstRoomParams.straightCount *
+                                  firstRoomParams.straightCoef *
+                                  firstRoomParams.conversion
+                              )) *
+                              firstRoomParams.averageCheck
+                        )
+                      : "" | formatNumber
+                  }}
+                  ₽
+                </h4>
               </span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
               Привлечено клиентов:
-              <span
-                class="badge badge-primary badge-pill"
-              >{{(gamerRoomParams !== undefined ? (Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)) : '')}} × {{firstRoomParams.month}} мес. = {{((Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)))*firstRoomParams.month}}</span>
+              <span class="badge badge-primary badge-pill"
+                >{{
+                  gamerRoomParams !== undefined
+                    ? Math.ceil(
+                        gamerRoomParams.organicCount *
+                          gamerRoomParams.organicCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.contextCount *
+                          gamerRoomParams.contextCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.socialsCount *
+                          gamerRoomParams.socialsCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.smmCount *
+                          gamerRoomParams.smmCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.straightCount *
+                          gamerRoomParams.straightCoef *
+                          gamerRoomParams.conversion
+                      ) -
+                      (Math.ceil(
+                        firstRoomParams.organicCount *
+                          firstRoomParams.organicCoef *
+                          firstRoomParams.conversion
+                      ) +
+                        Math.ceil(
+                          gamerRoomParams.contextCount *
+                            firstRoomParams.contextCoef *
+                            firstRoomParams.conversion
+                        ) +
+                        Math.ceil(
+                          firstRoomParams.socialsCount *
+                            firstRoomParams.socialsCoef *
+                            firstRoomParams.conversion
+                        ) +
+                        Math.ceil(
+                          firstRoomParams.smmCount *
+                            firstRoomParams.smmCoef *
+                            firstRoomParams.conversion
+                        ) +
+                        Math.ceil(
+                          firstRoomParams.straightCount *
+                            firstRoomParams.straightCoef *
+                            firstRoomParams.conversion
+                        ))
+                    : ""
+                }}
+                × {{ firstRoomParams.month }} мес. =
+                {{
+                  (Math.ceil(
+                    gamerRoomParams.organicCount *
+                      gamerRoomParams.organicCoef *
+                      gamerRoomParams.conversion
+                  ) +
+                    Math.ceil(
+                      gamerRoomParams.contextCount *
+                        gamerRoomParams.contextCoef *
+                        gamerRoomParams.conversion
+                    ) +
+                    Math.ceil(
+                      gamerRoomParams.socialsCount *
+                        gamerRoomParams.socialsCoef *
+                        gamerRoomParams.conversion
+                    ) +
+                    Math.ceil(
+                      gamerRoomParams.smmCount *
+                        gamerRoomParams.smmCoef *
+                        gamerRoomParams.conversion
+                    ) +
+                    Math.ceil(
+                      gamerRoomParams.straightCount *
+                        gamerRoomParams.straightCoef *
+                        gamerRoomParams.conversion
+                    ) -
+                    (Math.ceil(
+                      firstRoomParams.organicCount *
+                        firstRoomParams.organicCoef *
+                        firstRoomParams.conversion
+                    ) +
+                      Math.ceil(
+                        gamerRoomParams.contextCount *
+                          firstRoomParams.contextCoef *
+                          firstRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        firstRoomParams.socialsCount *
+                          firstRoomParams.socialsCoef *
+                          firstRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        firstRoomParams.smmCount *
+                          firstRoomParams.smmCoef *
+                          firstRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        firstRoomParams.straightCount *
+                          firstRoomParams.straightCoef *
+                          firstRoomParams.conversion
+                      ))) *
+                    firstRoomParams.month
+                }}</span
+              >
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
               Потрачено на продвижение:
-              <span
-                class="badge badge-primary badge-pill"
-              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}} ₽ из {{firstRoomParams.money*firstRoomParams.month | formatNumber}} ₽</span>
+              <span class="badge badge-primary badge-pill"
+                >{{
+                  (firstRoomParams.money * firstRoomParams.month -
+                    (gamerRoomParams.money - firstRoomParams.money))
+                    | formatNumber
+                }}
+                ₽ из
+                {{
+                  (firstRoomParams.money * firstRoomParams.month) | formatNumber
+                }}
+                ₽</span
+              >
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -72,8 +270,10 @@
           </ul>
         </div>
         <div class="col-8 text-center mt-3" v-else-if="isPrizer">
-          <h5 class="mb-0">Поздравляю, {{gamerData.name}}!</h5>
-          <h3 class="mb-0">Вы на {{isSecondWinner ? 'втором' : 'третьем'}} месте</h3>
+          <h5 class="mb-0">Поздравляю, {{ gamerData.name }}!</h5>
+          <h3 class="mb-0">
+            Вы на {{ isSecondWinner ? "втором" : "третьем" }} месте
+          </h3>
           <p class="mb-0">Вам удалось заработать:</p>
           <ul class="list-group col-10 offset-1 mt-3">
             <li
@@ -81,20 +281,175 @@
             >
               Выручка за игру:
               <span class="badge badge-primary badge-pill">
-                <h4>{{gamerData!==undefined ? Math.ceil(gamerData.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck)) : '' | formatNumber}} ₽</h4>
+                <h4>
+                  {{
+                    gamerData !== undefined
+                      ? Math.ceil(
+                          gamerData.money -
+                            (Math.ceil(
+                              firstRoomParams.organicCount *
+                                firstRoomParams.organicCoef *
+                                firstRoomParams.conversion
+                            ) +
+                              Math.ceil(
+                                firstRoomParams.contextCount *
+                                  firstRoomParams.contextCoef *
+                                  firstRoomParams.conversion
+                              ) +
+                              Math.ceil(
+                                firstRoomParams.socialsCount *
+                                  firstRoomParams.socialsCoef *
+                                  firstRoomParams.conversion
+                              ) +
+                              Math.ceil(
+                                firstRoomParams.smmCount *
+                                  firstRoomParams.smmCoef *
+                                  firstRoomParams.conversion
+                              ) +
+                              Math.ceil(
+                                firstRoomParams.straightCount *
+                                  firstRoomParams.straightCoef *
+                                  firstRoomParams.conversion
+                              )) *
+                              firstRoomParams.averageCheck
+                        )
+                      : "" | formatNumber
+                  }}
+                  ₽
+                </h4>
               </span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
               Привлечено клиентов:
-              <span
-                class="badge badge-primary badge-pill"
-              >{{(gamerRoomParams !== undefined ? (Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)) : '')}} × {{firstRoomParams.month}} мес. = {{((Math.ceil(gamerRoomParams.organicCount*gamerRoomParams.organicCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*gamerRoomParams.contextCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.socialsCount*gamerRoomParams.socialsCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.smmCount*gamerRoomParams.smmCoef*gamerRoomParams.conversion)+Math.ceil(gamerRoomParams.straightCount*gamerRoomParams.straightCoef*gamerRoomParams.conversion))-(Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(gamerRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion)))*firstRoomParams.month}}</span>
+              <span class="badge badge-primary badge-pill"
+                >{{
+                  gamerRoomParams !== undefined
+                    ? Math.ceil(
+                        gamerRoomParams.organicCount *
+                          gamerRoomParams.organicCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.contextCount *
+                          gamerRoomParams.contextCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.socialsCount *
+                          gamerRoomParams.socialsCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.smmCount *
+                          gamerRoomParams.smmCoef *
+                          gamerRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        gamerRoomParams.straightCount *
+                          gamerRoomParams.straightCoef *
+                          gamerRoomParams.conversion
+                      ) -
+                      (Math.ceil(
+                        firstRoomParams.organicCount *
+                          firstRoomParams.organicCoef *
+                          firstRoomParams.conversion
+                      ) +
+                        Math.ceil(
+                          gamerRoomParams.contextCount *
+                            firstRoomParams.contextCoef *
+                            firstRoomParams.conversion
+                        ) +
+                        Math.ceil(
+                          firstRoomParams.socialsCount *
+                            firstRoomParams.socialsCoef *
+                            firstRoomParams.conversion
+                        ) +
+                        Math.ceil(
+                          firstRoomParams.smmCount *
+                            firstRoomParams.smmCoef *
+                            firstRoomParams.conversion
+                        ) +
+                        Math.ceil(
+                          firstRoomParams.straightCount *
+                            firstRoomParams.straightCoef *
+                            firstRoomParams.conversion
+                        ))
+                    : ""
+                }}
+                × {{ firstRoomParams.month }} мес. =
+                {{
+                  (Math.ceil(
+                    gamerRoomParams.organicCount *
+                      gamerRoomParams.organicCoef *
+                      gamerRoomParams.conversion
+                  ) +
+                    Math.ceil(
+                      gamerRoomParams.contextCount *
+                        gamerRoomParams.contextCoef *
+                        gamerRoomParams.conversion
+                    ) +
+                    Math.ceil(
+                      gamerRoomParams.socialsCount *
+                        gamerRoomParams.socialsCoef *
+                        gamerRoomParams.conversion
+                    ) +
+                    Math.ceil(
+                      gamerRoomParams.smmCount *
+                        gamerRoomParams.smmCoef *
+                        gamerRoomParams.conversion
+                    ) +
+                    Math.ceil(
+                      gamerRoomParams.straightCount *
+                        gamerRoomParams.straightCoef *
+                        gamerRoomParams.conversion
+                    ) -
+                    (Math.ceil(
+                      firstRoomParams.organicCount *
+                        firstRoomParams.organicCoef *
+                        firstRoomParams.conversion
+                    ) +
+                      Math.ceil(
+                        gamerRoomParams.contextCount *
+                          firstRoomParams.contextCoef *
+                          firstRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        firstRoomParams.socialsCount *
+                          firstRoomParams.socialsCoef *
+                          firstRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        firstRoomParams.smmCount *
+                          firstRoomParams.smmCoef *
+                          firstRoomParams.conversion
+                      ) +
+                      Math.ceil(
+                        firstRoomParams.straightCount *
+                          firstRoomParams.straightCoef *
+                          firstRoomParams.conversion
+                      ))) *
+                    firstRoomParams.month
+                }}</span
+              >
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
               Потрачено на продвижение:
-              <span
-                class="badge badge-primary badge-pill"
-              >{{firstRoomParams.money*firstRoomParams.month-(gamerRoomParams.money-firstRoomParams.money) | formatNumber}} ₽ из {{firstRoomParams.money*firstRoomParams.month | formatNumber}} ₽</span>
+              <span class="badge badge-primary badge-pill"
+                >{{
+                  (firstRoomParams.money * firstRoomParams.month -
+                    (gamerRoomParams.money - firstRoomParams.money))
+                    | formatNumber
+                }}
+                ₽ из
+                {{
+                  (firstRoomParams.money * firstRoomParams.month) | formatNumber
+                }}
+                ₽</span
+              >
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
               Прочие параметры
@@ -113,18 +468,57 @@
               </div>
               <div class="col-md-9">
                 <div class="card-body">
-                  <h5 class="card-title" v-if="isWinner ||isLoozer">
+                  <h5 class="card-title" v-if="isWinner || isLoozer">
                     Второе место -
-                    <strong>{{secondPosition!==undefined ? secondPosition.name : ''}}</strong>
+                    <strong>{{
+                      secondPosition !== undefined ? secondPosition.name : ""
+                    }}</strong>
                   </h5>
                   <h5 class="card-title" v-if="isPrizer">
                     Первое место -
-                    <strong>{{secondPosition!==undefined ? secondPosition.name : ''}}</strong>
+                    <strong>{{
+                      secondPosition !== undefined ? secondPosition.name : ""
+                    }}</strong>
                   </h5>
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em>{{secondPosition!==undefined ? secondPosition.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck) : ''}} ₽</em>
+                    <em
+                      >{{
+                        secondPosition !== undefined
+                          ? Math.ceil(
+                              secondPosition.money -
+                                (Math.ceil(
+                                  firstRoomParams.organicCount *
+                                    firstRoomParams.organicCoef *
+                                    firstRoomParams.conversion
+                                ) +
+                                  Math.ceil(
+                                    firstRoomParams.contextCount *
+                                      firstRoomParams.contextCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.socialsCount *
+                                      firstRoomParams.socialsCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.smmCount *
+                                      firstRoomParams.smmCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.straightCount *
+                                      firstRoomParams.straightCoef *
+                                      firstRoomParams.conversion
+                                  )) *
+                                  firstRoomParams.averageCheck
+                            )
+                          : ""
+                      }}
+                      ₽</em
+                    >
                   </p>
                 </div>
               </div>
@@ -139,18 +533,60 @@
               </div>
               <div class="col-md-9">
                 <div class="card-body">
-                  <h5 class="card-title" v-if="isWinner || isSecondWinner || isLoozer">
+                  <h5
+                    class="card-title"
+                    v-if="isWinner || isSecondWinner || isLoozer"
+                  >
                     Третье место -
-                    <strong>{{thirdPosition!=undefined ? thirdPosition.name : ''}}</strong>
+                    <strong>{{
+                      thirdPosition != undefined ? thirdPosition.name : ""
+                    }}</strong>
                   </h5>
                   <h5 class="card-title" v-if="isThirdWinner">
                     Второе место -
-                    <strong>{{thirdPosition!=undefined ? thirdPosition.name : ''}}</strong>
+                    <strong>{{
+                      thirdPosition != undefined ? thirdPosition.name : ""
+                    }}</strong>
                   </h5>
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em>{{thirdPosition!==undefined ? thirdPosition.money-((Math.ceil(firstRoomParams.organicCount*firstRoomParams.organicCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.contextCount*firstRoomParams.contextCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.socialsCount*firstRoomParams.socialsCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.smmCount*firstRoomParams.smmCoef*firstRoomParams.conversion)+Math.ceil(firstRoomParams.straightCount*firstRoomParams.straightCoef*firstRoomParams.conversion))*firstRoomParams.averageCheck) : ''}} ₽</em>
+                    <em
+                      >{{
+                        thirdPosition !== undefined
+                          ? Math.ceil(
+                              thirdPosition.money -
+                                (Math.ceil(
+                                  firstRoomParams.organicCount *
+                                    firstRoomParams.organicCoef *
+                                    firstRoomParams.conversion
+                                ) +
+                                  Math.ceil(
+                                    firstRoomParams.contextCount *
+                                      firstRoomParams.contextCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.socialsCount *
+                                      firstRoomParams.socialsCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.smmCount *
+                                      firstRoomParams.smmCoef *
+                                      firstRoomParams.conversion
+                                  ) +
+                                  Math.ceil(
+                                    firstRoomParams.straightCount *
+                                      firstRoomParams.straightCoef *
+                                      firstRoomParams.conversion
+                                  )) *
+                                  firstRoomParams.averageCheck
+                            )
+                          : ""
+                      }}
+                      ₽</em
+                    >
                   </p>
                 </div>
               </div>
@@ -159,17 +595,30 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-8 align-content-center justify-content-between pr-0 finish-table">
+        <div
+          class="col-8 align-content-center justify-content-between pr-0 finish-table"
+        >
           <DataTable is-finish-table="true"></DataTable>
         </div>
-        <div class="col-4 align-content-center justify-content-between steps" id="stepsBox">
+        <div
+          class="col-4 align-content-center justify-content-between steps"
+          id="stepsBox"
+        >
           <h6 class>Ваши ходы:</h6>
-          <div class="row mt-1" v-for="(step, count) in steps" v-bind:key="count">
+          <div
+            class="row mt-1"
+            v-for="(step, count) in steps"
+            v-bind:key="count"
+          >
             <div class="col-4 align-content-center justify-content-between">
-              <p class="mb-0 h-100 w-100 text-center font-weight-bold">{{count+1}} месяц</p>
+              <p class="mb-0 h-100 w-100 text-center font-weight-bold">
+                {{ count + 1 }} месяц
+              </p>
             </div>
-            <div class="col-8 pl-0" v-if="step.length!==0">
-              <p class="mb-0" v-for="(card, num) in step" v-bind:key="num">-{{card.title}}</p>
+            <div class="col-8 pl-0" v-if="step.length !== 0">
+              <p class="mb-0" v-for="(card, num) in step" v-bind:key="num">
+                -{{ card.title }}
+              </p>
             </div>
             <div class="col-8 pl-0" v-else>
               <p class="mb-0">-</p>
@@ -184,7 +633,8 @@
             tag="button"
             class="btn btn-info w-100"
             style="margin: auto auto; display: block;"
-          >Cоздать новую комнату</router-link>
+            >Cоздать новую комнату</router-link
+          >
         </div>
         <div class="col-6">
           <button
@@ -192,8 +642,7 @@
             style="margin: auto auto; display: block;"
             disabled
           >
-            Играть ещё раз в
-            комнате
+            Играть ещё раз в комнате
           </button>
         </div>
       </div>

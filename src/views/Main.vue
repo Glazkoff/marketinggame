@@ -56,7 +56,7 @@ export default {
       vm.$store.commit("setStateFromLS");
       let t = setTimeout(() => {
         if (vm.$store.state.roomId == -1) {
-          next("/choose 1");
+          next("/choose");
         } else {
           return true;
         }
@@ -136,11 +136,15 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 64px;
+  height: 42px;
   background-color: #fff;
   box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.2);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+}
+.pg-header a {
+  margin: auto 1rem !important;
+  margin-left: 1rem;
 }
 @media screen and (max-width: 320px) {
   .pg-header {

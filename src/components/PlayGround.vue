@@ -134,8 +134,8 @@
                       Месяц
                       <span class="badge badge-primary badge-pill">
                         <h4>
-                          {{ firstRoomParams.month - gamerParams.month }} из
-                          {{ firstRoomParams.month }}
+                          {{ firstRoomParams.month - gamerParams.month + 1 }} из
+                          {{ firstRoomParams.month + 1 }}
                         </h4>
                       </span>
                     </li>
@@ -409,6 +409,7 @@ export default {
   mounted() {
     this.number = this.$store.state.roomParams.money;
     this.$store.commit("doAnimation");
+    this.playAnimation();
   },
   watch: {
     number: function(newValue) {
@@ -569,7 +570,7 @@ export default {
       console.log(this.refreshCards);
       this.$socket.emit("startGame", a);
       this.$store.commit("SOCKET_calcAllParams");
-      this.$store.state.isOwner = false;
+      // this.$store.state.isOwner = false;
       this.$store.state.isStart = false;
       this.playAnimation();
     },
@@ -639,6 +640,34 @@ export default {
 </script>
 
 <style>
+.gamer-round-data {
+  min-width: unset !important;
+  overflow: auto;
+}
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background-color: #f5f5f5;
+}
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: linear-gradient(top, #fff, #e4e4e4);
+  border: 1px solid #aaa;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(left, #0079fb, #1e98ba);
+}
 #main-data .list-group-item {
   padding-top: 0.45rem !important;
   padding-bottom: 0.45rem !important;
@@ -730,7 +759,7 @@ export default {
   height: 100%;
   max-height: calc(100vh - 40px);
   position: relative;
-  padding-top: 64px;
+  padding-top: 40px;
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: 1.6fr 1fr;
@@ -937,6 +966,18 @@ export default {
     display: flex;
   }
 }
+@media screen and (max-width: 970px) {
+  #playground {
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1.6fr 1fr;
+  }
+  #play-field {
+    grid-area: 1/1/2/4;
+  }
+  #enemy-field {
+    grid-area: 2/3/3/4;
+  }
+}
 @media screen and (max-width: 730px) {
   .list-group-item {
     padding: 2px !important;
@@ -945,7 +986,7 @@ export default {
   }
 }
 @media screen and (orientation: portrait) {
-  #playground {
+  /* #playground {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 3fr 2fr 1fr;
   }
@@ -960,10 +1001,10 @@ export default {
   }
   #card-field {
     grid-area: 2/1/3/3;
-  }
+  } */
 }
 @media screen and (max-width: 640px) {
-  #playground {
+  /* #playground {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 3fr 2fr 1fr;
   }
@@ -978,6 +1019,14 @@ export default {
   }
   #card-field {
     grid-area: 2/1/3/3;
+  } */
+  /* .container {
+    max-width: unset;
+  } */
+}
+@media (min-width: 576px) {
+  .gamer-round-data {
+    max-width: unset !important;
   }
 }
 @media screen and (max-width: 450px) {
