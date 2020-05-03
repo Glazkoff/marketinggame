@@ -474,6 +474,7 @@ io.on("connection", function (socket) {
   connections.push(socket.id);
   console.log("Подключения:");
   console.log(connections);
+
   socket.on("setName", name => {
     socket.name = name;
     let oldNote = connectedNames.find(element => element.id === socket.id);
@@ -490,6 +491,7 @@ io.on("connection", function (socket) {
     }
     console.log(connectedNames);
   });
+
   socket.on("newMessage", message => {
     socket.broadcast.to(socket.roomId).emit("addMessage", {
       name: socket.name,
