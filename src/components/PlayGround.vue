@@ -135,7 +135,7 @@
                       <span class="badge badge-primary badge-pill">
                         <h4>
                           {{ firstRoomParams.month - gamerParams.month + 1 }} из
-                          {{ firstRoomParams.month + 1 }}
+                          {{ firstRoomParams.month }}
                         </h4>
                       </span>
                     </li>

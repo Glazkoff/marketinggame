@@ -161,6 +161,7 @@ const store = new Vuex.Store({
       router.push('/choose')
     },
     SOCKET_setStartGame(state, roomParams) {
+      console.log('SET START GAME');
       for (var key in state.roomParams) {
         state.prevRoomParams[key] = state.roomParams[key]
       }
