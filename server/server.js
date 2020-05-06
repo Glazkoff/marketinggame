@@ -9,7 +9,7 @@ const server = app
   .listen(port, () => {
     console.log(`server running on port ${port}`);
   });
-app.get(/.*/, function(req, res) {
+app.get(/.*/, function (req, res) {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });
 
@@ -20,13 +20,11 @@ let roomsState = [];
 let disconnectedUsers = [];
 let leaveUsers = [];
 let roomNumb = 10;
-let events = [
-  {
+let events = [{
     id: 1,
     title: "Выход на рынок нового конкурента",
     description: "Снижение всех видов трафика на 30%",
-    dataChange: [
-      {
+    dataChange: [{
         param: "organicCount",
         operation: "*",
         change: 0.7,
@@ -66,10 +64,8 @@ let events = [
   {
     id: 2,
     title: "Изменение алгоритма поисковой машины",
-    description:
-      "Падение трафика из органической выдачи в первый месяц после изменения на 50% восстановление трафика к 3-му месяцу на уровень первого месяца",
-    dataChange: [
-      {
+    description: "Падение трафика из органической выдачи в первый месяц после изменения на 50% восстановление трафика к 3-му месяцу на уровень первого месяца",
+    dataChange: [{
         param: "organicCount",
         operation: "*",
         change: 0.5,
@@ -88,10 +84,8 @@ let events = [
   {
     id: 3,
     title: "Изменение подрядчика по контекстной рекламе",
-    description:
-      "Увеличение реальной стоимости привлечения клиента на 5%, увеличение конверсии от контекстной рекламы на 30%",
-    dataChange: [
-      {
+    description: "Увеличение реальной стоимости привлечения клиента на 5%, увеличение конверсии от контекстной рекламы на 30%",
+    dataChange: [{
         param: "realCostAttract",
         operation: "*",
         change: 1.05,
@@ -110,10 +104,8 @@ let events = [
   {
     id: 4,
     title: "Ввод в эксплуатацию нового офисного здания рядом",
-    description:
-      "Увеличение трафика от канала прямого захода в первый месяц после этого в 3 раза и после этого во второй месяц увеличение конверсии в клиента на 5%",
-    dataChange: [
-      {
+    description: "Увеличение трафика от канала прямого захода в первый месяц после этого в 3 раза и после этого во второй месяц увеличение конверсии в клиента на 5%",
+    dataChange: [{
         param: "straightCount",
         operation: "*",
         change: 3,
@@ -131,11 +123,9 @@ let events = [
   },
   {
     id: 5,
-    title:
-      "Появление серии негативных публикаций о компании и руководителе компании",
+    title: "Появление серии негативных публикаций о компании и руководителе компании",
     description: "Снижение конверсии трафика в звонки на 50%",
-    dataChange: [
-      {
+    dataChange: [{
         param: "organicCoef",
         operation: "*",
         change: 0.5,
@@ -173,15 +163,13 @@ let events = [
     ]
   }
 ];
-let cards = [
-  {
+let cards = [{
     id: 1,
     title: "Нанять SMM-менеджера",
     text: "Описание карточки, описание карточки",
     cost: 80000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "smmCount",
         operation: "*",
         change: 1.1,
@@ -213,8 +201,7 @@ let cards = [
     text: "Описание карточки, описание карточки",
     cost: 50000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "organicCount",
         operation: "*",
         change: 2,
@@ -246,8 +233,7 @@ let cards = [
     text: "Описание карточки, описание карточки",
     cost: 20000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "organicCoef",
         operation: "*",
         change: 1.1,
@@ -319,8 +305,7 @@ let cards = [
     text: "Описание карточки, описание карточки",
     cost: 25000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "socialsCount",
         operation: "+",
         change: 4500,
@@ -360,8 +345,7 @@ let cards = [
     text: "Описание карточки, описание карточки",
     cost: 30000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "realCostAttract",
         operation: "*",
         change: 1.3,
@@ -393,8 +377,7 @@ let cards = [
     text: "Описание карточки, описание карточки",
     cost: 35000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "contextCount",
         operation: "+",
         change: 6000,
@@ -458,8 +441,7 @@ let cards = [
     text: "Описание карточки, описание карточки",
     cost: 20000,
     duration: 3,
-    dataChange: [
-      {
+    dataChange: [{
         param: "straightCount",
         operation: "*",
         change: 1.2,
@@ -489,7 +471,7 @@ let cards = [
 /** ********************************************* **/
 /** ******Ниже описаны события Socket.io********* **/
 /** ********************************************* **/
-io.on("connection", function(socket) {
+io.on("connection", function (socket) {
   connections.push(socket.id);
   console.log("Подключения:");
   console.log(connections);
@@ -501,7 +483,8 @@ io.on("connection", function(socket) {
       let person = {
         name,
         id: socket.id,
-        roomId: -1
+        roomId: -1,
+        isAdmin: false
       };
       connectedNames.push(person);
     } else {
@@ -529,9 +512,16 @@ io.on("connection", function(socket) {
         });
         if (leaveUserId !== -1) {
           let sendObj = leaveUsers[roomId][leaveUserId];
+          if (sendObj.isAdmin) {
+            console.log('ADMIN!!!');
+            socket.emit('setOwner')
+          } else {
+            console.log('Не админ', sendObj.isAdmin);
+          }
           console.log(socket.id);
           console.log("Данные для отправки:", sendObj.data);
           socket.emit("setStartGame", sendObj.data);
+
           console.log("Имя пользователя: ", socket.name);
           let gamerObj = {
             id: socket.id,
@@ -541,6 +531,7 @@ io.on("connection", function(socket) {
             effects: sendObj.effects,
             usedCards: sendObj.usedCards
           };
+          socket.emit('setEffects', sendObj.effects);
           let room = roomsState.find(el => el.roomId === roomId);
           if (room !== undefined) {
             room.gamers.push(gamerObj);
@@ -586,6 +577,7 @@ io.on("connection", function(socket) {
     let oldNote = connectedNames.find(element => element.id === socket.id);
     if (oldNote !== undefined) {
       oldNote.roomId = roomNumb;
+      oldNote.isAdmin = true;
       console.log("Подключенные имена:");
       console.log(connectedNames);
       socket.roomId = roomNumb;
@@ -659,7 +651,7 @@ io.on("connection", function(socket) {
   //   socket.to(socket.roomId).broadcast.emit('addMessage');
   // });
 
-  socket.on("kickUser", function(roomId, user) {
+  socket.on("kickUser", function (roomId, user) {
     console.log("Удаляем пользователя с ID ", roomId, "---", user);
     let room = roomsState.find(el => el.roomId === roomId);
     if (room) {
@@ -687,7 +679,7 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("refreshSocketID", function(oldSocketId, roomId) {
+  socket.on("refreshSocketID", function (oldSocketId, roomId) {
     console.log("Refresh ID");
     console.log("Socket room ID", socket.roomId);
     let room = roomsState.find(el => el.roomId === roomId);
@@ -722,7 +714,7 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("doStep", function(cardArr) {
+  socket.on("doStep", function (cardArr) {
     // если room.gamers!==undefined
     // Поиск комнаты
     let room = roomsState.find(el => el.roomId === socket.roomId);
@@ -779,16 +771,15 @@ io.on("connection", function(socket) {
             );
             gamer.effects.splice(effectIndex, 1);
             console.log("Действие эффекта закончилось");
-          } else {
-          }
+          } else {}
         }
         for (const cardId of cardArr) {
           console.log("------------------------------------");
           console.log(
             'Сделан шаг "' +
-              cards.find(el => el.id === cardId).title +
-              '" игроком ' +
-              socket.name
+            cards.find(el => el.id === cardId).title +
+            '" игроком ' +
+            socket.name
           );
           card = cards.find(el => el.id === cardId);
           // ИЗМЕНЕНИЕ ОТ КАРТОЧКИ
@@ -867,9 +858,9 @@ io.on("connection", function(socket) {
         indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id);
         console.log(
           "Для ID изменения " +
-            changing.id +
-            " индекс в м.эфф. равен " +
-            indexEffArr
+          changing.id +
+          " индекс в м.эфф. равен " +
+          indexEffArr
         );
         if (
           indexEffArr === -1 &&
@@ -881,25 +872,25 @@ io.on("connection", function(socket) {
             if (gamer.changes[index].id === changing.id) {
               console.log(
                 "УДАЛЯЕТСЯ параметр " +
-                  changing.param +
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changing.change +
-                  " (" +
-                  changing.from +
-                  ")"
+                changing.param +
+                " со знаком " +
+                changing.operation +
+                " на " +
+                changing.change +
+                " (" +
+                changing.from +
+                ")"
               );
               messageArr.push(
                 "УДАЛЯЕТСЯ параметр " +
-                  changing.param +
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changing.change +
-                  " (" +
-                  changing.from +
-                  ")"
+                changing.param +
+                " со знаком " +
+                changing.operation +
+                " на " +
+                changing.change +
+                " (" +
+                changing.from +
+                ")"
               );
               console.log("----!----");
               console.log(gamer.changes[index]);
@@ -1028,19 +1019,19 @@ io.on("connection", function(socket) {
               if (gamer.changes[index].id === changing.id) {
                 messageArr.push(
                   "УДАЛЁН параметр " +
-                    changing.param +
-                    " со знаком " +
-                    changing.operation +
-                    " на " +
-                    changing.change
+                  changing.param +
+                  " со знаком " +
+                  changing.operation +
+                  " на " +
+                  changing.change
                 );
                 console.log(
                   "УДАЛЁН параметр " +
-                    changing.param +
-                    " со знаком " +
-                    changing.operation +
-                    " на " +
-                    changing.change
+                  changing.param +
+                  " со знаком " +
+                  changing.operation +
+                  " на " +
+                  changing.change
                 );
                 gamer.changes.splice(index, 1);
               }
@@ -1112,11 +1103,11 @@ io.on("connection", function(socket) {
                 }
                 console.log(
                   "Событием изменен параметр " +
-                    eventChange.param +
-                    " со знаком " +
-                    eventChange.operation +
-                    " на " +
-                    eventChange.change
+                  eventChange.param +
+                  " со знаком " +
+                  eventChange.operation +
+                  " на " +
+                  eventChange.change
                 );
               } else {
                 for (const oneGamer of gamers) {
@@ -1161,31 +1152,30 @@ io.on("connection", function(socket) {
         for (const gamer of gamers) {
           let position = {
             id: gamer.id,
-            money:
-              (Math.ceil(
-                gamer.data.organicCount *
+            money: (Math.ceil(
+                  gamer.data.organicCount *
                   gamer.data.organicCoef *
                   gamer.data.conversion
-              ) +
+                ) +
                 Math.ceil(
                   gamer.data.contextCount *
-                    gamer.data.contextCoef *
-                    gamer.data.conversion
+                  gamer.data.contextCoef *
+                  gamer.data.conversion
                 ) +
                 Math.ceil(
                   gamer.data.socialsCount *
-                    gamer.data.socialsCoef *
-                    gamer.data.conversion
+                  gamer.data.socialsCoef *
+                  gamer.data.conversion
                 ) +
                 Math.ceil(
                   gamer.data.smmCount *
-                    gamer.data.smmCoef *
-                    gamer.data.conversion
+                  gamer.data.smmCoef *
+                  gamer.data.conversion
                 ) +
                 Math.ceil(
                   gamer.data.straightCount *
-                    gamer.data.straightCoef *
-                    gamer.data.conversion
+                  gamer.data.straightCoef *
+                  gamer.data.conversion
                 )) *
               gamer.data.averageCheck
           };
@@ -1219,8 +1209,7 @@ io.on("connection", function(socket) {
         });
 
         io.sockets.to(room.roomId).emit("finish", winners);
-      } else {
-      }
+      } else {}
       console.log("---ДАННЫЕ ИГРОКА---");
       console.log(gamer.data);
       console.log("---ЭФФЕКТЫ ИГРОКА---");
@@ -1240,7 +1229,7 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("leaveRoom", function() {
+  socket.on("leaveRoom", function () {
     console.log(`${socket.name} уходит с комнаты!`);
     let oldNote = connectedNames.find(element => element.id === socket.id);
     if (oldNote !== undefined) {
@@ -1256,6 +1245,7 @@ io.on("connection", function(socket) {
           "Уходит, объект: ",
           roomsState[index].gamers[gamerThereIndex]
         );
+        roomsState[index].gamers[gamerThereIndex].isAdmin = oldNote.isAdmin
         if (typeof leaveUsers[socket.roomId] !== "array") {
           leaveUsers[socket.roomId] = [];
           leaveUsers[socket.roomId].push(
@@ -1274,7 +1264,7 @@ io.on("connection", function(socket) {
     console.log(connectedNames);
   });
 
-  socket.on("checkRoom", function(id) {
+  socket.on("checkRoom", function (id) {
     console.log(`Поиск комнаты с номером ${id}`);
     console.log(connectedNames);
     let check = false;
@@ -1296,7 +1286,7 @@ io.on("connection", function(socket) {
     }, 200);
   });
 
-  socket.on("disconnect", function() {
+  socket.on("disconnect", function () {
     this.messageArr = [];
     connections.splice(connections.indexOf(socket.id), 1);
     let oldNote = connectedNames.findIndex(element => element.id === socket.id);

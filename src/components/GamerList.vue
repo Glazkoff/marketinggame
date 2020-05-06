@@ -117,7 +117,7 @@ export default {
 }
 .list-group-item button::before {
   outline: none;
-  display: block;
+  display: none;
   content: "Удалить игрока";
   position: fixed;
   left: 0px;
@@ -141,6 +141,7 @@ export default {
 }
 .list-group-item button:hover::before {
   opacity: 1;
+  display: block;
 }
 .list-group-item button:hover {
   transform: rotate(90deg) scale(1.2);

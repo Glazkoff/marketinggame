@@ -106,6 +106,9 @@ const store = new Vuex.Store({
     setOwner(state) {
       state.isOwner = true
     },
+    SOCKET_setOwner(state) {
+      state.isOwner = true
+    },
     notNotOwner(state) {
       state.isOwner = !state.isOwner
       state.isOwner = !state.isOwner
