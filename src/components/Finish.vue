@@ -21,7 +21,7 @@
           <div class="card" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <div class="gray-block"></div>
+                <div class="gray-block block-winner-img"></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -79,7 +79,7 @@
       </div>
       <div class="row" v-if="isSomeWinner">
         <div class="col-4">
-          <div class="gray-block"></div>
+          <div class="gray-block block-winner-img"></div>
         </div>
         <div class="col-8 text-center mt-0" v-if="isWinner">
           <h5 class="mb-0">
@@ -464,7 +464,7 @@
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <div class="gray-block"></div>
+                <div class="gray-block block-secondplace-img"></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -529,7 +529,7 @@
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <div class="gray-block"></div>
+                <div class="gray-block block-thirdplace-img"></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -856,5 +856,14 @@ export default {
 
 #stepsBox::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
+}
+.block-winner-img {
+  background: url("../assets/1.svg") no-repeat 50% 50%;
+}
+.block-secondplace-img {
+  background: url("../assets/2.svg") no-repeat 50% 50%;
+}
+.block-thirdplace-img {
+  background: url("../assets/3.svg") no-repeat 50% 50%;
 }
 </style>
