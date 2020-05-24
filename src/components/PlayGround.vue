@@ -188,6 +188,7 @@
         @enter="enter"
         @leave="leave"
       >
+        <!-- v-if="!isStart" -->
         <div
           class="card-box"
           :draggable="card.cost <= gamerParams.money"
@@ -195,7 +196,6 @@
           v-for="(card, count) in cards"
           :key="count"
           @dragend="altdragend"
-          v-if="!isStart"
           :class="{
             'card-ml-0': card.oneOff,
             'card-ml-1': !card.oneOff && !isLastEffectStage(card.id),
@@ -416,7 +416,7 @@ export default {
       // TweenLite.to(this.$data, 1, { tweenedNumber: newValue })
     },
     money: function(newValue) {
-      let a = setTimeout(() => {
+      setTimeout(() => {
         this.playAnimation();
         // this.$store.commit('doAnimation')
       }, 50);
@@ -449,7 +449,7 @@ export default {
       return this.$store.state.gamerName;
     },
     gamerParams() {
-      let a = this.$store.state.roomParams;
+      // let a = this.$store.state.roomParams;
       return this.$store.state.roomParams;
     },
     firstRoomParams() {
@@ -593,10 +593,10 @@ export default {
       this.dragovered = false;
       this.dragstart = false;
       if (typeof this.dragnode !== "undefined") {
-        if (this.dragnode.parentNode.id == "card-wrap") {
+        if (this.dragnode.parentNode.id === "card-wrap") {
           let i = 0;
           for (const iterator of this.dragnode.parentNode.childNodes) {
-            if (iterator == this.dragnode) {
+            if (iterator === this.dragnode) {
               break;
             }
             i++;

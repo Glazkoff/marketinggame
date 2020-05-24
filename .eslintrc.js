@@ -5,11 +5,14 @@ module.exports = {
   },
   'extends': [
     'plugin:vue/essential',
-    '@vue/standard'
+    '@vue/standard',
+    'prettier',
+    'prettier/vue'
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-console': 'off',
+    'no-debugger': 'off',
+    "standard/computed-property-even-spacing": 0
   },
   parserOptions: {
     parser: 'babel-eslint'

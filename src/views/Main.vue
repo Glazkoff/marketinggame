@@ -54,8 +54,8 @@ export default {
     next(function(vm) {
       console.log(vm.$store.state.roomId);
       vm.$store.commit("setStateFromLS");
-      let t = setTimeout(() => {
-        if (vm.$store.state.roomId == -1) {
+      setTimeout(() => {
+        if (vm.$store.state.roomId === -1) {
           next("/choose");
         } else {
           return true;

@@ -1,11 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../src/router'
+import axios from 'axios'
+// import jwt from 'jsonwebtoken';
+
+const apiUrl = "http://localhost:3001/api";
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    token: localStorage.getItem("user-token") || "",
+    status: "",
     gamerName: '',
     socketId: '',
     isAdmin: false,
@@ -47,8 +53,30 @@ const store = new Vuex.Store({
     gameEvent: null,
     completedSessions: []
   },
-  getters: {},
-  mutations: {
+  getters: {
+    // Логическое значение - авторизован или нет
+    isAuthenticated: state => !!state.token,
+    // Статус авторизации
+    authStatus: state => state.status
+  },
+  mutations: { // Изменение состояния на "Загрузка"
+    AUTH_REQUEST: state => {
+      state.status = "loading";
+    },
+    // Изменение состояния на "Успех"
+    AUTH_SUCCESS: (state, token) => {
+      state.status = "success";
+      state.token = token;
+    },
+    // Изменение состояния на "Ошибка"
+    AUTH_ERROR: state => {
+      state.status = "error";
+    },
+    // Выход из учётной записи
+    AUTH_LOGOUT: state => {
+      state.token = "";
+      state.status = "";
+    },
     resetData(state) {
       console.log('RESET!')
       state.connections = []
@@ -160,7 +188,6 @@ const store = new Vuex.Store({
       }
     },
     SOCKET_kickUser() {
-
       router.push('/choose')
     },
     SOCKET_setStartGame(state, roomParams) {
@@ -245,21 +272,75 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    AUTH_REQUEST(context, user) {
+      let prom
+      try {
+        prom = new Promise(function (resolve, reject) {
+          // Promise используется для редиректа при входе в систему
+          context.commit("AUTH_REQUEST");
+          axios({
+            url: `${apiUrl}/login`,
+            data: user,
+            method: "POST"
+          }).then(
+            resp => {
+              console.log('AUTHORIZATION', resp.data);
+              const token = resp.data.token;
+              localStorage.setItem('user-token', token)
+              axios.defaults.headers.common['Authorization'] = token
+              context.commit("AUTH_SUCCESS", token);
+
+              resolve(resp);
+            }, error => {
+              if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+                console.log(error.response);
+                console.log(
+                  `Ошибка сервера ${error.response.status} при ответе`
+                );
+              } else if (error.request) {
+                console.log(
+                  `Ошибка сервера ${error.request.status} при запросе`
+                );
+                console.log(error.request);
+              } else {
+                console.log("Error", error.message);
+              }
+              console.log(error.config);
+              context.commit("AUTH_ERROR");
+              delete axios.defaults.headers.common['Authorization'];
+              localStorage.removeItem("user-token"); // если запрос ошибочен, удаление токена в localstorage при возможности
+              reject(error);
+            }).catch(error => {
+            console.log("ОШИБКА СЕРВЕРА");
+            console.log(error);
+          });
+        })
+        return prom;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // Удаление всех данных при выходе из учётной записи
+    AUTH_LOGOUT: context => {
+      return new Promise(resolve => {
+        context.commit("AUTH_LOGOUT");
+        context.token = "";
+        localStorage.removeItem("user-token"); // удаляем токен из localstorage
+        delete axios.defaults.headers.common["Authorization"];
+        resolve();
+      });
+    },
     SOCKET_gameEvent(state, eventObj) {
       console.log(eventObj)
       state.commit('SOCKET_setGameEvent', eventObj)
-      // setTimeout(() => {
-      //   state.commit('SOCKET_setGameEvent', {})
-      // }, 7000)
     }
-    // SOCKET_setStartGame (state, roomParams) {
-    //   console.log('AAAAAACTIONS');
-
-    // }
   }
 })
-store.subscribe((mutation, state) => {
-  // Сохраняем состояние как JSON-строку
-  localStorage.setItem('store', JSON.stringify(state))
-})
+// store.subscribe((mutation, state) => {
+//   // Сохраняем состояние как JSON-строку
+//   localStorage.setItem('store', JSON.stringify(state))
+// })
 export default store

@@ -82,7 +82,7 @@ export default {
     SendBox
   },
   computed: {
-    messages() {
+    messages: () => {
       setTimeout(() => {
         let messList = document.querySelector("#messageField");
         if (messList !== null) {

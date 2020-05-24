@@ -692,10 +692,10 @@ export default {
     isThirdWinner() {
       return this.$socket.id === this.$store.state.winners[3].id;
     },
-    isPrizer() {
+    isPrizer: () => {
       if (
         this.$store.state.winners[2] !== undefined &&
-        this.$store.state.winners[3] == undefined
+        this.$store.state.winners[3] === undefined
       ) {
         return this.$socket.id === this.$store.state.winners[2].id;
       }
@@ -723,7 +723,7 @@ export default {
         this.$socket.id === this.$store.state.winners[3].id
       );
     },
-    gamerData() {
+    gamerData: () => {
       if (this.isWinner) {
         return this.$store.state.winners[1];
       } else if (this.$socket.id === this.$store.state.winners[2].id) {
@@ -735,7 +735,7 @@ export default {
     firstPosition() {
       return this.$store.state.winners[1];
     },
-    secondPosition() {
+    secondPosition: () => {
       if (this.$store.state.winners.hasOwnProperty("2")) {
         if (this.isWinner || this.isLoozer) {
           return this.$store.state.winners[2];
@@ -747,7 +747,7 @@ export default {
         }
       } else return false;
     },
-    thirdPosition() {
+    thirdPosition: () => {
       if (this.$store.state.winners.hasOwnProperty("3")) {
         if (
           this.isWinner ||

@@ -23,16 +23,12 @@
   </div>
 </template>
 <script>
-import io from "socket.io-client";
-
 export default {
   data() {
     return {
       user: "",
       message: "",
       messages: []
-      // adminNav: false
-      // socket: io("localhost:3001")
     };
   },
   sockets: {
@@ -41,14 +37,6 @@ export default {
       console.log(this.$socket.id);
       console.log("Socket connected");
     }
-    // connectList: function(connections) {
-    //   console.log(connections);
-    //   this.connections = connections;
-    //   this.$store.commit("setConnections", connections);
-    // },
-    // newMessage: function(mess) {
-    //   console.log(`${mess.text}`);
-    // }
   },
   beforeCreate() {
     console.log("setStateFromLS");
@@ -59,16 +47,13 @@ export default {
     if (this.$store.state.roomId) {
       this.$socket.emit("setRoom", this.$store.state.roomId);
     }
-    // if (this.$socket.id) {
     console.log("SEND RESRESH!");
     this.$socket.emit(
       "refreshSocketID",
       this.$store.state.socketId,
       this.$store.state.roomId
     );
-    // }
   },
-  computed: {},
   methods: {
     changeAdminNav() {
       this.$store.commit("changeAdminNav");
@@ -81,6 +66,25 @@ export default {
     isAdmin() {
       return this.$store.state.isAdmin;
     }
+  },
+  mounted() {
+    const token = localStorage.getItem("user-token");
+    if (token) {
+      this.$http.defaults.headers.common["Authorization"] = token;
+    }
+    this.$http.interceptors.response.use(undefined, function(err) {
+      return new Promise(function() {
+        if (err.response) {
+          console.log(err.response);
+        }
+        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+          // Если ошибка авторизации на сервере, выкинуть пользователя
+          this.$store.dispatch("AUTH_LOGOUT");
+          this.$router.push("/login");
+        }
+        throw err;
+      });
+    });
   }
 };
 </script>

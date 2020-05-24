@@ -1,8 +1,8 @@
 <template>
   <div class="card container col-lg-4 col-md-5 col-sm-10 col-xs-8 mt-5 p-4">
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
-    <router-link to="/">Сменить имя</router-link>
-
+    <!-- <router-link to="/">Сменить имя</router-link> -->
+    <a href="" @click.prevent="logout()">Выйти</a>
     <p>Выбери, как ты начнёшь игру</p>
     <div class="btn-group btn-group-toggle mb-3">
       <label
@@ -105,6 +105,7 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
 export default {
   name: "Choose",
   data() {
@@ -123,6 +124,10 @@ export default {
     }
   },
   created() {
+    console.log("JWT DECODE: ", jwt.decode(this.$store.state.token));
+    let name = jwt.decode(this.$store.state.token).name;
+    this.$socket.emit("setName", name);
+    this.$store.commit("setName", name);
     // this.roomParams = Object.assign(this.stateFirstParams)
   },
   beforeMount() {},
@@ -131,6 +136,25 @@ export default {
     // this.roomParams = Object.assign(this.stateFirstParams)
   },
   methods: {
+    logout() {
+      try {
+        this.$store
+          .dispatch("AUTH_LOGOUT")
+          .then(
+            () => {
+              this.$router.push("/");
+            },
+            err => {
+              console.log("ОШИБКА ВЫХОДА: ", err);
+            }
+          )
+          .catch(err => {
+            console.log("ОШИБКА ВЫХОДА: ", err);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     createGame() {
       // this.roomParams.month++
       // this.$store.state.isOwner = true;
@@ -160,7 +184,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     // if (vm.$store.state.roomId == -1) {
     next(function(vm) {
-      if (vm.$store.state.gamerName == "") {
+      if (vm.$store.state.gamerName === "") {
         next("/");
       } else {
         return true;

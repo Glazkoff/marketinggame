@@ -123,58 +123,89 @@
       <h3 class="mb-4">Войдите в игру</h3>
       <form action @submit.prevent>
         <div class="form-group">
-          <label for="name" class>Ваше имя</label>
+          <label for="name" class>Логин</label>
           <br />
           <input
             type="text"
             name="name"
             id="name"
             class="form-control form-control-lg"
-            :class="{ 'is-invalid': errorClass }"
-            placeholder="Имя"
-            v-model.trim="name"
+            :class="{ 'is-invalid': $v.login.$error || serverError }"
+            placeholder="Введите логин"
+            v-model.trim="$v.login.$model"
             @click="clckForm()"
           />
-          <div v-if="errorClass" class="invalid-feedback">
+          <div v-if="!$v.login.required" class="invalid-feedback">
             Обязательно введите имя!
           </div>
-          <small class="form-text text-muted">
+        </div>
+        <div class="form-group">
+          <label for="name" class>Пароль</label>
+          <br />
+          <input
+            type="password"
+            name="name"
+            v-model.trim="$v.password.$model"
+            class="form-control form-control-lg"
+            :class="{ 'is-invalid': $v.password.$error || serverError }"
+            placeholder="Введите пароль"
+            @click="clckForm()"
+          />
+
+          <div v-if="!$v.login.required" class="invalid-feedback">
+            Обязательно введите пароль!
+          </div>
+          <!-- <small class="form-text text-muted">
             Имя необходимо, чтобы другие игроки могли идентифицировать в чате и
             игре
+          </small> -->
+          <small class="form-text text-danger">
+            {{ serverError }}
           </small>
         </div>
         <button
           class="btn btn-lg btn-primary btn-block"
-          @click="changePop()"
-          :disabled="disabled"
+          @click="tryAuth()"
+          :disabled="$v.$invalid"
         >
           Войти
         </button>
+        <small class="form-text text-muted">
+          Нет учётной записи?
+          <router-link to="/registration">Зарегистрироваться!</router-link>
+        </small>
       </form>
     </div>
   </div>
 </template>
 
 <script>
-import Router from "vue-router";
+import { required } from "vuelidate/lib/validators";
 import anime from "animejs/lib/anime.es.js";
 import AnimBG from "./AnimBG";
 export default {
   name: "Entrance",
-  // props: {
-  //   msg: String
-  // },
   data() {
     return {
       formClicked: false,
-      name: "",
+      // name: "",
+      serverError: "",
+      login: "",
+      password: "",
       wasClicked: false
     };
   },
   components: {
     AnimBG
   },
-  created() {},
+  validations: {
+    login: {
+      required
+    },
+    password: {
+      required
+    }
+  },
   mounted() {
     this.name = this.$store.state.gamerName;
     if (this.wasClicked) this.formClicked = true;
@@ -191,19 +222,50 @@ export default {
       return this.$store.state.gamerName;
     },
     errorClass() {
-      let bool = this.name == "" && this.formClicked;
+      let bool = this.name === "" && this.formClicked;
       return bool;
     },
     disabled() {
       if (!this.formClicked) {
         return true;
-      } else return this.name == "" && this.formClicked;
+      } else return this.name === "" && this.formClicked;
     }
   },
   methods: {
+    // Попытка авторизации
+    tryAuth() {
+      const authData = {
+        login: this.login,
+        password: this.password
+      };
+      console.log("AUTH: ", authData);
+      try {
+        // Возращает promise
+        // Если успешно, перенаправляет на путь "/"
+        this.$store.dispatch("AUTH_REQUEST", authData).then(
+          () => {
+            this.$router.push("/choose");
+          },
+          err => {
+            this.errorMessage = err;
+            this.serverError = err.data.message;
+            // this.$v.password.$error = false;
+            console.log("ОШИБКА ВХОДА: ", err.data.message);
+          }
+        );
+      } catch (error) {
+        this.errorMessage = error;
+      }
+    },
+    clckForm() {
+      this.formClicked = true;
+      this.clickForm = true;
+      this.serverError = "";
+    },
+    /** ****************Необработанные методы******************* */
     changePop() {
       console.log(this.name);
-      if (this.name[0] == "/") {
+      if (this.name[0] === "/") {
         this.name = this.name.slice(1, this.name.length);
         // Чит-коды с префиксом '/'
         switch (this.name) {
@@ -217,10 +279,6 @@ export default {
         this.$store.commit("setName", this.name);
         this.$router.push("choose");
       }
-    },
-    clckForm() {
-      this.formClicked = true;
-      this.clickForm = true;
     },
     startTimeline() {
       anime
@@ -340,7 +398,5 @@ export default {
 }
 #path path {
   stroke: black;
-}
-#my-div .el path {
 }
 </style>

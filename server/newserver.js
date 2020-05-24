@@ -1,19 +1,222 @@
+"use strict";
 const express = require("express");
 const serveStatic = require("serve-static");
+const bodyParser = require("body-parser");
+const Sequelize = require("sequelize");
 const path = require("path");
+const morgan = require("morgan");
+const compression = require("compression");
+const helmet = require("helmet");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const DBCONFIG = require("./db.config");
+const JWTCONFIG = require("./secret.config");
 const app = express();
 let port = process.env.PORT || 3001;
 
+// Сжатие gzip
+app.use(compression());
+
+// Настрйока безоопасности
+// app.use(helmet());
+
+// Настройка CORS
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, PATCH, PUT, POST, DELETE, OPTIONS"
+  );
+  next();
+});
+
+// Парсинг json - application/json
+app.use(bodyParser.json());
+
+// Парсинг запросов по типу: application/x-www-form-urlencoded
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+);
+
+// Логирование запросов
+app.use(morgan("common"));
+
+// Запуск сервера на порте
 const server = app
   .use("/", serveStatic(path.join(__dirname, "../dist")))
   .listen(port, () => {
     console.log(`server running on port ${port}`);
   });
-app.get(/.*/, function (req, res) {
-  res.sendFile(path.join(__dirname, "../dist/index.html"));
-});
+// app.get(/.*/, function(req, res) {
+//   res.sendFile(path.join(__dirname, "../dist/index.html"));
+// });
+
+// Создание соли для хеширования
+const salt = bcrypt.genSaltSync(10);
 
 const io = require("socket.io")(server);
+
+// Создание подключения с БД
+const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
+  dialect: "postgres",
+  host: DBCONFIG.HOST
+});
+
+// МОДЕЛЬ: Users
+const Users = sequelize.define("users", {
+  user_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  login: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
+});
+
+// Синхронизация таблиц с БД
+sequelize
+  // .sync({ force: true })
+  .sync()
+  .then(result => {
+    Users.create({
+        login: "login",
+        password: bcrypt.hashSync("password", salt),
+        name: "Никита"
+      })
+      .then(res => {
+        console.log(res.dataValues);
+      })
+      .catch(err => console.log(err));
+    console.log("Подключено к БД");
+  })
+  .catch(err => console.log("Ошибка подключения к БД", err));
+
+/** ************************** Модуль API *********************** */
+
+// Авторизация
+app.post("/api/login", (req, res) => {
+  console.log("LOGIN: ", req.body);
+  if (!req.body.login || !req.body.password) {
+    res.status(400).send({
+      status: 400,
+      message: "Пустой запрос!"
+    });
+  } else {
+    Users.findOne({
+        where: {
+          login: req.body.login
+        }
+      })
+      .then(user => {
+        if (!user) {
+          res.status(404).send({
+            status: 404,
+            message: "Неправильный логин или пароль!"
+          });
+        } else {
+          bcrypt.compare(req.body.password, user.password, function (
+            err,
+            result
+          ) {
+            if (err) {
+              console.log("Ошибка расшифровки: ", err);
+              res.status(500).send({
+                status: 500,
+                message: err
+              });
+            } else if (result) {
+              console.log(result);
+              const accessToken = jwt.sign({
+                  id: user.user_id,
+                  name: user.name
+                },
+                JWTCONFIG.SECRET
+              );
+              res.send({
+                status: 202,
+                message: "Пользователь найден",
+                token: accessToken
+              });
+            } else {
+              res.status(404).send({
+                status: 404,
+                message: "Неправильный логин или пароль"
+              });
+            }
+          });
+        }
+      })
+      .catch(err => console.log(err));
+  }
+});
+
+// Зарегистрироваться
+app.post('/api/register', (req, res) => {
+  console.log("REGISTER: ", req.body);
+  if (!req.body.login || !req.body.password || !req.body.name) {
+    res.status(400).send({
+      status: 400,
+      message: "Пустой запрос!"
+    });
+  } else {
+    Users.findOne({
+        where: {
+          login: req.body.login
+        }
+      }).then(user => {
+        if (user) {
+          res.status(403).send({
+            status: 403,
+            message: 'Пользователь с таким логином уже существет!'
+          })
+        } else {
+          Users.create({
+              login: req.body.login,
+              password: bcrypt.hashSync(req.body.password, salt),
+              name: req.body.name
+            })
+            .then(user => {
+              res.send({
+                status: 202,
+                user: user.dataValues
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              res.status(500).send({
+                status: 500,
+                message: "Ошибка сервера!"
+              });
+            });
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        res.status(500).send({
+          status: 500,
+          message: "Ошибка сервера!"
+        });
+      });
+  }
+})
+/** ************************************************************* */
 let connections = [];
 let connectedNames = [];
 let roomsState = [];
@@ -508,15 +711,15 @@ io.on("connection", function (socket) {
       oldNote.roomId = roomId;
       if (leaveUsers[roomId] !== undefined) {
         let leaveUserId = leaveUsers[roomId].findIndex(el => {
-          return el.id === socket.id;
+          return el.id == socket.id;
         });
         if (leaveUserId !== -1) {
           let sendObj = leaveUsers[roomId][leaveUserId];
           if (sendObj.isAdmin) {
-            console.log('ADMIN!!!');
-            socket.emit('setOwner')
+            console.log("ADMIN!!!");
+            socket.emit("setOwner");
           } else {
-            console.log('Не админ', sendObj.isAdmin);
+            console.log("Не админ", sendObj.isAdmin);
           }
           console.log(socket.id);
           console.log("Данные для отправки:", sendObj.data);
@@ -531,7 +734,7 @@ io.on("connection", function (socket) {
             effects: sendObj.effects,
             usedCards: sendObj.usedCards
           };
-          socket.emit('setEffects', sendObj.effects);
+          socket.emit("setEffects", sendObj.effects);
           let room = roomsState.find(el => el.roomId === roomId);
           if (room !== undefined) {
             room.gamers.push(gamerObj);
@@ -655,7 +858,7 @@ io.on("connection", function (socket) {
     console.log("Удаляем пользователя с ID ", roomId, "---", user);
     let room = roomsState.find(el => el.roomId === roomId);
     if (room) {
-      let userIndex = room.gamers.findIndex(el => el.id === user.id);
+      let userIndex = room.gamers.findIndex(el => el.id == user.id);
       room.gamers.splice(userIndex, 1);
       io.sockets.to(user.id).emit("kickUser");
       let gamerNames = [];
@@ -684,7 +887,7 @@ io.on("connection", function (socket) {
     console.log("Socket room ID", socket.roomId);
     let room = roomsState.find(el => el.roomId === roomId);
     console.log("Room", room);
-    // let gamer;
+    let gamer;
     if (room !== undefined) {
       let refreshUser = disconnectedUsers.find(el => el.id === oldSocketId);
       if (refreshUser) {
@@ -1221,7 +1424,7 @@ io.on("connection", function (socket) {
       console.log("NEED USER DATA!");
       let room = roomsState.find(el => el.roomId === socket.roomId);
       // Поиск игрока
-      // let gamer = room.gamers.find(el => el.id === socket.id);
+      let gamer = room.gamers.find(el => el.id === socket.id);
       console.log("ROOM", room);
       console.log("GAMERS", room.gamers);
       console.log("SOCKETID", socket.id);
@@ -1245,8 +1448,7 @@ io.on("connection", function (socket) {
           "Уходит, объект: ",
           roomsState[index].gamers[gamerThereIndex]
         );
-        roomsState[index].gamers[gamerThereIndex].isAdmin = oldNote.isAdmin
-        // eslint-disable-next-line valid-typeof
+        roomsState[index].gamers[gamerThereIndex].isAdmin = oldNote.isAdmin;
         if (typeof leaveUsers[socket.roomId] !== "array") {
           leaveUsers[socket.roomId] = [];
           leaveUsers[socket.roomId].push(

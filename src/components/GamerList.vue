@@ -20,9 +20,7 @@
         <span class="badge badge-primary badge-pill" v-if="gamer.isattacker"
           >Сделал ход</span
         >
-        <span class="badge badge-warning badge-pill" v-else="gamer.isattacker"
-          >Размышляет</span
-        >
+        <span class="badge badge-warning badge-pill" v-else>Размышляет</span>
       </li>
     </ul>
   </div>
