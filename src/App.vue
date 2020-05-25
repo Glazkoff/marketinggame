@@ -152,4 +152,11 @@ body {
   top: -36px;
   left: 0;
 }
+.loader-wrap {
+  width: 100%;
+  display: flex;
+}
+.loader-wrap > * {
+  margin: auto;
+}
 </style>

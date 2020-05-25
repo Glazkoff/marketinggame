@@ -90,10 +90,108 @@ const Users = sequelize.define("users", {
   }
 });
 
+// МОДЕЛЬ: Rooms
+const Rooms = sequelize.define("rooms", {
+  room_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  participants_id: {
+    type: Sequelize.JSONB,
+    allowNull: false
+  },
+  first_params: {
+    type: Sequelize.JSONB,
+    allowNull: false
+  },
+})
+
+// МОДЕЛЬ: UsersInRooms
+
+// МОДЕЛЬ: Cards
+const Cards = sequelize.define("cards", {
+  card_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  text: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  cost: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  duartion: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  data_change: {
+    type: Sequelize.JSONB,
+    allowNull: false
+  }
+})
+
+// МОДЕЛЬ: Events
+const Events = sequelize.define("events", {
+  event_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  title: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  description: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  data_change: {
+    type: Sequelize.JSONB,
+    allowNull: false
+  }
+})
+
+// МОДЕЛЬ: Updates
+const Updates = sequelize.define("updates", {
+  event_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  content: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  }
+})
+
+// Модель: DefaultRooms
+const DefaultRooms = sequelize.define("default_rooms", {
+  default_room_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+})
+
 // Синхронизация таблиц с БД
 sequelize
-  // .sync({ force: true })
-  .sync()
+  .sync({
+    force: true
+  })
+  // .sync()
   .then(result => {
     Users.create({
         login: "login",
@@ -215,6 +313,60 @@ app.post('/api/register', (req, res) => {
         });
       });
   }
+})
+
+// Получить комнату по умолчанию
+app.get('/api/default/room', (req, res) => {
+  let default_room = {
+    first: true,
+    preset: true,
+    month: 3,
+    money: 150000,
+    organicCount: 7500,
+    contextCount: 9500,
+    socialsCount: 1500,
+    smmCount: 1200,
+    straightCount: 300,
+    organicCoef: 0.1,
+    contextCoef: 0.07,
+    socialsCoef: 0.25,
+    smmCoef: 0.05,
+    straightCoef: 0.1,
+    conversion: 0.3,
+    averageCheck: 6500,
+    realCostAttract: 2500,
+    marginalCost: 800
+  };
+  res.send(default_room)
+})
+
+// Создание новой команты
+app.post('/api/rooms', async (req, res) => {
+  console.log('Новая комната');
+  console.log(req.body);
+  console.log();
+  await jwt.verify(req.headers.authorization, JWTCONFIG.SECRET, async (err, decoded) => {
+    if (err) {
+      res.status(401).send({
+        status: 401,
+        message: "Вы не авторизованы!"
+      })
+    } else {
+      try {
+        let result = await Rooms.create({
+          participants_id: [decoded.id],
+          first_params: req.body
+        })
+        res.send(result)
+      } catch (error) {
+        console.log('Ошибка создания комнаты', error);
+        res.status(500).send({
+          status: 500,
+          message: "Ошибка создания комнаты!"
+        })
+      }
+    }
+  });
 })
 /** ************************************************************* */
 let connections = [];

@@ -1,7 +1,6 @@
 <template>
   <div class="card container col-lg-4 col-md-5 col-sm-10 col-xs-8 mt-5 p-4">
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
-    <!-- <router-link to="/">Сменить имя</router-link> -->
     <a href="" @click.prevent="logout()">Выйти</a>
     <p>Выбери, как ты начнёшь игру</p>
     <div class="btn-group btn-group-toggle mb-3">
@@ -28,7 +27,7 @@
           'btn-outline-info': this.toggle != 'create',
           'btn-info': this.toggle == 'create'
         }"
-        @click="reset()"
+        @click="loadRoomState()"
       >
         <input
           type="radio"
@@ -58,19 +57,7 @@
           Присоединиться
         </button>
       </div>
-      <div class v-if="toggle == 'create'">
-        <!-- <label for="name" class>Номер комнаты</label>
-        <br />
-        <input
-          type="number"
-          name="roomId"
-          id="roomId"
-          min="0"
-          disabled
-          v-model.number="roomId"
-          class="form-control form-control-lg mb-2"
-          value
-        />-->
+      <div class v-if="toggle == 'create' && !loading">
         <label for="name" class>Количество месяцев</label>
         <br />
         <input
@@ -101,19 +88,26 @@
         </button>
       </div>
     </transition>
+    <div class="loader-wrap" v-if="loading"><Loader></Loader></div>
   </div>
 </template>
 
 <script>
 import jwt from "jsonwebtoken";
+import Loader from "@/components/Loader.vue";
+let apiUrl = "http://localhost:3001/api";
 export default {
   name: "Choose",
   data() {
     return {
       toggle: "join",
       roomIdJoin: "",
-      roomParams: {}
+      roomParams: "",
+      loading: false
     };
+  },
+  components: {
+    Loader
   },
   computed: {
     gamerName() {
@@ -128,12 +122,6 @@ export default {
     let name = jwt.decode(this.$store.state.token).name;
     this.$socket.emit("setName", name);
     this.$store.commit("setName", name);
-    // this.roomParams = Object.assign(this.stateFirstParams)
-  },
-  beforeMount() {},
-  beforeRouteUpdate(to, from, next) {},
-  mounted() {
-    // this.roomParams = Object.assign(this.stateFirstParams)
   },
   methods: {
     logout() {
@@ -155,42 +143,72 @@ export default {
         console.log(error);
       }
     },
+    loadRoomState() {
+      if (!this.roomParams) {
+        this.loading = true;
+        try {
+          this.$store
+            .dispatch("LOAD_DEFAULT_ROOM")
+            .then(
+              res => {
+                console.log("ПРИШЁЛ СТЕЙТ ПО УМОЛЧАНИЮ: ", res);
+                this.roomParams = res.data;
+                this.loading = false;
+              },
+              err => {
+                console.log("ОШИБКА ЗАГРУЗКИ: ", err);
+                this.loading = false;
+              }
+            )
+            .catch(err => {
+              console.log("ОШИБКА ЗАГРУЗКИ: ", err);
+              this.loading = false;
+            });
+        } catch (error) {
+          console.log(error);
+          this.loading = false;
+        }
+      }
+    },
     createGame() {
+      this.loading = true;
+      this.$http
+        .post(apiUrl + "/rooms", this.roomParams)
+        .then(res => {
+          console.log(res.data);
+          this.loading = false;
+          this.$store.commit("SET_ROOM_PARAMS", res.data);
+          this.$router.push("main");
+        })
+        .catch(err => {
+          console.log(err);
+          this.loading = false;
+        });
       // this.roomParams.month++
       // this.$store.state.isOwner = true;
-      this.$store.commit("setOwner");
-      console.log("IS OWNER", this.$store.state.isOwner);
-      this.$socket.emit("createRoom");
-      this.$store.commit("copyData", this.roomParams);
-      this.$router.push("main");
+      // this.$store.commit("setOwner");
+      // console.log("IS OWNER", this.$store.state.isOwner);
+      // this.$socket.emit("createRoom");
+      // this.$store.commit("copyData", this.roomParams);
+      // this.$router.push("main");
       // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
+    // Ниже методы необработаны
     joinGame() {
       this.$socket.emit("checkRoom", this.roomIdJoin);
       this.$socket.emit("setRoom", this.roomIdJoin);
       console.log("//" + this.roomIdJoin);
       this.$router.push("main");
-    },
-    reset() {
-      this.$store.commit("resetData");
-      this.roomParams = {};
-      this.roomParams = Object.assign(this.stateFirstParams);
-      console.log("RESET FROM BTN");
-      console.log(this.roomParams);
-      console.log("FIRST PARAMS");
-      console.log(Object.assign(this.stateFirstParams));
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    // if (vm.$store.state.roomId == -1) {
-    next(function(vm) {
-      if (vm.$store.state.gamerName === "") {
-        next("/");
-      } else {
-        return true;
-      }
-      return true;
-    });
+    // reset() {
+    //   this.$store.commit("resetData");
+    //   this.roomParams = {};
+    //   this.roomParams = Object.assign(this.stateFirstParams);
+    //   console.log("RESET FROM BTN");
+    //   console.log(this.roomParams);
+    //   console.log("FIRST PARAMS");
+    //   console.log(Object.assign(this.stateFirstParams));
+    // }
   }
 };
 </script>

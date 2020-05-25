@@ -77,6 +77,11 @@ const store = new Vuex.Store({
       state.token = "";
       state.status = "";
     },
+    // Установить значение параметров комнаты
+    SET_ROOM_PARAMS: (state, roomParams) => {
+      state.roomParams = roomParams;
+      state.roomId = roomParams.room_id
+    },
     resetData(state) {
       console.log('RESET!')
       state.connections = []
@@ -258,16 +263,12 @@ const store = new Vuex.Store({
       // state.roomParams.money += result;
     },
     SOCKET_setEffects(state, effects) {
-      console.log('/////////////////////////')
-      console.log('/////////////////////////')
       effects.forEach(el => {
         if (el.step === el.duration) {
           state.completedSessions.push(el.id)
         }
       })
       console.log(state.completedSessions)
-      console.log('/////////////////////////')
-      console.log('/////////////////////////')
       state.activeEffects = [...effects]
     }
   },
@@ -332,6 +333,22 @@ const store = new Vuex.Store({
         delete axios.defaults.headers.common["Authorization"];
         resolve();
       });
+    },
+    LOAD_DEFAULT_ROOM: state => {
+      return new Promise((resolve, reject) => {
+        axios({
+            url: `${apiUrl}/default/room`,
+            method: "GET"
+          })
+          .then(res => {
+            console.log(res);
+            resolve(res);
+          })
+          .catch(err => {
+            console.log('ошибка загрузки', err);
+            reject(err);
+          })
+      })
     },
     SOCKET_gameEvent(state, eventObj) {
       console.log(eventObj)

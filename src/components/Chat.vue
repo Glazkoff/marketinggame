@@ -66,7 +66,8 @@ export default {
     };
   },
   created() {
-    this.$store.watch(
+    const vm = this;
+    vm.$store.watch(
       (state, getters) => state.messages,
       (newValue, oldValue) => {
         if (!this.chatOpened) {
