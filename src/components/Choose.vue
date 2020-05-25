@@ -171,27 +171,28 @@ export default {
       }
     },
     createGame() {
-      this.loading = true;
-      this.$http
-        .post(apiUrl + "/rooms", this.roomParams)
-        .then(res => {
-          console.log(res.data);
-          this.loading = false;
-          this.$store.commit("SET_ROOM_PARAMS", res.data);
-          this.$router.push("main");
-        })
-        .catch(err => {
-          console.log(err);
-          this.loading = false;
-        });
-      // this.roomParams.month++
-      // this.$store.state.isOwner = true;
-      // this.$store.commit("setOwner");
-      // console.log("IS OWNER", this.$store.state.isOwner);
-      // this.$socket.emit("createRoom");
-      // this.$store.commit("copyData", this.roomParams);
-      // this.$router.push("main");
-      // this.$store.state.roomParams = Object.assign(this.roomParams);
+      // this.loading = true;
+      // this.$http
+      //   .post(apiUrl + "/rooms", this.roomParams)
+      //   .then(res => {
+      //     console.log(res.data);
+      //     this.loading = false;
+      //     this.$store.commit("SET_ROOM_PARAMS", res.data);
+      //     this.$router.push("main");
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //     this.loading = false;
+      //   });
+      console.log(apiUrl);
+      this.roomParams.month++;
+      this.$store.state.isOwner = true;
+      this.$store.commit("setOwner");
+      console.log("IS OWNER", this.$store.state.isOwner);
+      this.$socket.emit("createRoom");
+      this.$store.commit("copyData", this.roomParams);
+      this.$router.push("main");
+      this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     // Ниже методы необработаны
     joinGame() {

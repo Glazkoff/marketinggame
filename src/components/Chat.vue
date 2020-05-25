@@ -65,9 +65,8 @@ export default {
       readCount: 0
     };
   },
-  created() {
-    const vm = this;
-    vm.$store.watch(
+  mounted() {
+    this.$store.watch(
       (state, getters) => state.messages,
       (newValue, oldValue) => {
         if (!this.chatOpened) {
