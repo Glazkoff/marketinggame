@@ -23,6 +23,7 @@
   </div>
 </template>
 <script>
+import jwt from "jsonwebtoken";
 export default {
   data() {
     return {
@@ -36,23 +37,49 @@ export default {
       this.$store.state.socketId = this.$socket.id;
       console.log(this.$socket.id);
       console.log("Socket connected");
+      let token = this.$store.state.token;
+      this.$socket.emit("authenticate", { token });
+    },
+    authenticated: function() {
+      console.log("ПОДКЛЮЧЕНО!");
+    },
+    unauthorized: function(error) {
+      console.error("НЕ АВТОРИЗОВАН!");
+      if (
+        error.data.type === "UnauthorizedError" ||
+        error.data.code === "invalid_token"
+      ) {
+        // TODO: Пушить роутер на страницу авторизации, если другой путь
+        console.error("Плохой токен");
+        // this.$router.push("Home");
+      }
     }
   },
   beforeCreate() {
-    console.log("setStateFromLS");
-    this.$store.commit("setStateFromLS");
-    if (this.$store.state.gamerName) {
-      this.$socket.emit("setName", this.$store.state.gamerName);
+    let decode = jwt.decode(this.$store.state.token);
+    if (decode) {
+      if (decode.admin) {
+        this.$store.commit("SET_USER_ID", decode.id);
+        this.$store.commit("changeAdminStatus");
+      }
+      let name = decode.name;
+      // this.$socket.emit("setName", name);
+      this.$store.commit("SET_NAME", name);
+      console.log("setStateFromLS");
+      this.$store.commit("setStateFromLS");
+      if (this.$store.state.gamerName) {
+        this.$socket.emit("setName", this.$store.state.gamerName);
+      }
+      if (this.$store.state.roomId) {
+        this.$socket.emit("setRoom", this.$store.state.roomId);
+      }
+      console.log("SEND RESRESH!");
+      this.$socket.emit(
+        "refreshSocketID",
+        this.$store.state.socketId,
+        this.$store.state.roomId
+      );
     }
-    if (this.$store.state.roomId) {
-      this.$socket.emit("setRoom", this.$store.state.roomId);
-    }
-    console.log("SEND RESRESH!");
-    this.$socket.emit(
-      "refreshSocketID",
-      this.$store.state.socketId,
-      this.$store.state.roomId
-    );
   },
   methods: {
     changeAdminNav() {

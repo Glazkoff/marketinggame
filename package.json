@@ -30,6 +30,7 @@
     "sequelize": "^5.21.10",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
+    "socketio-jwt": "^4.6.0",
     "vue": "^2.6.11",
     "vue-number-animation": "^1.0.5",
     "vue-router": "^3.1.5",

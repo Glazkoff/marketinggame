@@ -45,24 +45,37 @@ export default {
       this.$store.state.isStart = true;
       this.$store.state.isOwner = false;
       this.$store.state.isFinish = false;
-      this.$store.commit("SOCKET_doNextStep");
-      this.$store.commit("resetData");
+      this.$store.state.prevRoomParams = {};
+      this.$store.state.roomParams = {};
+      this.$store.state.firstRoomParams = {};
+      // this.$store.commit("SOCKET_doNextStep");
+      // this.$store.commit("resetData");
     }
   },
   // ################  НЕ УДАЛЯТЬ  ###############
   beforeRouteEnter(to, from, next) {
-    next(function(vm) {
-      console.log(vm.$store.state.roomId);
-      vm.$store.commit("setStateFromLS");
-      setTimeout(() => {
-        if (vm.$store.state.roomId === -1) {
-          next("/choose");
-        } else {
-          return true;
+    next(async function(vm) {
+      // console.log(vm.$store.state.roomId);
+      // vm.$store.commit("setStateFromLS");
+      // setTimeout(() => {
+      //   if (vm.$store.state.roomId === -1) {
+      //     next("/choose");
+      //   } else {
+      if (
+        isNaN(vm.$store.state.roomParams.money) ||
+        typeof vm.$store.state.roomParams.money === "undefined"
+      ) {
+        try {
+          console.log(await vm.$store.dispatch("TRY_RESET_ROOM"));
+        } catch (error) {
+          console.log(error);
         }
-      }, 2000);
+      }
+      return true;
+      //   }
+      // }, 2000);
 
-      // return true
+      // // return true
     });
   },
   // ######################################################
@@ -78,6 +91,12 @@ export default {
     next();
     // } else {
     //   next(false);
+    // }
+  },
+  mounted() {
+    // if (JSON.stringify(this.$store.state.firstRoomParams) === "{}") {
+    //   console.log("НУЖНО СКАЧАТЬ ДАННЫЕ!");
+    //   this.$store.dispatch();
     // }
   },
   computed: {
@@ -102,9 +121,6 @@ export default {
 .fade-leave-active {
   transition: all 0.4s;
 }
-.fade-enter-active {
-  /* transition-delay: 0.4s; */
-}
 .fade-enter-to {
   transform: scale(1);
   opacity: 0.9;
@@ -128,7 +144,6 @@ export default {
 .main-side {
   position: relative;
   max-height: calc(100vh - 40px);
-  /* z-index: -1; */
 }
 .pg-header {
   position: absolute;
@@ -156,6 +171,4 @@ export default {
     padding-top: 40px;
   }
 }
-/* .sidebox {
-} */
 </style>

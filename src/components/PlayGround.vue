@@ -149,6 +149,7 @@
                 @click="makeStep()"
               >
                 Завершить ход
+                <small>(Использовано карт: {{ usedCards.length }})</small>
               </button>
             </div>
           </div>
@@ -231,29 +232,6 @@
             Использовать
           </button>
         </div>
-        <!-- <div
-          class="card-box"
-          :draggable="true"
-          @dragstart.self="altdragstart"
-
-          key="1"
-          @dragend="altdragend"
-          v-if="!isStart"
-
-        >
-
-          <div class="card-head">
-            <h6 class="card-title text-center pl-2 pr-2 mb-1">title</h6>
-          </div>
-
-          <div class="card-image"></div>
-          <small class="card-text text-center">text</small>
-          <h3 class="card-text text-center">cost ₽</h3>
-          <button
-            class="btn btn-dark pl-2"
-            @click="dropFromBtn()"
-          >Использовать</button>
-        </div>-->
       </transition-group>
     </div>
     <!-- Конец Поле для карточек -->
@@ -473,6 +451,42 @@ export default {
     }
   },
   methods: {
+    // При клике на кнопку "Начать"
+    startGame() {
+      this.$socket.emit("startGame", { room_id: this.$store.state.roomId });
+      // this.$socket.emit("startGame", a);
+      // this.$store.commit("SOCKET_calcAllParams");
+      // this.$store.state.isStart = false;
+      // this.playAnimation();
+    },
+    makeStep() {
+      this.$store.commit("doStep"); //
+      this.$socket.emit("doStep", this.usedCards);
+      let stepArr = [];
+      for (const val of this.usedCards) {
+        let cardObj = {
+          id: val,
+          title: this.refreshCards.find(el => el.id === val).title
+        };
+        stepArr.push(cardObj);
+      }
+      this.$store.commit("addSteps", stepArr);
+      // Одноразовые карточки (индексы):
+      let oneOffCards = [3, 7];
+      for (const cardIndex of oneOffCards) {
+        let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex);
+        console.log("ОДНОРАЗОВЫЕ КАРТОЧКИ");
+        if (usedIndex !== -1) {
+          let spliceIndex = this.refreshCards.findIndex(
+            elem => elem.id === cardIndex
+          );
+          this.refreshCards.splice(spliceIndex, 1);
+        }
+      }
+      this.usedCards = [];
+      this.cards = [...this.refreshCards];
+    },
+    // **** Ниже необработанные методы ******
     playAnimation() {
       if (this.$refs.number1 !== undefined) {
         this.$refs.number1.play();
@@ -518,42 +532,7 @@ export default {
       }
       return arra1;
     },
-    makeStep() {
-      this.$store.commit("doStep"); //
-      this.$socket.emit("doStep", this.usedCards);
-      let stepArr = [];
-      for (const val of this.usedCards) {
-        // console.log(val);
-        // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        // console.log(this.refreshCards.find(el => el.id === val));
-        let cardObj = {
-          id: val,
-          title: this.refreshCards.find(el => el.id === val).title
-        };
-        // console.log("!!!!!!!!!!!!!");
-        // console.log(cardObj);
-        stepArr.push(cardObj);
-      }
-      this.$store.commit("addSteps", stepArr);
-      // Одноразовые карточки (индексы):
-      let oneOffCards = [3, 7];
-      for (const cardIndex of oneOffCards) {
-        let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex);
-        console.log("ОДНОРАЗОВЫЕ КАРТОЧКИ");
-        if (usedIndex !== -1) {
-          let spliceIndex = this.refreshCards.findIndex(
-            elem => elem.id === cardIndex
-          );
-          this.refreshCards.splice(spliceIndex, 1);
-        }
-      }
-      this.usedCards = [];
-      // console.log(this.refreshCards);
-      this.cards = [...this.refreshCards];
-      // console.log(this.cards);
-      // console.log("-----Index of cards------");
-      // console.log(this.usedCards);
-    },
+
     dropFromBtn(index) {
       this.usedCards.push(this.cards[index].id);
       let change = -this.cards[index].cost;
@@ -561,19 +540,19 @@ export default {
       this.cards.splice(index, 1);
       this.playAnimation();
     },
-    startGame() {
-      console.log("Стейт комнаты");
-      let a = Object.assign(this.$store.state.roomParams);
-      console.log(a);
-      // this.refreshCards = Object.assign(this.cards);
-      console.log(this.cards);
-      console.log(this.refreshCards);
-      this.$socket.emit("startGame", a);
-      this.$store.commit("SOCKET_calcAllParams");
-      // this.$store.state.isOwner = false;
-      this.$store.state.isStart = false;
-      this.playAnimation();
-    },
+    // startGame() {
+    //   console.log("Стейт комнаты");
+    //   let a = Object.assign(this.$store.state.roomParams);
+    //   console.log(a);
+    //   // this.refreshCards = Object.assign(this.cards);
+    //   console.log(this.cards);
+    //   console.log(this.refreshCards);
+    //   this.$socket.emit("startGame", a);
+    //   this.$store.commit("SOCKET_calcAllParams");
+    //   // this.$store.state.isOwner = false;
+    //   this.$store.state.isStart = false;
+    //   this.playAnimation();
+    // },
     beforeEnter: function(el) {
       console.log("befenterhook");
     },

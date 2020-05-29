@@ -151,14 +151,9 @@
             placeholder="Введите пароль"
             @click="clckForm()"
           />
-
           <div v-if="!$v.login.required" class="invalid-feedback">
             Обязательно введите пароль!
           </div>
-          <!-- <small class="form-text text-muted">
-            Имя необходимо, чтобы другие игроки могли идентифицировать в чате и
-            игре
-          </small> -->
           <small class="form-text text-danger">
             {{ serverError }}
           </small>
@@ -188,7 +183,6 @@ export default {
   data() {
     return {
       formClicked: false,
-      // name: "",
       serverError: "",
       login: "",
       password: "",
@@ -243,13 +237,15 @@ export default {
         // Возращает promise
         // Если успешно, перенаправляет на путь "/"
         this.$store.dispatch("AUTH_REQUEST", authData).then(
-          () => {
+          token => {
+            // this.$socket.emit("authenticate", {
+            //   token
+            // });
             this.$router.push("/choose");
           },
           err => {
             this.errorMessage = err;
             this.serverError = err.data.message;
-            // this.$v.password.$error = false;
             console.log("ОШИБКА ВХОДА: ", err.data.message);
           }
         );
@@ -261,24 +257,6 @@ export default {
       this.formClicked = true;
       this.clickForm = true;
       this.serverError = "";
-    },
-    /** ****************Необработанные методы******************* */
-    changePop() {
-      console.log(this.name);
-      if (this.name[0] === "/") {
-        this.name = this.name.slice(1, this.name.length);
-        // Чит-коды с префиксом '/'
-        switch (this.name) {
-          case "swadmin":
-            this.$store.commit("changeAdminStatus");
-            break;
-        }
-        this.name = "";
-      } else {
-        this.$socket.emit("setName", this.name);
-        this.$store.commit("setName", this.name);
-        this.$router.push("choose");
-      }
     },
     startTimeline() {
       anime

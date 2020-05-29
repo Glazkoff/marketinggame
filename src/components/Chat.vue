@@ -82,13 +82,13 @@ export default {
     SendBox
   },
   computed: {
-    messages: () => {
-      setTimeout(() => {
-        let messList = document.querySelector("#messageField");
-        if (messList !== null) {
-          messList.scrollTop = messList.scrollHeight;
-        }
-      }, 10);
+    messages() {
+      // let a = setTimeout(() => {
+      let messList = document.querySelector("#messageField");
+      if (messList !== null) {
+        messList.scrollTop = messList.scrollHeight;
+      }
+      // }, 10);
       return this.$store.state.messages;
     },
     messCountIsVoid() {

@@ -12,12 +12,19 @@ Vue.use(Vuelidate)
 
 Vue.use(new VueSocketIO({
   debug: true,
-  // connection: 'https://marketing-game.herokuapp.com/',
   connection: 'http://localhost:3001',
+  // debug: false,
+  // connection: 'https://marketing-game.herokuapp.com/',
   vuex: {
     store,
     actionPrefix: "SOCKET_",
     mutationPrefix: 'SOCKET_'
+  },
+  options: {
+    query: `token=${localStorage.getItem("user-token")}`,
+    extraHeaders: {
+      Authorization: `Bearer ${localStorage.getItem("user-token")}`
+    }
   }
 }))
 

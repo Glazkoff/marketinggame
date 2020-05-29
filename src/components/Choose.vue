@@ -40,20 +40,39 @@
       </label>
     </div>
     <transition name="slideUp" mode="out-in" appear>
-      <div class v-if="toggle == 'join'">
+      <div class v-if="toggle == 'join' && !loading">
         <label for="name" class>Номер комнаты</label>
         <br />
         <input
           type="number"
           min="0"
-          v-model.number="roomIdJoin"
+          v-model.number="$v.roomIdJoin.$model"
           name="roomIdJoin"
           id="roomIdJoin"
-          class="form-control form-control-lg mb-3"
+          class="form-control form-control-lg "
           placeholder="Введите номер комнаты"
           @keypress.enter="joinGame()"
+          @input="joinError = ''"
+          :class="{
+            'is-invalid':
+              ($v.roomIdJoin.$invalid && $v.roomIdJoin.$dirty) || joinError,
+            'mb-3': !(
+              ($v.roomIdJoin.$invalid && $v.roomIdJoin.$dirty) ||
+              joinError
+            )
+          }"
         />
-        <button class="btn btn-lg btn-danger btn-block" @click="joinGame()">
+        <div v-if="!$v.roomIdJoin.required" class="invalid-feedback mb-3">
+          Обязательно введите номер комнаты!
+        </div>
+        <div v-if="joinError" class="invalid-feedback mb-3">
+          {{ joinError }}
+        </div>
+        <button
+          class="btn btn-lg btn-danger btn-block"
+          @click="joinGame()"
+          :disabled="$v.roomIdJoin.$invalid"
+        >
           Присоединиться
         </button>
       </div>
@@ -83,7 +102,11 @@
           placeholder="100000"
           @keypress.enter="createGame()"
         />
-        <button class="btn btn-lg btn-danger btn-block" @click="createGame()">
+        <button
+          class="btn btn-lg btn-danger btn-block"
+          @click="createGame()"
+          :disabled="$v.roomParams.$invalid"
+        >
           Создать
         </button>
       </div>
@@ -95,6 +118,7 @@
 <script>
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
+import { required } from "vuelidate/lib/validators";
 let apiUrl = "http://localhost:3001/api";
 export default {
   name: "Choose",
@@ -103,8 +127,22 @@ export default {
       toggle: "join",
       roomIdJoin: "",
       roomParams: "",
-      loading: false
+      loading: false,
+      joinError: ""
     };
+  },
+  validations: {
+    roomIdJoin: {
+      required
+    },
+    roomParams: {
+      month: {
+        required
+      },
+      money: {
+        required
+      }
+    }
   },
   components: {
     Loader
@@ -118,10 +156,16 @@ export default {
     }
   },
   created() {
-    console.log("JWT DECODE: ", jwt.decode(this.$store.state.token));
-    let name = jwt.decode(this.$store.state.token).name;
-    this.$socket.emit("setName", name);
-    this.$store.commit("setName", name);
+    let token = this.$store.state.token;
+    let decode = jwt.decode(token);
+    if (decode.admin) {
+      this.$store.commit("SET_USER_ID", decode.id);
+      this.$store.commit("changeAdminStatus");
+    }
+    let name = decode.name;
+    this.$store.commit("SET_NAME", name);
+    this.$socket.disconnect();
+    this.$socket.open();
   },
   methods: {
     logout() {
@@ -171,36 +215,60 @@ export default {
       }
     },
     createGame() {
-      // this.loading = true;
-      // this.$http
-      //   .post(apiUrl + "/rooms", this.roomParams)
-      //   .then(res => {
-      //     console.log(res.data);
-      //     this.loading = false;
-      //     this.$store.commit("SET_ROOM_PARAMS", res.data);
-      //     this.$router.push("main");
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //     this.loading = false;
-      //   });
-      console.log(apiUrl);
-      this.roomParams.month++;
-      this.$store.state.isOwner = true;
-      this.$store.commit("setOwner");
-      console.log("IS OWNER", this.$store.state.isOwner);
-      this.$socket.emit("createRoom");
-      this.$store.commit("copyData", this.roomParams);
-      this.$router.push("main");
-      this.$store.state.roomParams = Object.assign(this.roomParams);
+      this.loading = true;
+      this.$http
+        .post(apiUrl + "/rooms", this.roomParams)
+        .then(res => {
+          console.log("ДАН КОМНАТЫ", res.data);
+          this.loading = false;
+          this.$store.commit("setOwner");
+          this.setRoomParams(res);
+        })
+        .catch(err => {
+          console.log(err);
+          this.loading = false;
+        });
+
+      // console.log(apiUrl);
+      // this.roomParams.month++;
+      // this.$store.state.isOwner = true;
+
+      // console.log("IS OWNER", this.$store.state.isOwner);
+      // this.$socket.emit("createRoom");
+      // this.$store.commit("copyData", this.roomParams);
+      // this.$router.push("main");
+      // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
-    // Ниже методы необработаны
     joinGame() {
-      this.$socket.emit("checkRoom", this.roomIdJoin);
-      this.$socket.emit("setRoom", this.roomIdJoin);
-      console.log("//" + this.roomIdJoin);
+      if (this.$v.roomIdJoin.required) {
+        this.loading = true;
+        this.$http
+          .post(apiUrl + "/rooms/join/" + this.roomIdJoin, this.roomParams)
+          .then(res => {
+            console.log("ДАН КОМНАТЫ", res.data.first_params);
+            this.setRoomParams(res);
+            this.loading = false;
+          })
+          .catch(err => {
+            this.joinError = err.data.message;
+            console.log(err.data.message);
+            this.loading = false;
+          });
+      }
+    },
+    setRoomParams(res) {
+      // this.$store.state.prevRoomParams = {};
+      // this.$store.state.roomParams = {};
+      // this.$store.state.firstRoomParams = {};
+      // this.$store.commit("SET_IS_START", res.data.is_start);
+      // this.$store.commit("SET_ROOM_ID", res.data.room_id);
+      // this.$store.commit("SET_ROOM_PARAMS", res.data.first_params);
+      this.$store.dispatch("SET_ROOM_PARAMS", res);
+      this.$socket.emit("subscribeRoom", res.data.room_id);
       this.$router.push("main");
     }
+    // Ниже методы необработаны
+
     // reset() {
     //   this.$store.commit("resetData");
     //   this.roomParams = {};

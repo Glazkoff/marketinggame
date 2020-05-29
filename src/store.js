@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../src/router'
 import axios from 'axios'
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const apiUrl = "http://localhost:3001/api";
 
@@ -12,6 +12,12 @@ const store = new Vuex.Store({
   state: {
     token: localStorage.getItem("user-token") || "",
     status: "",
+    prevRoomParams: {},
+    roomParams: {},
+    firstRoomParams: {},
+    roomId: -1,
+    userId: "",
+    // Ниже необработанные данные 
     gamerName: '',
     socketId: '',
     isAdmin: false,
@@ -21,29 +27,9 @@ const store = new Vuex.Store({
     isFinish: false,
     stepDone: false,
     havePrevData: false,
-    roomId: -1,
-    prevRoomParams: {},
-    roomParams: {},
-    firstRoomParams: {
-      first: true,
-      preset: true,
-      month: 3,
-      money: 150000,
-      organicCount: 7500,
-      contextCount: 9500,
-      socialsCount: 1500,
-      smmCount: 1200,
-      straightCount: 300,
-      organicCoef: 0.1,
-      contextCoef: 0.07,
-      socialsCoef: 0.25,
-      smmCoef: 0.05,
-      straightCoef: 0.1,
-      conversion: 0.3,
-      averageCheck: 6500,
-      realCostAttract: 2500,
-      marginalCost: 800
-    },
+
+
+
     connections: [],
     messages: [],
     gamers: [],
@@ -79,9 +65,69 @@ const store = new Vuex.Store({
     },
     // Установить значение параметров комнаты
     SET_ROOM_PARAMS: (state, roomParams) => {
-      state.roomParams = roomParams;
-      state.roomId = roomParams.room_id
+      if (JSON.stringify(state.roomParams) !== '{}') {
+        for (var key in state.roomParams) {
+          state.prevRoomParams[key] = state.roomParams[key]
+        }
+        state.roomParams = roomParams;
+      } else {
+        state.roomParams = roomParams;
+        for (var k in roomParams) {
+          state.prevRoomParams[k] = state.roomParams[k]
+          state.firstRoomParams[k] = state.roomParams[k]
+        }
+
+        console.log('FIRST_ROOM_PARAMS: ', state.firstRoomParams);
+        console.log('PREV_ROOM_PARAMS: ', state.prevRoomParams);
+        console.log('ROOM_PARAMS: ', state.roomParams);
+      }
     },
+    SET_ROOM_ID: (state, roomId) => {
+      state.roomId = roomId
+    },
+    TRY_RESET_ROOM_PARAMS: (state) => {
+      axios({
+          url: `${apiUrl}/rooms/reset`,
+          // data: user,
+          method: "GET"
+        })
+        .then(
+          resp => {
+            console.log("TRY_RESET_ROOM_PARAMS");
+          },
+          err => {
+            console.log(err);
+          })
+        .catch(err => {
+          console.log(err);
+        })
+    },
+    SET_IS_START(state, isStart) {
+      state.isStart = isStart;
+    },
+    SET_USER_ID(state, userId) {
+      state.userId = userId
+    },
+    SET_NAME(state, name) {
+      state.gamerName = name
+    },
+    async SET_GAME_PARAMS(state, res) {
+      state.prevRoomParams = res.data.prev_room_params;
+      state.roomParams = res.data.gamer_room_params;
+      state.firstRoomParams = res.data.first_params;
+      state.isStart = res.data.is_start;
+      state.roomId = res.data.room_id
+      console.log("SET_GAME_PARAMS: ", res)
+      let decode = await jwt.decode(state.token)
+      if (res.data.owner_id === decode.id) {
+        state.isOwner = true;
+      }
+    },
+    SOCKET_SET_GAME_START(state, boolean) {
+      console.log('SET GAME START: ', boolean);
+      state.isStart = boolean;
+    },
+    /* *********************************** */
     resetData(state) {
       console.log('RESET!')
       state.connections = []
@@ -133,9 +179,7 @@ const store = new Vuex.Store({
       state.roomParams.money++
       state.roomParams.money--
     },
-    setName(state, name) {
-      state.gamerName = name
-    },
+
     setOwner(state) {
       state.isOwner = true
     },
@@ -149,12 +193,12 @@ const store = new Vuex.Store({
     // setRoomId(state, number) {
     //   state.roomId = number
     // },
-    setRoomParams(state, {
-      month
-    }) {
-      console.log('MONTH STATE', month)
-      state.roomParams.month = month
-    },
+    // setRoomParams(state, {
+    //   month
+    // }) {
+    //   console.log('MONTH STATE', month)
+    //   state.roomParams.month = month
+    // },
     doStep(state) {
       state.stepDone = true
     },
@@ -196,31 +240,31 @@ const store = new Vuex.Store({
       router.push('/choose')
     },
     SOCKET_setStartGame(state, roomParams) {
-      console.log('SET START GAME');
+      // console.log('SET START GAME');
       for (var key in state.roomParams) {
         state.prevRoomParams[key] = state.roomParams[key]
       }
-      console.log('~~~~~~~PREV~~~~~~')
-      console.log(state.prevRoomParams)
+      // console.log('~~~~~~~PREV~~~~~~')
+      // console.log(state.prevRoomParams)
       if (state.isStart) {
         state.firstRoomParams.month = roomParams.month + 0
       }
       state.isStart = false
       // if (state.roomParams.month == undefined) {
       state.roomParams = roomParams
-      console.log('Тут')
-      console.log(state.roomParams)
+      // console.log('Тут')
+      // console.log(state.roomParams)
       let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
       state.roomParams.clients = Math.ceil(clients)
-      console.log('Клиенты: ' + clients)
+      // console.log('Клиенты: ' + clients)
       let commCircul = clients * state.roomParams.averageCheck
       state.roomParams.commCircul = commCircul
-      console.log('commCircul: ' + commCircul)
+      // console.log('commCircul: ' + commCircul)
       let expenses = Math.ceil(clients * state.roomParams.realCostAttract)
       state.roomParams.expenses = expenses
-      console.log('expenses: ' + expenses)
+      // console.log('expenses: ' + expenses)
       let result = commCircul - expenses
-      console.log('result: ' + result)
+      // console.log('result: ' + result)
       let resultPerClient = result / clients
       state.roomParams.moneyPerClient = Math.ceil(resultPerClient)
       // }
@@ -273,8 +317,9 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    AUTH_REQUEST(context, user) {
+    AUTH_REQUEST: function (context, user) {
       let prom
+      let there = this
       try {
         prom = new Promise(function (resolve, reject) {
           // Promise используется для редиректа при входе в систему
@@ -290,8 +335,9 @@ const store = new Vuex.Store({
               localStorage.setItem('user-token', token)
               axios.defaults.headers.common['Authorization'] = token
               context.commit("AUTH_SUCCESS", token);
-
-              resolve(resp);
+              there._vm.$socket.disconnect();
+              there._vm.$socket.open();
+              resolve(token);
             }, error => {
               if (error.response) {
                 console.log(error.response.data);
@@ -323,14 +369,16 @@ const store = new Vuex.Store({
       } catch (err) {
         console.log(err);
       }
+
     },
     // Удаление всех данных при выходе из учётной записи
-    AUTH_LOGOUT: context => {
+    AUTH_LOGOUT: function (context) {
       return new Promise(resolve => {
         context.commit("AUTH_LOGOUT");
         context.token = "";
         localStorage.removeItem("user-token"); // удаляем токен из localstorage
         delete axios.defaults.headers.common["Authorization"];
+        this._vm.$socket.disconnect();
         resolve();
       });
     },
@@ -341,7 +389,26 @@ const store = new Vuex.Store({
             method: "GET"
           })
           .then(res => {
-            console.log(res);
+            // console.log(res);
+            resolve(res);
+          })
+          .catch(err => {
+            // console.log('ошибка xзагрузки', err);
+            reject(err);
+          })
+      })
+    },
+    TRY_RESET_ROOM: function (state) {
+      let there = this
+      return new Promise((resolve, reject) => {
+        axios({
+            url: `${apiUrl}/rooms/reset`,
+            method: "GET"
+          })
+          .then(res => {
+            console.log('FROM RESSETTING ROOM', res);
+            state.commit('SET_GAME_PARAMS', res);
+            there._vm.$socket.emit("subscribeRoom", res.data.room_id);
             resolve(res);
           })
           .catch(err => {
@@ -349,6 +416,10 @@ const store = new Vuex.Store({
             reject(err);
           })
       })
+    },
+    SET_ROOM_PARAMS: function (state, res) {
+      console.warn('FROM SETTING ROOM', res);
+      state.commit('SET_GAME_PARAMS', res);
     },
     SOCKET_gameEvent(state, eventObj) {
       console.log(eventObj)

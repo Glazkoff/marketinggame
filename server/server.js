@@ -705,7 +705,6 @@ io.on("connection", function (socket) {
         io.sockets.to(socket.roomId).emit("setGamers", gamerNamesObj);
       }
     } else {
-      // TODO: Отправить событие на перезагрузку данных
       // io.sockets.to(socket.id).emit("resetData");
       io.sockets.to(socket.id).emit("addMessage", {
         name: "Admin",
