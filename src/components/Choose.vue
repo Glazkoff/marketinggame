@@ -119,7 +119,7 @@
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
 import { required } from "vuelidate/lib/validators";
-let apiUrl = "http://localhost:3001/api";
+let apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
 export default {
   name: "Choose",
   data() {

@@ -66,6 +66,7 @@ export default {
         typeof vm.$store.state.roomParams.money === "undefined"
       ) {
         try {
+          console.log("ENV ", process.env.VUE_APP_API_URL);
           console.log(await vm.$store.dispatch("TRY_RESET_ROOM"));
         } catch (error) {
           console.log(error);
