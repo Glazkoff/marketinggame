@@ -571,7 +571,6 @@ app.get("/api/rooms/reset", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        // decoded.id
         const Op = Sequelize.Op;
         let room = await Rooms.findOne({
           where: {
@@ -601,6 +600,10 @@ app.get("/api/rooms/reset", async (req, res) => {
               room
             });
           } else {
+            let gamerNamesObj = {
+              gamers: room.users_steps_state
+            };
+
             res.send({
               room_id: room.room_id,
               owner_id: room.owner_id,
@@ -609,7 +612,8 @@ app.get("/api/rooms/reset", async (req, res) => {
               prev_room_params: userInRoom.prev_room_params,
               gamer_room_params: userInRoom.gamer_room_params,
               is_finished: room.is_finished,
-              winners: room.winners
+              winners: room.winners,
+              gamers: gamerNamesObj
             });
           }
         }
@@ -684,16 +688,21 @@ io.on(
         }
       });
       let participantsSteps = [];
-      room.participants_id.forEach(async id => {
+
+      for (let index = 0; index < room.participants_id.length; index++) {
+        const id = room.participants_id[index];
         let user = await Users.findByPk(id);
+        console.log(chalk.redBright("USER", JSON.stringify(user)));
         if (user) {
           participantsSteps.push({
             name: user.name,
             id: id,
-            isattacker: false
+            isattacker: false,
+            steps: []
           });
         }
-      });
+      }
+      console.log(chalk.redBright(JSON.stringify(participantsSteps)));
 
       if (room) {
         await Rooms.update(
@@ -710,17 +719,10 @@ io.on(
       }
       console.log(chalk.bgBlue("Старт в комнате #" + socket.roomId));
       io.in(data.room_id).emit("SET_GAME_START", false);
-      // let gamersSteps = []
-      // let room = await Rooms.
       let gamerNamesObj = {
         gamers: participantsSteps
       };
       io.in(data.room_id).emit("setGamers", gamerNamesObj);
-      // {
-      //         //   name: socket.name,
-      //         //   id: socket.id,
-      //         //   isattacker: false
-      //         // }
     } catch (error) {
       console.log(error);
     }
@@ -750,6 +752,25 @@ io.on(
         order: [["updatedAt", "DESC"]]
       });
       room = room.dataValues;
+
+      room.users_steps_state.find(
+        el => el.id === socket.decoded_token.id
+      ).isattacker = true;
+      console.log(chalk.bgGreen(JSON.stringify(room.users_steps_state)));
+      await Rooms.update(
+        {
+          users_steps_state: room.users_steps_state
+        },
+        {
+          where: {
+            room_id: room.room_id
+          }
+        }
+      );
+      let gamerNamesObj = {
+        gamers: room.users_steps_state
+      };
+      io.in(room.room_id).emit("setGamers", gamerNamesObj);
 
       // Копируем неизменённые данные в колонку "предыдущие"
       gamer.prev_room_params = {
@@ -1067,7 +1088,12 @@ io.on(
       // TODO: Посылаем событие на изменение статуса участника
       //     io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
 
-      console.log(chalk.bgYellow(room.users_steps_state));
+      console.log(
+        chalk.bgYellow(
+          "room.users_steps_state",
+          JSON.stringify(room.users_steps_state)
+        )
+      );
       let usersStepsState = [];
       // Если в комнате уже были шаги
       if (room.users_steps_state !== null) {
@@ -1208,6 +1234,7 @@ io.on(
         if (didStepCurrMonth === room.participants_id.length) {
           console.log("Все пользователи сделали ход");
           allGamersDoStep = true;
+          io.in(socket.roomId).emit("doNextStep");
         }
         // Если число сходивших не равно количеству участников
         else {
@@ -1246,13 +1273,6 @@ io.on(
         );
       }
 
-      //     // Если все в комнате завершили ход
-      //     if (room.attackers === 0) {
-      //       room.roomState.month--;
-      //       // console.log(room.roomState.month);
-      //       // console.log("Обновление данных для ВСЕХ");
-
-      // setTimeout(() => {
       if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
         console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
 
@@ -1324,9 +1344,8 @@ io.on(
             }
           }
         }
-        // socket.emit("gameEvent");
-        io.sockets.to(room.roomId).emit("gameEvent", randomEvent);
-        io.sockets.to(room.roomId).emit("addMessage", {
+        io.in(room.room_id).emit("gameEvent", randomEvent);
+        io.in(room.room_id).emit("addMessage", {
           name: "СОБЫТИЕ!",
           text: `${randomEvent.description}`
         });
@@ -1350,13 +1369,9 @@ io.on(
           }
         };
         io.sockets.to(usersAndSockets[gamerId]).emit("SET_GAME_PARAMS", obj);
+
         // Отправка новых данных состояния пользователю
       }
-      socket.emit("doNextStep");
-      io.sockets.to(socket.roomId).emit("doNextStep");
-      // }, 1000);
-      // TODO: зачем здесь таймаут?
-      //     }
 
       for (let index = 0; index < gamer.changes.length; index++) {
         const changing = gamer.changes[index];

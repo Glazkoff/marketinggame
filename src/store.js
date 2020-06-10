@@ -118,6 +118,11 @@ const store = new Vuex.Store({
       state.roomId = res.data.room_id;
       state.isFinish = res.data.is_finished;
       state.winners = res.data.winners;
+      console.log('GAMERS:', res.data);
+      if (res.data.gamers !== undefined) {
+        state.gamers = [...res.data.gamers.gamers]
+      }
+      // state.gamers = res.data.gamers.gamers;
       console.log("SET_GAME_PARAMS: ", res);
       let decode = await jwt.decode(state.token);
       if (res.data.owner_id === decode.id) {
@@ -175,7 +180,7 @@ const store = new Vuex.Store({
     },
     SOCKET_setGamers(state, obj) {
       state.gamers = [...obj.gamers]
-      state.prevRoomParams = {}
+      // state.prevRoomParams = {}
     },
     /* *********************************** */
     // resetData(state) {

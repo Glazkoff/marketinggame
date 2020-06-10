@@ -1,6 +1,10 @@
 <template>
   <div id="splitScr">
+    <div v-if="loading" class="loader-wrap">
+      <Loader></Loader>
+    </div>
     <div
+      v-else
       class="main-side"
       :style="{ display: isFinish ? 'flex' : 'unset' }"
       :class="{ 'full-screen': !adminNav }"
@@ -24,18 +28,22 @@
 import Chat from "@/components/Chat.vue";
 import PlayGround from "@/components/PlayGround.vue";
 import Finish from "@/components/Finish.vue";
+import Loader from "@/components/Loader.vue";
 
 require("bootstrap/dist/css/bootstrap.css");
 
 export default {
   name: "Main",
   data() {
-    return {};
+    return {
+      loading: false
+    };
   },
   components: {
     Chat,
     PlayGround,
-    Finish
+    Finish,
+    Loader
   },
   methods: {
     leaveRoom() {
@@ -61,14 +69,18 @@ export default {
       //   if (vm.$store.state.roomId === -1) {
       //     next("/choose");
       //   } else {
+
       if (
         isNaN(vm.$store.state.roomParams.money) ||
         typeof vm.$store.state.roomParams.money === "undefined"
       ) {
+        vm.loading = true;
         try {
-          console.log(await vm.$store.dispatch("TRY_RESET_ROOM"));
+          await vm.$store.dispatch("TRY_RESET_ROOM");
+          vm.loading = false;
         } catch (error) {
           console.log(error);
+          vm.loading = false;
         }
       }
       return true;
