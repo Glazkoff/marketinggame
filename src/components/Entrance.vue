@@ -208,7 +208,7 @@ export default {
         this.formClicked = true;
       }
     }, 100);
-    this.$store.commit("resetData");
+    // this.$store.commit("resetData");
     this.startTimeline();
   },
   computed: {

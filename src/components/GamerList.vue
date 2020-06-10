@@ -52,7 +52,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.commit("notNotOwner");
+    // this.$store.commit("notNotOwner");
   }
 };
 </script>

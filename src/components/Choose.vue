@@ -221,7 +221,6 @@ export default {
         .then(res => {
           console.log("ДАН КОМНАТЫ", res.data);
           this.loading = false;
-          this.$store.commit("setOwner");
           this.setRoomParams(res);
         })
         .catch(err => {
@@ -246,6 +245,7 @@ export default {
           .post(apiUrl + "/rooms/join/" + this.roomIdJoin, this.roomParams)
           .then(res => {
             console.log("ДАН КОМНАТЫ", res.data.first_params);
+            console.warn("JOIN RES", res);
             this.setRoomParams(res);
             this.loading = false;
           })

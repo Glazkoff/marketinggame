@@ -82,11 +82,11 @@ export default {
   beforeRouteLeave(to, from, next) {
     // вызывается перед переходом от пути, соответствующего текущему компоненту;
     // имеет доступ к контексту экземпляра компонента `this`.
+    this.$socket.emit("roomLeave");
+    this.leaveRoom();
     // const answer = window.confirm(
     //   "Вы хотите уйти? У вас есть несохранённые изменения!"
     // );
-    this.leaveRoom();
-
     // if (answer) {
     next();
     // } else {

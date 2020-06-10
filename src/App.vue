@@ -65,8 +65,8 @@ export default {
       let name = decode.name;
       // this.$socket.emit("setName", name);
       this.$store.commit("SET_NAME", name);
-      console.log("setStateFromLS");
-      this.$store.commit("setStateFromLS");
+      // console.log("setStateFromLS");
+      // this.$store.commit("setStateFromLS");
       if (this.$store.state.gamerName) {
         this.$socket.emit("setName", this.$store.state.gamerName);
       }
@@ -156,9 +156,7 @@ body {
   color: #fff;
   background-color: #007bff;
   border: none;
-  /* position: absolute; */
   position: fixed;
-  /* bottom: -30px; */
   top: 0;
   right: 0;
   height: 40px;
@@ -169,6 +167,7 @@ body {
 }
 .admin-btn[disabled] {
   background-color: #6bb3ff;
+  visibility: hidden;
 }
 .admin-show {
   position: relative;
