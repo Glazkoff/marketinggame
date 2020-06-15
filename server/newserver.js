@@ -548,29 +548,30 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 userInRoom.prev_room_params;
               findRoom.dataValues.gamer_room_params =
                 userInRoom.gamer_room_params;
-              let usersState = await Rooms.findOne({
-                attributes: ["users_steps_state"],
-                where: {
-                  room_id: req.params.id
-                }
-              });
-              let index = usersState.users_steps_state.findIndex(
-                el => el.id === decoded.id
-              );
-              if (index !== -1) {
-                usersState.users_steps_state[index].isdisconnected = false;
-                await Rooms.update(
-                  {
-                    users_steps_state: usersState.users_steps_state
-                  },
-                  { where: { room_id: req.params.id } }
+
+              if (findRoom.dataValues.users_steps_state !== null) {
+                let index = findRoom.dataValues.users_steps_state.findIndex(
+                  el => el.id === decoded.id
                 );
-                let gamerNamesObj = {
-                  gamers: usersState.users_steps_state
-                };
-                io.in(req.params.id).emit("setGamers", gamerNamesObj);
+                if (index !== -1) {
+                  findRoom.dataValues.users_steps_state[
+                    index
+                  ].isdisconnected = false;
+                  await Rooms.update(
+                    {
+                      users_steps_state: findRoom.dataValues.users_steps_state
+                    },
+                    { where: { room_id: req.params.id } }
+                  );
+                  let gamerNamesObj = {
+                    gamers: findRoom.dataValues.users_steps_state
+                  };
+                  res.send(findRoom.dataValues);
+                  io.in(req.params.id).emit("setGamers", gamerNamesObj);
+                }
+              } else {
+                res.send(findRoom.dataValues);
               }
-              res.send(findRoom.dataValues);
             }
           }
         }
@@ -1930,7 +1931,6 @@ io.on(
   socket.on("disconnect", async function() {
     const Op = Sequelize.Op;
     let room = await Rooms.findOne({
-      // attributes: ["users_steps_state"],
       where: {
         participants_id: {
           [Op.contains]: socket.decoded_token.id
