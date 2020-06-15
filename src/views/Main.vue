@@ -48,7 +48,7 @@ export default {
   methods: {
     leaveRoom() {
       console.log("Ушёл из комнаты!");
-      this.$socket.emit("leaveRoom");
+      this.$socket.emit("leaveRoom", this.roomNumber);
       this.$store.state.messages = [];
       this.$store.state.isStart = true;
       this.$store.state.isOwner = false;
@@ -94,7 +94,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     // вызывается перед переходом от пути, соответствующего текущему компоненту;
     // имеет доступ к контексту экземпляра компонента `this`.
-    this.$socket.emit("roomLeave");
+    this.$socket.emit("roomLeave", this.roomNumber);
     this.leaveRoom();
     // const answer = window.confirm(
     //   "Вы хотите уйти? У вас есть несохранённые изменения!"

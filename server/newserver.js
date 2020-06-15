@@ -548,6 +548,28 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 userInRoom.prev_room_params;
               findRoom.dataValues.gamer_room_params =
                 userInRoom.gamer_room_params;
+              let usersState = await Rooms.findOne({
+                attributes: ["users_steps_state"],
+                where: {
+                  room_id: req.params.id
+                }
+              });
+              let index = usersState.users_steps_state.findIndex(
+                el => el.id === decoded.id
+              );
+              if (index !== -1) {
+                usersState.users_steps_state[index].isdisconnected = false;
+                await Rooms.update(
+                  {
+                    users_steps_state: usersState.users_steps_state
+                  },
+                  { where: { room_id: req.params.id } }
+                );
+                let gamerNamesObj = {
+                  gamers: usersState.users_steps_state
+                };
+                io.in(req.params.id).emit("setGamers", gamerNamesObj);
+              }
               res.send(findRoom.dataValues);
             }
           }
@@ -600,10 +622,22 @@ app.get("/api/rooms/reset", async (req, res) => {
               room
             });
           } else {
+            let usersState = await Rooms.findOne({
+              attributes: ["users_steps_state"],
+              where: {
+                room_id: room.room_id
+              }
+            });
+            let index = usersState.users_steps_state.findIndex(
+              el => el.id === decoded.id
+            );
+            if (index !== -1) {
+              usersState.users_steps_state[index].isdisconnected = false;
+            }
             let gamerNamesObj = {
-              gamers: room.users_steps_state
+              gamers: usersState.users_steps_state
             };
-
+            io.in(room.room_id).emit("setGamers", gamerNamesObj);
             res.send({
               room_id: room.room_id,
               owner_id: room.owner_id,
@@ -672,10 +706,34 @@ io.on(
   });
 
   // При выходе из комнаты
-  socket.on("roomLeave", () => {
-    console.log(
-      "Пользователь " + socket.decoded_token.id + " уходит из комнаты!"
+  socket.on("roomLeave", async roomId => {
+    let usersState = await Rooms.findOne({
+      attributes: ["users_steps_state"],
+      where: {
+        room_id: roomId
+      }
+    });
+    let index = usersState.users_steps_state.findIndex(
+      el => el.id === socket.decoded_token.id
     );
+    if (index !== -1) {
+      usersState.users_steps_state[index].isdisconnected = true;
+      await Rooms.update(
+        {
+          users_steps_state: usersState.users_steps_state
+        },
+        { where: { room_id: roomId } }
+      );
+      let gamerNamesObj = {
+        gamers: usersState.users_steps_state
+      };
+      io.in(roomId).emit("setGamers", gamerNamesObj);
+      console.log(
+        chalk.bgBlue(
+          "Пользователь " + socket.decoded_token.id + " уходит из комнаты!"
+        )
+      );
+    }
   });
   // TODO: присылать список игроков
   // При старте игры в комнате
@@ -1869,7 +1927,30 @@ io.on(
   });
 
   // При потере подключения
-  socket.on("disconnect", function() {
+  socket.on("disconnect", async function() {
+    const Op = Sequelize.Op;
+    let room = await Rooms.findOne({
+      // attributes: ["users_steps_state"],
+      where: {
+        participants_id: {
+          [Op.contains]: socket.decoded_token.id
+        },
+        completed: false
+      },
+      order: [["updatedAt", "DESC"]]
+    });
+    if (room) {
+      let index = room.users_steps_state.findIndex(
+        el => el.id === socket.decoded_token.id
+      );
+      if (index !== -1) {
+        room.users_steps_state[index].isdisconnected = true;
+      }
+      let gamerNamesObj = {
+        gamers: room.users_steps_state
+      };
+      io.in(room.room_id).emit("setGamers", gamerNamesObj);
+    }
     connections.splice(connections.indexOf(socket.id), 1);
     console.log("Подключения:");
     console.log(connections);

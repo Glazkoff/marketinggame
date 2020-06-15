@@ -11,16 +11,28 @@
         v-for="(gamer, count) in gamers"
         :key="count"
         :class="{
-          'list-group-item-primary': gamer.isattacker,
-          'list-group-item-warning': !gamer.isattacker
+          'list-group-item-primary': gamer.isattacker && !gamer.isdisconnected,
+          'list-group-item-warning': !gamer.isattacker && !gamer.isdisconnected,
+          'list-group-item-danger': gamer.isdisconnected
         }"
       >
         <button v-if="isOwner" @click="kickUser(gamer)">&#x2715;</button>
         {{ gamer.name }}
-        <span class="badge badge-primary badge-pill" v-if="gamer.isattacker"
+        <span
+          class="badge badge-primary badge-pill"
+          v-if="gamer.isattacker && !gamer.isdisconnected"
           >Сделал ход</span
         >
-        <span class="badge badge-warning badge-pill" v-else>Размышляет</span>
+        <span
+          class="badge badge-warning badge-pill"
+          v-else-if="!gamer.isattacker && !gamer.isdisconnected"
+          >Размышляет</span
+        >
+        <span
+          class="badge badge-danger badge-pill"
+          v-else-if="gamer.isdisconnected"
+          >Отключён</span
+        >
       </li>
     </ul>
   </div>
