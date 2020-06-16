@@ -316,6 +316,7 @@ const CARDS = require("./cards");
 const EVENTS = require("./events");
 const DEFAULTROOMS = require("./defaultrooms");
 const ONEWAYCARDS = require("./onewaycards.js");
+const { decode } = require("punycode");
 
 /** ************************** Модуль API *********************** */
 
@@ -512,6 +513,31 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               return el === decoded.id;
             });
             if (isSet === -1) {
+              if (!findRoom.is_start) {
+                await Rooms.update(
+                  {
+                    users_steps_state: sequelize.fn(
+                      "array_append",
+                      sequelize.col("users_steps_state"),
+                      JSON.stringify({
+                        id: decoded.id,
+                        name: decoded.name,
+                        steps: [
+                          {
+                            month: findRoom.current_month,
+                            makeStep: true
+                          }
+                        ]
+                      })
+                    )
+                  },
+                  {
+                    where: {
+                      room_id: findRoom.room_id
+                    }
+                  }
+                );
+              }
               participantsArray.push(decoded.id);
               await Rooms.update(
                 {
@@ -574,6 +600,11 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               }
             }
           }
+          findRoom = await Rooms.findByPk(findRoom.room_id);
+          let gamerNamesObj = {
+            gamers: findRoom.users_steps_state
+          };
+          io.in(findRoom.room_id).emit("setGamers", gamerNamesObj);
         }
       }
     }
@@ -629,27 +660,34 @@ app.get("/api/rooms/reset", async (req, res) => {
                 room_id: room.room_id
               }
             });
-            let index = usersState.users_steps_state.findIndex(
-              el => el.id === decoded.id
-            );
-            if (index !== -1) {
-              usersState.users_steps_state[index].isdisconnected = false;
+            if (usersState.users_steps_state != null) {
+              let index = usersState.users_steps_state.findIndex(
+                el => el.id === decoded.id
+              );
+              if (index !== -1) {
+                usersState.users_steps_state[index].isdisconnected = false;
+              }
+              let gamerNamesObj = {
+                gamers: usersState.users_steps_state
+              };
+              io.in(room.room_id).emit("setGamers", gamerNamesObj);
+              res.send({
+                room_id: room.room_id,
+                owner_id: room.owner_id,
+                is_start: room.is_start,
+                first_params: room.first_params,
+                prev_room_params: userInRoom.prev_room_params,
+                gamer_room_params: userInRoom.gamer_room_params,
+                is_finished: room.is_finished,
+                winners: room.winners,
+                gamers: gamerNamesObj
+              });
+            } else {
+              res.status(404).send({
+                status: 404,
+                message: "Ошибка сервера"
+              });
             }
-            let gamerNamesObj = {
-              gamers: usersState.users_steps_state
-            };
-            io.in(room.room_id).emit("setGamers", gamerNamesObj);
-            res.send({
-              room_id: room.room_id,
-              owner_id: room.owner_id,
-              is_start: room.is_start,
-              first_params: room.first_params,
-              prev_room_params: userInRoom.prev_room_params,
-              gamer_room_params: userInRoom.gamer_room_params,
-              is_finished: room.is_finished,
-              winners: room.winners,
-              gamers: gamerNamesObj
-            });
           }
         }
 
