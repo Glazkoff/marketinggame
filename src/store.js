@@ -34,7 +34,11 @@ const store = new Vuex.Store({
     activeEffects: [],
     steps: [],
     gameEvent: null,
-    completedSessions: []
+    completedSessions: [],
+    admin: {
+      rooms: [],
+      usersInRoom: []
+    }
   },
   getters: {
     // Логическое значение - авторизован или нет
@@ -85,10 +89,10 @@ const store = new Vuex.Store({
     },
     TRY_RESET_ROOM_PARAMS: state => {
       axios({
-          url: `${apiUrl}/rooms/reset`,
-          // data: user,
-          method: "GET"
-        })
+        url: `${apiUrl}/rooms/reset`,
+        // data: user,
+        method: "GET"
+      })
         .then(
           resp => {
             console.log("TRY_RESET_ROOM_PARAMS");
@@ -118,9 +122,9 @@ const store = new Vuex.Store({
       state.roomId = res.data.room_id;
       state.isFinish = res.data.is_finished;
       state.winners = res.data.winners;
-      console.log('GAMERS:', res.data);
+      console.log("GAMERS:", res.data);
       if (res.data.gamers !== undefined) {
-        state.gamers = [...res.data.gamers.gamers]
+        state.gamers = [...res.data.gamers.gamers];
       }
       console.log("SET_GAME_PARAMS: ", res);
       let decode = await jwt.decode(state.token);
@@ -178,7 +182,7 @@ const store = new Vuex.Store({
       state.winners = Object.assign(winnersObj);
     },
     SOCKET_setGamers(state, obj) {
-      state.gamers = [...obj.gamers]
+      state.gamers = [...obj.gamers];
       // state.prevRoomParams = {}
     },
     /* *********************************** */
@@ -209,13 +213,18 @@ const store = new Vuex.Store({
     // SOCKET_resetData(state) {
     //   this.commit('resetData');
     // },
-    // changeAdminNav(state) {
-    //   state.adminNav = !state.adminNav
-    // },
-    // changeAdminStatus(state) {
-    //   state.isAdmin = !state.isAdmin
-    // },
-
+    changeAdminNav(state) {
+      state.adminNav = !state.adminNav;
+    },
+    changeAdminStatus(state) {
+      state.isAdmin = !state.isAdmin;
+    },
+    SET_ADMIN_ROOMS(state, rooms) {
+      state.admin.rooms = rooms;
+    },
+    SET_ADMIN_USERS_IN_ROOMS(state, users) {
+      state.admin.usersInRoom = users;
+    }
     // copyData(state, data) {
     //   state.roomParams = {}
     //   for (var key in data) {
@@ -332,18 +341,18 @@ const store = new Vuex.Store({
     // }
   },
   actions: {
-    AUTH_REQUEST: function (context, user) {
+    AUTH_REQUEST: function(context, user) {
       let prom;
       let there = this;
       try {
-        prom = new Promise(function (resolve, reject) {
+        prom = new Promise(function(resolve, reject) {
           // Promise используется для редиректа при входе в систему
           context.commit("AUTH_REQUEST");
           axios({
-              url: `${apiUrl}/login`,
-              data: user,
-              method: "POST"
-            })
+            url: `${apiUrl}/login`,
+            data: user,
+            method: "POST"
+          })
             .then(
               resp => {
                 console.log("AUTHORIZATION", resp.data);
@@ -390,7 +399,7 @@ const store = new Vuex.Store({
       }
     },
     // Удаление всех данных при выходе из учётной записи
-    AUTH_LOGOUT: function (context) {
+    AUTH_LOGOUT: function(context) {
       return new Promise(resolve => {
         context.commit("AUTH_LOGOUT");
         context.token = "";
@@ -403,9 +412,9 @@ const store = new Vuex.Store({
     LOAD_DEFAULT_ROOM: state => {
       return new Promise((resolve, reject) => {
         axios({
-            url: `${apiUrl}/default/room`,
-            method: "GET"
-          })
+          url: `${apiUrl}/default/room`,
+          method: "GET"
+        })
           .then(res => {
             // console.log(res);
             resolve(res);
@@ -416,13 +425,13 @@ const store = new Vuex.Store({
           });
       });
     },
-    TRY_RESET_ROOM: function (state) {
+    TRY_RESET_ROOM: function(state) {
       let there = this;
       return new Promise((resolve, reject) => {
         axios({
-            url: `${apiUrl}/rooms/reset`,
-            method: "GET"
-          })
+          url: `${apiUrl}/rooms/reset`,
+          method: "GET"
+        })
           .then(res => {
             console.log("FROM RESSETTING ROOM", res);
             state.commit("SET_GAME_PARAMS", res);
@@ -435,9 +444,41 @@ const store = new Vuex.Store({
           });
       });
     },
-    SET_ROOM_PARAMS: function (state, res) {
+    SET_ROOM_PARAMS: function(state, res) {
       console.warn("FROM SETTING ROOM", res);
       state.commit("SET_GAME_PARAMS", res);
+    },
+    GET_ADMIN_ROOMS: function name(state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/rooms`,
+          method: "GET"
+        })
+          .then(res => {
+            state.commit("SET_ADMIN_ROOMS", res.data);
+            resolve(res.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_USERS_IN_ROOMS(state, roomId) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/rooms/${roomId}/users`,
+          method: "GET"
+        })
+          .then(res => {
+            state.commit("SET_ADMIN_USERS_IN_ROOMS", res.data);
+            resolve(res.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
     },
     SOCKET_SET_GAME_PARAMS(state, res) {
       console.warn("FROM SOCKET SETTING ROOM", res);

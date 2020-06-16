@@ -316,9 +316,53 @@ const CARDS = require("./cards");
 const EVENTS = require("./events");
 const DEFAULTROOMS = require("./defaultrooms");
 const ONEWAYCARDS = require("./onewaycards.js");
-const { decode } = require("punycode");
+// const { decode } = require("punycode");
 
 /** ************************** Модуль API *********************** */
+
+// Получение всех пользователей комнаты для админпанели
+app.get("/api/admin/rooms/:id/users", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await UsersInRooms.findAll({
+          where: {
+            room_id: req.params.id
+          }
+        });
+        res.send(result);
+      }
+    }
+  );
+});
+
+// Получение всех комнат для админпанели
+app.get("/api/admin/rooms", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Rooms.findAll({
+          order: [["room_id", "DESC"]]
+        });
+        res.send(result);
+      }
+    }
+  );
+});
 
 // Авторизация
 app.post("/api/login", (req, res) => {
@@ -587,7 +631,11 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                     {
                       users_steps_state: findRoom.dataValues.users_steps_state
                     },
-                    { where: { room_id: req.params.id } }
+                    {
+                      where: {
+                        room_id: req.params.id
+                      }
+                    }
                   );
                   let gamerNamesObj = {
                     gamers: findRoom.dataValues.users_steps_state
@@ -761,7 +809,11 @@ io.on(
         {
           users_steps_state: usersState.users_steps_state
         },
-        { where: { room_id: roomId } }
+        {
+          where: {
+            room_id: roomId
+          }
+        }
       );
       let gamerNamesObj = {
         gamers: usersState.users_steps_state
