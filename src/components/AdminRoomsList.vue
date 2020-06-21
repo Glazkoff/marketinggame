@@ -14,6 +14,12 @@
           />
         </div>
       </div>
+      <button
+        class="btn btn-success btn-block btn-lg"
+        @click="reloadRoomsList()"
+      >
+        Обновить список
+      </button>
       <div class="container-fluid mt-2">
         <div class="row">
           <div class="card-columns">
@@ -26,9 +32,9 @@
             >
               <div class="card-body">
                 <h5 class="card-title">Комната #{{ room.room_id }}</h5>
-                <p class="card-text">
+                <!-- <p class="card-text">
                   Текст о комнате
-                </p>
+                </p> -->
               </div>
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -98,19 +104,35 @@ export default {
   components: {
     Loader
   },
-  beforeRouteEnter(to, from, next) {
-    next(async vm => {
-      vm.loading = true;
-      vm.$store.dispatch("GET_ADMIN_ROOMS").then(
+  methods: {
+    reloadRoomsList() {
+      this.loading = true;
+      this.$store.dispatch("GET_ADMIN_ROOMS").then(
         res => {
-          vm.loading = false;
+          this.loading = false;
           console.log(res);
         },
         err => {
-          vm.loading = false;
+          this.loading = false;
           console.log(err);
         }
       );
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      vm.reloadRoomsList();
+      // vm.loading = true;
+      // vm.$store.dispatch("GET_ADMIN_ROOMS").then(
+      //   res => {
+      //     vm.loading = false;
+      //     console.log(res);
+      //   },
+      //   err => {
+      //     vm.loading = false;
+      //     console.log(err);
+      //   }
+      // );
     });
   }
 };

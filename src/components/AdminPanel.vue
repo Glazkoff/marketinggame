@@ -6,21 +6,21 @@
           <router-link
             tag="div"
             class="menu-point"
+            to="/admin"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            Оповещения
+          </router-link>
+          <router-link
+            tag="div"
+            class="menu-point"
             to="/admin/rooms"
             active-class="menu-point-active"
             :exact="true"
           >
             Состояния комнат</router-link
           >
-          <router-link
-            tag="div"
-            class="menu-point menu-point-disabled"
-            to="/admin"
-            active-class="menu-point-active"
-            :exact="true"
-          >
-            Главная
-          </router-link>
           <router-link
             tag="div"
             :disabled="true"
