@@ -12,9 +12,13 @@ const bcrypt = require("bcrypt");
 const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
+const history = require("connect-history-api-fallback");
 
 const app = express();
 let port = process.env.PORT || 3001;
+
+// Корректная работа режима HTML5 history
+app.use(history());
 
 // Сжатие gzip
 app.use(compression());
