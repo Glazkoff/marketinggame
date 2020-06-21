@@ -46,10 +46,12 @@ axios.interceptors.response.use(
     return response;
   },
   function(error) {
-    if (error.response.status === 401) {
-      console.log("Неавторизован ...");
-      localStorage.removeItem("user-token");
-      router.push("login");
+    if (error.response !== undefined) {
+      if (error.response.status === 401) {
+        console.log("Неавторизован ...");
+        localStorage.removeItem("user-token");
+        router.push("login");
+      }
     }
     return Promise.reject(error.response);
   }
