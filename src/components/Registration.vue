@@ -142,7 +142,9 @@ export default {
         })
         .catch(err => {
           this.loading = false;
-          this.serverError = err.data.message;
+          if (err.data !== undefined) {
+            this.serverError = err.data.message;
+          }
           console.log("ERROR:", err);
         });
     },
