@@ -159,6 +159,19 @@
           </small>
         </div>
         <button
+          v-if="authLoading"
+          class="btn btn-lg btn-primary btn-block"
+          disabled
+        >
+          <span
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          Загрузка...
+        </button>
+        <button
+          v-else
           class="btn btn-lg btn-primary btn-block"
           @click="tryAuth()"
           :disabled="$v.$invalid"
@@ -186,7 +199,8 @@ export default {
       serverError: "",
       login: "",
       password: "",
-      wasClicked: false
+      wasClicked: false,
+      authLoading: false
     };
   },
   components: {
@@ -228,6 +242,7 @@ export default {
   methods: {
     // Попытка авторизации
     tryAuth() {
+      this.authLoading = true;
       const authData = {
         login: this.login,
         password: this.password
@@ -241,15 +256,18 @@ export default {
             // this.$socket.emit("authenticate", {
             //   token
             // });
+            this.authLoading = false;
             this.$router.push("/choose");
           },
           err => {
             this.errorMessage = err;
             this.serverError = err.data.message;
+            this.authLoading = false;
             console.log("ОШИБКА ВХОДА: ", err.data.message);
           }
         );
       } catch (error) {
+        this.authLoading = false;
         this.errorMessage = error;
       }
     },
