@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Toasts></Toasts>
     <button
       class="admin-btn"
       @click="changeAdminNav"
@@ -52,6 +53,35 @@ export default {
         // TODO: Пушить роутер на страницу авторизации, если другой путь
         console.error("Плохой токен");
         // this.$router.push("Home");
+      }
+    },
+    setToast: function(toast) {
+      switch (toast.type) {
+        case "success":
+          this.$toast.success(toast.body, {
+            showProgress: true,
+            timeOut: toast.timeOut
+          });
+          break;
+        case "warning":
+          this.$toast.warning(toast.body, {
+            showProgress: true,
+            timeOut: toast.timeOut
+          });
+          break;
+        case "danger":
+          this.$toast.error(toast.body, {
+            showProgress: true,
+            timeOut: toast.timeOut
+          });
+          break;
+        case "info":
+        default:
+          this.$toast.info(toast.body, {
+            showProgress: true,
+            timeOut: toast.timeOut
+          });
+          break;
       }
     }
   },
@@ -184,5 +214,15 @@ body {
 }
 .loader-wrap > * {
   margin: auto;
+}
+@media (max-width: 930px) {
+  .toast-container {
+    right: 1rem !important;
+    width: calc(100vw - 2rem) !important;
+    min-width: calc(100vw - 2rem) !important;
+  }
+  .toast {
+    max-width: calc(100vw - 2rem) !important;
+  }
 }
 </style>

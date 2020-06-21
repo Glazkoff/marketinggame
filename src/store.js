@@ -185,6 +185,7 @@ const store = new Vuex.Store({
       state.gamers = [...obj.gamers];
       // state.prevRoomParams = {}
     },
+    SOCKET_setToast(state, toast) {},
     /* *********************************** */
     // resetData(state) {
     //   console.log('RESET!')

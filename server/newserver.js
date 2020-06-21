@@ -801,6 +801,12 @@ io.on(
   console.log("Авторизованные подключения:", connections);
   console.log("Сопоставление сокетов с пользователями: ", usersAndSockets);
 
+  // Рассылка нового тоста
+  socket.on("addToast", toast => {
+    console.log(chalk.bgCyan(JSON.stringify(toast)));
+    io.emit("setToast", toast);
+  });
+
   // Прикрепление пользователя к комнате
   socket.on("subscribeRoom", roomId => {
     socket.join(roomId, () => {
