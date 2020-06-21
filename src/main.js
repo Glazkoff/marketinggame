@@ -16,10 +16,8 @@ Vue.use(Vuelidate);
 
 Vue.use(
   new VueSocketIO({
-    debug: true,
-    connection: "http://localhost:3001",
-    // debug: false,
-    // connection: 'https://marketing-game.herokuapp.com/',
+    debug: process.env.NODE_ENV !== "production",
+    connection: process.env.VUE_APP_API_URL,
     vuex: {
       store,
       actionPrefix: "SOCKET_",
