@@ -55,6 +55,12 @@ export default {
         // this.$router.push("Home");
       }
     },
+    error: function(err) {
+      console.log("SOCKET IO ERROR: ", err);
+    },
+    success: function(data) {
+      console.log("SOCKET IO SUCCESS: ", data);
+    },
     setToast: function(toast) {
       switch (toast.type) {
         case "success":

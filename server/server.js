@@ -13,6 +13,7 @@ const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
 const history = require("connect-history-api-fallback");
+const jwtAuth = require("socketio-jwt-auth");
 
 const app = express();
 let port = process.env.PORT || 3001;
@@ -790,17 +791,22 @@ io.use(function(socket, next) {
       err,
       decoded
     ) {
-      if (err) return next(new Error("Authentication error"));
-      console.log(
-        chalk.bgRed("DECODED TOKEN FROM SOCKET: ", JSON.stringify(decoded))
-      );
+      if (err) {
+        console.log(chalk.bgBlue(err));
+        return next(new Error("Authentication error"));
+      }
       socket.decoded_token = decoded;
       next();
     });
   } else {
     next(new Error("Authentication error"));
   }
-}).on("connection", socket => {
+});
+io.on("connection", async socket => {
+  socket.decoded_token = await jwt.decode(socket.handshake.query.token);
+  console.log(
+    chalk.bgBlue(`Пользователь #${socket.decoded_token.id} авторизован`)
+  );
   // Сокет авторизован, можем обрабатывать события от него
   connections.push(socket.id);
   usersAndSockets[socket.decoded_token.id] = socket.id;
@@ -2064,7 +2070,7 @@ io.use(function(socket, next) {
       },
       order: [["updatedAt", "DESC"]]
     });
-    if (room) {
+    if (room && room.users_steps_state !== null) {
       let index = room.users_steps_state.findIndex(
         el => el.id === socket.decoded_token.id
       );

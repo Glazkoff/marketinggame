@@ -17,7 +17,7 @@ Vue.use(Vuelidate);
 Vue.use(
   new VueSocketIO({
     debug: process.env.NODE_ENV !== "production",
-    connection: process.env.VUE_APP_API_URL,
+    connection: process.env.VUE_APP_SOCKET_URL,
     vuex: {
       store,
       actionPrefix: "SOCKET_",
@@ -25,10 +25,7 @@ Vue.use(
     },
     options: {
       query: {
-        token: localStorage.getItem("user-token")
-      },
-      extraHeaders: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`
+        token: `${localStorage.getItem("user-token")}`
       }
     }
   })

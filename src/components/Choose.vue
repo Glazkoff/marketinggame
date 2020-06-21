@@ -165,7 +165,14 @@ export default {
     let name = decode.name;
     this.$store.commit("SET_NAME", name);
     this.$socket.disconnect();
-    this.$socket.open();
+    this.$socket.query.token = this.$store.state.token;
+    console.log(this.$store.state.token);
+    let a = setInterval(() => {
+      this.$socket.open();
+      if (this.$socket.connected) {
+        clearInterval(a);
+      }
+    }, 200);
   },
   methods: {
     logout() {
