@@ -26,7 +26,9 @@ Vue.use(
       mutationPrefix: "SOCKET_"
     },
     options: {
-      query: `token=${localStorage.getItem("user-token")}`,
+      query: {
+        token: localStorage.getItem("user-token")
+      },
       extraHeaders: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`
       }
