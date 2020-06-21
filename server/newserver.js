@@ -343,6 +343,29 @@ app.get("/api/admin/rooms/:id/users", async (req, res) => {
   );
 });
 
+// Получение конкретной комнаты для админпанели
+app.get("/api/admin/rooms/:id", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Rooms.findAll({
+          where: {
+            room_id: req.params.id
+          }
+        });
+        res.send(result);
+      }
+    }
+  );
+});
+
 // Получение всех комнат для админпанели
 app.get("/api/admin/rooms", async (req, res) => {
   await jwt.verify(

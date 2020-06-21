@@ -36,7 +36,7 @@
                 </li>
                 <li class="list-group-item">
                   Игра началась:
-                  <span class="text-success" v-if="room.is_start">Да</span>
+                  <span class="text-success" v-if="!room.is_start">Да</span>
                   <span class="text-danger" v-else>Нет</span>
                 </li>
                 <li class="list-group-item">

@@ -480,6 +480,21 @@ const store = new Vuex.Store({
           });
       });
     },
+    GET_ADMIN_ROOM_STATE(state, roomId) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/rooms/${roomId}`,
+          method: "GET"
+        })
+          .then(res => {
+            resolve(res.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
     SOCKET_SET_GAME_PARAMS(state, res) {
       console.warn("FROM SOCKET SETTING ROOM", res);
       state.commit("SET_GAME_PARAMS", res);
