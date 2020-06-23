@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <SocketStatus></SocketStatus>
     <Toasts></Toasts>
     <button
       class="admin-btn"
@@ -24,6 +25,7 @@
   </div>
 </template>
 <script>
+import SocketStatus from "./components/SocketStatus.vue";
 import jwt from "jsonwebtoken";
 export default {
   data() {
@@ -32,6 +34,9 @@ export default {
       message: "",
       messages: []
     };
+  },
+  components: {
+    SocketStatus
   },
   sockets: {
     connect: function(connections) {
