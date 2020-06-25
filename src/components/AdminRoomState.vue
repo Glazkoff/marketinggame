@@ -61,7 +61,7 @@
 
       <h5>Бюджет в месяц: {{ room.budget_per_month }} ₽</h5>
       <h5>
-        Текущий месяц: {{ room.current_month }} из
+        Текущий месяц: {{ room.current_month + 1 }} из
         <span v-if="room.first_params !== undefined">{{
           room.first_params.month
         }}</span>
@@ -127,6 +127,75 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <hr />
+    <div class="users-state-wrap mt-3">
+      <h5>Эффекты игроков:</h5>
+
+      <div
+        class="mt-3"
+        v-for="user in usersInRoom"
+        :key="user.users_in_rooms_id"
+      >
+        <h4>Для игрока #{{ user.user_id }}</h4>
+        <!-- {{ user.effects }}
+        {{ user.changes }} -->
+        <div class="container-fluid">
+          <div class="row">
+            <div
+              class="col-12"
+              v-for="(effect, ind) in user.effects"
+              :key="ind"
+            >
+              <div class="card mb-2">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Эффект #{{ effect.id }} - {{ effect.name }}
+                  </h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">step: {{ effect.step }}</li>
+                  <li class="list-group-item">
+                    duration: {{ effect.duration }}
+                  </li>
+                  <li class="list-group-item bg-light">
+                    <!-- {{ user.changes.filter(el => el.id === effect.id) }} -->
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div
+                          class="col-3"
+                          v-for="(change, ix) in user.changes.filter(
+                            el => el.id === effect.id
+                          )"
+                          :key="change.id + '.' + ix"
+                        >
+                          <div class="card mb-2">
+                            <div class="card-body">
+                              <h5 class="card-title">
+                                Изменение "{{ change.from }}" (#{{ change.id }})
+                              </h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                              <li class="list-group-item">
+                                when: {{ change.when }}
+                              </li>
+                              <li class="list-group-item">
+                                param: {{ change.param }}{{ change.operation
+                                }}{{ change.change }}
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="bg-dark" />
+      </div>
     </div>
   </div>
 </template>
@@ -254,5 +323,13 @@ export default {
 .users-state-wrap table {
   /* width: 90%; */
   display: block;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row > div[class*="col-"] {
+  display: flex;
 }
 </style>

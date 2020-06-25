@@ -226,6 +226,9 @@ body {
 .loader-wrap > * {
   margin: auto;
 }
+.toast-container {
+  top: 2rem !important;
+}
 @media (max-width: 930px) {
   .toast-container {
     right: 1rem !important;

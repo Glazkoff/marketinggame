@@ -1,5 +1,5 @@
 <template>
-  <div id="socket-status" @click="log()">
+  <div id="socket-status" @click="update()">
     <span
       class="badge "
       :class="{ 'badge-success': isConnected, 'badge-danger': !isConnected }"
@@ -37,8 +37,7 @@ export default {
     }, 500);
   },
   methods: {
-    log() {
-      console.log(this.$socket);
+    update() {
       this.isConnected = this.$socket.connected;
     }
   }
@@ -48,8 +47,8 @@ export default {
 <style scoped>
 #socket-status {
   position: fixed;
-  right: 0.5rem;
-  top: 0;
+  right: 1rem;
+  top: 0.5rem;
   z-index: 9999;
 }
 </style>

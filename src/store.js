@@ -4,7 +4,9 @@ import Vuex from "vuex";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 
-const apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
+// const apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
+const apiUrl =
+  process.env.VUE_APP_API_URL || "https://marketing-game.herokuapp.com/api";
 
 Vue.use(Vuex);
 

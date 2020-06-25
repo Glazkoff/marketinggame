@@ -13,19 +13,21 @@ const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
 const history = require("connect-history-api-fallback");
-const jwtAuth = require("socketio-jwt-auth");
+// const jwtAuth = require("socketio-jwt-auth");
 
 const app = express();
 let port = process.env.PORT || 3001;
 
-// Корректная работа режима HTML5 history
-app.use(history());
+if (process.env.PORT) {
+  // Корректная работа режима HTML5 history
+  app.use(history());
+
+  // Настрйока безоопасности
+  // app.use(helmet());
+}
 
 // Сжатие gzip
 app.use(compression());
-
-// Настрйока безоопасности
-// app.use(helmet());
 
 // Настройка CORS
 app.use(function(req, res, next) {
@@ -320,7 +322,6 @@ const CARDS = require("./cards");
 const EVENTS = require("./events");
 const DEFAULTROOMS = require("./defaultrooms");
 const ONEWAYCARDS = require("./onewaycards.js");
-// const { decode } = require("punycode");
 
 /** ************************** Модуль API *********************** */
 
