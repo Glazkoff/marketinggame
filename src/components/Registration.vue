@@ -134,7 +134,7 @@ export default {
       };
       this.loading = true;
       axios
-        .post("http://localhost:3001/api/register", regData)
+        .post(process.env.VUE_APP_API_URL + "/register", regData)
         .then(res => {
           this.loading = false;
           this.serverSuccess = true;
