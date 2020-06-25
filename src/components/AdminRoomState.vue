@@ -147,7 +147,7 @@
               v-for="(effect, ind) in user.effects"
               :key="ind"
             >
-              <div class="card mb-2">
+              <div class="card mb-2 w-100">
                 <div class="card-body">
                   <h5 class="card-title">
                     Эффект #{{ effect.id }} - {{ effect.name }}

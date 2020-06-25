@@ -35,6 +35,7 @@
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "socketio-jwt-auth": "^0.1.0",
+    "v-offline": "^1.2.1",
     "vue": "^2.6.11",
     "vue-bootstrap-toasts": "^1.0.7",
     "vue-number-animation": "^1.0.5",

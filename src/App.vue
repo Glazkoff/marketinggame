@@ -1,5 +1,28 @@
 <template>
   <div id="app">
+    <Offline
+      @detected-condition="amIOnline"
+      online-class="online"
+      offline-class="offline"
+    >
+      <template v-slot:[onlineSlot] :slot-name="onlineSlot">
+        <div class="centered-content text-center">
+          <img src="./assets/cloud-off.svg" alt="" height="96" width="96" />
+          <h1 class="text-light">Офлайн!</h1>
+          <h3 class="text-light">
+            Дождитесь, когда у вас снова будет доступ в интернет
+          </h3>
+        </div>
+      </template>
+      <!-- <template v-slot:[offlineSlot] :slot-name="offlineSlot">
+        <div class="container-fluid">
+          <div class="row">
+            <h1>Офлайн!</h1>
+          </div>
+        </div>
+        ( Online: {{ onLine }} )
+      </template> -->
+    </Offline>
     <SocketStatus></SocketStatus>
     <Toasts></Toasts>
     <button
@@ -26,17 +49,22 @@
 </template>
 <script>
 import SocketStatus from "./components/SocketStatus.vue";
+import Offline from "v-offline";
 import jwt from "jsonwebtoken";
 export default {
   data() {
     return {
       user: "",
       message: "",
-      messages: []
+      messages: [],
+      onLine: null,
+      onlineSlot: "online",
+      offlineSlot: "offline"
     };
   },
   components: {
-    SocketStatus
+    SocketStatus,
+    Offline
   },
   sockets: {
     connect: function(connections) {
@@ -125,6 +153,9 @@ export default {
   methods: {
     changeAdminNav() {
       this.$store.commit("changeAdminNav");
+    },
+    amIOnline(e) {
+      this.onLine = e;
     }
   },
   computed: {
@@ -157,6 +188,23 @@ export default {
 };
 </script>
 <style>
+.centered-content {
+  margin: auto;
+}
+.offline {
+  background-color: #fc9842;
+  background-image: linear-gradient(315deg, #fc9842 0%, #fe5f75 74%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  display: flex;
+}
+.online {
+  display: none;
+}
 body {
   overflow-x: hidden;
   overflow-y: hidden;
