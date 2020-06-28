@@ -37,7 +37,8 @@ const store = new Vuex.Store({
     completedSessions: [],
     admin: {
       rooms: [],
-      usersInRoom: []
+      usersInRoom: [],
+      globalConfig: {}
     }
   },
   getters: {
@@ -186,31 +187,39 @@ const store = new Vuex.Store({
       // state.prevRoomParams = {}
     },
     SOCKET_setToast(state, toast) {},
+    SOCKET_setEffects(state, effects) {
+      console.log("EFFECTS!", effects);
+      effects.forEach(el => {
+        if (el.step === el.duration) {
+          state.completedSessions.push(el.id);
+        }
+      });
+      state.activeEffects = [...effects];
+    },
     /* *********************************** */
-    // resetData(state) {
-    //   console.log('RESET!')
-    //   state.connections = []
-    //   state.messages = []
-    //   state.gamers = []
-    //   state.winners = {}
-    //   state.activeEffects = []
-    //   state.completedSessions = []
-    //   state.gameEvent = null
-    //   state.isOwner = false
-    //   state.isStart = true
-    //   state.isFinish = false
-    //   state.stepDone = false
-    //   state.roomId = -1
-    //   state.steps = []
-    //   state.havePrevData = false
-    //   // state.roomParams = Object.assign(state.firstRoomParams)
-    //   state.roomParams = {}
-    //   state.prevRoomParams = {}
-    //   for (var key in state.firstRoomParams) {
-    //     state.roomParams[key] = state.firstRoomParams[key]
-    //   }
-    //   localStorage.removeItem('store')
-    // },
+    resetData(state) {
+      console.log("RESET!");
+      state.connections = [];
+      state.messages = [];
+      state.gamers = [];
+      state.winners = {};
+      state.activeEffects = [];
+      state.completedSessions = [];
+      state.gameEvent = null;
+      state.isOwner = false;
+      state.isStart = true;
+      state.isFinish = false;
+      state.stepDone = false;
+      state.roomId = -1;
+      state.steps = [];
+      state.havePrevData = false;
+      // state.roomParams = Object.assign(state.firstRoomParams)
+      state.roomParams = {};
+      state.prevRoomParams = {};
+      for (var key in state.firstRoomParams) {
+        state.roomParams[key] = state.firstRoomParams[key];
+      }
+    },
     // SOCKET_resetData(state) {
     //   this.commit('resetData');
     // },
@@ -225,6 +234,9 @@ const store = new Vuex.Store({
     },
     SET_ADMIN_USERS_IN_ROOMS(state, users) {
       state.admin.usersInRoom = users;
+    },
+    SET_ADMIN_CONFIG(state, config) {
+      state.admin.globalConfig = config;
     }
     // copyData(state, data) {
     //   state.roomParams = {}
@@ -331,15 +343,6 @@ const store = new Vuex.Store({
     //   state.roomParams.moneyPerClient = resultPerClient
     //   // state.roomParams.money += result;
     // },
-    // SOCKET_setEffects(state, effects) {
-    //   effects.forEach(el => {
-    //     if (el.step === el.duration) {
-    //       state.completedSessions.push(el.id)
-    //     }
-    //   })
-    //   console.log(state.completedSessions)
-    //   state.activeEffects = [...effects]
-    // }
   },
   actions: {
     AUTH_REQUEST: function(context, user) {
@@ -446,7 +449,6 @@ const store = new Vuex.Store({
       });
     },
     SET_ROOM_PARAMS: function(state, res) {
-      console.warn("FROM SETTING ROOM", res);
       state.commit("SET_GAME_PARAMS", res);
     },
     GET_ADMIN_ROOMS: function name(state, res) {
@@ -489,6 +491,41 @@ const store = new Vuex.Store({
         })
           .then(res => {
             resolve(res.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_CONFIG(state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/config`,
+          method: "GET"
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_CONFIG", resp.data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    POST_ADMIN_CONFIG(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/config`,
+          method: "POST",
+          data: {
+            event_chance: data.event_chance
+          }
+        })
+          .then(resp => {
+            resolve(resp);
+            console.log(resp);
           })
           .catch(err => {
             console.log("ошибка загрузки", err);

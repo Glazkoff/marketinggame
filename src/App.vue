@@ -25,7 +25,7 @@
     </Offline>
     <SocketStatus></SocketStatus>
     <Toasts></Toasts>
-    <button
+    <!-- <button
       class="admin-btn"
       @click="changeAdminNav"
       title="Доступ администратора"
@@ -33,7 +33,7 @@
     >
       <span v-if="!adminNav">↓</span>
       <span v-else>↑</span>
-    </button>
+    </button> -->
     <div id="nav" :class="{ 'admin-show': adminNav, 'admin-hide': !adminNav }">
       <router-link to="/">Вход</router-link>|
       <router-link to="/choose">Создать игру</router-link>|

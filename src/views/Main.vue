@@ -57,7 +57,7 @@ export default {
       this.$store.state.roomParams = {};
       this.$store.state.firstRoomParams = {};
       // this.$store.commit("SOCKET_doNextStep");
-      // this.$store.commit("resetData");
+      this.$store.commit("resetData");
     }
   },
   // ################  НЕ УДАЛЯТЬ  ###############

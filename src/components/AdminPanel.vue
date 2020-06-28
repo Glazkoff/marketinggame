@@ -23,6 +23,15 @@
           >
           <router-link
             tag="div"
+            class="menu-point"
+            to="/admin/config"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            Глобальная конфигурация</router-link
+          >
+          <router-link
+            tag="div"
             :disabled="true"
             class="menu-point menu-point-disabled"
             to="/admin/statistics"

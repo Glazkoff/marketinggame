@@ -294,6 +294,19 @@ const DefaultRooms = sequelize.define("default_rooms", {
   }
 });
 
+const GameConfig = sequelize.define("game_config", {
+  config_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  event_chance: {
+    type: Sequelize.DECIMAL,
+    allowNull: false
+  }
+});
+
 // Синхронизация таблиц с БД
 sequelize
   // .sync({
@@ -304,15 +317,15 @@ sequelize
   })
   // .sync()
   .then(result => {
-    Users.create({
-      login: "login",
-      password: bcrypt.hashSync("password", salt),
-      name: "Никита"
-    })
-      .then(res => {
-        console.log(res.dataValues);
-      })
-      .catch(err => console.log(err));
+    // Users.create({
+    //   login: "login",
+    //   password: bcrypt.hashSync("password", salt),
+    //   name: "Никита"
+    // })
+    //   .then(res => {
+    //     console.log(res.dataValues);
+    //   })
+    //   .catch(err => console.log(err));
     console.log("Подключено к БД");
   })
   .catch(err => console.log("Ошибка подключения к БД", err));
@@ -324,6 +337,52 @@ const DEFAULTROOMS = require("./defaultrooms");
 const ONEWAYCARDS = require("./onewaycards.js");
 
 /** ************************** Модуль API *********************** */
+// Запись глобальной конфигурации для админпанели
+app.post("/api/admin/config", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let lastConfig = await GameConfig.findOne({
+          limit: 1,
+          order: [["createdAt", "DESC"]]
+        });
+        let result = await GameConfig.create({
+          event_chance: req.body.event_chance || lastConfig.event_chance
+        });
+        res.send(result);
+      }
+    }
+  );
+});
+
+// Получение глобальной конфигурации для админпанели
+app.get("/api/admin/config", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await GameConfig.findOne({
+          limit: 1,
+          order: [["createdAt", "DESC"]]
+        });
+        res.send(result);
+      }
+    }
+  );
+});
 
 // Получение всех пользователей комнаты для админпанели
 app.get("/api/admin/rooms/:id/users", async (req, res) => {
@@ -808,6 +867,14 @@ io.on("connection", async socket => {
   console.log(
     chalk.bgBlue(`Пользователь #${socket.decoded_token.id} авторизован`)
   );
+  socket.join("user" + socket.decoded_token.id, () => {
+    console.log(
+      chalk.bgBlue(
+        "Сокет подписан к ID пользователя user" + socket.decoded_token.id
+      )
+    );
+  });
+
   // Сокет авторизован, можем обрабатывать события от него
   connections.push(socket.id);
   usersAndSockets[socket.decoded_token.id] = socket.id;
@@ -1364,7 +1431,6 @@ io.on("connection", async socket => {
       // Если в комнате никто не делал шагов
       else {
         console.log(chalk.bgGreen("Если в комнате никто не делал шагов"));
-
         room.users_steps_state = [];
         room.users_steps_state.push({
           id: socket.decoded_token.id,
@@ -1450,6 +1516,20 @@ io.on("connection", async socket => {
 
       // Когда все пользователи в комнате сходили
       if (allGamersDoStep) {
+        let usersEffects = await UsersInRooms.findAll({
+          attributes: ["user_id", "effects"],
+          where: {
+            room_id: room.room_id
+          }
+        });
+        console.log(chalk.bgRed(JSON.stringify(usersEffects)));
+        for (const userWithEffects of usersEffects) {
+          console.log(chalk.bgRed(JSON.stringify(userWithEffects)));
+          io.sockets
+            .to("user" + userWithEffects.user_id)
+            .emit("setEffects", userWithEffects.effects);
+        }
+
         console.log(chalk.bgBlue("Сменился месяц в комнате #" + room.room_id));
         room.current_month++;
         await Rooms.update(
@@ -1464,7 +1544,12 @@ io.on("connection", async socket => {
         );
       }
 
-      if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
+      let lastConfig = await GameConfig.findOne({
+        limit: 1,
+        order: [["createdAt", "DESC"]]
+      });
+      if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
+        // if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
         console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
 
         // TODO: сделать загрузку массива
@@ -2070,6 +2155,11 @@ io.on("connection", async socket => {
         completed: false
       },
       order: [["updatedAt", "DESC"]]
+    });
+    socket.leave("user" + socket.decoded_token.id, () => {
+      console.log(
+        chalk.bgBlue("Сокет отписан от user" + socket.decoded_token.id)
+      );
     });
     if (room && room.users_steps_state !== null) {
       let index = room.users_steps_state.findIndex(
