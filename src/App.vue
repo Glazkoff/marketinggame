@@ -23,7 +23,7 @@
         ( Online: {{ onLine }} )
       </template> -->
     </Offline>
-    <SocketStatus></SocketStatus>
+
     <Toasts></Toasts>
     <!-- <button
       class="admin-btn"
@@ -48,7 +48,6 @@
   </div>
 </template>
 <script>
-import SocketStatus from "./components/SocketStatus.vue";
 import Offline from "v-offline";
 import jwt from "jsonwebtoken";
 export default {
@@ -63,7 +62,6 @@ export default {
     };
   },
   components: {
-    SocketStatus,
     Offline
   },
   sockets: {

@@ -184,6 +184,7 @@
         name="cardwrap"
         id="card-wrap"
         tag="div"
+        v-if="!isStart"
         type="transition"
         @before-enter="beforeEnter"
         @enter="enter"

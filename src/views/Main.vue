@@ -1,5 +1,6 @@
 <template>
   <div id="splitScr">
+    <SocketStatus></SocketStatus>
     <div v-if="loading" class="loader-wrap">
       <Loader></Loader>
     </div>
@@ -29,6 +30,7 @@ import Chat from "@/components/Chat.vue";
 import PlayGround from "@/components/PlayGround.vue";
 import Finish from "@/components/Finish.vue";
 import Loader from "@/components/Loader.vue";
+import SocketStatus from "@/components/SocketStatus.vue";
 
 require("bootstrap/dist/css/bootstrap.css");
 
@@ -43,7 +45,8 @@ export default {
     Chat,
     PlayGround,
     Finish,
-    Loader
+    Loader,
+    SocketStatus
   },
   methods: {
     leaveRoom() {

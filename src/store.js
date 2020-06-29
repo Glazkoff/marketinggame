@@ -127,6 +127,15 @@ const store = new Vuex.Store({
       if (res.data.gamers !== undefined) {
         state.gamers = [...res.data.gamers.gamers];
       }
+      if (res.data.effects !== undefined) {
+        res.data.effects.forEach(el => {
+          if (el.step === el.duration) {
+            state.completedSessions.push(el.id);
+          }
+        });
+        state.activeEffects = [...res.data.effects];
+      }
+
       console.log("SET_GAME_PARAMS: ", res);
       let decode = await jwt.decode(state.token);
       if (res.data.owner_id === decode.id) {

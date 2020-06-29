@@ -219,8 +219,8 @@ Users.hasMany(Rooms, {
 const Cards = sequelize.define("cards", {
   card_id: {
     type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+    // autoIncrement: true,
+    // primaryKey: true,
     allowNull: false
   },
   title: {
@@ -231,13 +231,20 @@ const Cards = sequelize.define("cards", {
     type: Sequelize.TEXT,
     allowNull: false
   },
+  coefs: {
+    type: Sequelize.JSONB,
+    defaultValue: []
+  },
+  templateText: {
+    type: Sequelize.TEXT
+  },
   cost: {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  duartion: {
-    type: Sequelize.INTEGER,
-    allowNull: false
+  duration: {
+    type: Sequelize.INTEGER
+    // allowNull: false
   },
   data_change: {
     type: Sequelize.JSONB,
@@ -294,6 +301,7 @@ const DefaultRooms = sequelize.define("default_rooms", {
   }
 });
 
+// Модель: GameConfig
 const GameConfig = sequelize.define("game_config", {
   config_id: {
     type: Sequelize.INTEGER,
@@ -326,6 +334,7 @@ sequelize
     //     console.log(res.dataValues);
     //   })
     //   .catch(err => console.log(err));
+    trySetCards();
     console.log("Подключено к БД");
   })
   .catch(err => console.log("Ошибка подключения к БД", err));
@@ -336,7 +345,78 @@ const EVENTS = require("./events");
 const DEFAULTROOMS = require("./defaultrooms");
 const ONEWAYCARDS = require("./onewaycards.js");
 
+async function trySetCards() {
+  // await Cards.destroy({ where: {} });
+  for (let card of CARDS) {
+    // console.log(chalk.bgRed(card.id));
+    let findCard = await Cards.findOne({
+      where: {
+        card_id: card.id
+      }
+    });
+    // console.log(chalk.bgGreen(JSON.stringify(findCard)));
+    if (JSON.stringify(findCard) === "null") {
+      Cards.create({
+        card_id: card.id,
+        title: card.title,
+        text: card.text,
+        cost: card.cost,
+        coefs: card.coefs,
+        templateText: card.templateText,
+        duration: card.duration,
+        data_change: card.data_change
+      });
+    }
+  }
+}
+
 /** ************************** Модуль API *********************** */
+
+// Получение данных о конкретной карточке
+app.get("/api/cards/:id", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Cards.findOne({
+          where: {
+            card_id: req.params.id
+          },
+          order: [["updatedAt", "DESC"]]
+        });
+        res.send(result);
+      }
+    }
+  );
+});
+
+// Получение данных о всех карточках
+app.get("/api/cards", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Cards.findAll({
+          order: [["card_id", "ASC"]]
+        });
+        res.send(result);
+      }
+    }
+  );
+});
+
 // Запись глобальной конфигурации для админпанели
 app.post("/api/admin/config", async (req, res) => {
   await jwt.verify(
@@ -815,7 +895,8 @@ app.get("/api/rooms/reset", async (req, res) => {
                 gamer_room_params: userInRoom.gamer_room_params,
                 is_finished: room.is_finished,
                 winners: room.winners,
-                gamers: gamerNamesObj
+                gamers: gamerNamesObj,
+                effects: userInRoom.effects
               });
             } else {
               res.status(404).send({
@@ -1086,7 +1167,13 @@ io.on("connection", async socket => {
         for (const cardId of cardArr) {
           // TODO: сделать загрузку из БД
           // Находим объект карточки на основе пришедшего ID
-          let card = CARDS.find(el => el.id === cardId);
+          // let card = CARDS.find(el => el.id === cardId);
+          let card = await Cards.findOne({
+            where: {
+              card_id: cardId
+            },
+            order: [["updatedAt", "DESC"]]
+          });
           gamer.gamer_room_params.money -= card.cost;
 
           // TODO: сделать выгрузку ONEWAYCARDS из БД
@@ -1098,7 +1185,7 @@ io.on("connection", async socket => {
             // Если эффекта ещё нет (карточка выбрасывается первый раз)
             if (effectIndex === -1) {
               // Занести свойства ещё не применённых изменений
-              for (const changes of card.dataChange) {
+              for (const changes of card.data_change) {
                 let changeObj = {};
                 for (var key in changes) {
                   changeObj[key] = changes[key];
@@ -1123,7 +1210,7 @@ io.on("connection", async socket => {
           else {
             if (effectIndex === -1) {
               // Занести свойства одноразовых карточек
-              for (const changes of card.dataChange) {
+              for (const changes of card.data_change) {
                 let changeObj = {};
                 for (var k in changes) {
                   changeObj[k] = changes[k];
@@ -1166,14 +1253,15 @@ io.on("connection", async socket => {
       // ...
       let iter = 0;
       let indexEffArr;
+
+      console.log(chalk.bgBlackBright("ОБРАБОТКА gamer.changes"));
+      console.log(chalk.bgRedBright(JSON.stringify(gamer.changes)));
       for (let index = 0; index < gamer.changes.length; index++) {
         let changing = gamer.changes[index];
         // Для ID изменения changing.id индекс в массиве эфф. равен indexEffArr
         indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id);
 
-        let oneWayChangingId = ONEWAYCARDS.findIndex(
-          el => el.id === changing.id
-        );
+        let oneWayChangingId = ONEWAYCARDS.findIndex(el => el === changing.id);
         if (
           indexEffArr === -1 &&
           oneWayChangingId === -1 &&
@@ -1192,9 +1280,7 @@ io.on("connection", async socket => {
                   changing.from +
                   ")"
               );
-              gamer.changes.splice(index, 1);
-              // ???
-              index--;
+              gamer.changes[index].toDelete = true;
             }
           }
         }
@@ -1204,6 +1290,7 @@ io.on("connection", async socket => {
             oneWayChangingId ||
             changing.event
           ) {
+            // TODO: предположительно, ошибка в занесении в массив used_cards, так как
             let usedCard = gamer["used_cards"];
             if (
               usedCard[changing.id] < 1 ||
@@ -1303,10 +1390,9 @@ io.on("connection", async socket => {
               );
             });
             if (indForDelete !== -1) {
-              gamer.changes.splice(indForDelete, 1);
+              gamer.changes[indForDelete].toDelete = true;
             }
           } else {
-            // messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
             for (let index = 0; index < gamer.changes.length; index++) {
               if (gamer.changes[index].id === changing.id) {
                 messageArr.push(
@@ -1317,17 +1403,24 @@ io.on("connection", async socket => {
                     " на " +
                     changing.change
                 );
-                gamer.changes.splice(index, 1);
+                gamer.changes[index].toDelete = true;
               }
             }
           }
-          gamer.changes.splice(iter, 1);
+          console.log(chalk.bgBlackBright("16"));
+          gamer.changes[iter].toDelete = true;
         } else {
+          console.log(chalk.bgBlackBright("17"));
           iter++;
         }
       } // Конец обработки пришедшего массива
 
-      // СИнхронизируем изменения с БД
+      // Удаляем подготовленные к удалению объекты
+      gamer.changes.filter(el => {
+        return el.toDelete !== true;
+      });
+
+      // Синхронизируем изменения с БД
       UsersInRooms.update(
         {
           gamer_room_params: gamer.gamer_room_params,
@@ -1530,7 +1623,12 @@ io.on("connection", async socket => {
             .emit("setEffects", userWithEffects.effects);
         }
 
-        console.log(chalk.bgBlue("Сменился месяц в комнате #" + room.room_id));
+        console.log(
+          chalk.bgBlue(
+            "Сменился месяц в комнате #" + room.room_id,
+            `(${room.current_month + 1})`
+          )
+        );
         room.current_month++;
         await Rooms.update(
           {
@@ -1556,7 +1654,7 @@ io.on("connection", async socket => {
         // Получаем случайный объект из массива событий
         let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
         // Для каждого изменения
-        for (const eventChange of randomEvent.dataChange) {
+        for (const eventChange of randomEvent.data_change) {
           // Если изменения при применении
           if (eventChange.when === 0) {
             for (const gamerId of room.participants_id) {
