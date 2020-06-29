@@ -348,13 +348,11 @@ const ONEWAYCARDS = require("./onewaycards.js");
 async function trySetCards() {
   // await Cards.destroy({ where: {} });
   for (let card of CARDS) {
-    // console.log(chalk.bgRed(card.id));
     let findCard = await Cards.findOne({
       where: {
         card_id: card.id
       }
     });
-    // console.log(chalk.bgGreen(JSON.stringify(findCard)));
     if (JSON.stringify(findCard) === "null") {
       Cards.create({
         card_id: card.id,
@@ -1132,11 +1130,14 @@ io.on("connection", async socket => {
             );
             gamer.effects.splice(effectIndex, 1);
           }
+
           // Добавление в объект использованных карточек
-          if (typeof gamer["used_cards"][effect.id] === "undefined") {
-            gamer["used_cards"][effect.id] = 1;
-          } else {
-            gamer["used_cards"][effect.id]++;
+          if (effect.step === effect.duration) {
+            if (typeof gamer["used_cards"][effect.id] === "undefined") {
+              gamer["used_cards"][effect.id] = 1;
+            } else {
+              gamer["used_cards"][effect.id]++;
+            }
           }
         });
       }
@@ -1253,9 +1254,6 @@ io.on("connection", async socket => {
       // ...
       let iter = 0;
       let indexEffArr;
-
-      console.log(chalk.bgBlackBright("ОБРАБОТКА gamer.changes"));
-      console.log(chalk.bgRedBright(JSON.stringify(gamer.changes)));
       for (let index = 0; index < gamer.changes.length; index++) {
         let changing = gamer.changes[index];
         // Для ID изменения changing.id индекс в массиве эфф. равен indexEffArr
@@ -1290,7 +1288,6 @@ io.on("connection", async socket => {
             oneWayChangingId ||
             changing.event
           ) {
-            // TODO: предположительно, ошибка в занесении в массив used_cards, так как
             let usedCard = gamer["used_cards"];
             if (
               usedCard[changing.id] < 1 ||
@@ -1407,10 +1404,8 @@ io.on("connection", async socket => {
               }
             }
           }
-          console.log(chalk.bgBlackBright("16"));
           gamer.changes[iter].toDelete = true;
         } else {
-          console.log(chalk.bgBlackBright("17"));
           iter++;
         }
       } // Конец обработки пришедшего массива
@@ -1439,22 +1434,14 @@ io.on("connection", async socket => {
       // TODO: Посылаем событие на изменение статуса участника
       //     io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
 
-      console.log(
-        chalk.bgYellow(
-          "room.users_steps_state",
-          JSON.stringify(room.users_steps_state)
-        )
-      );
       let usersStepsState = [];
       // Если в комнате уже были шаги
       if (room.users_steps_state !== null) {
-        console.log(chalk.bgGreen("Если в комнате уже были шаги"));
         let userStepState = room.users_steps_state.findIndex(
           el => el.id === socket.decoded_token.id
         );
         // Если пользователь делает шаг первый раз
         if (userStepState === -1) {
-          console.log(chalk.bgGreen("Если пользователь делает шаг первый раз"));
           room.users_steps_state.push({
             id: socket.decoded_token.id,
             isattacker: true,
@@ -1491,17 +1478,11 @@ io.on("connection", async socket => {
         }
         // Если пользователь уже делал шаг
         else {
-          console.log(chalk.bgGreen("Если пользователь уже делал шаг"));
           let stepIsSet = room.users_steps_state[userStepState].steps.findIndex(
             el => el.month === room.current_month
           );
           // Если пользователь делает шаг в этом месяце первый раз
           if (stepIsSet === -1) {
-            console.log(
-              chalk.bgGreen(
-                "Если пользователь делает шаг в этом месяце первый раз"
-              )
-            );
             room.users_steps_state[userStepState]["steps"].push({
               month: room.current_month,
               makeStep: true,
@@ -1523,7 +1504,6 @@ io.on("connection", async socket => {
       }
       // Если в комнате никто не делал шагов
       else {
-        console.log(chalk.bgGreen("Если в комнате никто не делал шагов"));
         room.users_steps_state = [];
         room.users_steps_state.push({
           id: socket.decoded_token.id,
@@ -1569,10 +1549,8 @@ io.on("connection", async socket => {
       let allGamersDoStep = false;
       // Если корректно установлены параметры комнаты
       if (room.users_steps_state !== null && room.participants_id !== null) {
-        // console.log(chalk.bgRed(JSON.stringify(room.users_steps_state)));
         room.users_steps_state.forEach(el => {
           // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
-
           if (
             el["steps"].findIndex(elem => elem.month === room.current_month) !==
             -1
@@ -1615,9 +1593,7 @@ io.on("connection", async socket => {
             room_id: room.room_id
           }
         });
-        console.log(chalk.bgRed(JSON.stringify(usersEffects)));
         for (const userWithEffects of usersEffects) {
-          console.log(chalk.bgRed(JSON.stringify(userWithEffects)));
           io.sockets
             .to("user" + userWithEffects.user_id)
             .emit("setEffects", userWithEffects.effects);
