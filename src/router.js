@@ -8,6 +8,7 @@ import AdminRooms from "./components/AdminRooms.vue";
 import AdminStatistics from "./components/AdminStatistics.vue";
 import AdminRoomsList from "./components/AdminRoomsList.vue";
 import AdminGameConfig from "./components/AdminGameConfig.vue";
+import AdminUsers from "./components/AdminUsers.vue";
 import store from "./store";
 
 Vue.use(Router);
@@ -89,6 +90,10 @@ export default new Router({
         {
           path: "config",
           component: AdminGameConfig
+        },
+        {
+          path: "users",
+          component: AdminUsers
         }
       ]
     },

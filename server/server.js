@@ -370,6 +370,103 @@ async function trySetCards() {
 
 /** ************************** Модуль API *********************** */
 
+// Удаление записи о пользователе
+app.delete("/api/admin/users/login/:login", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          await Users.destroy({
+            where: {
+              login: req.params.login
+            }
+          });
+          res.status(200).send({ message: "ok" });
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Удаление записи о пользователе
+app.delete("/api/admin/users/id/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          await Users.destroy({
+            where: {
+              user_id: req.params.id
+            }
+          });
+          res.status(200).send({ message: "ok" });
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Получение информации о количестве пользователей
+app.get("/api/admin/users/count", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Users.count();
+        let obj = { count: result };
+        res.send(obj);
+      }
+    }
+  );
+});
+
+app.get("/api/admin/users/list/:offset", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Users.findAll({
+          attributes: ["user_id", "login", "name", "createdAt"],
+          order: [["updatedAt", "DESC"]],
+          offset: 10 * (req.params.offset - 1),
+          limit: 10
+        });
+        res.send(result);
+      }
+    }
+  );
+});
+
 // Получение данных о конкретной карточке
 app.get("/api/cards/:id", async (req, res) => {
   await jwt.verify(

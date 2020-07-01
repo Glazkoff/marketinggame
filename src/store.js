@@ -38,7 +38,9 @@ const store = new Vuex.Store({
     admin: {
       rooms: [],
       usersInRoom: [],
-      globalConfig: {}
+      globalConfig: {},
+      users: [],
+      usersCount: 1
     }
   },
   getters: {
@@ -246,6 +248,12 @@ const store = new Vuex.Store({
     },
     SET_ADMIN_CONFIG(state, config) {
       state.admin.globalConfig = config;
+    },
+    SET_ADMIN_USERS(state, users) {
+      state.admin.users = users;
+    },
+    SET_ADMIN_USERS_COUNT(state, usersCount) {
+      state.admin.usersCount = usersCount.count;
     }
     // copyData(state, data) {
     //   state.roomParams = {}
@@ -535,6 +543,53 @@ const store = new Vuex.Store({
           .then(resp => {
             resolve(resp);
             console.log(resp);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_USERS(state, page) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/users/list/${page}`,
+          method: "GET"
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_USERS", resp.data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_USERS_COUNT(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/users/count`,
+          method: "GET"
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_USERS_COUNT", resp.data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    DELETE_ADMIN_USER(state, userId) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/users/id/${userId}`,
+          method: "DELETE"
+        })
+          .then(resp => {
+            resolve(resp.data);
           })
           .catch(err => {
             console.log("ошибка загрузки", err);

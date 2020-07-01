@@ -32,6 +32,15 @@
           >
           <router-link
             tag="div"
+            class="menu-point"
+            to="/admin/users"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            Пользователи</router-link
+          >
+          <router-link
+            tag="div"
             :disabled="true"
             class="menu-point menu-point-disabled"
             to="/admin/statistics"
