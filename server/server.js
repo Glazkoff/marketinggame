@@ -1726,68 +1726,70 @@ io.on("connection", async socket => {
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
         let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
-        // Для каждого изменения
-        for (const eventChange of randomEvent.data_change) {
-          // Если изменения при применении
-          if (eventChange.when === 0) {
-            for (const gamerId of room.participants_id) {
-              let userInRoom = await UsersInRooms.findOne({
-                where: {
-                  user_id: gamerId,
-                  room_id: room.room_id
+        if (randomEvent.data_change !== undefined) {
+          // Для каждого изменения
+          for (const eventChange of randomEvent.data_change) {
+            // Если изменения при применении
+            if (eventChange.when === 0) {
+              for (const gamerId of room.participants_id) {
+                let userInRoom = await UsersInRooms.findOne({
+                  where: {
+                    user_id: gamerId,
+                    room_id: room.room_id
+                  }
+                });
+                switch (eventChange.operation) {
+                  case "+":
+                    userInRoom.gamer_room_params[eventChange.param] +=
+                      eventChange.change;
+                    break;
+                  case "-":
+                    userInRoom.gamer_room_params[eventChange.param] -=
+                      eventChange.change;
+                    break;
+                  case "*":
+                    userInRoom.gamer_room_params[eventChange.param] *=
+                      eventChange.change;
+                    break;
+                  default:
+                    // console.log("Что-то не так с событием " + card.id);
+                    break;
                 }
-              });
-              switch (eventChange.operation) {
-                case "+":
-                  userInRoom.gamer_room_params[eventChange.param] +=
-                    eventChange.change;
-                  break;
-                case "-":
-                  userInRoom.gamer_room_params[eventChange.param] -=
-                    eventChange.change;
-                  break;
-                case "*":
-                  userInRoom.gamer_room_params[eventChange.param] *=
-                    eventChange.change;
-                  break;
-                default:
-                  // console.log("Что-то не так с событием " + card.id);
-                  break;
+                await UsersInRooms.update(
+                  {
+                    gamer_room_params: userInRoom.gamer_room_params
+                  },
+                  {
+                    where: {
+                      user_id: gamerId,
+                      room_id: room.room_id
+                    }
+                  }
+                );
               }
-              await UsersInRooms.update(
-                {
-                  gamer_room_params: userInRoom.gamer_room_params
-                },
-                {
-                  where: {
-                    user_id: gamerId,
-                    room_id: room.room_id
-                  }
-                }
-              );
-            }
 
-            // Если изменение в следующие месяцы
-          } else {
-            for (const gamerId of room.participants_id) {
-              let userInRoom = await UsersInRooms.findOne({
-                where: {
-                  user_id: gamerId,
-                  room_id: room.room_id
-                }
-              });
-              userInRoom.changes.push(eventChange);
-              await UsersInRooms.update(
-                {
-                  changes: userInRoom.changes
-                },
-                {
+              // Если изменение в следующие месяцы
+            } else {
+              for (const gamerId of room.participants_id) {
+                let userInRoom = await UsersInRooms.findOne({
                   where: {
                     user_id: gamerId,
                     room_id: room.room_id
                   }
-                }
-              );
+                });
+                userInRoom.changes.push(eventChange);
+                await UsersInRooms.update(
+                  {
+                    changes: userInRoom.changes
+                  },
+                  {
+                    where: {
+                      user_id: gamerId,
+                      room_id: room.room_id
+                    }
+                  }
+                );
+              }
             }
           }
         }
