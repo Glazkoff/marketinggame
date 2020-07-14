@@ -60,7 +60,11 @@ export default {
   methods: {
     kickUser(gamer) {
       console.log("KICK!", this.roomId, gamer);
-      this.$socket.emit("kickUser", this.roomId, gamer);
+      let obj = {
+        roomId: this.roomId,
+        gamerId: gamer.id
+      };
+      this.$socket.emit("kickUser", obj);
     }
   },
   mounted() {

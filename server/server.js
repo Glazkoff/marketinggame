@@ -75,7 +75,8 @@ const io = require("socket.io")(server);
 // Создание подключения с БД
 const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
   dialect: "postgres",
-  host: DBCONFIG.HOST
+  host: DBCONFIG.HOST,
+  logging: false // TODO: УБРАТЬ
 });
 
 // МОДЕЛЬ: Users
@@ -1041,7 +1042,8 @@ io.use(function(socket, next) {
 io.on("connection", async socket => {
   socket.decoded_token = await jwt.decode(socket.handshake.query.token);
   console.log(
-    chalk.bgBlue(`Пользователь #${socket.decoded_token.id} авторизован`)
+    chalk.magenta(`(connection)`),
+    chalk.bgMagenta(`Пользователь #${socket.decoded_token.id} авторизован`)
   );
   socket.join("user" + socket.decoded_token.id, () => {
     console.log(
@@ -1059,12 +1061,17 @@ io.on("connection", async socket => {
 
   // Рассылка нового тоста
   socket.on("addToast", toast => {
+    console.log(chalk.magenta(`(addToast)`), chalk.bgMagenta(`Добавлен тост`));
     console.log(chalk.bgCyan(JSON.stringify(toast)));
     io.emit("setToast", toast);
   });
 
   // Прикрепление пользователя к комнате
   socket.on("subscribeRoom", roomId => {
+    console.log(
+      chalk.magenta(`(subscribeRoom)`),
+      chalk.bgMagenta(`Прикрепление пользователя к комнате тост ${roomId}`)
+    );
     socket.join(roomId, () => {
       socket.roomId = roomId;
       console.log("Подключён к комнате " + roomId);
@@ -1077,8 +1084,30 @@ io.on("connection", async socket => {
     });
   });
 
+  // Удалить пользователя из комнаты
+
+  socket.on("kickUser", async data => {
+    console.log(
+      chalk.magenta(`(kickUser)`),
+      chalk.bgMagenta(`Удалить пользователя из комнаты`)
+    );
+    // TODO: удаление/изменение статуса из БД
+    // console.log(chalk.bgRed("KICK", JSON.stringify(data)));
+    // let res = await Rooms.findOne({
+    //   where: {
+    //     room_id: data.roomId
+    //   }
+    // });
+    // console.log(chalk.bgRed("KICK", JSON.stringify(res)), "user" + data.gamerId);
+    io.in("user" + data.gamerId).emit("kickUser");
+  });
+
   // При выходе из комнаты
   socket.on("roomLeave", async roomId => {
+    console.log(
+      chalk.magenta(`(roomLeave)`),
+      chalk.bgMagenta(`При выходе из комнаты`)
+    );
     let usersState = await Rooms.findOne({
       attributes: ["users_steps_state"],
       where: {
@@ -1114,6 +1143,10 @@ io.on("connection", async socket => {
   // TODO: присылать список игроков
   // При старте игры в комнате
   socket.on("startGame", async function(data) {
+    console.log(
+      chalk.magenta(`(startGame)`),
+      chalk.bgMagenta(`При старте игры в комнате`)
+    );
     console.log("SET START! ", data);
     try {
       let room = await Rooms.findOne({
@@ -1164,7 +1197,12 @@ io.on("connection", async socket => {
 
   // При выполнении хода
   socket.on("doStep", async function(cardArr) {
+    console.log(
+      chalk.magenta(`(doStep)`),
+      chalk.bgMagenta(`При выполнении хода`)
+    );
     console.log(chalk.bgBlue("Шаг пользователя #" + socket.decoded_token.id));
+    console.log(chalk.bgRed("НАЧАЛО ОТЛАДКИ"));
     try {
       // Находим данные об игроке
       let gamer = await UsersInRooms.findOne({
@@ -1204,7 +1242,10 @@ io.on("connection", async socket => {
       let gamerNamesObj = {
         gamers: room.users_steps_state
       };
+
       io.in(room.room_id).emit("setGamers", gamerNamesObj);
+      console.log(chalk.yellow(">setGamers>"));
+      console.log(chalk.yellow(JSON.stringify(gamerNamesObj)));
 
       // Копируем неизменённые данные в колонку "предыдущие"
       gamer.prev_room_params = {
@@ -1659,6 +1700,25 @@ io.on("connection", async socket => {
         if (didStepCurrMonth === room.participants_id.length) {
           console.log("Все пользователи сделали ход");
           allGamersDoStep = true;
+
+          // let await Rooms.findOne()
+          console.log(chalk.bgGray(JSON.stringify(room)));
+          room.users_steps_state.map(el => {
+            el.isattacker = false;
+          });
+          io.in(room.room_id).emit("setGamers", {
+            gamers: room.users_steps_state
+          });
+          await Rooms.update(
+            {
+              users_steps_state: room.users_steps_state
+            },
+            {
+              where: {
+                room_id: room.room_id
+              }
+            }
+          );
           io.in(socket.roomId).emit("doNextStep");
         }
         // Если число сходивших не равно количеству участников
@@ -2319,6 +2379,10 @@ io.on("connection", async socket => {
 
   // При потере подключения
   socket.on("disconnect", async function() {
+    console.log(
+      chalk.magenta(`(disconnect)`),
+      chalk.bgMagenta(`При потере подключения #${socket.id}`)
+    );
     const Op = Sequelize.Op;
     let room = await Rooms.findOne({
       where: {

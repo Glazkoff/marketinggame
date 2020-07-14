@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-// import router from '../src/router'
+import router from "../src/router";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 
@@ -194,7 +194,7 @@ const store = new Vuex.Store({
       state.winners = Object.assign(winnersObj);
     },
     SOCKET_setGamers(state, obj) {
-      state.gamers = [...obj.gamers];
+      state.gamers = obj.gamers;
       // state.prevRoomParams = {}
     },
     SOCKET_setToast(state, toast) {},
@@ -206,6 +206,10 @@ const store = new Vuex.Store({
         }
       });
       state.activeEffects = [...effects];
+    },
+    SOCKET_kickUser() {
+      console.log("====================");
+      router.push("/choose");
     },
     /* *********************************** */
     resetData(state) {
@@ -300,9 +304,7 @@ const store = new Vuex.Store({
     //     )
     //   }
     // },
-    // SOCKET_kickUser() {
-    //   router.push('/choose')
-    // },
+
     // SOCKET_setStartGame(state, roomParams) {
     //   // console.log('SET START GAME');
     //   for (var key in state.roomParams) {

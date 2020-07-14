@@ -268,7 +268,7 @@
           </ul>
         </div>
         <div class="col-8 text-center mt-3" v-else-if="isPrizer">
-          <h5 class="mb-0">Поздравляю, {{ gamerData.name }}!</h5>
+          <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">
             Вы на {{ isSecondWinner ? "втором" : "третьем" }} месте
           </h3>
@@ -458,7 +458,7 @@
       </div>
       <!-- <hr> -->
       <div class="row mt-2">
-        <div class="col-6" v-if="isSecondPosition">
+        <div class="col-6" v-if="hasSecondPosition">
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
@@ -523,7 +523,7 @@
             </div>
           </div>
         </div>
-        <div class="col-6" v-if="isThirdPosition">
+        <div class="col-6" v-if="hasThirdPosition">
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
@@ -652,8 +652,6 @@
 import DataTable from "@/components/DataTable.vue";
 import jwt from "jsonwebtoken";
 
-let decoded = jwt.decode(localStorage.getItem("user-token"));
-
 export default {
   name: "Finish",
   methods: {},
@@ -661,6 +659,15 @@ export default {
     DataTable
   },
   computed: {
+    decoded() {
+      try {
+        let decoded = jwt.decode(localStorage.getItem("user-token"));
+        return decoded;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
     steps() {
       return this.$store.state.steps;
     },
@@ -673,23 +680,23 @@ export default {
     gamerName() {
       return this.$store.state.gamerName;
     },
-    isSecondPosition() {
+    hasSecondPosition() {
       return this.$store.state.winners["2"]["id"] !== -1;
     },
-    isThirdPosition() {
+    hasThirdPosition() {
       // if (this.$store.state.winners.hasOwnProperty("3")) {
       //   return true;
       // } else return false;
       return this.$store.state.winners["3"]["id"] !== -1;
     },
     isWinner() {
-      return decoded.id === this.$store.state.winners[1].id;
+      return this.decoded.id === this.$store.state.winners[1].id;
     },
     isSecondWinner() {
-      return decoded.id === this.$store.state.winners[2].id;
+      return this.decoded.id === this.$store.state.winners[2].id;
     },
     isThirdWinner() {
-      return decoded.id === this.$store.state.winners[3].id;
+      return this.decoded.id === this.$store.state.winners[3].id;
     },
     isPrizer() {
       if (
@@ -703,8 +710,8 @@ export default {
         this.$store.state.winners[3] !== undefined
       ) {
         return (
-          decoded.id === this.$store.state.winners[2].id ||
-          decoded.id === this.$store.state.winners[3].id
+          this.decoded.id === this.$store.state.winners[2].id ||
+          this.decoded.id === this.$store.state.winners[3].id
         );
       } else {
         return false;
@@ -712,24 +719,24 @@ export default {
     },
     isLoozer() {
       return !(
-        decoded.id === this.$store.state.winners[1].id ||
-        decoded.id === this.$store.state.winners[2].id ||
-        decoded.id === this.$store.state.winners[3].id
+        this.decoded.id === this.$store.state.winners[1].id ||
+        this.decoded.id === this.$store.state.winners[2].id ||
+        this.decoded.id === this.$store.state.winners[3].id
       );
     },
     isSomeWinner() {
       return (
-        decoded.id === this.$store.state.winners[1].id ||
-        decoded.id === this.$store.state.winners[2].id ||
-        decoded.id === this.$store.state.winners[3].id
+        this.decoded.id === this.$store.state.winners[1].id ||
+        this.decoded.id === this.$store.state.winners[2].id ||
+        this.decoded.id === this.$store.state.winners[3].id
       );
     },
     gamerData() {
       if (this.isWinner) {
         return this.$store.state.winners[1];
-      } else if (decoded.id === this.$store.state.winners[2].id) {
+      } else if (this.decoded.id === this.$store.state.winners[2].id) {
         return this.$store.state.winners[2];
-      } else if (decoded.id === this.$store.state.winners[3].id) {
+      } else if (this.decoded.id === this.$store.state.winners[3].id) {
         return this.$store.state.winners[3];
       } else {
         return null;
@@ -743,8 +750,8 @@ export default {
         if (this.isWinner || this.isLoozer) {
           return this.$store.state.winners[2];
         } else if (
-          decoded.id === this.$store.state.winners[2].id ||
-          decoded.id === this.$store.state.winners[3].id
+          this.decoded.id === this.$store.state.winners[2].id ||
+          this.decoded.id === this.$store.state.winners[3].id
         ) {
           return this.$store.state.winners[1];
         }
@@ -757,11 +764,11 @@ export default {
       if (this.$store.state.winners.hasOwnProperty("3")) {
         if (
           this.isWinner ||
-          decoded.id === this.$store.state.winners[2].id ||
+          this.decoded.id === this.$store.state.winners[2].id ||
           this.isLoozer
         ) {
           return this.$store.state.winners[3];
-        } else if (decoded.id === this.$store.state.winners[3].id) {
+        } else if (this.decoded.id === this.$store.state.winners[3].id) {
           return this.$store.state.winners[2];
         }
       } else {
