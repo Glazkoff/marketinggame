@@ -120,6 +120,13 @@ export default {
           });
           break;
       }
+    },
+    askIfInTheRoom() {
+      if (this.$route.path === "/main") {
+        console.log(this.$store.state.roomId);
+        this.$socket.emit("subscribeRoom", this.$store.state.roomId);
+      }
+      console.warn();
     }
   },
   beforeCreate() {

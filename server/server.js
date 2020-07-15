@@ -1051,6 +1051,7 @@ io.on("connection", async socket => {
         "Сокет подписан к ID пользователя user" + socket.decoded_token.id
       )
     );
+    io.in("user" + socket.decoded_token.id).emit("askIfInTheRoom");
   });
 
   // Сокет авторизован, можем обрабатывать события от него
@@ -1081,7 +1082,7 @@ io.on("connection", async socket => {
   socket.on("subscribeRoom", roomId => {
     console.log(
       chalk.magenta(`(subscribeRoom)`),
-      chalk.bgMagenta(`Прикрепление пользователя к комнате тост ${roomId}`)
+      chalk.bgMagenta(`Прикрепление пользователя к комнате ${roomId}`)
     );
     socket.join(roomId, () => {
       socket.roomId = roomId;
@@ -1096,7 +1097,6 @@ io.on("connection", async socket => {
   });
 
   // Удалить пользователя из комнаты
-
   socket.on("kickUser", async data => {
     console.log(
       chalk.magenta(`(kickUser)`),
@@ -1888,7 +1888,7 @@ io.on("connection", async socket => {
             gamer_room_params: userInRoom.gamer_room_params
           }
         };
-        io.sockets.to(usersAndSockets[gamerId]).emit("SET_GAME_PARAMS", obj);
+        io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
 
         // Отправка новых данных состояния пользователю
       }
@@ -2406,7 +2406,9 @@ io.on("connection", async socket => {
     });
     socket.leave("user" + socket.decoded_token.id, () => {
       console.log(
-        chalk.bgBlue("Сокет отписан от user" + socket.decoded_token.id)
+        chalk.bgBlue(
+          `Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
+        )
       );
     });
     if (room && room.users_steps_state !== null) {
