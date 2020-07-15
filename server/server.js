@@ -1059,6 +1059,17 @@ io.on("connection", async socket => {
   console.log("Авторизованные подключения:", connections);
   console.log("Сопоставление сокетов с пользователями: ", usersAndSockets);
 
+  socket.on("newMessage", message => {
+    console.log(
+      chalk.magenta(`(newMessage)`),
+      chalk.bgMagenta(`Добавлено сообщение`)
+    );
+    socket.broadcast.to(socket.roomId).emit("addMessage", {
+      name: socket.decoded_token.name,
+      text: `${message}`
+    });
+  });
+
   // Рассылка нового тоста
   socket.on("addToast", toast => {
     console.log(chalk.magenta(`(addToast)`), chalk.bgMagenta(`Добавлен тост`));
@@ -2423,12 +2434,6 @@ io.on("connection", async socket => {
 //     console.log("Подключения:", connections);
 
 //     // Пересылка сообщения
-//     // socket.on("newMessage", message => {
-//     //   socket.broadcast.to(socket.roomId).emit("addMessage", {
-//     //     name: socket.name,
-//     //     text: `${message}`
-//     //   });
-//     // });
 
 //     socket.on('authenticated', () => {
 //       // this socket is authenticated, we are good to handle more events from it.
