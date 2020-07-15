@@ -1,5 +1,5 @@
 <template>
-  <div id="playground" :class="{ 'full-screen': !adminNav }">
+  <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
     <div id="play-field">
       <div
         class="play-information"
@@ -172,77 +172,82 @@
       style="transition: all 5s"
       :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
     >
-      <transition mode="out-in" name="fade" type="transition">
-        <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
-          <div class="container h-100 w-100">
-            <div
-              class="row h-100 justify-content-md-center align-content-center"
-            >
-              <div class="col-12">
-                <h2 class="text-center">Вы сделали ход!</h2>
-                <p class="text-center">
-                  <small>Ожидайте следующий</small>
-                </p>
+      <div class="loader-wrap h-100" v-if="cardsLoading">
+        <Loader></Loader>
+      </div>
+      <div class="h-100" v-else>
+        <transition mode="out-in" name="fade" type="transition">
+          <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
+            <div class="container h-100 w-100">
+              <div
+                class="row h-100 justify-content-md-center align-content-center"
+              >
+                <div class="col-12">
+                  <h2 class="text-center">Вы сделали ход!</h2>
+                  <p class="text-center">
+                    <small>Ожидайте следующий</small>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </transition>
-      <transition-group
-        mode="out-in"
-        name="cardwrap"
-        id="card-wrap"
-        tag="div"
-        v-if="!isStart"
-        type="transition"
-        @before-enter="beforeEnter"
-        @enter="enter"
-        @leave="leave"
-      >
-        <!-- v-if="!isStart" -->
-        <div
-          class="card-box"
-          :draggable="card.cost <= gamerParams.money"
-          @dragstart.self="altdragstart"
-          v-for="(card, count) in cards"
-          :key="count"
-          @dragend="altdragend"
-          :class="{
-            'card-ml-0': card.oneOff,
-            'card-ml-1': !card.oneOff && !isLastEffectStage(card.id),
-            'card-ml-2': !card.oneOff && !hasThisEffect(card.id)
-          }"
+        </transition>
+        <transition-group
+          mode="out-in"
+          name="cardwrap"
+          id="card-wrap"
+          tag="div"
+          v-if="!isStart"
+          type="transition"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @leave="leave"
         >
+          <!-- v-if="!isStart" -->
           <div
-            class="card-box w-100 h-100 bottom-card bottom-card-1"
-            v-if="!card.oneOff && !isLastEffectStage(card.id)"
-          ></div>
-          <div
-            class="card-box w-100 h-100 bottom-card bottom-card-2"
-            v-if="
-              (!card.oneOff && !hasThisEffect(card.id)) || isLastStep(card.id)
-            "
-          ></div>
-          <div class="inner-card-wrap">
-            <div class="card-head">
-              <h6 class="card-title text-center pl-2 pr-2 mb-1">
-                {{ card.title }}
-              </h6>
-            </div>
-            <small class="card-text text-center">{{ card.text }}</small>
-            <h3 class="card-text text-center">
-              {{ card.cost | formatNumber }} ₽
-            </h3>
-          </div>
-          <button
-            class="btn btn-dark pl-2"
-            @click="dropFromBtn(count)"
-            :disabled="stepDone || card.cost > gamerParams.money"
+            class="card-box"
+            :draggable="card.cost <= gamerParams.money"
+            @dragstart.self="altdragstart"
+            v-for="(card, count) in cards"
+            :key="count"
+            @dragend="altdragend"
+            :class="{
+              'card-ml-0': card.oneOff,
+              'card-ml-1': !card.oneOff && !isLastEffectStage(card.id),
+              'card-ml-2': !card.oneOff && !hasThisEffect(card.id)
+            }"
           >
-            Использовать
-          </button>
-        </div>
-      </transition-group>
+            <div
+              class="card-box w-100 h-100 bottom-card bottom-card-1"
+              v-if="!card.oneOff && !isLastEffectStage(card.id)"
+            ></div>
+            <div
+              class="card-box w-100 h-100 bottom-card bottom-card-2"
+              v-if="
+                (!card.oneOff && !hasThisEffect(card.id)) || isLastStep(card.id)
+              "
+            ></div>
+            <div class="inner-card-wrap">
+              <div class="card-head">
+                <h6 class="card-title text-center pl-2 pr-2 mb-1">
+                  {{ card.title }}
+                </h6>
+              </div>
+              <small class="card-text text-center">{{ card.text }}</small>
+              <h3 class="card-text text-center">
+                {{ card.cost | formatNumber }} ₽
+              </h3>
+            </div>
+            <button
+              class="btn btn-dark pl-2"
+              @click="dropFromBtn(count)"
+              :disabled="stepDone || card.cost > gamerParams.money"
+            >
+              Использовать
+            </button>
+          </div>
+        </transition-group>
+      </div>
     </div>
     <!-- Конец Поле для карточек -->
     <!-- Список игроков -->
@@ -262,6 +267,7 @@
 import GamerList from "@/components/GamerList.vue";
 import Effects from "@/components/Effects.vue";
 import DataTable from "@/components/DataTable.vue";
+import Loader from "@/components/Loader.vue";
 import numeral from "numeral";
 import Vue from "vue";
 Vue.filter("formatNumber", function(value) {
@@ -272,7 +278,8 @@ export default {
   components: {
     GamerList,
     Effects,
-    DataTable
+    DataTable,
+    Loader
   },
   created() {
     this.$store.watch(
@@ -294,11 +301,33 @@ export default {
           }
         });
 
+        this.$store.watch(
+          state => state.isStart,
+          (newValue, oldValue) => {
+            if (!newValue) {
+              setTimeout(() => {
+                this.playAnimation();
+              }, 100);
+            }
+          }
+        );
+        this.$store.watch(
+          state => state.roomParams.money,
+          (newValue, oldValue) => {
+            if (newValue) {
+              setTimeout(() => {
+                this.playAnimation();
+              }, 100);
+            }
+          }
+        );
+
         // ЗАНЕСЕНИЕ ИЗ ШАБЛОНА И ПОДСТАНОВКА КОЭФФИЦИЕНТОВ
         this.refreshCards.forEach(el => {
           if (
             typeof el.coefs !== "undefined" &&
-            typeof el.templateText !== "undefined"
+            typeof el.templateText !== "undefined" &&
+            !el.oneOff
           ) {
             el.text = el.templateText;
             for (let i = 0; i < el.coefs.length; i++) {
@@ -311,85 +340,85 @@ export default {
         });
       }
     );
-    this.cards = this.shuffle(this.cards);
-    // this.refreshCards = Object.assign(this.cards);
+    this.$store.commit("SET_CARDS", this.shuffle(this.cards));
     this.refreshCards = [...this.cards];
     this.$store.commit("doAnimation");
   },
   data() {
     return {
       usedCards: [],
+      cardsLoading: false,
       clientsRendered: true,
       dragstart: false,
       dragover: false,
       dragnode: undefined,
       params: {},
       refreshCards: [],
-      cards: [
-        {
-          id: 1,
-          title: "Нанять SMM-менеджера",
-          text: `Трафик из соц.медиа: 2й мес - к-т 1.1, 3й - 1.8. Конверсия в звонки по соц.сетям: 3й мес - 1.5`,
-          coefs: [1.1, 1.8, 1.5],
-          templateText:
-            "Трафик из соц.медиа: 2й мес - к-т @coef0, 3й - @coef1. Конверсия в звонки по соц.сетям: 3й мес - @coef2",
-          cost: 80000
-        },
-        {
-          id: 2,
-          title: "Заказать SEO-оптимизацию",
-          text:
-            "Органика растет в 2 раза на 3й мес применения. 1й мес просто стоимости привлечения - 1.5, 3й мес падение - 0.3",
-          coefs: [2, 1.5, 0.3],
-          templateText:
-            "Органика растет в @coef0 раза на 3й мес применения. 1й мес просто стоимости привлечения - @coef1, 3й мес падение - @coef2",
-          cost: 50000
-        },
-        {
-          id: 3,
-          title: "Улучшение юзабилити",
-          text:
-            "Конверсия в звонки по всем каналам: 3й - 1.1. Стоимость привлечения: 1 и 2й - 0.8. Средний чек: 3й - 1.5",
-          cost: 20000,
-          oneOff: true
-        },
-        {
-          id: 4,
-          title: "Реклама в соцсетях",
-          text:
-            "Трафик по рекламе: 1й мес +4500. Стоимость привлечения: 1-3 мес - 1.1",
-          coefs: [4500, 1.1],
-          templateText:
-            "Трафик по рекламе: 1й мес +@coef0. Стоимость привлечения: 1-3 мес - @coef1",
-          cost: 25000
-        },
-        {
-          id: 5,
-          title: "PR-компания компании",
-          text: "Стоимость привелечения: 1й - 1.3, 2й - 1.1, 3й - 1.2",
-          coefs: [1.3, 1.1, 1.2],
-          templateText:
-            "Стоимость привелечения: 1й - @coef0, 2й - @coef1, 3й - @coef2",
-          cost: 30000
-        },
-        {
-          id: 6,
-          title: "Контекстная рекламная компания",
-          text:
-            "Трафик из контекста: 1й мес- +6000 визитов, 2 и 3й - 1.1. Конверсия в звонки: 1й - 1.5. Стоимость привлечения: каждый мес -  1.3",
-          coefs: [6000, 1.1, 1.5, 1.3],
-          templateText:
-            "Трафик из контекста: 1й мес - +@coef0 визитов, 2 и 3й - @coef1. Конверсия в звонки: 1й - @coef2. Стоимость привлечения: каждый мес - @coef3",
-          cost: 35000
-        },
-        {
-          id: 7,
-          title: "Размещение информации в справочниках",
-          text: "Трафик type-in: 1-3й - 1,2. ",
-          cost: 20000,
-          oneOff: true
-        }
-      ],
+      // cards: [
+      // {
+      //   id: 1,
+      //   title: "Нанять SMM-менеджера",
+      //   text: `Трафик из соц.медиа: 2й мес - к-т 1.1, 3й - 1.8. Конверсия в звонки по соц.сетям: 3й мес - 1.5`,
+      //   coefs: [1.1, 1.8, 1.5],
+      //   templateText:
+      //     "Трафик из соц.медиа: 2й мес - к-т @coef0, 3й - @coef1. Конверсия в звонки по соц.сетям: 3й мес - @coef2",
+      //   cost: 80000
+      // },
+      // {
+      //   id: 2,
+      //   title: "Заказать SEO-оптимизацию",
+      //   text:
+      //     "Органика растет в 2 раза на 3й мес применения. 1й мес просто стоимости привлечения - 1.5, 3й мес падение - 0.3",
+      //   coefs: [2, 1.5, 0.3],
+      //   templateText:
+      //     "Органика растет в @coef0 раза на 3й мес применения. 1й мес просто стоимости привлечения - @coef1, 3й мес падение - @coef2",
+      //   cost: 50000
+      // },
+      // {
+      //   id: 3,
+      //   title: "Улучшение юзабилити",
+      //   text:
+      //     "Конверсия в звонки по всем каналам: 3й - 1.1. Стоимость привлечения: 1 и 2й - 0.8. Средний чек: 3й - 1.5",
+      //   cost: 20000,
+      //   oneOff: true
+      // },
+      // {
+      //   id: 4,
+      //   title: "Реклама в соцсетях",
+      //   text:
+      //     "Трафик по рекламе: 1й мес +4500. Стоимость привлечения: 1-3 мес - 1.1",
+      //   coefs: [4500, 1.1],
+      //   templateText:
+      //     "Трафик по рекламе: 1й мес +@coef0. Стоимость привлечения: 1-3 мес - @coef1",
+      //   cost: 25000
+      // },
+      // {
+      //   id: 5,
+      //   title: "PR-компания компании",
+      //   text: "Стоимость привелечения: 1й - 1.3, 2й - 1.1, 3й - 1.2",
+      //   coefs: [1.3, 1.1, 1.2],
+      //   templateText:
+      //     "Стоимость привелечения: 1й - @coef0, 2й - @coef1, 3й - @coef2",
+      //   cost: 30000
+      // },
+      // {
+      //   id: 6,
+      //   title: "Контекстная рекламная компания",
+      //   text:
+      //     "Трафик из контекста: 1й мес- +6000 визитов, 2 и 3й - 1.1. Конверсия в звонки: 1й - 1.5. Стоимость привлечения: каждый мес -  1.3",
+      //   coefs: [6000, 1.1, 1.5, 1.3],
+      //   templateText:
+      //     "Трафик из контекста: 1й мес - +@coef0 визитов, 2 и 3й - @coef1. Конверсия в звонки: 1й - @coef2. Стоимость привлечения: каждый мес - @coef3",
+      //   cost: 35000
+      // },
+      // {
+      //   id: 7,
+      //   title: "Размещение информации в справочниках",
+      //   text: "Трафик type-in: 1-3й - 1,2. ",
+      //   cost: 20000,
+      //   oneOff: true
+      // }
+      // ],
       number: 0,
       tweenedNumber: 0
     };
@@ -398,10 +427,14 @@ export default {
     this.number = this.$store.state.roomParams.money;
     this.$store.commit("doAnimation");
     this.playAnimation();
+    this.getCards();
   },
   watch: {
     number: function(newValue) {
       // TweenLite.to(this.$data, 1, { tweenedNumber: newValue })
+      if (this.$refs.number1 !== undefined) {
+        this.$refs.number1.play();
+      }
     },
     money: function(newValue) {
       setTimeout(() => {
@@ -411,6 +444,9 @@ export default {
     }
   },
   computed: {
+    cards() {
+      return this.$store.state.cards;
+    },
     clients() {
       return this.$store.state.roomParams.clients;
     },
@@ -431,6 +467,7 @@ export default {
       return this.$store.state.isOwner;
     },
     isStart() {
+      this.playAnimation();
       return this.$store.state.isStart;
     },
     gamerName() {
@@ -467,7 +504,7 @@ export default {
       // this.$socket.emit("startGame", a);
       // this.$store.commit("SOCKET_calcAllParams");
       // this.$store.state.isStart = false;
-      // this.playAnimation();
+      this.playAnimation();
     },
     makeStep() {
       this.$store.commit("doStep"); //
@@ -494,7 +531,7 @@ export default {
         }
       }
       this.usedCards = [];
-      this.cards = [...this.refreshCards];
+      this.$store.commit("SET_CARDS", [...this.refreshCards]);
     },
     // **** Ниже необработанные методы ******
     playAnimation() {
@@ -547,7 +584,7 @@ export default {
       this.usedCards.push(this.cards[index].id);
       let change = -this.cards[index].cost;
       this.$store.commit("changeMoney", change);
-      this.cards.splice(index, 1);
+      this.$store.commit("SPLICE_CARD", this.cards[index].id);
       this.playAnimation();
     },
     // startGame() {
@@ -593,7 +630,7 @@ export default {
           this.usedCards.push(this.cards[i].id);
           let change = -this.cards[i].cost;
           this.$store.commit("changeMoney", change);
-          this.cards.splice(i, 1);
+          this.$store.commit("SPLICE_CARD", this.cards[i].id);
         }
       }
       this.dragnode = undefined;
@@ -623,6 +660,21 @@ export default {
     dragleave(e) {
       console.log("leave");
       this.dragover = false;
+    },
+    getCards() {
+      if (this.$store.state.cards.length === 0) {
+        console.log("GET CARDS!");
+        this.cardsLoading = true;
+        this.$store.dispatch("GET_CARDS").then(
+          res => {
+            this.cardsLoading = false;
+          },
+          err => {
+            this.cardsLoading = false;
+            console.log(err);
+          }
+        );
+      }
     }
   }
 };
@@ -921,6 +973,11 @@ export default {
 .inner-card-wrap h6 {
   font-size: 0.9rem;
 }
+
+[v-cloak] {
+  display: none;
+}
+
 @media screen and (max-width: 1250px) {
   .list-group-item {
     padding: 8px !important;

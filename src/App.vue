@@ -122,11 +122,9 @@ export default {
       }
     },
     askIfInTheRoom() {
-      if (this.$route.path === "/main") {
-        console.log(this.$store.state.roomId);
+      if (this.$route.path === "/main" && this.$store.state.roomId !== -1) {
         this.$socket.emit("subscribeRoom", this.$store.state.roomId);
       }
-      console.warn();
     }
   },
   beforeCreate() {

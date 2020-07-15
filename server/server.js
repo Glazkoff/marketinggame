@@ -215,13 +215,10 @@ Users.hasMany(Rooms, {
   foreignKey: "owner_id"
 });
 
-// TODO:  Добавить заполнение таблицы Cards
 // МОДЕЛЬ: Cards
 const Cards = sequelize.define("cards", {
   card_id: {
     type: Sequelize.INTEGER,
-    // autoIncrement: true,
-    // primaryKey: true,
     allowNull: false
   },
   title: {
@@ -245,11 +242,14 @@ const Cards = sequelize.define("cards", {
   },
   duration: {
     type: Sequelize.INTEGER
-    // allowNull: false
   },
   data_change: {
     type: Sequelize.JSONB,
     allowNull: false
+  },
+  oneOff: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 });
 
@@ -363,7 +363,8 @@ async function trySetCards() {
         coefs: card.coefs,
         templateText: card.templateText,
         duration: card.duration,
-        data_change: card.data_change
+        data_change: card.data_change,
+        oneOff: card.oneOff
       });
     }
   }
@@ -505,6 +506,16 @@ app.get("/api/cards", async (req, res) => {
         });
       } else {
         let result = await Cards.findAll({
+          attributes: [
+            ["card_id", "id"],
+            "title",
+            "text",
+            "coefs",
+            "templateText",
+            "cost",
+            "duration",
+            "oneOff"
+          ],
           order: [["card_id", "ASC"]]
         });
         res.send(result);
@@ -1048,7 +1059,7 @@ io.on("connection", async socket => {
   socket.join("user" + socket.decoded_token.id, () => {
     console.log(
       chalk.bgBlue(
-        "Сокет подписан к ID пользователя user" + socket.decoded_token.id
+        `Сокет подписан к ID пользователя user${socket.decoded_token.id} (${socket.decoded_token.name}) `
       )
     );
     io.in("user" + socket.decoded_token.id).emit("askIfInTheRoom");
@@ -1060,6 +1071,7 @@ io.on("connection", async socket => {
   console.log("Авторизованные подключения:", connections);
   console.log("Сопоставление сокетов с пользователями: ", usersAndSockets);
 
+  // При отправке игроком сообщения
   socket.on("newMessage", message => {
     console.log(
       chalk.magenta(`(newMessage)`),
@@ -1089,7 +1101,7 @@ io.on("connection", async socket => {
       console.log("Подключён к комнате " + roomId);
     });
     io.in(roomId).emit("addMessage", {
-      name: "NGO CREATIVE ",
+      name: "Admin",
       text: `Пользователь ${JSON.stringify(
         socket.decoded_token.name
       )} подключён к комнате #${roomId}`
@@ -1170,7 +1182,6 @@ io.on("connection", async socket => {
       for (let index = 0; index < room.participants_id.length; index++) {
         const id = room.participants_id[index];
         let user = await Users.findByPk(id);
-        console.log(chalk.redBright("USER", JSON.stringify(user)));
         if (user) {
           participantsSteps.push({
             name: user.name,
@@ -1711,9 +1722,6 @@ io.on("connection", async socket => {
         if (didStepCurrMonth === room.participants_id.length) {
           console.log("Все пользователи сделали ход");
           allGamersDoStep = true;
-
-          // let await Rooms.findOne()
-          console.log(chalk.bgGray(JSON.stringify(room)));
           room.users_steps_state.map(el => {
             el.isattacker = false;
           });

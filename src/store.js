@@ -17,7 +17,6 @@ const store = new Vuex.Store({
     firstRoomParams: {},
     roomId: -1,
     userId: "",
-    // Ниже необработанные данные
     gamerName: "",
     socketId: "",
     isAdmin: false,
@@ -35,6 +34,7 @@ const store = new Vuex.Store({
     steps: [],
     gameEvent: null,
     completedSessions: [],
+    cards: [],
     admin: {
       rooms: [],
       usersInRoom: [],
@@ -258,6 +258,13 @@ const store = new Vuex.Store({
     },
     SET_ADMIN_USERS_COUNT(state, usersCount) {
       state.admin.usersCount = usersCount.count;
+    },
+    SET_CARDS(state, cards) {
+      state.cards = cards;
+    },
+    SPLICE_CARD(state, cardId) {
+      let ind = state.cards.findIndex(el => el.id === cardId);
+      state.cards.splice(ind, 1);
     }
     // copyData(state, data) {
     //   state.roomParams = {}
@@ -469,6 +476,22 @@ const store = new Vuex.Store({
     },
     SET_ROOM_PARAMS: function(state, res) {
       state.commit("SET_GAME_PARAMS", res);
+    },
+    GET_CARDS: function(state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/cards`,
+          method: "GET"
+        })
+          .then(res => {
+            state.commit("SET_CARDS", res.data);
+            resolve(res.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
     },
     GET_ADMIN_ROOMS: function name(state, res) {
       return new Promise((resolve, reject) => {
