@@ -2,7 +2,10 @@
   <div>
     <h3 class="mb-3">Список карточек</h3>
     <div class="container-fluid">
-      <div class="table-responsive">
+      <div class="loader-wrap h-100" v-if="cardsLoading">
+        <Loader></Loader>
+      </div>
+      <div class="table-responsive" v-else>
         <table class="table table-sm table-hover">
           <thead>
             <tr>
@@ -35,7 +38,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ num }}
@@ -48,7 +51,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "organicCount", num) }}
@@ -63,7 +66,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "contextCount", num) }}
@@ -78,7 +81,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "socialsCount", num) }}
@@ -91,7 +94,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "smmCount", num) }}
@@ -104,7 +107,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "straightCount", num) }}
@@ -117,7 +120,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "organicCoef", num) }}
@@ -132,7 +135,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "contextCoef", num) }}
@@ -147,7 +150,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "socialsCoef", num) }}
@@ -162,7 +165,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "smmCoef", num) }}
@@ -177,7 +180,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "straightCoef", num) }}
@@ -190,7 +193,7 @@
                 <td
                   class="text-center  font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{ getFormatChange(card.data_change, "averageCheck", num) }}
@@ -205,7 +208,7 @@
                 <td
                   class="text-center  border-bottom font-weight-bold"
                   v-for="num in card.duration"
-                  :key="num"
+                  :key="'card' + card.id + 'month' + num"
                   :class="{ 'border-right': num === card.duration }"
                 >
                   {{
@@ -222,8 +225,12 @@
 </template>
 
 <script>
+import Loader from "./Loader.vue";
 export default {
   name: "AdminCardsList",
+  components: {
+    Loader
+  },
   data() {
     return {
       cardsLoading: false
@@ -236,11 +243,9 @@ export default {
   },
   methods: {
     getFormatChange(dataChange, param, when) {
-      console.log(param);
       let findDataChange = dataChange.find(el => {
         return el.param === param && el.when === when;
       });
-      console.log(findDataChange);
       if (findDataChange === undefined) {
         return "-";
       } else {
