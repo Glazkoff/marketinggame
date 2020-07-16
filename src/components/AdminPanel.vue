@@ -21,6 +21,16 @@
           >
             Состояния комнат</router-link
           >
+
+          <router-link
+            tag="div"
+            class="menu-point"
+            to="/admin/users"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            Пользователи</router-link
+          >
           <router-link
             tag="div"
             class="menu-point"
@@ -32,12 +42,12 @@
           >
           <router-link
             tag="div"
-            class="menu-point"
-            to="/admin/users"
+            class="menu-point menu-point-disabled"
+            to="/admin/cards"
             active-class="menu-point-active"
             :exact="true"
           >
-            Пользователи</router-link
+            Редактирование карточек</router-link
           >
           <router-link
             tag="div"

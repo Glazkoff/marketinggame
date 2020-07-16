@@ -40,7 +40,8 @@ const store = new Vuex.Store({
       usersInRoom: [],
       globalConfig: {},
       users: [],
-      usersCount: 1
+      usersCount: 1,
+      cards: []
     }
   },
   getters: {
@@ -258,6 +259,9 @@ const store = new Vuex.Store({
     },
     SET_ADMIN_USERS_COUNT(state, usersCount) {
       state.admin.usersCount = usersCount.count;
+    },
+    SET_ADMIN_CARDS(state, cards) {
+      state.admin.cards = cards;
     },
     SET_CARDS(state, cards) {
       state.cards = cards;
@@ -614,6 +618,22 @@ const store = new Vuex.Store({
           method: "DELETE"
         })
           .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_CARDS(state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards`,
+          method: "GET"
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_CARDS", resp.data);
             resolve(resp.data);
           })
           .catch(err => {

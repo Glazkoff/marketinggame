@@ -372,6 +372,44 @@ async function trySetCards() {
 
 /** ************************** Модуль API *********************** */
 
+// Получение данных обо всех карточек для администратора
+app.get("/api/admin/cards", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          let result = await Cards.findAll({
+            attributes: [
+              ["card_id", "id"],
+              "title",
+              "text",
+              "coefs",
+              "templateText",
+              "cost",
+              "duration",
+              "oneOff",
+              "data_change",
+              "createdAt",
+              "updatedAt"
+            ],
+            order: [["card_id", "ASC"]]
+          });
+          res.send(result);
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 // Удаление записи о пользователе
 app.delete("/api/admin/users/login/:login", async (req, res) => {
   try {

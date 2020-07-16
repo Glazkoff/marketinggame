@@ -9,6 +9,9 @@ import AdminStatistics from "./components/AdminStatistics.vue";
 import AdminRoomsList from "./components/AdminRoomsList.vue";
 import AdminGameConfig from "./components/AdminGameConfig.vue";
 import AdminUsers from "./components/AdminUsers.vue";
+import AdminCards from "./components/AdminCards.vue";
+import AdminCardsEdit from "./components/AdminCardsEdit.vue";
+import AdminCardsList from "./components/AdminCardsList.vue";
 import store from "./store";
 
 Vue.use(Router);
@@ -94,6 +97,20 @@ export default new Router({
         {
           path: "users",
           component: AdminUsers
+        },
+        {
+          path: "cards",
+          component: AdminCards,
+          children: [
+            {
+              path: "/",
+              component: AdminCardsList
+            },
+            {
+              path: "edit/:id",
+              component: AdminCardsEdit
+            }
+          ]
         }
       ]
     },
