@@ -32,6 +32,14 @@ let cards = [
         when: 3,
         from: "Нанять SMM-менеджера 3",
         id: 1
+      },
+      {
+        param: "conversion",
+        operation: "*",
+        change: 1.05,
+        when: 3,
+        from: "Нанять SMM-менеджера 3",
+        id: 1
       }
     ]
   },
@@ -53,23 +61,23 @@ let cards = [
         when: 3,
         from: "Заказать SEO-оптимизацию 3",
         id: 2
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.5,
-        when: 1,
-        from: "Заказать SEO-оптимизацию 1",
-        id: 2
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 0.3,
-        when: 3,
-        from: "Заказать SEO-оптимизацию 3",
-        id: 2
       }
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.5,
+      //   when: 1,
+      //   from: "Заказать SEO-оптимизацию 1",
+      //   id: 2
+      // },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 0.3,
+      //   when: 3,
+      //   from: "Заказать SEO-оптимизацию 3",
+      //   id: 2
+      // }
     ]
   },
   {
@@ -129,23 +137,23 @@ let cards = [
         when: 3,
         from: "Улучшение юзабилити 3",
         id: 3
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 0.8,
-        when: 1,
-        from: "Улучшение юзабилити 1",
-        id: 3
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 0.8,
-        when: 2,
-        from: "Улучшение юзабилити 2",
-        id: 3
       }
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 0.8,
+      //   when: 1,
+      //   from: "Улучшение юзабилити 1",
+      //   id: 3
+      // },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 0.8,
+      //   when: 2,
+      //   from: "Улучшение юзабилити 2",
+      //   id: 3
+      // }
     ]
   },
   {
@@ -168,31 +176,31 @@ let cards = [
         when: 1,
         from: "Реклама в соцсетях 1",
         id: 4
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.1,
-        when: 1,
-        from: "Реклама в соцсетях 1",
-        id: 4
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.1,
-        when: 2,
-        from: "Реклама в соцсетях 2",
-        id: 4
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.1,
-        when: 3,
-        from: "Реклама в соцсетях 3",
-        id: 4
       }
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.1,
+      //   when: 1,
+      //   from: "Реклама в соцсетях 1",
+      //   id: 4
+      // },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.1,
+      //   when: 2,
+      //   from: "Реклама в соцсетях 2",
+      //   id: 4
+      // },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.1,
+      //   when: 3,
+      //   from: "Реклама в соцсетях 3",
+      //   id: 4
+      // }
     ]
   },
   {
@@ -209,14 +217,14 @@ let cards = [
     cost: 30000,
     duration: 3,
     data_change: [
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.3,
-        when: 1,
-        from: "PR-компания компании 1",
-        id: 5
-      },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.3,
+      //   when: 1,
+      //   from: "PR-компания компании 1",
+      //   id: 5
+      // },
       {
         param: "averageCheck",
         operation: "*",
@@ -267,7 +275,7 @@ let cards = [
       {
         param: "contextCount",
         operation: "*",
-        change: 1.2,
+        change: 1.1,
         when: 3,
         from: "Контекстная рекламная компания 3",
         id: 6
@@ -279,31 +287,31 @@ let cards = [
         when: 1,
         from: "Контекстная рекламная компания 1",
         id: 6
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.3,
-        when: 1,
-        from: "Контекстная рекламная компания 1",
-        id: 6
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.3,
-        when: 2,
-        from: "Контекстная рекламная компания 2",
-        id: 6
-      },
-      {
-        param: "realCostAttract",
-        operation: "*",
-        change: 1.3,
-        when: 3,
-        from: "Контекстная рекламная компания 3",
-        id: 6
       }
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.3,
+      //   when: 1,
+      //   from: "Контекстная рекламная компания 1",
+      //   id: 6
+      // },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.3,
+      //   when: 2,
+      //   from: "Контекстная рекламная компания 2",
+      //   id: 6
+      // },
+      // {
+      //   param: "realCostAttract",
+      //   operation: "*",
+      //   change: 1.3,
+      //   when: 3,
+      //   from: "Контекстная рекламная компания 3",
+      //   id: 6
+      // }
     ]
   },
   {
