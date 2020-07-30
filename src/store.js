@@ -270,6 +270,31 @@ const store = new Vuex.Store({
       let ind = state.cards.findIndex(el => el.id === cardId);
       state.cards.splice(ind, 1);
     }
+    // SET_ADMIN_CARD_PARAMS(state, data) {
+    //   console.log("MUT", data);
+    //   console.log("MUT", state.admin.cards);
+    //   let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
+    //   console.log(cardIndex, data.id);
+    //   if (cardIndex !== -1) {
+    //     let cardParamIndex = state.admin.cards[cardIndex].data_change.findIndex(
+    //       el => {
+    //         return el.param === data.param && el.when === data.when;
+    //       }
+    //     );
+    //     if (cardParamIndex !== 1) {
+    //       for (const prop in data) {
+    //         console.log(
+    //           "!!!",
+    //           prop,
+    //           state.admin.cards[cardIndex].data_change[cardParamIndex][prop]
+    //         );
+    //         state.admin.cards[cardIndex].data_change[cardParamIndex][prop] =
+    //           data.prop;
+    //       }
+    //       // state.admin.cards[cardIndex].data_change[cardParamIndex];
+    //     }
+    //   }
+    // }
     // copyData(state, data) {
     //   state.roomParams = {}
     //   for (var key in data) {
@@ -634,6 +659,39 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             state.commit("SET_ADMIN_CARDS", resp.data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    POST_ADMIN_CARD_PARAMS(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards/${data.id}`,
+          method: "POST",
+          data
+        })
+          .then(resp => {
+            // state.commit("SET_ADMIN_CARD_PARAMS", data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    POST_ADMIN_VOID_CARD_PARAMS(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards/${data.id}`,
+          method: "POST",
+          data
+        })
+          .then(resp => {
             resolve(resp.data);
           })
           .catch(err => {

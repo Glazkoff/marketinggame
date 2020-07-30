@@ -372,6 +372,64 @@ async function trySetCards() {
 
 /** ************************** Модуль API *********************** */
 
+// Добавление, редактирование или удаление параметра карточки
+app.post("/api/admin/cards/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          console.log(chalk.bgRed(JSON.stringify(req.body)));
+          let newParam = req.body;
+          let findCard = await Cards.findOne({
+            where: {
+              card_id: req.params.id
+            }
+          });
+          if (JSON.stringify(findCard) !== "{}") {
+            let findCardParamIndex = findCard.data_change.findIndex(el => {
+              return el.param === req.body.param && el.when === req.body.when;
+            });
+            if (findCardParamIndex !== -1) {
+              if (req.body.toDelete) {
+                findCard.data_change.splice(findCardParamIndex, 1);
+              } else {
+                console.log(chalk.bgYellow(JSON.stringify(findCard)));
+                findCard.data_change[findCardParamIndex] = newParam;
+              }
+            } else {
+              newParam.from = `${findCard.title} ${newParam.when}`;
+              findCard.data_change.push(newParam);
+            }
+            let a = await Cards.update(
+              {
+                data_change: findCard.data_change
+              },
+              {
+                where: { card_id: req.params.id }
+              }
+            );
+            res.send(a);
+          } else {
+            res.status(500).send({
+              message: "Error",
+              status: 500
+            });
+          }
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 // Получение данных обо всех карточек для администратора
 app.get("/api/admin/cards", async (req, res) => {
   try {

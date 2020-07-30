@@ -16,7 +16,9 @@
                 v-for="card in cards"
                 :key="card.id"
               >
-                {{ card.id }}
+                <router-link :to="`/admin/cards/edit/${card.id}`"
+                  >(редактировать)</router-link
+                ><br />{{ card.id }}
               </th>
             </tr>
           </thead>
