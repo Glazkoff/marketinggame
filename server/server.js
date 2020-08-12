@@ -1567,21 +1567,25 @@ io.on("connection", async socket => {
                   break;
               }
             } else {
+              // TODO: проверить формулу coef/2 => (1+coef)/2
+              let changeCoef = changing.change;
+              if (gamer["used_cards"][changing.id] !== 0) {
+                for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
+                  changeCoef = (1 + changeCoef) / 2;
+                  if (changing.change >= 10) {
+                    changeCoef = Math.ceil(changeCoef);
+                  }
+                }
+              }
               switch (changing.operation) {
                 case "+":
-                  gamer.gamer_room_params[changing.param] +=
-                    changing.change /
-                    Math.pow(2, gamer["used_cards"][changing.id]);
+                  gamer.gamer_room_params[changing.param] += changeCoef;
                   break;
                 case "-":
-                  gamer.gamer_room_params[changing.param] -=
-                    changing.change /
-                    Math.pow(2, gamer["used_cards"][changing.id]);
+                  gamer.gamer_room_params[changing.param] -= changeCoef;
                   break;
                 case "*":
-                  gamer.gamer_room_params[changing.param] *=
-                    changing.change /
-                    Math.pow(2, gamer["used_cards"][changing.id]);
+                  gamer.gamer_room_params[changing.param] *= changeCoef;
                   break;
                 default:
                   // messageArr.push(
@@ -1614,12 +1618,21 @@ io.on("connection", async socket => {
             }
 
             if (gamer["used_cards"][changing.id] >= 1) {
+              // TODO: проверить формулу coef/2 => (1+coef)/2
+              let changeCoef = changing.change;
+              if (gamer["used_cards"][changing.id] !== 0) {
+                for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
+                  changeCoef = (1 + changeCoef) / 2;
+                  if (changing.change >= 10) {
+                    changeCoef = Math.ceil(changeCoef);
+                  }
+                }
+              }
               analyticsString +=
                 " со знаком " +
                 changing.operation +
                 " на " +
-                changing.change /
-                  Math.pow(2, gamer["used_cards"][changing.id]) +
+                changeCoef +
                 " (" +
                 changing.from +
                 ")";

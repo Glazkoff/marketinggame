@@ -25,7 +25,7 @@
               <option value="+">+</option>
               <option value="*">*</option>
               <option value="-">-</option>
-              <option value="/">/</option>
+              <!-- <option value="/">/</option> -->
             </select>
           </label>
           <label for="new-coef" class="w-100 col-9"

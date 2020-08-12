@@ -294,7 +294,12 @@ export default {
             this.refreshCards[cardIndex].coefs = this.refreshCards[
               cardIndex
             ].coefs.map(coef => {
-              return Math.round(coef / 2);
+              // Изменение каждого коэф. после трёх ходов подряд
+              let res = Math.ceil(((1 + coef) / 2) * 10) / 10;
+              if (coef >= 10) {
+                res = Math.ceil(res);
+              }
+              return res;
             });
           } else {
             console.error("Что-то не так с изменением карточек после сессий");
@@ -329,12 +334,19 @@ export default {
             typeof el.templateText !== "undefined" &&
             !el.oneOff
           ) {
-            el.text = el.templateText;
-            for (let i = 0; i < el.coefs.length; i++) {
-              let regexp = new RegExp(/@coef[0-9]/);
-              el.text = el.text.replace(regexp, (match, p1, offset, string) => {
-                return el.coefs[i];
-              });
+            if (el.templateText !== null) {
+              el.text = el.templateText;
+            }
+            if (el.coefs.length !== 0 && el.coefs.length !== undefined) {
+              for (let i = 0; i < el.coefs.length; i++) {
+                let regexp = new RegExp(/@coef[0-9]/);
+                el.text = el.text.replace(
+                  regexp,
+                  (match, p1, offset, string) => {
+                    return el.coefs[i];
+                  }
+                );
+              }
             }
           }
         });
@@ -511,6 +523,12 @@ export default {
       this.$socket.emit("doStep", this.usedCards);
       let stepArr = [];
       for (const val of this.usedCards) {
+        console.log(
+          "$$$: ",
+          this.refreshCards,
+          this.refreshCards.find(el => el.id === val),
+          val
+        );
         let cardObj = {
           id: val,
           title: this.refreshCards.find(el => el.id === val).title
@@ -664,9 +682,11 @@ export default {
     getCards() {
       if (this.$store.state.cards.length === 0) {
         console.log("GET CARDS!");
+
         this.cardsLoading = true;
         this.$store.dispatch("GET_CARDS").then(
           res => {
+            this.refreshCards = [...res];
             this.cardsLoading = false;
           },
           err => {
