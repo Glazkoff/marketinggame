@@ -114,6 +114,35 @@
         </p>
       </div>
       <div class="table-responsive" v-else-if="card !== undefined">
+        <div class="custom-control custom-switch ml-2 mb-3">
+          <input
+            type="checkbox"
+            class="custom-control-input"
+            id="customSwitch1"
+            :checked="card.oneOff"
+            @click="onOneOffSwitch()"
+            :disabled="oneOffLoading"
+          />
+          <label
+            class="custom-control-label"
+            for="customSwitch1"
+            v-if="oneOffLoading"
+            ><span
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span
+          ></label>
+          <label
+            class="custom-control-label"
+            for="customSwitch1"
+            v-else-if="card.oneOff"
+            >Одноразовая карточка</label
+          >
+          <label class="custom-control-label" for="customSwitch1" v-else
+            >Многоразовая карточка</label
+          >
+        </div>
         <small>Нажмите на коэффициент, чтобы отредактировать</small>
         <table class="table table-sm">
           <thead>
@@ -357,6 +386,8 @@ export default {
       modalVoidLoading: false,
       isError: false,
       showModal: false,
+      oneOffChange: false,
+      oneOffLoading: false,
       coefEdit: {},
       newCoefValue: {
         operation: "+",
@@ -365,6 +396,23 @@ export default {
     };
   },
   methods: {
+    onOneOffSwitch() {
+      this.card.oneOff = !this.card.oneOff;
+      this.oneOffLoading = true;
+      let oneOffData = {
+        id: this.$route.params.id,
+        oneOff: this.card.oneOff
+      };
+      this.$store.dispatch("POST_ADMIN_CARD_ONEOFF", oneOffData).then(
+        res => {
+          this.oneOffLoading = false;
+        },
+        err => {
+          this.oneOffLoading = false;
+          console.log(err);
+        }
+      );
+    },
     getFormatChange(dataChange, param, when) {
       let findDataChange = dataChange.find(el => {
         return el.param === param && el.when === when;
@@ -445,6 +493,7 @@ export default {
           if (this.card === undefined) {
             this.isError = true;
           }
+          this.oneOffChange = this.card.oneOff;
         },
         err => {
           this.cardsLoading = false;
@@ -499,6 +548,9 @@ export default {
 }
 td:hover {
   background-color: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+.custom-control-label {
   cursor: pointer;
 }
 </style>

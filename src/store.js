@@ -700,6 +700,22 @@ const store = new Vuex.Store({
           });
       });
     },
+    POST_ADMIN_CARD_ONEOFF(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards/oneoff/${data.id}`,
+          method: "POST",
+          data
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
     SOCKET_SET_GAME_PARAMS(state, res) {
       console.warn("FROM SOCKET SETTING ROOM", res);
       state.commit("SET_GAME_PARAMS", res);

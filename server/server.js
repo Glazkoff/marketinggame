@@ -372,6 +372,34 @@ async function trySetCards() {
 
 /** ************************** Модуль API *********************** */
 
+// Обновление статуса карточки: одно- или многоразовая
+app.post("/api/admin/cards/oneoff/:id", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await Cards.update(
+          {
+            oneOff: req.body.oneOff
+          },
+          {
+            where: {
+              card_id: req.params.id
+            }
+          }
+        );
+        res.send(result);
+      }
+    }
+  );
+});
+
 // Добавление, редактирование или удаление параметра карточки
 app.post("/api/admin/cards/:id", async (req, res) => {
   try {
