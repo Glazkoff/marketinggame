@@ -272,6 +272,7 @@ const store = new Vuex.Store({
       state.cards.splice(ind, 1);
     },
     SET_ONEOFF_CARD_LIST(state, oneOffCardList) {
+      state.oneOffCardList = [];
       oneOffCardList.forEach(el => {
         state.oneOffCardList.push(el.card_id);
       });

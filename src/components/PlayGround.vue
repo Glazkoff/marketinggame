@@ -684,22 +684,34 @@ export default {
       this.dragover = false;
     },
     getCards() {
-      if (this.$store.state.cards.length === 0) {
-        console.log("GET CARDS!");
-
-        this.cardsLoading = true;
-        this.$store.dispatch("GET_CARDS").then(
-          res => {
-            this.refreshCards = [...res];
-            this.cardsLoading = false;
-          },
-          err => {
-            this.cardsLoading = false;
-            console.log(err);
-          }
-        );
-      }
+      console.log("GET CARDS!");
+      this.cardsLoading = true;
+      this.$store.dispatch("GET_CARDS").then(
+        res => {
+          this.refreshCards = [...res];
+          this.cardsLoading = false;
+        },
+        err => {
+          this.cardsLoading = false;
+          console.log(err);
+        }
+      );
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.cardsLoading = true;
+      vm.$store.dispatch("GET_CARDS").then(
+        res => {
+          vm.refreshCards = [...res];
+          vm.cardsLoading = false;
+        },
+        err => {
+          vm.cardsLoading = false;
+          console.log(err);
+        }
+      );
+    });
   }
 };
 </script>
