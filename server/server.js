@@ -344,7 +344,7 @@ sequelize
 const CARDS = require("./cards");
 const EVENTS = require("./events");
 const DEFAULTROOMS = require("./defaultrooms");
-const ONEWAYCARDS = require("./onewaycards.js");
+// const ONEWAYCARDS = require("./onewaycards.js");
 
 async function trySetCards() {
   // await Cards.destroy({ where: {} });
@@ -370,7 +370,40 @@ async function trySetCards() {
   }
 }
 
+async function getOneOffCardsId() {
+  let result;
+  try {
+    result = await Cards.findAll({
+      attributes: ["card_id"],
+      where: {
+        oneOff: true
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return result;
+}
 /** ************************** Модуль API *********************** */
+
+// Обновление статуса карточки: одно- или многоразовая
+app.get("/api/cards/oneoff", async (req, res) => {
+  await jwt.verify(
+    req.headers.authorization,
+    JWTCONFIG.SECRET,
+    async (err, decoded) => {
+      if (err) {
+        res.status(401).send({
+          status: 401,
+          message: "Вы не авторизованы!"
+        });
+      } else {
+        let result = await getOneOffCardsId();
+        res.send(result);
+      }
+    }
+  );
+});
 
 // Обновление статуса карточки: одно- или многоразовая
 app.post("/api/admin/cards/oneoff/:id", async (req, res) => {
@@ -1461,8 +1494,10 @@ io.on("connection", async socket => {
           });
           gamer.gamer_room_params.money -= card.cost;
 
-          // TODO: сделать выгрузку ONEWAYCARDS из БД
-          let oneWayCardIndex = ONEWAYCARDS.findIndex(elem => elem === cardId);
+          let oneWayCards = await getOneOffCardsId();
+          let oneWayCardIndex = oneWayCards.findIndex(
+            elem => elem.card_id === cardId
+          );
           let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId);
 
           // Если карточка не является одноразовой
@@ -1542,8 +1577,10 @@ io.on("connection", async socket => {
         let changing = gamer.changes[index];
         // Для ID изменения changing.id индекс в массиве эфф. равен indexEffArr
         indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id);
-
-        let oneWayChangingId = ONEWAYCARDS.findIndex(el => el === changing.id);
+        let oneWayCards = await getOneOffCardsId();
+        let oneWayChangingId = oneWayCards.findIndex(
+          el => el.card_id === changing.id
+        );
         if (
           indexEffArr === -1 &&
           oneWayChangingId === -1 &&

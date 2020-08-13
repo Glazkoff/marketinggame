@@ -459,6 +459,9 @@ export default {
     cards() {
       return this.$store.state.cards;
     },
+    oneOffCardList() {
+      return this.$store.state.oneOffCardList;
+    },
     clients() {
       return this.$store.state.roomParams.clients;
     },
@@ -518,7 +521,7 @@ export default {
       // this.$store.state.isStart = false;
       this.playAnimation();
     },
-    makeStep() {
+    async makeStep() {
       this.$store.commit("doStep"); //
       this.$socket.emit("doStep", this.usedCards);
       let stepArr = [];
@@ -537,7 +540,8 @@ export default {
       }
       this.$store.commit("addSteps", stepArr);
       // Одноразовые карточки (индексы):
-      let oneOffCards = [3, 7];
+      await this.$store.dispatch("GET_ONEOFF_CARD_LIST");
+      let oneOffCards = this.oneOffCardList;
       for (const cardIndex of oneOffCards) {
         let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex);
         console.log("ОДНОРАЗОВЫЕ КАРТОЧКИ");

@@ -35,6 +35,7 @@ const store = new Vuex.Store({
     gameEvent: null,
     completedSessions: [],
     cards: [],
+    oneOffCardList: [],
     admin: {
       rooms: [],
       usersInRoom: [],
@@ -269,6 +270,11 @@ const store = new Vuex.Store({
     SPLICE_CARD(state, cardId) {
       let ind = state.cards.findIndex(el => el.id === cardId);
       state.cards.splice(ind, 1);
+    },
+    SET_ONEOFF_CARD_LIST(state, oneOffCardList) {
+      oneOffCardList.forEach(el => {
+        state.oneOffCardList.push(el.card_id);
+      });
     }
     // SET_ADMIN_CARD_PARAMS(state, data) {
     //   console.log("MUT", data);
@@ -514,6 +520,22 @@ const store = new Vuex.Store({
         })
           .then(res => {
             state.commit("SET_CARDS", res.data);
+            resolve(res.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ONEOFF_CARD_LIST: function(state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/cards/oneoff`,
+          method: "GET"
+        })
+          .then(res => {
+            state.commit("SET_ONEOFF_CARD_LIST", res.data);
             resolve(res.data);
           })
           .catch(err => {
