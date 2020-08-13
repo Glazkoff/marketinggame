@@ -219,6 +219,21 @@
                 </td>
               </template>
             </tr>
+            <tr>
+              <td class="text-left border-right border-left border-bottom">
+                Конверсия
+              </td>
+              <template v-for="card in cards">
+                <td
+                  class="text-center  border-bottom font-weight-bold"
+                  v-for="num in card.duration"
+                  :key="'card' + card.id + 'month' + num"
+                  :class="{ 'border-right': num === card.duration }"
+                >
+                  {{ getFormatChange(card.data_change, "conversion", num) }}
+                </td>
+              </template>
+            </tr>
           </tbody>
         </table>
       </div>

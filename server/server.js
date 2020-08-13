@@ -386,7 +386,43 @@ async function getOneOffCardsId() {
 }
 /** ************************** Модуль API *********************** */
 
-// Обновление статуса карточки: одно- или многоразовая
+// Изменение описания карточки через админпанель
+app.put("/api/admin/cards/description/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          console.log(req.body);
+          let result = await Cards.update(
+            {
+              title: req.body.title,
+              coefs: req.body.coefs,
+              templateText: req.body.templateText,
+              text: req.body.text
+            },
+            {
+              where: {
+                card_id: req.params.id
+              }
+            }
+          );
+          res.send(result);
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// Получение списка одноразовых карточек
 app.get("/api/cards/oneoff", async (req, res) => {
   await jwt.verify(
     req.headers.authorization,

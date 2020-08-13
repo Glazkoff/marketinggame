@@ -339,7 +339,7 @@ export default {
             }
             if (el.coefs.length !== 0 && el.coefs.length !== undefined) {
               for (let i = 0; i < el.coefs.length; i++) {
-                let regexp = new RegExp(/@coef[0-9]/);
+                let regexp = new RegExp("(@coef" + i + ")");
                 el.text = el.text.replace(
                   regexp,
                   (match, p1, offset, string) => {

@@ -268,7 +268,7 @@ const store = new Vuex.Store({
       state.cards = cards;
     },
     SPLICE_CARD(state, cardId) {
-      let ind = state.cards.findIndex(el => el.id === cardId);
+      let ind = state.cards.findIndex(el => +el.id === +cardId);
       state.cards.splice(ind, 1);
     },
     SET_ONEOFF_CARD_LIST(state, oneOffCardList) {
@@ -276,6 +276,13 @@ const store = new Vuex.Store({
       oneOffCardList.forEach(el => {
         state.oneOffCardList.push(el.card_id);
       });
+    },
+    SET_ADMIN_CARD_DESCRIPTION(state, data) {
+      let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
+      state.admin.cards[cardIndex].coefs = data.coefs;
+      state.admin.cards[cardIndex].text = data.text;
+      state.admin.cards[cardIndex].templateText = data.templateText;
+      state.admin.cards[cardIndex].title = data.title;
     }
     // SET_ADMIN_CARD_PARAMS(state, data) {
     //   console.log("MUT", data);
@@ -731,6 +738,23 @@ const store = new Vuex.Store({
           data
         })
           .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    PUT_ADMIN_CARD_DESCRIPTION(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards/description/${data.id}`,
+          method: "PUT",
+          data
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_CARD_DESCRIPTION", data);
             resolve(resp.data);
           })
           .catch(err => {

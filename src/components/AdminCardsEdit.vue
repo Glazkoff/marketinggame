@@ -114,6 +114,239 @@
         </p>
       </div>
       <div class="table-responsive" v-else-if="card !== undefined">
+        <div
+          class="description-as-is cursor-pointer"
+          v-if="!newCardDescription.isEdit"
+          @click="onDescriptionChange()"
+        >
+          <div class="form-group">
+            <label for="card-description">Название карточки</label>
+            <input
+              class="form-control"
+              id="card-description"
+              type="text"
+              disabled
+              :value="card.title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="card-description">Описание карточки</label>
+            <textarea
+              class="form-control"
+              id="card-description"
+              rows="3"
+              disabled
+              :value="card.text"
+            ></textarea>
+            <small>Нажмите на поле, чтобы начать редактировать</small>
+          </div>
+        </div>
+        <div class="bg-light pl-3 pr-3" v-else-if="!card.oneOff">
+          <hr />
+          <h3>Редактирование описания карточки</h3>
+          <button
+            class="btn btn-danger btn-block"
+            @click="onDescriptionChange()"
+            :disabled="descriptionSaveLoading"
+          >
+            Отменить редактирование описания
+          </button>
+          <div class="form-group">
+            <label for="title">Название карточки</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control form-control-input"
+              :disabled="descriptionSaveLoading"
+              v-model.trim="newCardDescription.title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Описание карточки</label>
+            <textarea
+              class="form-control"
+              id="description"
+              rows="3"
+              v-model.trim="newCardDescription.templateText"
+              :disabled="descriptionSaveLoading"
+            ></textarea>
+            <button
+              class="btn btn-primary btn-block mt-2"
+              @click="onAddCoef()"
+              :disabled="descriptionSaveLoading"
+            >
+              Добавить
+              <strong>@coef{{ newCardDescription.coefs.length }}</strong>
+            </button>
+            <small
+              >Примечание: пожалуйста, вписывайте коэффициенты по порядку (т.е.
+              сначала @coef0, потом @coef1 и т.д.)</small
+            >
+          </div>
+          <div class="row">
+            <div
+              class="form-group col-2"
+              v-for="(coef, index) in newCardDescription.coefs"
+              :key="index"
+            >
+              <label :for="'coef' + index">@coef{{ index }}</label>
+              <div class="row">
+                <div class="col-8 pr-1">
+                  <input
+                    type="email"
+                    class="form-control"
+                    :id="'coef' + index"
+                    placeholder="name@example.com"
+                    v-model.number="newCardDescription.coefs[index]"
+                    :disabled="descriptionSaveLoading"
+                  />
+                </div>
+                <div class="col-4 p-0 ">
+                  <button
+                    class="btn btn-danger btn-block h-100"
+                    @click="onCoefDelete(index)"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-2"></div>
+          </div>
+          <div class="form-group">
+            <label for="finaltext">Итоговое описание карточки</label>
+            <textarea
+              class="form-control"
+              id="finaltext"
+              rows="3"
+              disabled
+              :value="finalText"
+            ></textarea>
+          </div>
+          <button
+            class="btn btn-success btn-block btn-lg"
+            disabled
+            v-if="descriptionSaveLoading"
+          >
+            <span
+              class="spinner-border spinner-border-md"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Сохранение...
+          </button>
+          <button
+            class="btn btn-success btn-block btn-lg"
+            @click="onDescriptionSave()"
+            v-else
+          >
+            Сохранить описание
+          </button>
+          <hr />
+        </div>
+        <div class="bg-light pl-3 pr-3" v-else>
+          <hr />
+          <h3>Редактирование описания карточки</h3>
+          <button
+            class="btn btn-danger btn-block"
+            @click="onDescriptionChange()"
+            :disabled="descriptionSaveLoading"
+          >
+            Отменить редактирование описания
+          </button>
+          <div class="form-group">
+            <label for="title">Название карточки</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control form-control-input"
+              :disabled="descriptionSaveLoading"
+              v-model.trim="newCardDescription.title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Описание карточки</label>
+            <textarea
+              class="form-control"
+              id="description"
+              rows="3"
+              v-model.trim="newCardDescription.text"
+              :disabled="descriptionSaveLoading"
+            ></textarea>
+            <!-- <button
+              class="btn btn-primary btn-block mt-2"
+              @click="onAddCoef()"
+              :disabled="descriptionSaveLoading"
+            >
+              Добавить
+              <strong>@coef{{ newCardDescription.coefs.length }}</strong>
+            </button>
+            <small
+              >Примечание: пожалуйста, вписывайте коэффициенты по порядку (т.е.
+              сначала @coef0, потом @coef1 и т.д.)</small
+            > -->
+          </div>
+          <div class="row">
+            <div
+              class="form-group col-2"
+              v-for="(coef, index) in newCardDescription.coefs"
+              :key="index"
+            >
+              <label :for="'coef' + index">@coef{{ index }}</label>
+              <!-- <div class="row">
+                <div class="col-8 pr-1">
+                  <input
+                    type="email"
+                    class="form-control"
+                    :id="'coef' + index"
+                    placeholder="name@example.com"
+                    v-model.number="newCardDescription.coefs[index]"
+                    :disabled="descriptionSaveLoading"
+                  />
+                </div>
+                <div class="col-4 p-0 ">
+                  <button
+                    class="btn btn-danger btn-block h-100"
+                    @click="onCoefDelete(index)"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div> -->
+            </div>
+            <div class="col-2"></div>
+          </div>
+          <!-- <div class="form-group">
+            <label for="finaltext">Итоговое описание карточки</label>
+            <textarea
+              class="form-control"
+              id="finaltext"
+              rows="3"
+              disabled
+              :value="finalText"
+            ></textarea>
+          </div> -->
+          <button
+            class="btn btn-success btn-block btn-lg"
+            disabled
+            v-if="descriptionSaveLoading"
+          >
+            <span
+              class="spinner-border spinner-border-md"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Сохранение...
+          </button>
+          <button
+            class="btn btn-success btn-block btn-lg"
+            @click="onDescriptionSave()"
+            v-else
+          >
+            Сохранить описание
+          </button>
+          <hr />
+        </div>
         <div class="custom-control custom-switch ml-2 mb-3">
           <input
             type="checkbox"
@@ -143,6 +376,7 @@
             >Многоразовая карточка</label
           >
         </div>
+        <h3>Редактирование коэффициентов карточки</h3>
         <small>Нажмите на коэффициент, чтобы отредактировать</small>
         <table class="table table-sm">
           <thead>
@@ -363,6 +597,22 @@
                 </td>
               </template>
             </tr>
+            <tr>
+              <td class="text-left border-right border-left border-bottom">
+                Конверсия
+              </td>
+              <template>
+                <td
+                  class="text-center  border-bottom font-weight-bold"
+                  v-for="num in card.duration"
+                  :key="'card' + card.id + 'month' + num"
+                  :class="{ 'border-right': num === card.duration }"
+                  @click="onChangeClick(card.data_change, 'conversion', num)"
+                >
+                  {{ getFormatChange(card.data_change, "conversion", num) }}
+                </td>
+              </template>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -392,12 +642,62 @@ export default {
       newCoefValue: {
         operation: "+",
         change: 0
-      }
+      },
+      newCardDescription: {
+        isEdit: false,
+        coefs: [],
+        text: "",
+        templateText: "",
+        title: ""
+      },
+      descriptionSaveLoading: false
     };
   },
   methods: {
+    onCoefDelete(index) {
+      let regexp = new RegExp("(@coef" + index + ")");
+      this.newCardDescription.templateText = this.newCardDescription.templateText.replace(
+        regexp,
+        (match, p1, offset, string) => {
+          return "";
+        }
+      );
+      console.log(this.newCardDescription.coefs.splice(index, 1));
+    },
+    onDescriptionSave() {
+      this.newCardDescription.id = this.$route.params.id;
+      this.descriptionSaveLoading = true;
+      this.$store
+        .dispatch("PUT_ADMIN_CARD_DESCRIPTION", this.newCardDescription)
+        .then(
+          res => {
+            this.descriptionSaveLoading = false;
+            this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
+          },
+          err => {
+            this.descriptionSaveLoading = false;
+            this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
+            console.log(err);
+          }
+        );
+    },
+    onAddCoef() {
+      this.newCardDescription.coefs.push(0);
+      this.newCardDescription.templateText +=
+        " @coef" + (this.card.coefs.length - 1);
+    },
+    onDescriptionChange() {
+      this.newCardDescription.coefs = this.card.coefs;
+      this.newCardDescription.text = this.card.text;
+      this.newCardDescription.templateText = this.card.templateText;
+      this.newCardDescription.title = this.card.title;
+      this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
+    },
     onOneOffSwitch() {
       this.card.oneOff = !this.card.oneOff;
+      if (!this.card.oneOff) {
+        this.newCardDescription.templateText = this.newCardDescription.text;
+      }
       this.oneOffLoading = true;
       let oneOffData = {
         id: this.$route.params.id,
@@ -505,6 +805,18 @@ export default {
       );
     }
   },
+  watch: {
+    desc() {
+      let text = this.newCardDescription.templateText;
+      for (let i = 0; i < this.newCardDescription.coefs.length; i++) {
+        let regexp = new RegExp("(@coef" + i + ")");
+        text = text.replace(regexp, (match, p1, offset, string) => {
+          return this.newCardDescription.coefs[i];
+        });
+      }
+      this.newCardDescription.text = text;
+    }
+  },
   computed: {
     cardId() {
       return this.$route.params.id;
@@ -514,6 +826,16 @@ export default {
         el => +el["id"] === +this.$route.params.id
       );
       return card;
+    },
+    finalText() {
+      let text = this.newCardDescription.templateText;
+      for (let i = 0; i < this.newCardDescription.coefs.length; i++) {
+        let regexp = new RegExp("(@coef" + i + ")");
+        text = text.replace(regexp, (match, p1, offset, string) => {
+          return this.newCardDescription.coefs[i];
+        });
+      }
+      return text;
     }
   },
   mounted() {
@@ -543,6 +865,10 @@ export default {
 </script>
 
 <style scoped>
+.cursor-pointer,
+.cursor-pointer * {
+  cursor: pointer;
+}
 [v-cloak] {
   display: none;
 }
