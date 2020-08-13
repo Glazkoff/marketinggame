@@ -42,7 +42,7 @@
           >
           <router-link
             tag="div"
-            class="menu-point menu-point-disabled"
+            class="menu-point"
             to="/admin/cards"
             active-class="menu-point-active"
             :exact="true"
@@ -58,6 +58,15 @@
             :exact="true"
           >
             Статистика</router-link
+          >
+          <router-link
+            tag="div"
+            class="menu-point"
+            to="/choose"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            <em>← Вернуться в игру</em></router-link
           >
         </div>
       </transition>

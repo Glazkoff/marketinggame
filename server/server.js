@@ -1566,7 +1566,9 @@ io.on("connection", async socket => {
       gamer.gamer_room_params.expenses = expenses;
       let result = commCircul - expenses;
       gamer.gamer_room_params.money += room.budget_per_month;
-      messageArr.push("Пришёл бюджет на месяц (" + Math.ceil(result) + ")");
+      messageArr.push(
+        "Пришёл бюджет на месяц (+" + Math.ceil(room.budget_per_month) + "₽)"
+      );
       let resultPerClient = result / clients;
       gamer.gamer_room_params.moneyPerClient = Math.ceil(resultPerClient);
 
@@ -1588,17 +1590,17 @@ io.on("connection", async socket => {
         ) {
           for (let index = 0; index < gamer.changes.length; index++) {
             if (gamer.changes[index].id === changing.id) {
-              messageArr.push(
-                "УДАЛЯЕТСЯ параметр " +
-                  changing.param +
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changing.change +
-                  " (" +
-                  changing.from +
-                  ")"
-              );
+              // messageArr.push(
+              //   "УДАЛЯЕТСЯ параметр " +
+              //     changing.param +
+              //     " со знаком " +
+              //     changing.operation +
+              //     " на " +
+              //     changing.change +
+              //     " (" +
+              //     changing.from +
+              //     ")"
+              // );
               gamer.changes[index].toDelete = true;
             }
           }
@@ -1632,7 +1634,6 @@ io.on("connection", async socket => {
                   break;
               }
             } else {
-              // TODO: проверить формулу coef/2 => (1+coef)/2
               let changeCoef = changing.change;
               if (gamer["used_cards"][changing.id] !== 0) {
                 for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
@@ -1683,7 +1684,6 @@ io.on("connection", async socket => {
             }
 
             if (gamer["used_cards"][changing.id] >= 1) {
-              // TODO: проверить формулу coef/2 => (1+coef)/2
               let changeCoef = changing.change;
               if (gamer["used_cards"][changing.id] !== 0) {
                 for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
@@ -1711,7 +1711,7 @@ io.on("connection", async socket => {
                 changing.from +
                 ")";
             }
-
+            console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
             messageArr.push(analyticsString);
             let indForDelete = gamer.changes.findIndex(elem => {
               return (
@@ -1978,12 +1978,18 @@ io.on("connection", async socket => {
 
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
-        let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
-        if (randomEvent.data_change !== undefined) {
+        // TODO: вернуть строчку
+        // let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+        let randomEvent = EVENTS[0];
+        console.log(
+          chalk.bgRed("Случайное событие #", JSON.stringify(randomEvent))
+        );
+        if (randomEvent.dataChange !== undefined) {
+          console.log(chalk.bgYellow("$1$"));
           // Для каждого изменения
-          for (const eventChange of randomEvent.data_change) {
+          for (const eventChange of randomEvent.dataChange) {
             // Если изменения при применении
-            if (eventChange.when === 0) {
+            if (+eventChange.when === 0) {
               for (const gamerId of room.participants_id) {
                 let userInRoom = await UsersInRooms.findOne({
                   where: {
@@ -2586,12 +2592,17 @@ io.on("connection", async socket => {
       },
       order: [["updatedAt", "DESC"]]
     });
+    console.log(
+      chalk.bgBlue(
+        `Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
+      )
+    );
     socket.leave("user" + socket.decoded_token.id, () => {
-      console.log(
-        chalk.bgBlue(
-          `Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
-        )
-      );
+      // console.log(
+      //   chalk.bgBlue(
+      //     `(cb) Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
+      //   )
+      // );
     });
     if (room && room.users_steps_state !== null) {
       let index = room.users_steps_state.findIndex(
