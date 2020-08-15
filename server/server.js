@@ -1762,14 +1762,14 @@ io.on("connection", async socket => {
           } else {
             for (let index = 0; index < gamer.changes.length; index++) {
               if (gamer.changes[index].id === changing.id) {
-                messageArr.push(
-                  "УДАЛЁН параметр " +
-                    changing.param +
-                    " со знаком " +
-                    changing.operation +
-                    " на " +
-                    changing.change
-                );
+                // messageArr.push(
+                //   "УДАЛЁН параметр " +
+                //     changing.param +
+                //     " со знаком " +
+                //     changing.operation +
+                //     " на " +
+                //     changing.change
+                // );
                 gamer.changes[index].toDelete = true;
               }
             }
