@@ -278,6 +278,7 @@ const store = new Vuex.Store({
       });
     },
     SET_ADMIN_CARD_DESCRIPTION(state, data) {
+      console.error(data);
       let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
       state.admin.cards[cardIndex].coefs = data.coefs;
       state.admin.cards[cardIndex].text = data.text;
