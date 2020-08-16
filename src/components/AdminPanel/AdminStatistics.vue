@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Loader from "./Loader";
+import Loader from "@/components/Loader";
 
 export default {
   name: "AdminStatistics",

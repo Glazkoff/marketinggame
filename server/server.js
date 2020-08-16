@@ -253,7 +253,6 @@ const Cards = sequelize.define("cards", {
   }
 });
 
-// TODO:  Добавить заполнение таблицы Events
 // МОДЕЛЬ: Events
 const Events = sequelize.define("events", {
   event_id: {
@@ -365,6 +364,25 @@ async function trySetCards() {
         duration: card.duration,
         data_change: card.data_change,
         oneOff: card.oneOff
+      });
+    }
+  }
+}
+
+async function trySetEvents() {
+  // await Cards.destroy({ where: {} });
+  for (let event of EVENTS) {
+    let findEvent = await Events.findOne({
+      where: {
+        event_id: event.id
+      }
+    });
+    if (JSON.stringify(findEvent) === "null") {
+      Events.create({
+        event_id: event.id,
+        title: event.title,
+        description: event.description,
+        data_change: event.data_change
       });
     }
   }
@@ -2014,9 +2032,7 @@ io.on("connection", async socket => {
 
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
-        // TODO: вернуть строчку
-        // let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
-        let randomEvent = EVENTS[0];
+        let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
         console.log(
           chalk.bgRed("Случайное событие #", JSON.stringify(randomEvent))
         );

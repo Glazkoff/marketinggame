@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import Loader from "./Loader";
+import Loader from "@/components/Loader";
 import moment from "moment";
 
 export default {

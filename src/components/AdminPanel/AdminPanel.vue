@@ -51,6 +51,15 @@
           >
           <router-link
             tag="div"
+            class="menu-point menu-point-disabled"
+            to="/admin/events"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            Редактирование событий</router-link
+          >
+          <router-link
+            tag="div"
             :disabled="true"
             class="menu-point menu-point-disabled"
             to="/admin/statistics"

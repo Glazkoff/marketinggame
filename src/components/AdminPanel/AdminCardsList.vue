@@ -242,7 +242,7 @@
 </template>
 
 <script>
-import Loader from "./Loader.vue";
+import Loader from "@/components/Loader.vue";
 export default {
   name: "AdminCardsList",
   components: {

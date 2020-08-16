@@ -3,15 +3,19 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import Main from "./views/Main.vue";
 import Choose from "./components/Choose.vue";
-import AdminRoomState from "./components/AdminRoomState.vue";
-import AdminRooms from "./components/AdminRooms.vue";
-import AdminStatistics from "./components/AdminStatistics.vue";
-import AdminRoomsList from "./components/AdminRoomsList.vue";
-import AdminGameConfig from "./components/AdminGameConfig.vue";
-import AdminUsers from "./components/AdminUsers.vue";
-import AdminCards from "./components/AdminCards.vue";
-import AdminCardsEdit from "./components/AdminCardsEdit.vue";
-import AdminCardsList from "./components/AdminCardsList.vue";
+import AdminRoomState from "./components/AdminPanel/AdminRoomState.vue";
+import AdminRooms from "./components/AdminPanel/AdminRooms.vue";
+import AdminStatistics from "./components/AdminPanel/AdminStatistics.vue";
+import AdminRoomsList from "./components/AdminPanel/AdminRoomsList.vue";
+import AdminGameConfig from "./components/AdminPanel/AdminGameConfig.vue";
+import AdminUsers from "./components/AdminPanel/AdminUsers.vue";
+import AdminCards from "./components/AdminPanel/AdminCards.vue";
+import AdminCardsEdit from "./components/AdminPanel/AdminCardsEdit.vue";
+import AdminCardsList from "./components/AdminPanel/AdminCardsList.vue";
+import AdminEvents from "./components/AdminPanel/AdminEvents/AdminEvents.vue";
+import AdminEventsEdit from "./components/AdminPanel/AdminEvents/AdminEventsEdit.vue";
+import AdminEventsList from "./components/AdminPanel/AdminEvents/AdminEventsList.vue";
+
 import store from "./store";
 
 Vue.use(Router);
@@ -67,7 +71,7 @@ export default new Router({
       name: "Admin",
       component: () =>
         import(
-          /* webpackChunkName: "adminpanel" */ "./components/AdminPanel.vue"
+          /* webpackChunkName: "adminpanel" */ "./components/AdminPanel/AdminPanel.vue"
         ),
       // component: AdminPanel,
       beforeEnter: ifAuthenticated,
@@ -109,6 +113,20 @@ export default new Router({
             {
               path: "edit/:id",
               component: AdminCardsEdit
+            }
+          ]
+        },
+        {
+          path: "events",
+          component: AdminEvents,
+          children: [
+            {
+              path: "/",
+              component: AdminEventsList
+            },
+            {
+              path: "edit/:id",
+              component: AdminEventsEdit
             }
           ]
         }

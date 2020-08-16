@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import Loader from "./Loader.vue";
+import Loader from "@/components/Loader.vue";
 import moment from "moment";
 export default {
   name: "AdminRoomState",

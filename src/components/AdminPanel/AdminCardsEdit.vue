@@ -621,8 +621,8 @@
 </template>
 
 <script>
-import Loader from "./Loader";
-import Modal from "./Modal";
+import Loader from "@/components/Loader";
+import Modal from "@/components/Modal";
 export default {
   name: "AdminCardsEdit",
   components: {
