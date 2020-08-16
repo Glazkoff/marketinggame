@@ -5,7 +5,6 @@
         <h5>Изменение коэффициента</h5>
       </template>
       <template v-slot:body>
-        <!-- <h1>Fuck you, asshole!</h1> -->
         <p>
           Предыдущее значение:
           <strong v-if="coefEdit.oldValue !== undefined"
@@ -25,7 +24,6 @@
               <option value="+">+</option>
               <option value="*">*</option>
               <option value="-">-</option>
-              <!-- <option value="/">/</option> -->
             </select>
           </label>
           <label for="new-coef" class="w-100 col-9"
@@ -40,16 +38,6 @@
             />
           </label>
         </div>
-        <!-- <label for="new-coef" class="w-100"
-          >Новое значение:
-          <input
-            class="form-control form-control-lg"
-            type="number"
-            placeholder="0.0"
-            id="new-coef"
-            v-model.number.trim="newCoefValue"
-          />
-        </label> -->
       </template>
       <template v-slot:footer>
         <button
@@ -273,18 +261,6 @@
               v-model.trim="newCardDescription.text"
               :disabled="descriptionSaveLoading"
             ></textarea>
-            <!-- <button
-              class="btn btn-primary btn-block mt-2"
-              @click="onAddCoef()"
-              :disabled="descriptionSaveLoading"
-            >
-              Добавить
-              <strong>@coef{{ newCardDescription.coefs.length }}</strong>
-            </button>
-            <small
-              >Примечание: пожалуйста, вписывайте коэффициенты по порядку (т.е.
-              сначала @coef0, потом @coef1 и т.д.)</small
-            > -->
           </div>
           <div class="row">
             <div
@@ -293,39 +269,9 @@
               :key="index"
             >
               <label :for="'coef' + index">@coef{{ index }}</label>
-              <!-- <div class="row">
-                <div class="col-8 pr-1">
-                  <input
-                    type="email"
-                    class="form-control"
-                    :id="'coef' + index"
-                    placeholder="name@example.com"
-                    v-model.number="newCardDescription.coefs[index]"
-                    :disabled="descriptionSaveLoading"
-                  />
-                </div>
-                <div class="col-4 p-0 ">
-                  <button
-                    class="btn btn-danger btn-block h-100"
-                    @click="onCoefDelete(index)"
-                  >
-                    &times;
-                  </button>
-                </div>
-              </div> -->
             </div>
             <div class="col-2"></div>
           </div>
-          <!-- <div class="form-group">
-            <label for="finaltext">Итоговое описание карточки</label>
-            <textarea
-              class="form-control"
-              id="finaltext"
-              rows="3"
-              disabled
-              :value="finalText"
-            ></textarea>
-          </div> -->
           <button
             class="btn btn-success btn-block btn-lg"
             disabled

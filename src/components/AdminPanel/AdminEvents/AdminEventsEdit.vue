@@ -1,10 +1,18 @@
 <template>
-  <div></div>
+  <div>
+    <h3>Редактирование случайного события #{{ eventId }}</h3>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "AdminEventsEdit"
+  name: "AdminEventsEdit",
+  components: {},
+  computed: {
+    eventId() {
+      return this.$route.params.id;
+    }
+  }
 };
 </script>
 

@@ -42,7 +42,8 @@ const store = new Vuex.Store({
       globalConfig: {},
       users: [],
       usersCount: 1,
-      cards: []
+      cards: [],
+      events: []
     }
   },
   getters: {
@@ -284,6 +285,9 @@ const store = new Vuex.Store({
       state.admin.cards[cardIndex].text = data.text;
       state.admin.cards[cardIndex].templateText = data.templateText;
       state.admin.cards[cardIndex].title = data.title;
+    },
+    SET_ADMIN_EVENTS(state, events) {
+      state.admin.events = events;
     }
     // SET_ADMIN_CARD_PARAMS(state, data) {
     //   console.log("MUT", data);
@@ -756,6 +760,22 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             state.commit("SET_ADMIN_CARD_DESCRIPTION", data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_EVENTS(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events`,
+          method: "GET"
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_EVENTS", resp.data);
             resolve(resp.data);
           })
           .catch(err => {

@@ -335,6 +335,7 @@ sequelize
     //   })
     //   .catch(err => console.log(err));
     trySetCards();
+    trySetEvents();
     console.log("Подключено к БД");
   })
   .catch(err => console.log("Ошибка подключения к БД", err));
@@ -370,7 +371,7 @@ async function trySetCards() {
 }
 
 async function trySetEvents() {
-  // await Cards.destroy({ where: {} });
+  // await Events.destroy({ where: {} });
   for (let event of EVENTS) {
     let findEvent = await Events.findOne({
       where: {
@@ -403,6 +404,39 @@ async function getOneOffCardsId() {
   return result;
 }
 /** ************************** Модуль API *********************** */
+
+// Получение данных обо всех случайных событиях для администратора
+app.get("/api/admin/events", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          let result = await Events.findAll({
+            attributes: [
+              ["event_id", "id"],
+              "title",
+              "description",
+              "data_change",
+              "createdAt",
+              "updatedAt"
+            ],
+            order: [["event_id", "ASC"]]
+          });
+          res.send(result);
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 // Изменение описания карточки через админпанель
 app.put("/api/admin/cards/description/:id", async (req, res) => {
