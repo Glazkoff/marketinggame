@@ -279,7 +279,6 @@ const store = new Vuex.Store({
       });
     },
     SET_ADMIN_CARD_DESCRIPTION(state, data) {
-      console.error(data);
       let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
       state.admin.cards[cardIndex].coefs = data.coefs;
       state.admin.cards[cardIndex].text = data.text;
@@ -288,6 +287,13 @@ const store = new Vuex.Store({
     },
     SET_ADMIN_EVENTS(state, events) {
       state.admin.events = events;
+    },
+    SET_ADMIN_EVENT_DESCRIPTION(state, data) {
+      let eventIndex = state.admin.events.findIndex(el => +el.id === +data.id);
+      if (eventIndex !== -1) {
+        state.admin.events[eventIndex].description = data.description;
+        state.admin.events[eventIndex].title = data.title;
+      }
     }
     // SET_ADMIN_CARD_PARAMS(state, data) {
     //   console.log("MUT", data);
@@ -776,6 +782,55 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             state.commit("SET_ADMIN_EVENTS", resp.data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    POST_ADMIN_EVENT_PARAMS(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events/${data.id}`,
+          method: "POST",
+          data
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    POST_ADMIN_VOID_EVENT_PARAMS(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events/${data.id}`,
+          method: "POST",
+          data
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    PUT_ADMIN_EVENT_DESCRIPTION(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events/description/${data.id}`,
+          method: "PUT",
+          data
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_EVENT_DESCRIPTION", data);
             resolve(resp.data);
           })
           .catch(err => {

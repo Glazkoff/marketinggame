@@ -51,7 +51,7 @@
           >
           <router-link
             tag="div"
-            class="menu-point menu-point-disabled"
+            class="menu-point"
             to="/admin/events"
             active-class="menu-point-active"
             :exact="true"

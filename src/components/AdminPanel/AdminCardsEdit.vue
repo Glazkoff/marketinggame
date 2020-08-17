@@ -671,7 +671,6 @@ export default {
       }
     },
     onChangeClick(dataChange, param, when) {
-      console.log("Change", dataChange, param, when);
       this.showModal = true;
       this.coefEdit.dataChange = dataChange;
       this.coefEdit.param = param;
@@ -686,7 +685,6 @@ export default {
         this.newCoefValue.change = 0;
         this.newCoefValue.operation = "+";
       }
-      console.log(this.coefEdit);
     },
     onModalClose() {
       this.showModal = false;
@@ -813,7 +811,8 @@ export default {
 
 <style scoped>
 .cursor-pointer,
-.cursor-pointer * {
+.cursor-pointer *,
+.custom-control-label {
   cursor: pointer;
 }
 [v-cloak] {
@@ -822,8 +821,6 @@ export default {
 td:hover {
   background-color: rgba(0, 0, 0, 0.3);
   cursor: pointer;
-}
-.custom-control-label {
-  cursor: pointer;
+  user-select: none;
 }
 </style>

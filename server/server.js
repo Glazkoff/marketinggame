@@ -405,6 +405,94 @@ async function getOneOffCardsId() {
 }
 /** ************************** Модуль API *********************** */
 
+// Изменение описания события через админпанель
+app.put("/api/admin/events/description/:id", async (req, res) => {
+  console.log(chalk.bgRed(JSON.stringify(req.body)));
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          console.log(req.body);
+          let result = await Events.update(
+            {
+              title: req.body.title,
+              description: req.body.description
+            },
+            {
+              where: {
+                event_id: req.params.id
+              }
+            }
+          );
+          res.send(result);
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// Добавление, редактирование или удаление параметра события
+app.post("/api/admin/events/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          console.log(chalk.bgRed(JSON.stringify(req.body)));
+          let newParam = req.body;
+          let findEvent = await Events.findOne({
+            where: {
+              event_id: req.params.id
+            }
+          });
+          if (JSON.stringify(findEvent) !== "{}") {
+            let findEventParamIndex = findEvent.data_change.findIndex(el => {
+              return el.param === req.body.param && el.when === req.body.when;
+            });
+            if (findEventParamIndex !== -1) {
+              if (req.body.toDelete) {
+                findEvent.data_change.splice(findEventParamIndex, 1);
+              } else {
+                console.log(chalk.bgYellow(JSON.stringify(findEvent)));
+                findEvent.data_change[findEventParamIndex] = newParam;
+              }
+            } else {
+              newParam.from = `${findEvent.title} ${newParam.when}`;
+              findEvent.data_change.push(newParam);
+            }
+            let a = await Events.update(
+              {
+                data_change: findEvent.data_change
+              },
+              {
+                where: { event_id: req.params.id }
+              }
+            );
+            res.send(a);
+          }
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 // Получение данных обо всех случайных событиях для администратора
 app.get("/api/admin/events", async (req, res) => {
   try {
