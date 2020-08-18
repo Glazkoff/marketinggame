@@ -1,5 +1,6 @@
 <template>
   <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
+    <ReviewModal></ReviewModal>
     <div id="play-field">
       <div
         class="play-information"
@@ -264,6 +265,7 @@
 </template>
 
 <script>
+import ReviewModal from "@/components/ReviewModal.vue";
 import GamerList from "@/components/GamerList.vue";
 import Effects from "@/components/Effects.vue";
 import DataTable from "@/components/DataTable.vue";
@@ -279,7 +281,8 @@ export default {
     GamerList,
     Effects,
     DataTable,
-    Loader
+    Loader,
+    ReviewModal
   },
   created() {
     this.$store.watch(
