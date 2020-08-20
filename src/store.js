@@ -839,6 +839,23 @@ const store = new Vuex.Store({
           });
       });
     },
+    POST_REVIEW(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/reviews`,
+          method: "POST",
+          data
+        })
+          .then(resp => {
+            // state.commit("SET_ADMIN_EVENT_DESCRIPTION", data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
     SOCKET_SET_GAME_PARAMS(state, res) {
       console.warn("FROM SOCKET SETTING ROOM", res);
       state.commit("SET_GAME_PARAMS", res);

@@ -1,6 +1,10 @@
 <template>
   <div id="splitScr">
     <SocketStatus></SocketStatus>
+    <ReviewModal
+      v-if="showReviewModal"
+      @close="onHideReviewModal()"
+    ></ReviewModal>
     <div v-if="loading" class="loader-wrap">
       <Loader></Loader>
     </div>
@@ -31,6 +35,7 @@ import PlayGround from "@/components/PlayGround.vue";
 import Finish from "@/components/Finish.vue";
 import Loader from "@/components/Loader.vue";
 import SocketStatus from "@/components/SocketStatus.vue";
+import ReviewModal from "@/components/ReviewModal.vue";
 
 require("bootstrap/dist/css/bootstrap.css");
 
@@ -38,7 +43,8 @@ export default {
   name: "Main",
   data() {
     return {
-      loading: false
+      loading: false,
+      showReviewModal: false
     };
   },
   components: {
@@ -46,9 +52,16 @@ export default {
     PlayGround,
     Finish,
     Loader,
-    SocketStatus
+    SocketStatus,
+    ReviewModal
   },
   methods: {
+    onShowReviewModal() {
+      this.showReviewModal = true;
+    },
+    onHideReviewModal() {
+      this.showReviewModal = false;
+    },
     leaveRoom() {
       console.log("Ушёл из комнаты!");
       this.$socket.emit("leaveRoom", this.roomNumber);
@@ -122,6 +135,9 @@ export default {
       return this.$store.state.connections;
     },
     isFinish() {
+      if (this.$store.state.isFinish) {
+        this.onShowReviewModal();
+      }
       return this.$store.state.isFinish;
     },
     adminNav() {
@@ -132,6 +148,19 @@ export default {
 </script>
 
 <style>
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.4s;

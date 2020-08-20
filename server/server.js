@@ -315,6 +315,34 @@ const GameConfig = sequelize.define("game_config", {
   }
 });
 
+// Модель: Reviews
+const Reviews = sequelize.define("reviews", {
+  review_id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  author_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  room_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  rating: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  comment: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  }
+});
+
+// TODO: сделать внешний ключ для автора отзыва
+
 // Синхронизация таблиц с БД
 sequelize
   // .sync({
@@ -404,6 +432,42 @@ async function getOneOffCardsId() {
   return result;
 }
 /** ************************** Модуль API *********************** */
+
+app.post("/api/reviews", async (req, res) => {
+  console.log(chalk.bgRed(JSON.stringify(req.body)));
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          await Reviews.destroy({
+            where: {},
+            truncate: true
+          });
+          let result = await Reviews.create({
+            author_id: decoded.id,
+            room_id: req.body.room_id,
+            rating: req.body.rating,
+            comment: req.body.comment
+          });
+          res.send(result);
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
 
 // Изменение описания события через админпанель
 app.put("/api/admin/events/description/:id", async (req, res) => {
