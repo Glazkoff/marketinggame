@@ -38,6 +38,7 @@ const store = new Vuex.Store({
     oneOffCardList: [],
     admin: {
       rooms: [],
+      reviews: [],
       usersInRoom: [],
       globalConfig: {},
       users: [],
@@ -294,6 +295,13 @@ const store = new Vuex.Store({
         state.admin.events[eventIndex].description = data.description;
         state.admin.events[eventIndex].title = data.title;
       }
+    },
+    SET_ADMIN_REVIEWS(state, reviews) {
+      state.admin.reviews = reviews;
+    },
+    DELETE_REVIEW(state, id) {
+      let index = state.admin.reviews.findIndex(el => el.review_id === id);
+      state.admin.reviews.splice(index, 1);
     }
     // SET_ADMIN_CARD_PARAMS(state, data) {
     //   console.log("MUT", data);
@@ -848,6 +856,38 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             // state.commit("SET_ADMIN_EVENT_DESCRIPTION", data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_ADMIN_REVIEWS(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/reviews`,
+          method: "GET"
+        })
+          .then(resp => {
+            state.commit("SET_ADMIN_REVIEWS", resp.data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    DELETE_ADMIN_REVIEW(state, id) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/reviews/${id}`,
+          method: "DELETE"
+        })
+          .then(resp => {
+            state.commit("DELETE_REVIEW", id);
             resolve(resp.data);
           })
           .catch(err => {

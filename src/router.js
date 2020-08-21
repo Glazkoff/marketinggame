@@ -15,6 +15,7 @@ import AdminCardsList from "./components/AdminPanel/AdminCardsList.vue";
 import AdminEvents from "./components/AdminPanel/AdminEvents/AdminEvents.vue";
 import AdminEventsEdit from "./components/AdminPanel/AdminEvents/AdminEventsEdit.vue";
 import AdminEventsList from "./components/AdminPanel/AdminEvents/AdminEventsList.vue";
+import AdminReviews from "./components/AdminPanel/AdminReviews/AdminReviews.vue";
 
 import store from "./store";
 
@@ -89,6 +90,10 @@ export default new Router({
               component: AdminRoomState
             }
           ]
+        },
+        {
+          path: "reviews",
+          component: AdminReviews
         },
         {
           path: "statistics",

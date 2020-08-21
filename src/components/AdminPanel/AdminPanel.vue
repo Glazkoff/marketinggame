@@ -15,6 +15,15 @@
           <router-link
             tag="div"
             class="menu-point"
+            to="/admin/reviews"
+            active-class="menu-point-active"
+            :exact="true"
+          >
+            Отзывы</router-link
+          >
+          <router-link
+            tag="div"
+            class="menu-point"
             to="/admin/rooms"
             active-class="menu-point-active"
             :exact="true"

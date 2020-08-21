@@ -342,6 +342,15 @@ const Reviews = sequelize.define("reviews", {
 });
 
 // TODO: сделать внешний ключ для автора отзыва
+Users.hasMany(Reviews, {
+  onDelete: "cascade",
+  foreignKey: "author_id",
+  as: "reviews"
+});
+Reviews.belongsTo(Users, {
+  foreignKey: "author_id",
+  as: "user"
+});
 
 // Синхронизация таблиц с БД
 sequelize
@@ -433,6 +442,74 @@ async function getOneOffCardsId() {
 }
 /** ************************** Модуль API *********************** */
 
+// Удалить отзыв
+app.delete("/api/reviews/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          let result = await Reviews.destroy({
+            where: {
+              review_id: req.params.id
+            }
+          });
+          console.log(result);
+          res.sendStatus(200);
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Список всех отзывов
+app.get("/api/reviews", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          let result = await Reviews.findAll({
+            order: [["updatedAt", "DESC"]],
+            include: [
+              {
+                model: Users,
+                as: "user"
+              }
+            ]
+          });
+          res.send(result);
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Добавить отзыв
 app.post("/api/reviews", async (req, res) => {
   console.log(chalk.bgRed(JSON.stringify(req.body)));
   try {
@@ -446,10 +523,6 @@ app.post("/api/reviews", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          await Reviews.destroy({
-            where: {},
-            truncate: true
-          });
           let result = await Reviews.create({
             author_id: decoded.id,
             room_id: req.body.room_id,
@@ -501,6 +574,10 @@ app.put("/api/admin/events/description/:id", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -554,6 +631,10 @@ app.post("/api/admin/events/:id", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -587,6 +668,10 @@ app.get("/api/admin/events", async (req, res) => {
     );
   } catch (e) {
     console.log(e);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -623,6 +708,10 @@ app.put("/api/admin/cards/description/:id", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -728,6 +817,10 @@ app.post("/api/admin/cards/:id", async (req, res) => {
     );
   } catch (e) {
     console.log(e);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -766,6 +859,10 @@ app.get("/api/admin/cards", async (req, res) => {
     );
   } catch (e) {
     console.log(e);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -793,6 +890,10 @@ app.delete("/api/admin/users/login/:login", async (req, res) => {
     );
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 
@@ -820,6 +921,10 @@ app.delete("/api/admin/users/id/:id", async (req, res) => {
     );
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
   }
 });
 

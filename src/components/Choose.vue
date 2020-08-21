@@ -1,5 +1,9 @@
 <template>
   <div class="card container col-lg-4 col-md-5 col-sm-10 col-xs-8 mt-5 p-4">
+    <ReviewModal
+      v-if="showReviewModal"
+      @close="onCloseReviewModal()"
+    ></ReviewModal>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
     <p>Выбери, как ты начнёшь игру</p>
@@ -112,12 +116,16 @@
       </div>
     </transition>
     <div class="loader-wrap" v-if="loading"><Loader></Loader></div>
+    <button class="btn btn-link text-right mt-2" @click="onShowReviewModal()">
+      Оставить отзыв
+    </button>
   </div>
 </template>
 
 <script>
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
+import ReviewModal from "@/components/ReviewModal.vue";
 import { required } from "vuelidate/lib/validators";
 let apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
 export default {
@@ -128,7 +136,8 @@ export default {
       roomIdJoin: "",
       roomParams: "",
       loading: false,
-      joinError: ""
+      joinError: "",
+      showReviewModal: false
     };
   },
   validations: {
@@ -145,7 +154,8 @@ export default {
     }
   },
   components: {
-    Loader
+    Loader,
+    ReviewModal
   },
   computed: {
     gamerName() {
@@ -175,6 +185,12 @@ export default {
     }, 200);
   },
   methods: {
+    onCloseReviewModal() {
+      this.showReviewModal = false;
+    },
+    onShowReviewModal() {
+      this.showReviewModal = true;
+    },
     logout() {
       try {
         this.$store
