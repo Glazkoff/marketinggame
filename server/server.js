@@ -1627,6 +1627,17 @@ io.on("connection", async socket => {
         gamers: room.users_steps_state
       };
       io.in(room.room_id).emit("setGamers", gamerNamesObj);
+      let res = await Rooms.update(
+        {
+          users_steps_state: room.users_steps_state
+        },
+        {
+          where: {
+            room_id: room.room_id
+          }
+        }
+      );
+      console.log(res);
     }
     /*
      */
@@ -2257,6 +2268,7 @@ io.on("connection", async socket => {
       let allGamersDoStep = false;
       // Если корректно установлены параметры комнаты
       if (room.users_steps_state !== null && room.participants_id !== null) {
+        let activeParticipants = room.participants_id.length;
         room.users_steps_state.forEach(el => {
           // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
           if (
@@ -2265,9 +2277,13 @@ io.on("connection", async socket => {
           ) {
             didStepCurrMonth++;
           }
+          if (el["isdisconnected"]) {
+            activeParticipants--;
+          }
         });
+        console.log(chalk.bgGrey(JSON.stringify(room)));
         // Если число сходивших равно количеству участников
-        if (didStepCurrMonth === room.participants_id.length) {
+        if (didStepCurrMonth === activeParticipants) {
           console.log("Все пользователи сделали ход");
           allGamersDoStep = true;
           room.users_steps_state.map(el => {
@@ -2292,6 +2308,7 @@ io.on("connection", async socket => {
         else {
           console.log("Не все пользователи сделали ход");
           console.log("За этот месяц: ", didStepCurrMonth);
+          console.log("Активных участников: ", activeParticipants);
           console.log("Всего участников: ", room.participants_id.length);
         }
       } else {
@@ -2987,6 +3004,20 @@ io.on("connection", async socket => {
         gamers: room.users_steps_state
       };
       io.in(room.room_id).emit("setGamers", gamerNamesObj);
+      let res = await Rooms.update(
+        {
+          users_steps_state: room.users_steps_state
+        },
+        {
+          where: {
+            participants_id: {
+              [Op.contains]: socket.decoded_token.id
+            },
+            completed: false
+          }
+        }
+      );
+      console.log(res);
     }
     connections.splice(connections.indexOf(socket.id), 1);
     console.log("Подключения:");
