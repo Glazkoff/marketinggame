@@ -1593,7 +1593,7 @@ io.on("connection", async socket => {
   });
 
   // Прикрепление пользователя к комнате
-  socket.on("subscribeRoom", roomId => {
+  socket.on("subscribeRoom", async roomId => {
     console.log(
       chalk.magenta(`(subscribeRoom)`),
       chalk.bgMagenta(`Прикрепление пользователя к комнате ${roomId}`)
@@ -1602,6 +1602,35 @@ io.on("connection", async socket => {
       socket.roomId = roomId;
       console.log("Подключён к комнате " + roomId);
     });
+
+    /*
+     */
+    const Op = Sequelize.Op;
+    let room = await Rooms.findOne({
+      where: {
+        participants_id: {
+          [Op.contains]: socket.decoded_token.id
+        },
+        completed: false
+      },
+      order: [["updatedAt", "DESC"]]
+    });
+
+    if (room && room.users_steps_state !== null) {
+      let index = room.users_steps_state.findIndex(
+        el => el.id === socket.decoded_token.id
+      );
+      if (index !== -1) {
+        room.users_steps_state[index].isdisconnected = false;
+      }
+      let gamerNamesObj = {
+        gamers: room.users_steps_state
+      };
+      io.in(room.room_id).emit("setGamers", gamerNamesObj);
+    }
+    /*
+     */
+
     io.in(roomId).emit("addMessage", {
       name: "Admin",
       text: `Пользователь ${JSON.stringify(
