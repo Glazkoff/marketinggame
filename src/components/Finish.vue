@@ -636,11 +636,11 @@
         </div>
         <div class="col-6">
           <button
+            @click="showReviewModal()"
             class="btn btn-secondary w-100"
             style="margin: auto auto; display: block;"
-            disabled
           >
-            Играть ещё раз в комнате
+            Оставить отзыв
           </button>
         </div>
       </div>
@@ -654,7 +654,11 @@ import jwt from "jsonwebtoken";
 
 export default {
   name: "Finish",
-  methods: {},
+  methods: {
+    showReviewModal() {
+      this.$emit("showReviewModal");
+    }
+  },
   components: {
     DataTable
   },

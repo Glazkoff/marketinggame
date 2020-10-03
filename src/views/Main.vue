@@ -1,10 +1,6 @@
 <template>
   <div id="splitScr">
     <SocketStatus></SocketStatus>
-    <ReviewModal
-      v-if="showReviewModal"
-      @close="onHideReviewModal()"
-    ></ReviewModal>
     <div v-if="loading" class="loader-wrap">
       <Loader></Loader>
     </div>
@@ -20,9 +16,13 @@
           >Выйти из комнаты</router-link
         >
       </div>
+      <ReviewModal
+        v-if="showReviewModal"
+        @close="onHideReviewModal()"
+      ></ReviewModal>
       <transition name="fade" mode="out-in">
         <PlayGround v-if="!isFinish"></PlayGround>
-        <Finish v-else></Finish>
+        <Finish v-else @showReviewModal="onShowReviewModal()"></Finish>
       </transition>
     </div>
     <Chat></Chat>
@@ -136,7 +136,7 @@ export default {
     },
     isFinish() {
       if (this.$store.state.isFinish) {
-        this.onShowReviewModal();
+        // this.onShowReviewModal();
       }
       return this.$store.state.isFinish;
     },

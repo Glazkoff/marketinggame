@@ -2346,16 +2346,27 @@ io.on("connection", async socket => {
             `(${room.current_month + 1})`
           )
         );
-        room.current_month++;
-        await Rooms.update(
-          {
-            current_month: sequelize.literal("current_month + 1")
-          },
-          {
-            where: {
-              room_id: room.room_id
+        console.log(
+          chalk.bgRed("Комната #" + room.room_id, `(${JSON.stringify(room)})`)
+        );
+        if (room.first_params.month > room.current_month) {
+          room.current_month++;
+          await Rooms.update(
+            {
+              current_month: sequelize.literal("current_month + 1")
+            },
+            {
+              where: {
+                room_id: room.room_id
+              }
             }
-          }
+          );
+        }
+        console.log(
+          chalk.bgYellow(
+            `month:${room.first_params.month} =${room.first_params.month <=
+              room.current_month}= current_month:${room.current_month}`
+          )
         );
       }
 
@@ -2491,7 +2502,7 @@ io.on("connection", async socket => {
       );
 
       // Если игра завершается
-      if (room.current_month === room.first_params.month) {
+      if (room.current_month >= room.first_params.month) {
         console.log(chalk.bgBlueBright("Игра завершается #" + room.room_id));
         // for (const gamer of gamers) {
         //         io.sockets.to(gamer.id).emit("setStartGame", gamer.data);
