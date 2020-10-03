@@ -116,7 +116,8 @@
                       Бюджет
                       <span class="badge badge-primary badge-pill">
                         <h4>
-                          <number
+                          {{ gamerParams.money }}₽
+                          <!-- <number
                             class="bold transition"
                             animationPaused
                             ref="number1"
@@ -124,7 +125,7 @@
                             :duration="1.1"
                             @click="playAnimation"
                             easing="Power4.easeOut"
-                          />₽
+                          />₽ -->
                         </h4>
                       </span>
                     </li>
