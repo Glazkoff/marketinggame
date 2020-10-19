@@ -1759,6 +1759,78 @@ io.on("connection", async socket => {
     }
   });
 
+  // При принудительном завершении хода
+  socket.on("manualStepClose", async roomId => {
+    console.log(
+      chalk.bgRed(`[!!!] - (#${roomId}) ПРИНУДИТЕЛЬНОЕ ЗАВЕРШЕНИЕ ХОДА`)
+    );
+
+    // Находим состояние текущей комнаты в БД
+    let room = await Rooms.findOne({
+      where: {
+        room_id: roomId
+      }
+    });
+    console.log(chalk.bgRed(`[!!!] - (#${JSON.stringify(room)})`));
+
+    // Если текущий месяц не больше максимального количества месяцев
+    if (room.first_params.month > room.current_month) {
+      // Увеличиваем на 1 текущий месяц
+      room.current_month++;
+      console.log(
+        chalk.bgBlue(
+          "Сменился месяц в комнате #" + room.room_id,
+          `(${room.current_month}, ${room.first_params.month})`
+        )
+      );
+
+      // Обновляем в БД
+      await Rooms.update(
+        {
+          current_month: sequelize.literal("current_month + 1")
+        },
+        {
+          where: {
+            room_id: room.room_id
+          }
+        }
+      );
+    }
+
+    // ******************************* */
+    room.users_steps_state.map(el => {
+      el.isattacker = false;
+    });
+    io.in(room.room_id).emit("setGamers", {
+      gamers: room.users_steps_state
+    });
+    await Rooms.update(
+      {
+        users_steps_state: room.users_steps_state
+      },
+      {
+        where: {
+          room_id: room.room_id
+        }
+      }
+    );
+
+    // ******************************* */
+
+    let usersEffects = await UsersInRooms.findAll({
+      attributes: ["user_id", "effects"],
+      where: {
+        room_id: room.room_id
+      }
+    });
+
+    for (const userWithEffects of usersEffects) {
+      io.sockets
+        .to("user" + userWithEffects.user_id)
+        .emit("setEffects", userWithEffects.effects);
+    }
+  });
+
   // При выполнении хода
   socket.on("doStep", async function(cardArr) {
     console.log(
@@ -1766,7 +1838,6 @@ io.on("connection", async socket => {
       chalk.bgMagenta(`При выполнении хода`)
     );
     console.log(chalk.bgBlue("Шаг пользователя #" + socket.decoded_token.id));
-    console.log(chalk.bgRed("НАЧАЛО ОТЛАДКИ"));
     try {
       // Находим данные об игроке
       let gamer = await UsersInRooms.findOne({
@@ -1776,6 +1847,7 @@ io.on("connection", async socket => {
         }
       });
       gamer = gamer.dataValues;
+
       // Находим комнату, которая является последней, содержащей пользователя
       const Op = Sequelize.Op;
       let room = await Rooms.findOne({
@@ -1789,10 +1861,12 @@ io.on("connection", async socket => {
       });
       room = room.dataValues;
 
+      // Устанавливаем текущему игроку, что ход был сделан
       room.users_steps_state.find(
         el => el.id === socket.decoded_token.id
       ).isattacker = true;
-      console.log(chalk.bgGreen(JSON.stringify(room.users_steps_state)));
+
+      // Загружаем в БД, что ход был сделан
       await Rooms.update(
         {
           users_steps_state: room.users_steps_state
@@ -1803,21 +1877,24 @@ io.on("connection", async socket => {
           }
         }
       );
+
+      // Создаём объект с состояниями ходов игроков
       let gamerNamesObj = {
         gamers: room.users_steps_state
       };
 
+      // Отправляем объект с состояниями ходов игроков всем в комнате
       io.in(room.room_id).emit("setGamers", gamerNamesObj);
-      console.log(chalk.yellow(">setGamers>"));
-      console.log(chalk.yellow(JSON.stringify(gamerNamesObj)));
 
-      // Копируем неизменённые данные в колонку "предыдущие"
+      // Копируем неизменённые данные в колонку "предыдущие парметры"
       gamer.prev_room_params = {
         ...gamer.gamer_room_params
       };
 
+      // (?) Уменьшаем количество оставшихся месяцев
       gamer.gamer_room_params.month--;
 
+      // Если у пользователя не отсутсвуют активные эффекты
       if (gamer.effects !== null) {
         // Проходимся по всему массиву эффектов, чтобы проверить,
         // прислали ли карточку для продления серии
@@ -1957,7 +2034,7 @@ io.on("connection", async socket => {
       let resultPerClient = result / clients;
       gamer.gamer_room_params.moneyPerClient = Math.ceil(resultPerClient);
 
-      // ...
+      // Для каждого изменения
       let iter = 0;
       let indexEffArr;
       for (let index = 0; index < gamer.changes.length; index++) {
@@ -1975,17 +2052,6 @@ io.on("connection", async socket => {
         ) {
           for (let index = 0; index < gamer.changes.length; index++) {
             if (gamer.changes[index].id === changing.id) {
-              // messageArr.push(
-              //   "УДАЛЯЕТСЯ параметр " +
-              //     changing.param +
-              //     " со знаком " +
-              //     changing.operation +
-              //     " на " +
-              //     changing.change +
-              //     " (" +
-              //     changing.from +
-              //     ")"
-              // );
               gamer.changes[index].toDelete = true;
             }
           }
@@ -2111,14 +2177,6 @@ io.on("connection", async socket => {
           } else {
             for (let index = 0; index < gamer.changes.length; index++) {
               if (gamer.changes[index].id === changing.id) {
-                // messageArr.push(
-                //   "УДАЛЁН параметр " +
-                //     changing.param +
-                //     " со знаком " +
-                //     changing.operation +
-                //     " на " +
-                //     changing.change
-                // );
                 gamer.changes[index].toDelete = true;
               }
             }
@@ -2150,6 +2208,7 @@ io.on("connection", async socket => {
           }
         }
       );
+
       // TODO: Посылаем событие на изменение статуса участника
       //     io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
 
@@ -2258,31 +2317,45 @@ io.on("connection", async socket => {
         );
       }
 
-      let a = await Rooms.findOne({
-        where: {
-          room_id: room.room_id
-        }
-      });
-
+      // Количество пользователей в команте, которые сделали ход в текцщий месяц
       let didStepCurrMonth = 0;
+
+      // Все ли пользователи ход? Нет по умолчанию
       let allGamersDoStep = false;
+
       // Если корректно установлены параметры комнаты
       if (room.users_steps_state !== null && room.participants_id !== null) {
         let activeParticipants = room.participants_id.length;
+
+        console.log(
+          chalk.bgGreen(`--- НАЧИНАЕТСЯ ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ`)
+        );
+        console.log(chalk.bgGreen(`${room.users_steps_state}`));
+        // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
         room.users_steps_state.forEach(el => {
-          // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
           if (
             el["steps"].findIndex(elem => elem.month === room.current_month) !==
             -1
           ) {
             didStepCurrMonth++;
+            console.log(chalk.bgGreen(`didStepCurrMonth: ${didStepCurrMonth}`));
           }
           if (el["isdisconnected"]) {
             activeParticipants--;
+            console.log(
+              chalk.bgGreen(`activeParticipants: ${activeParticipants}`)
+            );
           }
         });
-        console.log(chalk.bgGrey(JSON.stringify(room)));
-        // Если число сходивших равно количеству участников
+        console.log(
+          chalk.bgGreen(`РЕЗУЛЬТАТ! didStepCurrMonth: ${didStepCurrMonth}`)
+        );
+        console.log(
+          chalk.bgGreen(`РЕЗУЛЬТАТ! activeParticipants: ${activeParticipants}`)
+        );
+        console.log(chalk.bgGreen(`--- ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ ЗАКОНЧЕН`));
+
+        // !!! Когда все в комнате сделали ход
         if (didStepCurrMonth === activeParticipants) {
           console.log("Все пользователи сделали ход");
           allGamersDoStep = true;
@@ -2340,17 +2413,15 @@ io.on("connection", async socket => {
             .emit("setEffects", userWithEffects.effects);
         }
 
-        console.log(
-          chalk.bgBlue(
-            "Сменился месяц в комнате #" + room.room_id,
-            `(${room.current_month + 1})`
-          )
-        );
-        console.log(
-          chalk.bgRed("Комната #" + room.room_id, `(${JSON.stringify(room)})`)
-        );
+        // Если текущий месяц меньше количества запланированных
         if (room.first_params.month > room.current_month) {
           room.current_month++;
+          console.log(
+            chalk.bgBlue(
+              "Сменился месяц в комнате #" + room.room_id,
+              `(${room.current_month}, ${room.first_params.month})`
+            )
+          );
           await Rooms.update(
             {
               current_month: sequelize.literal("current_month + 1")
@@ -2362,12 +2433,6 @@ io.on("connection", async socket => {
             }
           );
         }
-        console.log(
-          chalk.bgYellow(
-            `month:${room.first_params.month} =${room.first_params.month <=
-              room.current_month}= current_month:${room.current_month}`
-          )
-        );
       }
 
       let lastConfig = await GameConfig.findOne({
@@ -3008,9 +3073,10 @@ io.on("connection", async socket => {
       let index = room.users_steps_state.findIndex(
         el => el.id === socket.decoded_token.id
       );
-      if (index !== -1) {
-        room.users_steps_state[index].isdisconnected = true;
-      }
+      // TODO: добавить изменение в БД
+      // if (index !== -1) {
+      //   room.users_steps_state[index].isdisconnected = true;
+      // }
       let gamerNamesObj = {
         gamers: room.users_steps_state
       };

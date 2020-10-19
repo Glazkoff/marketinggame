@@ -141,7 +141,7 @@
                           "
                         > -->
                         <h4>
-                          {{ firstRoomParams.month - gamerParams.month + 1 }} из
+                          {{ firstRoomParams.month - gamerParams.month }} из
                           {{ firstRoomParams.month }}
                         </h4>
                         <!-- <h4 v-else>

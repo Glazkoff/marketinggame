@@ -7,6 +7,19 @@
         <h3>Игроки</h3>
       </li>
       <li
+        v-if="isOwner"
+        class="list-group-item d-flex justify-content-between align-items-center list-group-item-primardy"
+      >
+        <button
+          @click="onManualStepClose()"
+          :disabled="manualStepCloseDisable"
+          id="close-step"
+          class="btn btn-block btn-danger"
+        >
+          Завершить ход вручную
+        </button>
+      </li>
+      <li
         class="list-group-item d-flex justify-content-between align-items-center"
         v-for="(gamer, count) in gamers"
         :key="count"
@@ -41,7 +54,9 @@
 export default {
   name: "gamerlist",
   data() {
-    return {};
+    return {
+      manualStepCloseDisable: false
+    };
   },
   computed: {
     isStart() {
@@ -58,6 +73,10 @@ export default {
     }
   },
   methods: {
+    onManualStepClose() {
+      // this.manualStepCloseDisable = true;
+      this.$socket.emit("manualStepClose", this.roomId);
+    },
     kickUser(gamer) {
       console.log("KICK!", this.roomId, gamer);
       let obj = {
@@ -73,6 +92,9 @@ export default {
 };
 </script>
 <style>
+button:disabled {
+  cursor: not-allowed;
+}
 #gamerlist {
   background-color: #fff;
   margin: auto auto;
@@ -109,7 +131,7 @@ export default {
 #gamerlist::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
-.list-group-item button {
+.list-group-item button:not(#close-step) {
   display: block;
   background-color: transparent;
   border: none;
@@ -129,7 +151,7 @@ export default {
   user-select: none;
   position: relative;
 }
-.list-group-item button::before {
+.list-group-item button:not(#close-step)::before {
   outline: none;
   display: none;
   content: "Удалить игрока";
@@ -153,11 +175,11 @@ export default {
   transition-delay: 1.4s;
   transition: 0.2s ease-in-out;
 }
-.list-group-item button:hover::before {
+.list-group-item button:not(#close-step):hover::before {
   opacity: 1;
   display: block;
 }
-.list-group-item button:hover {
+.list-group-item button:not(#close-step):hover {
   transform: rotate(90deg) scale(1.2);
 }
 </style>
