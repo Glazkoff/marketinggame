@@ -355,7 +355,7 @@ export default {
     );
     this.$store.commit("SET_CARDS", this.shuffle(this.cards));
     this.refreshCards = [...this.cards];
-    this.$store.commit("doAnimation");
+    // this.$store.commit("doAnimation");
   },
   data() {
     return {
@@ -438,7 +438,7 @@ export default {
   },
   mounted() {
     this.number = this.$store.state.roomParams.money;
-    this.$store.commit("doAnimation");
+    // this.$store.commit("doAnimation");
     this.playAnimation();
     this.getCards();
   },
@@ -566,7 +566,7 @@ export default {
           }
         }, 100);
       }
-      this.$store.commit("doAnimation");
+      // this.$store.commit("doAnimation");
     },
     isLastEffectStage(id) {
       let effectId = this.effects.findIndex(elem => elem.id === id);
@@ -634,7 +634,7 @@ export default {
       el.style.opacity = 0;
       el.style.height = 0;
       console.log("leavehook");
-      this.$store.commit("doAnimation");
+      // this.$store.commit("doAnimation");
     },
     altdrop(e) {
       e.preventDefault();

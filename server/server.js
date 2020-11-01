@@ -1784,7 +1784,7 @@ io.on("connection", async socket => {
         )
       );
 
-      // Обновляем в БД
+      // Обновляем в БД месяц
       await Rooms.update(
         {
           current_month: sequelize.literal("current_month + 1")
@@ -1797,13 +1797,17 @@ io.on("connection", async socket => {
       );
     }
 
-    // ******************************* */
+    // Устанавливаем каждому игроку состояние "сходившего"
     room.users_steps_state.map(el => {
       el.isattacker = false;
     });
+
+    // Отправляем на клиенты информацию о ходах игроков
     io.in(room.room_id).emit("setGamers", {
       gamers: room.users_steps_state
     });
+
+    // Отправляем в БД данные о ходах игроков
     await Rooms.update(
       {
         users_steps_state: room.users_steps_state
@@ -1815,8 +1819,7 @@ io.on("connection", async socket => {
       }
     );
 
-    // ******************************* */
-
+    // Находим все эффекты игроков для всех игроков данной комнаты
     let usersEffects = await UsersInRooms.findAll({
       attributes: ["user_id", "effects"],
       where: {
@@ -1824,10 +1827,35 @@ io.on("connection", async socket => {
       }
     });
 
+    // Отправляем каждому игроку его эффекты
     for (const userWithEffects of usersEffects) {
       io.sockets
         .to("user" + userWithEffects.user_id)
         .emit("setEffects", userWithEffects.effects);
+    }
+
+    io.in(socket.roomId).emit("doNextStep");
+    for (let gamerId of room.participants_id) {
+      let userInRoom = await UsersInRooms.findOne({
+        where: {
+          user_id: gamerId,
+          room_id: room.room_id
+        }
+      });
+      userInRoom = userInRoom.dataValues;
+      userInRoom.gamer_room_params.month--;
+      let obj = {
+        data: {
+          room_id: room.room_id,
+          owner_id: room.owner_id,
+          is_start: room.is_start,
+          first_params: room.first_params,
+          prev_room_params: userInRoom.prev_room_params,
+          gamer_room_params: userInRoom.gamer_room_params
+        }
+      };
+      io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
+      // Отправка новых данных состояния пользователю
     }
   });
 
@@ -2542,7 +2570,6 @@ io.on("connection", async socket => {
           }
         };
         io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
-
         // Отправка новых данных состояния пользователю
       }
 
