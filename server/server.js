@@ -545,6 +545,92 @@ app.post("/api/reviews", async (req, res) => {
   }
 });
 
+app.get("/api/reviews", async (req, res) => {
+  try {
+    // await jwt.verify(
+    //   req.headers.authorization,
+    //   JWTCONFIG.SECRET,
+    //   async (err, decoded) => {
+    //     if (err) {
+    //       res.status(401).send({
+    //         status: 401,
+    //         message: "Вы не авторизованы!"
+    //       });
+    //     } else {
+    let result = await Reviews.findAll({
+      order: [["updatedAt", "DESC"]],
+      include: [
+        {
+          model: Users,
+          as: "user"
+        }
+      ]
+    });
+    res.send(result);
+    // }
+    //   }
+    // );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+app.get("/api/reviewslist", async (req, res) => {
+  try {
+    // await jwt.verify(
+    //   req.headers.authorization,
+    //   JWTCONFIG.SECRET,
+    //   async (err, decoded) => {
+    //     if (err) {
+    //       res.status(401).send({
+    //         status: 401,
+    //         message: "Вы не авторизованы!"
+    //       });
+    //     } else {
+    let result = await Reviews.findAll({
+      order: [["updatedAt", "DESC"]],
+      include: [
+        {
+          model: Users,
+          as: "user"
+        }
+      ]
+    });
+    res.send({ reviews: result });
+    // }
+    //   }
+    // );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Добавить отзыв
+app.get("/api/reviews/:id", async (req, res) => {
+  try {
+    let result = await Reviews.findOne({
+      where: {
+        review_id: req.params.id
+      }
+    });
+    res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
 // Изменение описания события через админпанель
 app.put("/api/admin/events/description/:id", async (req, res) => {
   console.log(chalk.bgRed(JSON.stringify(req.body)));
