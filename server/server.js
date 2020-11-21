@@ -23,8 +23,7 @@ let port = process.env.PORT || 3001;
 
 if (process.env.PORT) {
   // Корректная работа режима HTML5 history
-  app.use(history());
-
+  // app.use(history());
   // Настрйока безоопасности
   // app.use(helmet());
 }
