@@ -480,29 +480,29 @@ app.delete("/api/reviews/:id", async (req, res) => {
 // Список всех отзывов
 app.get("/api/reviews", async (req, res) => {
   try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          let result = await Reviews.findAll({
-            order: [["updatedAt", "DESC"]],
-            include: [
-              {
-                model: Users,
-                as: "user"
-              }
-            ]
-          });
-          res.send(result);
+    // await jwt.verify(
+    //   req.headers.authorization,
+    //   JWTCONFIG.SECRET,
+    //   async (err, decoded) => {
+    //     if (err) {
+    //       res.status(401).send({
+    //         status: 401,
+    //         message: "Вы не авторизованы!"
+    //       });
+    //     } else {
+    let result = await Reviews.findAll({
+      order: [["updatedAt", "DESC"]],
+      include: [
+        {
+          model: Users,
+          as: "user"
         }
-      }
-    );
+      ]
+    });
+    res.send(result);
+    // }
+    //   }
+    // );
   } catch (err) {
     console.log(err);
     res.status(500).send({
