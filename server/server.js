@@ -21,12 +21,12 @@ const cors = require("cors");
 const app = express();
 let port = process.env.PORT || 3001;
 
-if (process.env.PORT) {
-  // Корректная работа режима HTML5 history
-  // app.use(history());
-  // Настрйока безоопасности
-  // app.use(helmet());
-}
+// if (process.env.PORT) {
+// Корректная работа режима HTML5 history
+
+// Настрйока безоопасности
+// app.use(helmet());
+// }
 
 // Сжатие gzip
 app.use(compression());
@@ -59,21 +59,12 @@ app.use(
 // Логирование запросов
 app.use(morgan("common"));
 
-// Запуск сервера на порте
-const server = app
-  .use("/", serveStatic(path.join(__dirname, "../dist")))
-  .listen(port, () => {
-    console.log(`server running on port ${port}`);
-  });
 // app.get(/.*/, function(req, res) {
 //   res.sendFile(path.join(__dirname, "../dist/index.html"));
 // });
 
 // Создание соли для хеширования
 const salt = bcrypt.genSaltSync(10);
-
-// Создание сервера Socket.io
-const io = require("socket.io")(server);
 
 // Создание подключения с БД
 const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
@@ -445,38 +436,6 @@ async function getOneOffCardsId() {
 }
 /** ************************** Модуль API *********************** */
 
-// Удалить отзыв
-app.delete("/api/reviews/:id", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          let result = await Reviews.destroy({
-            where: {
-              review_id: req.params.id
-            }
-          });
-          console.log(result);
-          res.sendStatus(200);
-        }
-      }
-    );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
 // Список всех отзывов
 app.get("/api/reviews", async (req, res) => {
   try {
@@ -503,6 +462,38 @@ app.get("/api/reviews", async (req, res) => {
     // }
     //   }
     // );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Удалить отзыв
+app.delete("/api/reviews/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          let result = await Reviews.destroy({
+            where: {
+              review_id: req.params.id
+            }
+          });
+          console.log(result);
+          res.sendStatus(200);
+        }
+      }
+    );
   } catch (err) {
     console.log(err);
     res.status(500).send({
@@ -1610,7 +1601,24 @@ app.get("/api/rooms/reset", async (req, res) => {
     }
   );
 });
+
+app.get("/api/test", (req, res) => {
+  res.send({ test: "asdd" });
+});
+
+app.use(history());
+
+// Запуск сервера на порте
+const server = app
+  .use("/", serveStatic(path.join(__dirname, "../dist")))
+  .listen(port, () => {
+    console.log(`server running on port ${port}`);
+  });
+
 /** ************************************************************* */
+// Создание сервера Socket.io
+const io = require("socket.io")(server);
+
 let connections = [];
 let usersAndSockets = {};
 let connectedNames = [];
