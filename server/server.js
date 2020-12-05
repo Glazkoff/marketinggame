@@ -1692,8 +1692,8 @@ app.get("/api/rooms/reset", async (req, res) => {
         // #endregion
 
         if (!room) {
-          res.status(400).send({
-            status: 400,
+          res.status(401).send({
+            status: 401,
             message: "Нет активных игр!"
           });
         } else {
