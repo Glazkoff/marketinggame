@@ -438,6 +438,7 @@ async function getOneOffCardsId() {
   }
   return result;
 }
+
 /** ************************** Модуль API *********************** */
 
 // Список всех пользователей
@@ -667,7 +668,7 @@ app.get("/api/reviewslist", async (req, res) => {
         }
       ]
     });
-    res.send({ reviews: result });
+    res.send({reviews: result});
     // }
     //   }
     // );
@@ -781,7 +782,7 @@ app.post("/api/admin/events/:id", async (req, res) => {
                 data_change: findEvent.data_change
               },
               {
-                where: { event_id: req.params.id }
+                where: {event_id: req.params.id}
               }
             );
             res.send(a);
@@ -965,7 +966,7 @@ app.post("/api/admin/cards/:id", async (req, res) => {
                 data_change: findCard.data_change
               },
               {
-                where: { card_id: req.params.id }
+                where: {card_id: req.params.id}
               }
             );
             res.send(a);
@@ -1047,7 +1048,7 @@ app.delete("/api/admin/users/login/:login", async (req, res) => {
               login: req.params.login
             }
           });
-          res.status(200).send({ message: "ok" });
+          res.status(200).send({message: "ok"});
         }
       }
     );
@@ -1078,7 +1079,7 @@ app.delete("/api/admin/users/id/:id", async (req, res) => {
               user_id: req.params.id
             }
           });
-          res.status(200).send({ message: "ok" });
+          res.status(200).send({message: "ok"});
         }
       }
     );
@@ -1104,7 +1105,7 @@ app.get("/api/admin/users/count", async (req, res) => {
         });
       } else {
         let result = await Users.count();
-        let obj = { count: result };
+        let obj = {count: result};
         res.send(obj);
       }
     }
@@ -1313,7 +1314,7 @@ app.post("/api/login", (req, res) => {
       message: "Пустой запрос!"
     });
   }
-  //#endregion
+    //#endregion
   //#region Запрос на вытаскивание данных о пользователе
   else {
     Users.findOne({
@@ -1321,7 +1322,7 @@ app.post("/api/login", (req, res) => {
         login: req.body.login
       }
     })
-  //#endregion
+      //#endregion
       .then(user => {
         //#region Проверка на существование пользователя
         if (!user) {
@@ -1336,11 +1337,11 @@ app.post("/api/login", (req, res) => {
           console.log(user.dataValues)
           console.log('-'.repeat(50))
           //#region Сравнение полученных и введенных паролей
-          bcrypt.compare(req.body.password, user.password, function(
+          bcrypt.compare(req.body.password, user.password, function (
             err,
             result
           )
-          //#endregion
+            //#endregion
           {
             //#region Если расшифровка не удалась
             if (err) {
@@ -1369,7 +1370,7 @@ app.post("/api/login", (req, res) => {
               });
               //#endregion
             } else
-            //#region Пользователь не найден
+              //#region Пользователь не найден
             {
               res.status(404).send({
                 status: 404,
@@ -1475,14 +1476,14 @@ app.post("/api/rooms", async (req, res) => {
           res.send(result);
           //#region Добавление последней комнаты для пользователя
           Users.update({
-            last_room: result.room_id
-          },
-          {
-            where: {user_id: decoded.id}
-          })
-          .then(res => {
-            console.log(res)
-          })
+              last_room: result.room_id
+            },
+            {
+              where: {user_id: decoded.id}
+            })
+            .then(res => {
+              console.log(res)
+            })
           //#endregion
         } catch (error) {
           console.log("Ошибка создания комнаты", error);
@@ -1525,6 +1526,17 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               message: "Игра в комнате была завершена!"
             });
           } else {
+            Users.update(
+              {
+                last_room: req.params.id
+              },
+              {
+                where: {user_id: decoded.id}
+              }
+            )
+              .then(res => {
+                console.log(res)
+              })
             let participantsArray = findRoom.participants_id;
             let isSet = participantsArray.findIndex(el => {
               return el === decoded.id;
@@ -1599,7 +1611,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 if (index !== -1) {
                   findRoom.dataValues.users_steps_state[
                     index
-                  ].isdisconnected = false;
+                    ].isdisconnected = false;
                   await Rooms.update(
                     {
                       users_steps_state: findRoom.dataValues.users_steps_state
@@ -1646,16 +1658,39 @@ app.get("/api/rooms/reset", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        const Op = Sequelize.Op;
-        let room = await Rooms.findOne({
+        // #region Получение последней комнаты
+        let lastRoomId = await Users.findOne({
           where: {
-            participants_id: {
-              [Op.contains]: decoded.id
-            },
-            completed: false
+            user_id: decoded.id
           },
-          order: [["updatedAt", "DESC"]]
-        });
+          attributes: ['last_room']
+        })
+        lastRoomId = lastRoomId.last_room
+
+        let room
+        const Op = Sequelize.Op;
+        // Если нет последней комнаты, то получает последнюю созданную с участием пользователя
+        if (!lastRoomId) {
+          room = await Rooms.findOne({
+            where: {
+              participants_id: {
+                [Op.contains]: decoded.id
+              },
+              completed: false
+            },
+            order: [["room_id", "DESC"]]
+          }) } else {
+            room = await Rooms.findOne({
+              where: {
+                participants_id: {
+                  [Op.contains]: decoded.id
+                },
+                room_id: lastRoomId
+              }
+            })
+        }
+        // #endregion
+
         if (!room) {
           res.status(400).send({
             status: 400,
@@ -1720,7 +1755,7 @@ app.get("/api/rooms/reset", async (req, res) => {
 });
 
 app.get("/api/test", (req, res) => {
-  res.send({ test: "asdd" });
+  res.send({test: "asdd"});
 });
 
 app.use(history());
@@ -1749,9 +1784,9 @@ let roomNumb = 10;
 /** ******Ниже описаны события Socket.io********* **/
 /** ********************************************* **/
 
-io.use(function(socket, next) {
+io.use(function (socket, next) {
   if (socket.handshake.query && socket.handshake.query.token) {
-    jwt.verify(socket.handshake.query.token, JWTCONFIG.SECRET, function(
+    jwt.verify(socket.handshake.query.token, JWTCONFIG.SECRET, function (
       err,
       decoded
     ) {
@@ -1769,6 +1804,7 @@ io.use(function(socket, next) {
 });
 io.on("connection", async socket => {
   socket.decoded_token = await jwt.decode(socket.handshake.query.token);
+
   // console.log(
   //   chalk.magenta(`(connection)`),
   //   chalk.bgMagenta(`Пользователь #${socket.decoded_token.id} авторизован`)
@@ -1897,16 +1933,35 @@ io.on("connection", async socket => {
     //   chalk.magenta(`(roomLeave)`),
     //   chalk.bgMagenta(`При выходе из комнаты`)
     // );
-    console.log('выход из комнаты 1795')
+    //#region Поиск комнаты по id и присвоение её переменной
     let usersState = await Rooms.findOne({
       attributes: ["users_steps_state"],
       where: {
         room_id: roomId
       }
     });
-    let index = usersState.users_steps_state.findIndex(
-      el => el.id === socket.decoded_token.id
-    );
+    //#endregion
+
+    //#region Фикс ошибки выполнения нахождения индекса в try
+    let index = -1
+    try {
+      index = usersState.users_steps_state.findIndex(
+        el => el.id === socket.decoded_token.id
+      );
+    } catch (err) {
+      console.log(' index пуст ')
+    }
+    //#endregion
+    //#region Обнуление last room пользователя при ручном выходе из комнаты
+    await Users.update(
+      {
+        last_room: null
+      },
+      {
+        where: {user_id: socket.decoded_token.id}
+      }
+    )
+    //#endregion
     if (index !== -1) {
       usersState.users_steps_state[index].isdisconnected = true;
       await Rooms.update(
@@ -1919,6 +1974,7 @@ io.on("connection", async socket => {
           }
         }
       );
+
       let gamerNamesObj = {
         gamers: usersState.users_steps_state
       };
@@ -1933,7 +1989,7 @@ io.on("connection", async socket => {
   });
   // TODO: присылать список игроков
   // При старте игры в комнате
-  socket.on("startGame", async function(data) {
+  socket.on("startGame", async function (data) {
     // console.log(
     //   chalk.magenta(`(startGame)`),
     //   chalk.bgMagenta(`При старте игры в комнате`)
@@ -2092,7 +2148,7 @@ io.on("connection", async socket => {
   });
 
   // При выполнении хода
-  socket.on("doStep", async function(cardArr) {
+  socket.on("doStep", async function (cardArr) {
     // console.log(
     //   chalk.magenta(`(doStep)`),
     //   chalk.bgMagenta(`При выполнении хода`)
@@ -2274,12 +2330,12 @@ io.on("connection", async socket => {
         (gamer.gamer_room_params.organicCount *
           gamer.gamer_room_params.organicCoef +
           gamer.gamer_room_params.contextCount *
-            gamer.gamer_room_params.contextCoef +
+          gamer.gamer_room_params.contextCoef +
           gamer.gamer_room_params.socialsCount *
-            gamer.gamer_room_params.socialsCoef +
+          gamer.gamer_room_params.socialsCoef +
           gamer.gamer_room_params.smmCount * gamer.gamer_room_params.smmCoef +
           gamer.gamer_room_params.straightCount *
-            gamer.gamer_room_params.straightCoef) *
+          gamer.gamer_room_params.straightCoef) *
         gamer.gamer_room_params.conversion;
       gamer.gamer_room_params.clients = Math.ceil(clients);
       let averageCheck = gamer.gamer_room_params.averageCheck;
@@ -2857,28 +2913,28 @@ io.on("connection", async socket => {
             money:
               (Math.ceil(
                 gamer.gamer_room_params.organicCount *
-                  gamer.gamer_room_params.organicCoef *
-                  gamer.gamer_room_params.conversion
-              ) +
+                gamer.gamer_room_params.organicCoef *
+                gamer.gamer_room_params.conversion
+                ) +
                 Math.ceil(
                   gamer.gamer_room_params.contextCount *
-                    gamer.gamer_room_params.contextCoef *
-                    gamer.gamer_room_params.conversion
+                  gamer.gamer_room_params.contextCoef *
+                  gamer.gamer_room_params.conversion
                 ) +
                 Math.ceil(
                   gamer.gamer_room_params.socialsCount *
-                    gamer.gamer_room_params.socialsCoef *
-                    gamer.gamer_room_params.conversion
+                  gamer.gamer_room_params.socialsCoef *
+                  gamer.gamer_room_params.conversion
                 ) +
                 Math.ceil(
                   gamer.gamer_room_params.smmCount *
-                    gamer.gamer_room_params.smmCoef *
-                    gamer.gamer_room_params.conversion
+                  gamer.gamer_room_params.smmCoef *
+                  gamer.gamer_room_params.conversion
                 ) +
                 Math.ceil(
                   gamer.gamer_room_params.straightCount *
-                    gamer.gamer_room_params.straightCoef *
-                    gamer.gamer_room_params.conversion
+                  gamer.gamer_room_params.straightCoef *
+                  gamer.gamer_room_params.conversion
                 )) *
               gamer.gamer_room_params.averageCheck
           };
@@ -2928,6 +2984,7 @@ io.on("connection", async socket => {
         // console.log(chalk.bgBlue("Финиш в комнате #" + room.room_id));
         // console.log(chalk.bgBlue("Победители: " + JSON.stringify(winners)));
         console.log('победители 2825')
+
         await Rooms.update(
           {
             is_finished: true,
@@ -2939,6 +2996,19 @@ io.on("connection", async socket => {
             }
           }
         );
+
+        // #region Очистка last_room после завершения игры
+        for (const gamer of gamers) {
+          Users.update({
+            last_room: null
+          }, {
+            where: {
+              user_id: gamer.user_id
+            }
+          })
+        }
+        // #endregion
+
         io.in(room.room_id).emit("finish", winners);
       } else {
         // console.log(chalk.bgBlue("Игра продолжается"));
@@ -3314,7 +3384,7 @@ io.on("connection", async socket => {
   });
 
   // При потере подключения
-  socket.on("disconnect", async function() {
+  socket.on("disconnect", async function () {
     // console.log(
     //   chalk.magenta(`(disconnect)`),
     //   chalk.bgMagenta(`При потере подключения #${socket.id}`)
