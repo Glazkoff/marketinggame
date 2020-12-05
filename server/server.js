@@ -1537,6 +1537,21 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               .then(res => {
                 console.log(res)
               })
+
+            // #region Добавление имени для победителей
+            if (findRoom.winners){
+              for (let index in findRoom.winners){
+                if (findRoom.winners[index].id !== -1){
+                  let user = await Users.findOne({
+                    where: {
+                      user_id: findRoom.winners[index].id
+                    }
+                  })
+                  findRoom.winners[index].name = user.name
+                }
+              }
+            }
+            // #endregion
             let participantsArray = findRoom.participants_id;
             let isSet = participantsArray.findIndex(el => {
               return el === decoded.id;
@@ -1578,6 +1593,8 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                   }
                 }
               );
+
+
               let userInRoom = await UsersInRooms.create({
                 user_id: decoded.id,
                 room_id: req.params.id,
@@ -1625,6 +1642,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                   let gamerNamesObj = {
                     gamers: findRoom.dataValues.users_steps_state
                   };
+
                   res.send(findRoom.dataValues);
                   io.in(req.params.id).emit("setGamers", gamerNamesObj);
                 }
@@ -1633,6 +1651,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               }
             }
           }
+
           findRoom = await Rooms.findByPk(findRoom.room_id);
           let gamerNamesObj = {
             gamers: findRoom.users_steps_state
@@ -1727,6 +1746,22 @@ app.get("/api/rooms/reset", async (req, res) => {
                 gamers: usersState.users_steps_state
               };
               io.in(room.room_id).emit("setGamers", gamerNamesObj);
+
+              // #region Добавление имени для победителей в Reset
+              if (room.winners){
+                for (let index in room.winners){
+                  if (room.winners[index].id !== -1){
+                    let user = await Users.findOne({
+                      where: {
+                        user_id: room.winners[index].id
+                      }
+                    })
+                    room.winners[index].name = user.name
+                  }
+                }
+              }
+              // #endregion
+
               res.send({
                 room_id: room.room_id,
                 owner_id: room.owner_id,

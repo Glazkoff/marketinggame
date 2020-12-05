@@ -525,7 +525,7 @@ const store = new Vuex.Store({
           method: "GET"
         })
           .then(res => {
-            console.log("FROM RESSETTING ROOM", res);
+            console.log("FROM RESETTING ROOM", res);
             state.commit("SET_GAME_PARAMS", res);
             there._vm.$socket.emit("subscribeRoom", res.data.room_id);
             resolve(res);
