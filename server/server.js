@@ -96,6 +96,10 @@ const Users = sequelize.define("users", {
   admin: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
+  },
+  last_room: {
+    type: Sequelize.INTEGER,
+    allowNull: true
   }
 });
 
@@ -481,7 +485,7 @@ app.get("/api/admin/globalconfig", async (req, res) => {
   // }
   // );
 });
- 
+
 app.post("/api/admin/config", async (req, res) => {
   // await jwt.verify(
   //   req.headers.authorization,
@@ -559,7 +563,8 @@ app.delete("/api/reviews/:id", async (req, res) => {
               review_id: req.params.id
             }
           });
-          console.log(result);
+          // console.log(result);
+          console.log('app.delete 493')
           res.sendStatus(200);
         }
       }
@@ -575,7 +580,8 @@ app.delete("/api/reviews/:id", async (req, res) => {
 
 // Добавить отзыв
 app.post("/api/reviews", async (req, res) => {
-  console.log(chalk.bgRed(JSON.stringify(req.body)));
+  // console.log(chalk.bgRed(JSON.stringify(req.body)));
+  console.log('app.post 510')
   try {
     await jwt.verify(
       req.headers.authorization,
@@ -694,7 +700,8 @@ app.get("/api/reviews/:id", async (req, res) => {
 
 // Изменение описания события через админпанель
 app.put("/api/admin/events/description/:id", async (req, res) => {
-  console.log(chalk.bgRed(JSON.stringify(req.body)));
+  // console.log(chalk.bgRed(JSON.stringify(req.body)));
+  console.log('app put 630')
   try {
     await jwt.verify(
       req.headers.authorization,
@@ -706,7 +713,8 @@ app.put("/api/admin/events/description/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          console.log(req.body);
+          // console.log(req.body);
+          console.log('app.put 643')
           let result = await Events.update(
             {
               title: req.body.title,
@@ -744,7 +752,8 @@ app.post("/api/admin/events/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          console.log(chalk.bgRed(JSON.stringify(req.body)));
+          // console.log(chalk.bgRed(JSON.stringify(req.body)));
+          console.log('app post 682')
           let newParam = req.body;
           let findEvent = await Events.findOne({
             where: {
@@ -759,7 +768,8 @@ app.post("/api/admin/events/:id", async (req, res) => {
               if (req.body.toDelete) {
                 findEvent.data_change.splice(findEventParamIndex, 1);
               } else {
-                console.log(chalk.bgYellow(JSON.stringify(findEvent)));
+                // console.log(chalk.bgYellow(JSON.stringify(findEvent)));
+                console.log('app post 698')
                 findEvent.data_change[findEventParamIndex] = newParam;
               }
             } else {
@@ -838,7 +848,8 @@ app.put("/api/admin/cards/description/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          console.log(req.body);
+          // console.log(req.body);
+          console.log('778 app put')
           let result = await Cards.update(
             {
               title: req.body.title,
@@ -925,7 +936,8 @@ app.post("/api/admin/cards/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          console.log(chalk.bgRed(JSON.stringify(req.body)));
+          // console.log(chalk.bgRed(JSON.stringify(req.body)));
+          console.log('app post 866')
           let newParam = req.body;
           let findCard = await Cards.findOne({
             where: {
@@ -940,7 +952,8 @@ app.post("/api/admin/cards/:id", async (req, res) => {
               if (req.body.toDelete) {
                 findCard.data_change.splice(findCardParamIndex, 1);
               } else {
-                console.log(chalk.bgYellow(JSON.stringify(findCard)));
+                // console.log(chalk.bgYellow(JSON.stringify(findCard)));
+                console.log('app post 882')
                 findCard.data_change[findCardParamIndex] = newParam;
               }
             } else {
@@ -1292,37 +1305,55 @@ app.get("/api/admin/rooms", async (req, res) => {
 
 // Авторизация
 app.post("/api/login", (req, res) => {
-  console.log("LOGIN: ", req.body);
+  // console.log("LOGIN: ", req.body);
+  //#region Проверка на пустые данные
   if (!req.body.login || !req.body.password) {
     res.status(400).send({
       status: 400,
       message: "Пустой запрос!"
     });
-  } else {
+  }
+  //#endregion
+  //#region Запрос на вытаскивание данных о пользователе
+  else {
     Users.findOne({
       where: {
         login: req.body.login
       }
     })
+  //#endregion
       .then(user => {
+        //#region Проверка на существование пользователя
         if (!user) {
           res.status(404).send({
             status: 404,
             message: "Неправильный логин или пароль!"
           });
-        } else {
+        }
+        //#endregion
+        else {
+          console.log('-'.repeat(50))
+          console.log(user.dataValues)
+          console.log('-'.repeat(50))
+          //#region Сравнение полученных и введенных паролей
           bcrypt.compare(req.body.password, user.password, function(
             err,
             result
-          ) {
+          )
+          //#endregion
+          {
+            //#region Если расшифровка не удалась
             if (err) {
               console.log("Ошибка расшифровки: ", err);
               res.status(500).send({
                 status: 500,
                 message: err
               });
-            } else if (result) {
-              console.log(result);
+            }
+            //#endregion
+            else if (result) {
+              // console.log(result);
+              //#region Создание токена найденного пользователя
               const accessToken = jwt.sign(
                 {
                   id: user.user_id,
@@ -1336,12 +1367,16 @@ app.post("/api/login", (req, res) => {
                 message: "Пользователь найден",
                 token: accessToken
               });
-            } else {
+              //#endregion
+            } else
+            //#region Пользователь не найден
+            {
               res.status(404).send({
                 status: 404,
                 message: "Неправильный логин или пароль"
               });
             }
+            //#endregion
           });
         }
       })
@@ -1351,7 +1386,8 @@ app.post("/api/login", (req, res) => {
 
 // Зарегистрироваться
 app.post("/api/register", (req, res) => {
-  console.log("REGISTER: ", req.body);
+  // console.log("REGISTER: ", req.body);
+  console.log(' app post 1296')
   if (!req.body.login || !req.body.password || !req.body.name) {
     res.status(400).send({
       status: 400,
@@ -1407,9 +1443,9 @@ app.get("/api/default/room", (req, res) => {
 
 // Создание новой команты
 app.post("/api/rooms", async (req, res) => {
-  console.log("Новая комната");
-  console.log(req.body);
-  console.log();
+  console.log("Новая комната 1376");
+  // console.log(req.body);
+  // console.log();
   await jwt.verify(
     req.headers.authorization,
     JWTCONFIG.SECRET,
@@ -1437,6 +1473,17 @@ app.post("/api/rooms", async (req, res) => {
           result.dataValues.prev_room_params = result.first_params;
           result.dataValues.gamer_room_params = result.first_params;
           res.send(result);
+          //#region Добавление последней комнаты для пользователя
+          Users.update({
+            last_room: result.room_id
+          },
+          {
+            where: {user_id: decoded.id}
+          })
+          .then(res => {
+            console.log(res)
+          })
+          //#endregion
         } catch (error) {
           console.log("Ошибка создания комнаты", error);
           res.status(500).send({
@@ -1682,7 +1729,7 @@ app.use(history());
 const server = app
   .use("/", serveStatic(path.join(__dirname, "../dist")))
   .listen(port, () => {
-    console.log(`server running on port ${port}`);
+    console.log(`server running on port ${port} 1627`);
   });
 
 /** ************************************************************* */
@@ -1709,7 +1756,8 @@ io.use(function(socket, next) {
       decoded
     ) {
       if (err) {
-        console.log(chalk.bgBlue(err));
+        // console.log(chalk.bgBlue(err));
+        console.log('socket io use 1655')
         return next(new Error("Authentication error"));
       }
       socket.decoded_token = decoded;
@@ -1721,31 +1769,35 @@ io.use(function(socket, next) {
 });
 io.on("connection", async socket => {
   socket.decoded_token = await jwt.decode(socket.handshake.query.token);
-  console.log(
-    chalk.magenta(`(connection)`),
-    chalk.bgMagenta(`Пользователь #${socket.decoded_token.id} авторизован`)
-  );
+  // console.log(
+  //   chalk.magenta(`(connection)`),
+  //   chalk.bgMagenta(`Пользователь #${socket.decoded_token.id} авторизован`)
+  // );
+  console.log('user connect 1671')
   socket.join("user" + socket.decoded_token.id, () => {
-    console.log(
-      chalk.bgBlue(
-        `Сокет подписан к ID пользователя user${socket.decoded_token.id} (${socket.decoded_token.name}) `
-      )
-    );
+    // console.log(
+    //   chalk.bgBlue(
+    //     `Сокет подписан к ID пользователя user${socket.decoded_token.id} (${socket.decoded_token.name}) `
+    //   )
+    // );
+    console.log('1678 socket join user')
     io.in("user" + socket.decoded_token.id).emit("askIfInTheRoom");
   });
 
   // Сокет авторизован, можем обрабатывать события от него
   connections.push(socket.id);
   usersAndSockets[socket.decoded_token.id] = socket.id;
-  console.log("Авторизованные подключения:", connections);
-  console.log("Сопоставление сокетов с пользователями: ", usersAndSockets);
+  // console.log("Авторизованные подключения:", connections);
+  // console.log("Сопоставление сокетов с пользователями: ", usersAndSockets);
+  console.log('1687 auth socket')
 
   // При отправке игроком сообщения
   socket.on("newMessage", message => {
-    console.log(
-      chalk.magenta(`(newMessage)`),
-      chalk.bgMagenta(`Добавлено сообщение`)
-    );
+    // console.log(
+    //   chalk.magenta(`(newMessage)`),
+    //   chalk.bgMagenta(`Добавлено сообщение`)
+    // );
+    console.log('1695 new msg socket')
     socket.broadcast.to(socket.roomId).emit("addMessage", {
       name: socket.decoded_token.name,
       text: `${message}`
@@ -1754,20 +1806,23 @@ io.on("connection", async socket => {
 
   // Рассылка нового тоста
   socket.on("addToast", toast => {
-    console.log(chalk.magenta(`(addToast)`), chalk.bgMagenta(`Добавлен тост`));
-    console.log(chalk.bgCyan(JSON.stringify(toast)));
+    // console.log(chalk.magenta(`(addToast)`), chalk.bgMagenta(`Добавлен тост`));
+    // console.log(chalk.bgCyan(JSON.stringify(toast)));
+    console.log('1706 socket add toast')
     io.emit("setToast", toast);
   });
 
   // Прикрепление пользователя к комнате
   socket.on("subscribeRoom", async roomId => {
-    console.log(
-      chalk.magenta(`(subscribeRoom)`),
-      chalk.bgMagenta(`Прикрепление пользователя к комнате ${roomId}`)
-    );
+    // console.log(
+    //   chalk.magenta(`(subscribeRoom)`),
+    //   chalk.bgMagenta(`Прикрепление пользователя к комнате ${roomId}`)
+    // );
+    console.log('прикрепление пользователя к комнате 1716')
     socket.join(roomId, () => {
       socket.roomId = roomId;
-      console.log("Подключён к комнате " + roomId);
+      // console.log("Подключён к комнате " + roomId);
+      console.log('1720 подключен к комнате')
     });
 
     /*
@@ -1804,7 +1859,8 @@ io.on("connection", async socket => {
           }
         }
       );
-      console.log(res);
+      // console.log(res);
+      console.log('1758 обновление бд rooms ')
     }
     /*
      */
@@ -1819,10 +1875,11 @@ io.on("connection", async socket => {
 
   // Удалить пользователя из комнаты
   socket.on("kickUser", async data => {
-    console.log(
-      chalk.magenta(`(kickUser)`),
-      chalk.bgMagenta(`Удалить пользователя из комнаты`)
-    );
+    // console.log(
+    //   chalk.magenta(`(kickUser)`),
+    //   chalk.bgMagenta(`Удалить пользователя из комнаты`)
+    // );
+    console.log('kick user 1777')
     // TODO: удаление/изменение статуса из БД
     // console.log(chalk.bgRed("KICK", JSON.stringify(data)));
     // let res = await Rooms.findOne({
@@ -1836,10 +1893,11 @@ io.on("connection", async socket => {
 
   // При выходе из комнаты
   socket.on("roomLeave", async roomId => {
-    console.log(
-      chalk.magenta(`(roomLeave)`),
-      chalk.bgMagenta(`При выходе из комнаты`)
-    );
+    // console.log(
+    //   chalk.magenta(`(roomLeave)`),
+    //   chalk.bgMagenta(`При выходе из комнаты`)
+    // );
+    console.log('выход из комнаты 1795')
     let usersState = await Rooms.findOne({
       attributes: ["users_steps_state"],
       where: {
@@ -1865,21 +1923,23 @@ io.on("connection", async socket => {
         gamers: usersState.users_steps_state
       };
       io.in(roomId).emit("setGamers", gamerNamesObj);
-      console.log(
-        chalk.bgBlue(
-          "Пользователь " + socket.decoded_token.id + " уходит из комнаты!"
-        )
-      );
+      // console.log(
+      //   chalk.bgBlue(
+      //     "Пользователь " + socket.decoded_token.id + " уходит из комнаты!"
+      //   )
+      // );
+      console.log('добавление сообщения другим пользователям 1826')
     }
   });
   // TODO: присылать список игроков
   // При старте игры в комнате
   socket.on("startGame", async function(data) {
-    console.log(
-      chalk.magenta(`(startGame)`),
-      chalk.bgMagenta(`При старте игры в комнате`)
-    );
-    console.log("SET START! ", data);
+    // console.log(
+    //   chalk.magenta(`(startGame)`),
+    //   chalk.bgMagenta(`При старте игры в комнате`)
+    // );
+    // console.log("SET START! ", data);
+    console.log('1837 старт игры')
     try {
       let room = await Rooms.findOne({
         where: {
@@ -1900,7 +1960,8 @@ io.on("connection", async socket => {
           });
         }
       }
-      console.log(chalk.redBright(JSON.stringify(participantsSteps)));
+      // console.log(chalk.redBright(JSON.stringify(participantsSteps)));
+
 
       if (room) {
         await Rooms.update(
@@ -1915,7 +1976,8 @@ io.on("connection", async socket => {
           }
         );
       }
-      console.log(chalk.bgBlue("Старт в комнате #" + socket.roomId));
+      // console.log(chalk.bgBlue("Старт в комнате #" + socket.roomId));
+      console.log('start in room 1875')
       io.in(data.room_id).emit("SET_GAME_START", false);
       let gamerNamesObj = {
         gamers: participantsSteps
@@ -1928,9 +1990,10 @@ io.on("connection", async socket => {
 
   // При принудительном завершении хода
   socket.on("manualStepClose", async roomId => {
-    console.log(
-      chalk.bgRed(`[!!!] - (#${roomId}) ПРИНУДИТЕЛЬНОЕ ЗАВЕРШЕНИЕ ХОДА`)
-    );
+    // console.log(
+    //   chalk.bgRed(`[!!!] - (#${roomId}) ПРИНУДИТЕЛЬНОЕ ЗАВЕРШЕНИЕ ХОДА`)
+    // );
+    console.log('finish step in room 1891')
 
     // Находим состояние текущей комнаты в БД
     let room = await Rooms.findOne({
@@ -1938,18 +2001,20 @@ io.on("connection", async socket => {
         room_id: roomId
       }
     });
-    console.log(chalk.bgRed(`[!!!] - (#${JSON.stringify(room)})`));
+    // console.log(chalk.bgRed(`[!!!] - (#${JSON.stringify(room)})`));
+
 
     // Если текущий месяц не больше максимального количества месяцев
     if (room.first_params.month > room.current_month) {
       // Увеличиваем на 1 текущий месяц
       room.current_month++;
-      console.log(
-        chalk.bgBlue(
-          "Сменился месяц в комнате #" + room.room_id,
-          `(${room.current_month}, ${room.first_params.month})`
-        )
-      );
+      // console.log(
+      //   chalk.bgBlue(
+      //     "Сменился месяц в комнате #" + room.room_id,
+      //     `(${room.current_month}, ${room.first_params.month})`
+      //   )
+      // );
+      console.log('смена месяца 1912')
 
       // Обновляем в БД месяц
       await Rooms.update(
@@ -2028,11 +2093,12 @@ io.on("connection", async socket => {
 
   // При выполнении хода
   socket.on("doStep", async function(cardArr) {
-    console.log(
-      chalk.magenta(`(doStep)`),
-      chalk.bgMagenta(`При выполнении хода`)
-    );
-    console.log(chalk.bgBlue("Шаг пользователя #" + socket.decoded_token.id));
+    // console.log(
+    //   chalk.magenta(`(doStep)`),
+    //   chalk.bgMagenta(`При выполнении хода`)
+    // );
+    console.log('ход сделан 1995')
+    // console.log(chalk.bgBlue("Шаг пользователя #" + socket.decoded_token.id));
     try {
       // Находим данные об игроке
       let gamer = await UsersInRooms.findOne({
@@ -2094,7 +2160,8 @@ io.on("connection", async socket => {
         // Проходимся по всему массиву эффектов, чтобы проверить,
         // прислали ли карточку для продления серии
         gamer.effects.forEach(effect => {
-          console.log(effect);
+          // console.log(effect);
+          console.log('продление карточки 2059')
           let cardArrIndex = cardArr.findIndex(elem => elem === effect.id);
           // Если в пришедшем массиве ID карточек нет эффекта из цикла
           // (если не прислали повторно), то удаляем из массива эффектов игрока
@@ -2357,7 +2424,8 @@ io.on("connection", async socket => {
                 changing.from +
                 ")";
             }
-            console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
+            // console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
+            console.log('непонятно что 2323')
             messageArr.push(analyticsString);
             let indForDelete = gamer.changes.findIndex(elem => {
               return (
@@ -2522,10 +2590,11 @@ io.on("connection", async socket => {
       if (room.users_steps_state !== null && room.participants_id !== null) {
         let activeParticipants = room.participants_id.length;
 
-        console.log(
-          chalk.bgGreen(`--- НАЧИНАЕТСЯ ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ`)
-        );
-        console.log(chalk.bgGreen(`${room.users_steps_state}`));
+        // console.log(
+        //   chalk.bgGreen(`--- НАЧИНАЕТСЯ ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ`)
+        // );
+        // console.log(chalk.bgGreen(`${room.users_steps_state}`));
+        console.log('подсчет участников сделавших ход 2491')
         // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
         room.users_steps_state.forEach(el => {
           if (
@@ -2533,26 +2602,28 @@ io.on("connection", async socket => {
             -1
           ) {
             didStepCurrMonth++;
-            console.log(chalk.bgGreen(`didStepCurrMonth: ${didStepCurrMonth}`));
+            // console.log(chalk.bgGreen(`didStepCurrMonth: ${didStepCurrMonth}`));
+            console.log('+месяц 2501')
           }
           if (el["isdisconnected"]) {
             activeParticipants--;
-            console.log(
-              chalk.bgGreen(`activeParticipants: ${activeParticipants}`)
-            );
+            // console.log(
+            //   chalk.bgGreen(`activeParticipants: ${activeParticipants}`)
+            // );
+            console.log('-участник 2508')
           }
         });
         console.log(
-          chalk.bgGreen(`РЕЗУЛЬТАТ! didStepCurrMonth: ${didStepCurrMonth}`)
+          chalk.bgGreen(`РЕЗУЛЬТАТ! didStepCurrMonth: ${didStepCurrMonth} 2512`)
         );
         console.log(
-          chalk.bgGreen(`РЕЗУЛЬТАТ! activeParticipants: ${activeParticipants}`)
+          chalk.bgGreen(`РЕЗУЛЬТАТ! activeParticipants: ${activeParticipants} 2515`)
         );
-        console.log(chalk.bgGreen(`--- ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ ЗАКОНЧЕН`));
+        console.log(chalk.bgGreen(`--- ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ ЗАКОНЧЕН 2517`));
 
         // !!! Когда все в комнате сделали ход
         if (didStepCurrMonth === activeParticipants) {
-          console.log("Все пользователи сделали ход");
+          console.log("Все пользователи сделали ход 2521");
           allGamersDoStep = true;
           room.users_steps_state.map(el => {
             el.isattacker = false;
@@ -2574,13 +2645,13 @@ io.on("connection", async socket => {
         }
         // Если число сходивших не равно количеству участников
         else {
-          console.log("Не все пользователи сделали ход");
-          console.log("За этот месяц: ", didStepCurrMonth);
-          console.log("Активных участников: ", activeParticipants);
-          console.log("Всего участников: ", room.participants_id.length);
+          console.log("Не все пользователи сделали ход 2543");
+          console.log("2544 За этот месяц: ", didStepCurrMonth);
+          console.log("2545 Активных участников: ", activeParticipants);
+          console.log(" 2546 Всего участников: ", room.participants_id.length);
         }
       } else {
-        console.log("Что-то не так с параметрами ходов пользователя");
+        console.log("Что-то не так с параметрами ходов пользователя 2549");
       }
 
       // Отправка сообщений об изменениях
@@ -2611,12 +2682,13 @@ io.on("connection", async socket => {
         // Если текущий месяц меньше количества запланированных
         if (room.first_params.month > room.current_month) {
           room.current_month++;
-          console.log(
-            chalk.bgBlue(
-              "Сменился месяц в комнате #" + room.room_id,
-              `(${room.current_month}, ${room.first_params.month})`
-            )
-          );
+          // console.log(
+          //   chalk.bgBlue(
+          //     "Сменился месяц в комнате #" + room.room_id,
+          //     `(${room.current_month}, ${room.first_params.month})`
+          //   )
+          // );
+          console.log('месяцы ещё есть 2586')
           await Rooms.update(
             {
               current_month: sequelize.literal("current_month + 1")
@@ -2636,16 +2708,19 @@ io.on("connection", async socket => {
       });
       if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
         // if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
-        console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
+        // console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
+        console.log('сулучайное событие 2607 ')
 
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
         let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
-        console.log(
-          chalk.bgRed("Случайное событие #", JSON.stringify(randomEvent))
-        );
+        // console.log(
+        //   chalk.bgRed("Случайное событие #", JSON.stringify(randomEvent))
+        // );
+        console.log('выбор случайного события 2615')
         if (randomEvent.dataChange !== undefined) {
-          console.log(chalk.bgYellow("$1$"));
+          // console.log(chalk.bgYellow("$1$"));
+
           // Для каждого изменения
           for (const eventChange of randomEvent.dataChange) {
             // Если изменения при применении
@@ -2671,7 +2746,7 @@ io.on("connection", async socket => {
                       eventChange.change;
                     break;
                   default:
-                    // console.log("Что-то не так с событием " + card.id);
+                    console.log("Что-то не так с событием 2644 карточка - " + card.id);
                     break;
                 }
                 await UsersInRooms.update(
@@ -2762,7 +2837,8 @@ io.on("connection", async socket => {
 
       // Если игра завершается
       if (room.current_month >= room.first_params.month) {
-        console.log(chalk.bgBlueBright("Игра завершается #" + room.room_id));
+        // console.log(chalk.bgBlueBright("Игра завершается #" + room.room_id));
+        console.log('завершение игры 2736')
         // for (const gamer of gamers) {
         //         io.sockets.to(gamer.id).emit("setStartGame", gamer.data);
         //       }
@@ -2771,9 +2847,9 @@ io.on("connection", async socket => {
             room_id: room.room_id
           }
         });
-        console.log(chalk.red(JSON.stringify(gamers)));
+        // console.log(chalk.red(JSON.stringify(gamers)));
         // gamers = gamers.dataValues;
-        console.log(chalk.red(gamers));
+        // console.log(chalk.red(gamers));
         let gamersRate = [];
         for (const gamer of gamers) {
           let position = {
@@ -2849,8 +2925,9 @@ io.on("connection", async socket => {
           text: `Конец игры в комнате!`
         });
 
-        console.log(chalk.bgBlue("Финиш в комнате #" + room.room_id));
-        console.log(chalk.bgBlue("Победители: " + JSON.stringify(winners)));
+        // console.log(chalk.bgBlue("Финиш в комнате #" + room.room_id));
+        // console.log(chalk.bgBlue("Победители: " + JSON.stringify(winners)));
+        console.log('победители 2825')
         await Rooms.update(
           {
             is_finished: true,
@@ -2864,9 +2941,10 @@ io.on("connection", async socket => {
         );
         io.in(room.room_id).emit("finish", winners);
       } else {
-        console.log(chalk.bgBlue("Игра продолжается"));
-        console.log(chalk.bgBlue(room.current_month));
-        console.log(chalk.bgBlue(room.first_params.month));
+        // console.log(chalk.bgBlue("Игра продолжается"));
+        // console.log(chalk.bgBlue(room.current_month));
+        // console.log(chalk.bgBlue(room.first_params.month));
+        console.log('игра продолжается 2842')
       }
 
       //  TODO: send effects
@@ -3237,10 +3315,11 @@ io.on("connection", async socket => {
 
   // При потере подключения
   socket.on("disconnect", async function() {
-    console.log(
-      chalk.magenta(`(disconnect)`),
-      chalk.bgMagenta(`При потере подключения #${socket.id}`)
-    );
+    // console.log(
+    //   chalk.magenta(`(disconnect)`),
+    //   chalk.bgMagenta(`При потере подключения #${socket.id}`)
+    // );
+    console.log('отключение пользователя 3217')
     const Op = Sequelize.Op;
     let room = await Rooms.findOne({
       where: {
@@ -3251,11 +3330,12 @@ io.on("connection", async socket => {
       },
       order: [["updatedAt", "DESC"]]
     });
-    console.log(
-      chalk.bgBlue(
-        `Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
-      )
-    );
+    // console.log(
+    //   chalk.bgBlue(
+    //     `Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
+    //   )
+    // );
+    console.log('пользователь отсоединен от сокета 3233')
     socket.leave("user" + socket.decoded_token.id, () => {
       // console.log(
       //   chalk.bgBlue(
@@ -3288,11 +3368,11 @@ io.on("connection", async socket => {
           }
         }
       );
-      console.log(res);
+      // console.log(res);
+      console.log('room upd 3267')
     }
     connections.splice(connections.indexOf(socket.id), 1);
-    console.log("Подключения:");
-    console.log(connections);
+    console.log(" 3270 Подключения:" + connections);
   });
 });
 
