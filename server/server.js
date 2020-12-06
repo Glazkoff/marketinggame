@@ -1677,7 +1677,7 @@ app.get("/api/rooms/reset", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        // #region Получение последней комнаты
+      // #region Получение последней комнаты
         let lastRoomId = await Users.findOne({
           where: {
             user_id: decoded.id
@@ -1708,7 +1708,7 @@ app.get("/api/rooms/reset", async (req, res) => {
               }
             })
         }
-        // #endregion
+      // #endregion
 
         if (!room) {
           res.status(401).send({
@@ -1898,16 +1898,27 @@ io.on("connection", async socket => {
 
     /*
      */
-    const Op = Sequelize.Op;
-    let room = await Rooms.findOne({
+    // const Op = Sequelize.Op;
+    // let room = await Rooms.findOne({
+    //   where: {
+    //     participants_id: {
+    //       [Op.contains]: socket.decoded_token.id
+    //     },
+    //     completed: false
+    //   },
+    //   order: [["updatedAt", "DESC"]]
+    // });
+    //#region Правка нахождения комнаты для пользователя (кастом версия)
+    
+    let room = Users.findOne({
       where: {
-        participants_id: {
-          [Op.contains]: socket.decoded_token.id
-        },
-        completed: false
-      },
-      order: [["updatedAt", "DESC"]]
-    });
+        user_id: socket.decoded_token.id
+      }
+    })
+
+    room = room.last_room
+
+    //#endregion
 
     if (room && room.users_steps_state !== null) {
       let index = room.users_steps_state.findIndex(
