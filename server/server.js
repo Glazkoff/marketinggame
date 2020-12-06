@@ -1458,33 +1458,47 @@ app.post("/api/rooms", async (req, res) => {
         });
       } else {
         try {
-          let result = await Rooms.create({
-            owner_id: decoded.id,
-            participants_id: [decoded.id],
-            first_params: req.body,
-            budget_per_month: req.body.money
-          });
-          await UsersInRooms.create({
-            user_id: decoded.id,
-            room_id: result.room_id,
-            current_month: result.first_params.month,
-            gamer_room_params: result.first_params,
-            prev_room_params: result.first_params
-          });
-          result.dataValues.prev_room_params = result.first_params;
-          result.dataValues.gamer_room_params = result.first_params;
-          res.send(result);
-          //#region Добавление последней комнаты для пользователя
-          Users.update({
-              last_room: result.room_id
-            },
-            {
-              where: {user_id: decoded.id}
+          let user_last_room_valid = await Users.findOne(
+              {
+                where: {user_id: decoded.id}
+              }
+            )
+          if (!user_last_room_valid.last_room) {
+            let result = await Rooms.create({
+              owner_id: decoded.id,
+              participants_id: [decoded.id],
+              first_params: req.body,
+              budget_per_month: req.body.money
+            });
+            await UsersInRooms.create({
+              user_id: decoded.id,
+              room_id: result.room_id,
+              current_month: result.first_params.month,
+              gamer_room_params: result.first_params,
+              prev_room_params: result.first_params
+            });
+            result.dataValues.prev_room_params = result.first_params;
+            result.dataValues.gamer_room_params = result.first_params;
+            //#region Добавление последней комнаты для пользователя
+            Users.update(
+              {
+                last_room: result.room_id
+              },
+              {
+                where: {user_id: decoded.id}
+              })
+              .then(res => {
+                console.log(res)
+              })
+            //#endregion
+            res.send(result);
+          } else {
+            console.log("Комната уже существует, вали отседа", error);
+            res.send({
+              status: 500,
+              message: "Вы уже находитесь в другой комнате!"
             })
-            .then(res => {
-              console.log(res)
-            })
-          //#endregion
+          }
         } catch (error) {
           console.log("Ошибка создания комнаты", error);
           res.status(500).send({
@@ -1526,6 +1540,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               message: "Игра в комнате была завершена!"
             });
           } else {
+            //#region Добавление ласт рум к пользователю
             Users.update(
               {
                 last_room: req.params.id
@@ -1534,9 +1549,10 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 where: {user_id: decoded.id}
               }
             )
-              .then(res => {
-                console.log(res)
-              })
+            .then(res => {
+              console.log(res)
+            })
+            //#endregion
 
             // #region Добавление имени для победителей
             if (findRoom.winners){
