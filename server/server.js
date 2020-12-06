@@ -1910,14 +1910,18 @@ io.on("connection", async socket => {
     // });
     //#region Правка нахождения комнаты для пользователя (кастом версия)
     
-    let room = Users.findOne({
+    let user_last_room_id = await Users.findOne({
       where: {
         user_id: socket.decoded_token.id
       }
     })
 
-    room = room.last_room
-
+    let last_room_id = user_last_room_id.last_room
+    let room = await Rooms.findOne({
+      where: {
+        room_id: last_room_id
+      }
+    })
     //#endregion
 
     if (room && room.users_steps_state !== null) {
