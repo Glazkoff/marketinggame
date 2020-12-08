@@ -481,7 +481,7 @@ app.get("/api/admin/globalconfig", async (req, res) => {
   // }
   // );
 });
- 
+
 app.post("/api/admin/config", async (req, res) => {
   // await jwt.verify(
   //   req.headers.authorization,
@@ -493,14 +493,14 @@ app.post("/api/admin/config", async (req, res) => {
   //         message: "Вы не авторизованы!"
   //       });
   //     } else {
-        let lastConfig = await GameConfig.findOne({
-          limit: 1,
-          order: [["createdAt", "DESC"]]
-        });
-        let result = await GameConfig.create({
-          event_chance: req.body.event_chance || lastConfig.event_chance
-        });
-        res.send(result);
+  let lastConfig = await GameConfig.findOne({
+    limit: 1,
+    order: [["createdAt", "DESC"]]
+  });
+  let result = await GameConfig.create({
+    event_chance: req.body.event_chance || lastConfig.event_chance
+  });
+  res.send(result);
   //     }
   //   }
   // );
@@ -540,6 +540,26 @@ app.get("/api/reviews", async (req, res) => {
     });
   }
 });
+
+app.post("/api/addreview", async (req, res) => {
+  try {
+    let result = await Reviews.create({
+      author_id: req.body.author_id,
+      room_id: req.body.room_id,
+      rating: req.body.rating,
+      comment: req.body.comment
+    });
+    res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// ************************************************************************
 
 // Удалить отзыв
 app.delete("/api/reviews/:id", async (req, res) => {
