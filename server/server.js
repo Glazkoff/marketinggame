@@ -436,6 +436,76 @@ async function getOneOffCardsId() {
 }
 /** ************************** Модуль API *********************** */
 
+// Список всех пользователей
+app.get("/api/admin/users/list", async (req, res) => {
+  // await jwt.verify(
+  //   req.headers.authorization,
+  //   JWTCONFIG.SECRET,
+  //   async (err, decoded) => {
+  //     if (err) {
+  //       res.status(401).send({
+  //         status: 401,
+  //         message: "Вы не авторизованы!"
+  //       });
+  //     } else {
+  let result = await Users.findAll({
+    attributes: ["user_id", "login", "name", "createdAt"],
+    order: [["updatedAt", "DESC"]]
+  });
+  res.send({ users: result });
+  // }
+  // }
+  // );
+});
+
+app.get("/api/admin/globalconfig", async (req, res) => {
+  // await jwt.verify(
+  //   req.headers.authorization,
+  //   JWTCONFIG.SECRET,
+  //   async (err, decoded) => {
+  //     if (err) {
+  //       res.status(401).send({
+  //         status: 401,
+  //         message: "Вы не авторизованы!"
+  //       });
+  //     } else {
+  let lastConfig = await GameConfig.findOne({
+    limit: 1,
+    order: [["createdAt", "DESC"]]
+  });
+  let result = await GameConfig.create({
+    event_chance: req.body.event_chance || lastConfig.event_chance
+  });
+  res.send({ config: result });
+  // }
+  // }
+  // );
+});
+ 
+app.post("/api/admin/config", async (req, res) => {
+  // await jwt.verify(
+  //   req.headers.authorization,
+  //   JWTCONFIG.SECRET,
+  //   async (err, decoded) => {
+  //     if (err) {
+  //       res.status(401).send({
+  //         status: 401,
+  //         message: "Вы не авторизованы!"
+  //       });
+  //     } else {
+        let lastConfig = await GameConfig.findOne({
+          limit: 1,
+          order: [["createdAt", "DESC"]]
+        });
+        let result = await GameConfig.create({
+          event_chance: req.body.event_chance || lastConfig.event_chance
+        });
+        res.send(result);
+  //     }
+  //   }
+  // );
+});
+
 // Список всех отзывов
 app.get("/api/reviews", async (req, res) => {
   try {
