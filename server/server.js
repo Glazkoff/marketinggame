@@ -482,7 +482,7 @@ app.get("/api/admin/globalconfig", async (req, res) => {
   // );
 });
 
-app.post("/api/admin/config", async (req, res) => {
+app.post("/api/admin/globalconfig", async (req, res) => {
   // await jwt.verify(
   //   req.headers.authorization,
   //   JWTCONFIG.SECRET,
