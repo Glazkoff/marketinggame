@@ -473,13 +473,8 @@ app.get("/api/admin/globalconfig", async (req, res) => {
     limit: 1,
     order: [["createdAt", "DESC"]]
   });
-  let result = await GameConfig.create({
-    event_chance: req.body.event_chance || lastConfig.event_chance
-  });
-  res.send({ config: result });
-  // }
-  // }
-  // );
+  console.log("lastConfig", lastConfig);
+  res.send({ config: lastConfig.dataValues });
 });
 
 app.post("/api/admin/globalconfig", async (req, res) => {
