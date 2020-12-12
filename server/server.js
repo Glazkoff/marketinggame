@@ -554,6 +554,15 @@ app.post("/api/addreview", async (req, res) => {
   }
 });
 
+app.delete("/api/deletereview/:id", async (req, res) => {
+  let result = await Reviews.destroy({
+    where: {
+      review_id: req.params.id
+    }
+  });
+  res.sendStatus(200).send(result);
+});
+
 // ************************************************************************
 
 // Удалить отзыв
