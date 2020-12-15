@@ -168,10 +168,12 @@
       </div>
     </div>
     <!-- Поле для карточек -->
+    
     <div
       id="card-field"
       style="transition: all 5s"
       :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
+   
     >
       <div class="loader-wrap h-100" v-if="cardsLoading">
         <Loader></Loader>
@@ -261,7 +263,8 @@
       <Effects></Effects>
     </div>
     <!-- Конец списка действующих игроков -->
-  </div>
+    </div>
+  
 </template>
 
 <script>
@@ -720,7 +723,7 @@ export default {
 <style>
 .gamer-round-data {
   min-width: unset !important;
-  overflow: auto;
+  overflow: scroll;
 }
 ::-webkit-scrollbar {
   width: 12px;
@@ -1056,16 +1059,46 @@ export default {
   }
   #play-field {
     grid-area: 1/1/2/4;
+    width: 100vw;
+    margin: 0;
   }
   #enemy-field {
     grid-area: 2/3/3/4;
   }
 }
 @media screen and (max-width: 730px) {
+ .main-side{
+   display: flex;
+   flex-direction: column;
+ 
+   overflow-x: hidden
+ }
+ 
+ #playground{
+   display: flex;
+   flex-direction: column;
+ }
   .list-group-item {
     padding: 2px !important;
     padding-left: 8px !important;
     padding-right: 2px !important;
+  }
+  
+   #card-field{
+     display: flex;
+    width: 100vw  !important;
+    min-height: 30vh;
+
+  }
+  
+  #enemy-field{
+ display: flex;
+    width: 100vw  !important;
+  }
+  #effects-field{
+     display: flex;
+    width: 100vw  !important;
+    
   }
 }
 @media screen and (orientation: portrait) {
