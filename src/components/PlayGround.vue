@@ -1068,6 +1068,48 @@ export default {
     padding-right: 2px !important;
   }
 }
+@media screen and (max-width: 490px) {
+  .main-side .pg-header{
+    height:5rem;
+  }
+  .main-side #finish-screen{
+    margin-top:6rem;
+  }
+  .main-side .pg-header a{
+    padding:2rem 0rem 0rem 5rem;
+    width:3rem;
+  }
+  .col .gray-block{
+    height:90%;
+  }
+  #direction-column{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+}
+@media screen and (max-width: 615px) {
+  .col .gray-block{
+    height:90%;
+  }
+  #flex{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+}
 @media screen and (orientation: portrait) {
   /* #playground {
     grid-template-columns: 1fr 1fr;
