@@ -77,7 +77,7 @@
           </div>
         </div>
       </div>
-      <div class="row" v-if="isSomeWinner">
+      <div class="row" id="direction-column" v-if="isSomeWinner">
         <div class="col-4">
           <div class="gray-block block-winner-img"></div>
         </div>
