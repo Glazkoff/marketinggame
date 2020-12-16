@@ -1261,5 +1261,6 @@ export default {
   h3.card-text {
     font-size: 22px;
   }
+  
 }
 </style>
