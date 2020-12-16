@@ -110,7 +110,7 @@
                 <div class="col-7 data-group">
                   <ul class="list-group list-group-horizontal w-100">
                     <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                       style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                     >
                       Бюджет
@@ -130,7 +130,7 @@
                       </span>
                     </li>
                     <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                     >
                       Месяц
                       <span class="badge badge-primary badge-pill">
@@ -1261,5 +1261,6 @@ export default {
   h3.card-text {
     font-size: 22px;
   }
+  
 }
 </style>

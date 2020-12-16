@@ -78,14 +78,14 @@
         </div>
       </div>
       <div class="row" v-if="isSomeWinner">
-        <div class="col-4">
+        <div class="col-lg-4 col">
           <div class="gray-block block-winner-img"></div>
         </div>
-        <div class="col-8 text-center mt-0" v-if="isWinner">
+        <div class="col-lg-8 col text-center mt-0" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
           <p class="mb-0">Вам удалось заработать:</p>
-          <ul class="list-group col-10 offset-1 mt-3">
+          <ul class="list-group col-lg-10 col offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -594,12 +594,12 @@
       </div>
       <div class="row">
         <div
-          class="col-8 align-content-center justify-content-between pr-0 finish-table"
+          class="col-lg-8 align-content-center justify-content-between pr-0 finish-table"
         >
           <DataTable is-finish-table="true"></DataTable>
         </div>
         <div
-          class="col-4 align-content-center justify-content-between steps"
+          class="col-lg-4 align-content-center justify-content-between steps"
           id="stepsBox"
         >
           <h6 class>Ваши ходы:</h6>
@@ -792,12 +792,15 @@ export default {
 
 #finish-screen {
   margin: auto auto;
-  margin-top: 90px;
   background-color: #fff;
   width: 96%;
-  height: calc(96% - 80px);
+ margin-top: 50px;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+
+}
+.finish-table{
+  overflow-x: scroll;
 }
 .finish-table .table td {
   font-size: 0.7rem;
@@ -886,4 +889,7 @@ export default {
 .block-thirdplace-img {
   background: url("../assets/3.svg") no-repeat 50% 50%;
 }
+
+  
+
 </style>
