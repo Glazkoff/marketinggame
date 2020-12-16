@@ -1463,6 +1463,7 @@ app.post("/api/rooms", async (req, res) => {
                 where: {user_id: decoded.id}
               }
             )
+          console.log(user_last_room_valid.last_room)
           if (!user_last_room_valid.last_room) {
             let result = await Rooms.create({
               owner_id: decoded.id,
@@ -1493,10 +1494,10 @@ app.post("/api/rooms", async (req, res) => {
             //#endregion
             res.send(result);
           } else {
-            console.log("Комната уже существует, вали отседа", error);
+            console.log("Комната уже существует, не создавай новые");
             res.send({
-              status: 500,
-              message: "Вы уже находитесь в другой комнате!"
+              status: 400,
+              message: "Вы уже находитесь в другой комнате! Ваша последняя комната - " + user_last_room_valid.last_room
             })
           }
         } catch (error) {
@@ -1540,14 +1541,14 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               message: "Игра в комнате была завершена!"
             });
           } else {
-            
+
             let user_last_room_valid = await Users.findOne(
               {
                 where: {user_id: decoded.id}
               }
             )
-            if (!user_last_room_valid) {
-              
+            if (!user_last_room_valid.last_room) {
+
               //#region Добавление ласт рум к пользователю
               Users.update(
                 {
@@ -1675,7 +1676,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 }
               }
             } else {
-              console.log("Комната уже существует, вали отседа", error);
+              console.log("Комната уже существует, вали отседа");
               res.status(400).send({
                 status: 400,
                 message: "Вы уже в игре!"
@@ -1940,7 +1941,7 @@ io.on("connection", async socket => {
     //   order: [["updatedAt", "DESC"]]
     // });
     //#region Правка нахождения комнаты для пользователя (кастом версия)
-    
+
     let user_last_room_id = await Users.findOne({
       where: {
         user_id: socket.decoded_token.id

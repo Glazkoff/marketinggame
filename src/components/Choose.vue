@@ -46,7 +46,7 @@
     <transition name="slideUp" mode="out-in" appear>
       <div class v-if="toggle == 'join' && !loading">
         <label for="name" class>Номер комнаты</label>
-        <br />
+        <br/>
         <input
           type="number"
           min="0"
@@ -82,7 +82,7 @@
       </div>
       <div class v-if="toggle == 'create' && !loading">
         <label for="name" class>Количество месяцев</label>
-        <br />
+        <br/>
         <input
           type="number"
           min="3"
@@ -95,7 +95,7 @@
           @keypress.enter="createGame()"
         />
         <label for="name" class>Бюджет за месяц</label>
-        <br />
+        <br/>
         <input
           type="number"
           min="50000"
@@ -116,7 +116,9 @@
         </button>
       </div>
     </transition>
-    <div class="loader-wrap" v-if="loading"><Loader></Loader></div>
+    <div class="loader-wrap" v-if="loading">
+      <Loader></Loader>
+    </div>
     <button class="btn btn-link text-right mt-2" @click="onShowReviewModal()">
       Оставить отзыв
     </button>
@@ -127,7 +129,8 @@
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
-import { required } from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
+
 let apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
 export default {
   name: "Choose",
@@ -245,7 +248,11 @@ export default {
         .then(res => {
           console.log("ДАН КОМНАТЫ", res.data);
           this.loading = false;
-          this.setRoomParams(res);
+          if (res.data.status !== 400) {
+            this.setRoomParams(res);
+          } else{
+            alert(res.data.message)
+          }
         })
         .catch(err => {
           console.log(err);
@@ -312,6 +319,7 @@ export default {
     padding: 0.7rem !important;
   }
 }
+
 @media screen and (max-width: 575px) {
   .card.container {
     border: 0px !important;
