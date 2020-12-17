@@ -98,7 +98,8 @@
         <br />
         <input
           type="number"
-          min="0"
+          min="50000"
+          step="1000"
           v-model.number="roomParams.money"
           name="money"
           id="money"
