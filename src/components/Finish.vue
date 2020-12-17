@@ -34,7 +34,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em
+<!--                    <em
                       >{{
                         firstPosition !== undefined
                           ? Math.ceil(
@@ -69,7 +69,8 @@
                           : ""
                       }}
                       ₽</em
-                    >
+                    >-->
+                    <em> {{ (firstPosition.money - firstRoomParams.money).toFixed(2)}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -84,7 +85,7 @@
         <div class="col-8 text-center mt-0" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
-          <p class="mb-0">Вам удалось заработать:</p>
+          <p class="mb-0">Вам удалось заработать: {{firstPosition.money.toFixed(2)}}</p>
           <ul class="list-group col-10 offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
@@ -272,7 +273,7 @@
           <h3 class="mb-0">
             Вы на {{ isSecondWinner ? "втором" : "третьем" }} месте
           </h3>
-          <p class="mb-0">Вам удалось заработать:</p>
+          <p class="mb-0">Вам удалось заработать: {{isSecondWinner ? secondPosition.money.toFixed(2) : thirdPosition.money.toFixed(2)}}</p>
           <ul class="list-group col-10 offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
@@ -481,7 +482,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em
+<!--                    <em
                       >{{
                         secondPosition !== undefined
                           ? Math.ceil(
@@ -516,7 +517,8 @@
                           : ""
                       }}
                       ₽</em
-                    >
+                    >-->
+                    <em>{{ (secondPosition.money - firstRoomParams.money).toFixed(2) }} ₽</em>
                   </p>
                 </div>
               </div>
@@ -549,7 +551,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em
+<!--                    <em
                       >{{
                         thirdPosition !== undefined
                           ? Math.ceil(
@@ -584,7 +586,8 @@
                           : ""
                       }}
                       ₽</em
-                    >
+                    >-->
+                    <em>{{(thirdPosition.money - firstRoomParams.money).toFixed(2)}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -688,9 +691,6 @@ export default {
       return this.$store.state.winners["2"]["id"] !== -1;
     },
     hasThirdPosition() {
-      // if (this.$store.state.winners.hasOwnProperty("3")) {
-      //   return true;
-      // } else return false;
       return this.$store.state.winners["3"]["id"] !== -1;
     },
     isWinner() {
