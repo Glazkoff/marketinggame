@@ -1741,6 +1741,7 @@ app.get("/api/rooms/reset", async (req, res) => {
             })
         }
       // #endregion
+        console.log("Последняя комната - " + room.room_id + ". Строка 1744")
 
         if (!room) {
           res.status(401).send({
