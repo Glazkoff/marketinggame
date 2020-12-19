@@ -106,10 +106,16 @@
           placeholder="100000"
           @keypress.enter="createGame()"
         />
+        <div v-if="this.roomParams.month<=0" class="mb-3">
+        Количество месяцев должно быть больше 0!
+        </div>
+        <div v-if="this.roomParams.money<=15000" class="mb-3">
+        Бюджет на месяц должен быть больше 15 000!
+        </div>
         <button
           class="btn btn-lg btn-danger btn-block"
           @click="createGame()"
-          :disabled="$v.roomParams.$invalid"
+          :disabled="$v.roomParams.$invalid||roomParams.month<=0||roomParams.money<15000"
         >
           Создать
         </button>
