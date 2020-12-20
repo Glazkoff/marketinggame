@@ -195,11 +195,13 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 42px;
+  height: auto;
   background-color: #fff;
   box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0.5rem;
 }
 .pg-header a {
   margin: auto 1rem !important;
@@ -208,8 +210,9 @@ export default {
 @media screen and (max-width: 320px) {
   .pg-header {
     flex-direction: row;
-    height: 40px;
+    height: auto;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
   #playground {
     padding-top: 40px;

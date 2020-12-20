@@ -110,7 +110,7 @@
                 <div class="col-7 data-group">
                   <ul class="list-group list-group-horizontal w-100">
                     <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                       style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                     >
                       Бюджет
@@ -130,7 +130,7 @@
                       </span>
                     </li>
                     <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                     >
                       Месяц
                       <span class="badge badge-primary badge-pill">
@@ -168,10 +168,12 @@
       </div>
     </div>
     <!-- Поле для карточек -->
+    
     <div
       id="card-field"
       style="transition: all 5s"
       :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
+   
     >
       <div class="loader-wrap h-100" v-if="cardsLoading">
         <Loader></Loader>
@@ -261,7 +263,8 @@
       <Effects></Effects>
     </div>
     <!-- Конец списка действующих игроков -->
-  </div>
+    </div>
+  
 </template>
 
 <script>
@@ -720,7 +723,7 @@ export default {
 <style>
 .gamer-round-data {
   min-width: unset !important;
-  overflow: auto;
+  overflow: scroll;
 }
 ::-webkit-scrollbar {
   width: 12px;
@@ -1056,16 +1059,88 @@ export default {
   }
   #play-field {
     grid-area: 1/1/2/4;
+    width: 100vw;
+    margin: 0;
   }
   #enemy-field {
     grid-area: 2/3/3/4;
   }
 }
+@media screen and (max-width: 490px) {
+  .main-side .pg-header{
+    height:5rem;
+  }
+  .main-side #finish-screen{
+    margin-top:6rem;
+  }
+  .main-side .pg-header a{
+    padding:2rem 0rem 0rem 5rem;
+    width:3rem;
+  }
+  .col .gray-block{
+    height:90%;
+  }
+  #direction-column{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+}
+@media screen and (max-width: 615px) {
+  .col .gray-block{
+    height:90%;
+  }
+  #flex{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+}
 @media screen and (max-width: 730px) {
+ .main-side{
+   display: flex;
+   flex-direction: column;
+ 
+   overflow-x: hidden
+ }
+ 
+ #playground{
+   display: flex;
+   flex-direction: column;
+ }
   .list-group-item {
     padding: 2px !important;
     padding-left: 8px !important;
     padding-right: 2px !important;
+  }
+  
+   #card-field{
+     display: flex;
+    width: 100vw  !important;
+    min-height: 30vh;
+
+  }
+  
+  #enemy-field{
+ display: flex;
+    width: 100vw  !important;
+  }
+  #effects-field{
+     display: flex;
+    width: 100vw  !important;
+    
   }
 }
 @media screen and (max-width: 490px) {
@@ -1270,5 +1345,6 @@ export default {
   h3.card-text {
     font-size: 22px;
   }
+  
 }
 </style>
