@@ -1481,7 +1481,7 @@ app.post("/api/rooms", async (req, res) => {
             result.dataValues.prev_room_params = result.first_params;
             result.dataValues.gamer_room_params = result.first_params;
             //#region Добавление последней комнаты для пользователя
-            Users.update(
+            await Users.update(
               {
                 last_room: result.room_id
               },
