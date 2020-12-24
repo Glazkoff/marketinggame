@@ -1017,7 +1017,11 @@ export default {
 [v-cloak] {
   display: none;
 }
-
+@media screen and (max-height: 560px) {
+  .main-side{
+    overflow-y:scroll;
+  }
+}
 @media screen and (max-width: 1250px) {
   .list-group-item {
     padding: 8px !important;

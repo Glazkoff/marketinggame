@@ -86,6 +86,7 @@
         <input
           type="number"
           min="3"
+          max="120"
           step="3"
           v-model.number="roomParams.month"
           name="month"
@@ -98,7 +99,8 @@
         <br/>
         <input
           type="number"
-          min="50000"
+          min="15000"
+          max="1000000000"
           step="1000"
           v-model.number="roomParams.money"
           name="money"
@@ -110,13 +112,20 @@
         <div v-if="this.roomParams.month<=0" class="mb-3">
         Количество месяцев должно быть больше 0!
         </div>
-        <div v-if="this.roomParams.money<=15000" class="mb-3">
+        <div v-if="this.roomParams.month>120" class="mb-3">
+        Количество месяцев должно быть меньше 120!
+        </div>
+        <div v-if="this.roomParams.money<15000" class="mb-3">
         Бюджет на месяц должен быть больше 15 000!
         </div>
+         <div v-if="this.roomParams.money>=1000000000" class="mb-3">
+        Бюджет на месяц должен быть меньше 1 000 000 000!
+        </div>
+        
         <button
           class="btn btn-lg btn-danger btn-block"
           @click="createGame()"
-          :disabled="$v.roomParams.$invalid||roomParams.month<=0||roomParams.money<15000"
+          :disabled="$v.roomParams.$invalid||roomParams.month<=0||roomParams.month>120||roomParams.money<15000||roomParams.money>=1000000000"
         >
           Создать
         </button>
