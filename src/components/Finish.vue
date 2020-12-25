@@ -34,7 +34,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em
+<!--                    <em
                       >{{
                         firstPosition !== undefined
                           ? Math.ceil(
@@ -69,7 +69,8 @@
                           : ""
                       }}
                       ₽</em
-                    >
+                    >-->
+                    <em> {{ (firstPosition.money - firstRoomParams.money).toFixed(2)}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -77,15 +78,17 @@
           </div>
         </div>
       </div>
-      <div class="row" v-if="isSomeWinner">
-        <div class="col-4">
+      <div class="row" id="direction-column" v-if="isSomeWinner">
+        <div class="col-lg-4 col">
           <div class="gray-block block-winner-img"></div>
         </div>
-        <div class="col-8 text-center mt-0" v-if="isWinner">
+        <div class="col-lg-8 col text-center mt-0" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
+<!--      <p class="mb-0">Вам удалось заработать: {{firstPosition.money.toFixed(2)}}</p>
+          <ul class="list-group col-10 offset-1 mt-3"> -->
           <p class="mb-0">Вам удалось заработать:</p>
-          <ul class="list-group col-10 offset-1 mt-3">
+          <ul class="list-group col-lg-10 col offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -272,7 +275,7 @@
           <h3 class="mb-0">
             Вы на {{ isSecondWinner ? "втором" : "третьем" }} месте
           </h3>
-          <p class="mb-0">Вам удалось заработать:</p>
+          <p class="mb-0">Вам удалось заработать: {{isSecondWinner ? secondPosition.money.toFixed(2) : thirdPosition.money.toFixed(2)}}</p>
           <ul class="list-group col-10 offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
@@ -457,7 +460,7 @@
         </div>
       </div>
       <!-- <hr> -->
-      <div class="row mt-2">
+      <div class="row mt-2" id="direction-column-cards">
         <div class="col-6" v-if="hasSecondPosition">
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
@@ -481,7 +484,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em
+<!--                    <em
                       >{{
                         secondPosition !== undefined
                           ? Math.ceil(
@@ -516,7 +519,8 @@
                           : ""
                       }}
                       ₽</em
-                    >
+                    >-->
+                    <em>{{ (secondPosition.money - firstRoomParams.money).toFixed(2) }} ₽</em>
                   </p>
                 </div>
               </div>
@@ -549,7 +553,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <em
+<!--                    <em
                       >{{
                         thirdPosition !== undefined
                           ? Math.ceil(
@@ -584,7 +588,8 @@
                           : ""
                       }}
                       ₽</em
-                    >
+                    >-->
+                    <em>{{(thirdPosition.money - firstRoomParams.money).toFixed(2)}} ₽</em>
                   </p>
                 </div>
               </div>
@@ -594,12 +599,12 @@
       </div>
       <div class="row">
         <div
-          class="col-8 align-content-center justify-content-between pr-0 finish-table"
+          class="col-lg-8 align-content-center justify-content-between pr-0 finish-table"
         >
           <DataTable is-finish-table="true"></DataTable>
         </div>
         <div
-          class="col-4 align-content-center justify-content-between steps"
+          class="col-lg-4 align-content-center justify-content-between steps"
           id="stepsBox"
         >
           <h6 class>Ваши ходы:</h6>
@@ -688,9 +693,6 @@ export default {
       return this.$store.state.winners["2"]["id"] !== -1;
     },
     hasThirdPosition() {
-      // if (this.$store.state.winners.hasOwnProperty("3")) {
-      //   return true;
-      // } else return false;
       return this.$store.state.winners["3"]["id"] !== -1;
     },
     isWinner() {
@@ -784,6 +786,27 @@ export default {
 };
 </script>
 <style>
+@media screen and (max-width: 490px) {
+  #direction-column-cards{
+    flex-direction:column;
+  }
+  #direction-column-cards .col-6{
+    max-width:90%;
+    margin:auto;
+  }
+  #direction-column .col-8{
+    flex:0 0 50%;
+  }
+}
+@media screen and (max-width: 768px) {
+  #direction-column-cards .col-md-3 {
+    height:5rem;
+    width:25%;
+  }
+   #direction-column-cards .col-md-9 {
+    width:65%;
+  }
+}
 .gray-block {
   background-color: gray;
   width: 100%;
@@ -792,12 +815,15 @@ export default {
 
 #finish-screen {
   margin: auto auto;
-  margin-top: 90px;
   background-color: #fff;
   width: 96%;
-  height: calc(96% - 80px);
+ margin-top: 50px;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+
+}
+.finish-table{
+  overflow-x: scroll;
 }
 .finish-table .table td {
   font-size: 0.7rem;
@@ -886,4 +912,7 @@ export default {
 .block-thirdplace-img {
   background: url("../assets/3.svg") no-repeat 50% 50%;
 }
+
+  
+
 </style>
