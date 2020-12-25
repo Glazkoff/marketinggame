@@ -46,7 +46,7 @@
     <transition name="slideUp" mode="out-in" appear>
       <div class v-if="toggle == 'join' && !loading">
         <label for="name" class>Номер комнаты</label>
-        <br />
+        <br/>
         <input
           type="number"
           min="0"
@@ -82,40 +82,100 @@
       </div>
       <div class v-if="toggle == 'create' && !loading">
         <label for="name" class>Количество месяцев</label>
-        <br />
+        <br/>
         <input
           type="number"
           min="3"
+<<<<<<< HEAD
+          step="1"
+=======
+          max="120"
           step="3"
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
           v-model.number="roomParams.month"
           name="month"
           id="month"
           class="form-control form-control-lg mb-3"
           placeholder="3"
+          :class="{
+          'is-invalid':
+          (this.roomParams.month<=0 || this.roomParams.month>120 || this.roomParams.month - Math.floor(roomParams.month)!==0)
+          }"
           @keypress.enter="createGame()"
         />
+        <div v-if="this.roomParams.month<=0" class="invalid-feedback mb-3" >
+         Количество месяцев должно быть больше 0!
+        </div> 
+        <div v-if="this.roomParams.month>120" class="invalid-feedback mb-3">
+        Количество месяцев должно быть меньше 120!
+        </div>
+        <div v-if="this.roomParams.month - Math.floor(roomParams.month)!==0" class="invalid-feedback mb-3">
+        Количество месяцев должно быть целым числом!
+        </div>
         <label for="name" class>Бюджет за месяц</label>
-        <br />
+        <br/>
         <input
           type="number"
-          min="0"
+          min="15000"
+<<<<<<< HEAD
+          step="15000"
+=======
+          max="1000000000"
+          step="1000"
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
           v-model.number="roomParams.money"
           name="money"
           id="money"
           class="form-control form-control-lg mb-3"
-          placeholder="100000"
+          placeholder="15000"
+          :class="{
+          'is-invalid':
+          (this.roomParams.money<=14999 || this.roomParams.money>=1000000000 || this.roomParams.money - Math.floor(roomParams.money)!==0)
+          }"
           @keypress.enter="createGame()"
         />
+<<<<<<< HEAD
+        <div v-if="this.roomParams.money<15000" class="invalid-feedback mb-3">
+        Бюджет на месяц должен быть больше 14 999!
+        </div> 
+        <div v-if="this.roomParams.money>=1000000000" class="invalid-feedback mb-3">
+        Бюджет на месяц должен быть меньше 1 000 000 000!
+        </div>
+        <div v-if="this.roomParams.money - Math.floor(roomParams.money)!==0" class="invalid-feedback mb-3">
+        Бюджет на месяц должен быть целым числом!
+        </div>
         <button
           class="btn btn-lg btn-danger btn-block"
           @click="createGame()"
-          :disabled="$v.roomParams.$invalid"
+          :disabled="$v.roomParams.$invalid ||roomParams.month<=0 ||roomParams.money<15000 || roomParams.month>120 || roomParams.money>=1000000000 || roomParams.month - Math.floor(roomParams.month)!==0
+          || this.roomParams.money - Math.floor(roomParams.money)!==0"
+=======
+        <div v-if="this.roomParams.month<=0" class="mb-3">
+        Количество месяцев должно быть больше 0!
+        </div>
+        <div v-if="this.roomParams.month>120" class="mb-3">
+        Количество месяцев должно быть меньше 120!
+        </div>
+        <div v-if="this.roomParams.money<15000" class="mb-3">
+        Бюджет на месяц должен быть больше 15 000!
+        </div>
+         <div v-if="this.roomParams.money>=1000000000" class="mb-3">
+        Бюджет на месяц должен быть меньше 1 000 000 000!
+        </div>
+        
+        <button
+          class="btn btn-lg btn-danger btn-block"
+          @click="createGame()"
+          :disabled="$v.roomParams.$invalid||roomParams.month<=0||roomParams.month>120||roomParams.money<15000||roomParams.money>=1000000000"
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
         >
           Создать
         </button>
       </div>
     </transition>
-    <div class="loader-wrap" v-if="loading"><Loader></Loader></div>
+    <div class="loader-wrap" v-if="loading">
+      <Loader></Loader>
+    </div>
     <button class="btn btn-link text-right mt-2" @click="onShowReviewModal()">
       Оставить отзыв
     </button>
@@ -126,7 +186,8 @@
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
-import { required } from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
+
 let apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
 export default {
   name: "Choose",
@@ -244,7 +305,11 @@ export default {
         .then(res => {
           console.log("ДАН КОМНАТЫ", res.data);
           this.loading = false;
-          this.setRoomParams(res);
+          if (res.data.status !== 400) {
+            this.setRoomParams(res);
+          } else{
+            alert(res.data.message)
+          }
         })
         .catch(err => {
           console.log(err);
@@ -311,6 +376,7 @@ export default {
     padding: 0.7rem !important;
   }
 }
+
 @media screen and (max-width: 575px) {
   .card.container {
     border: 0px !important;
