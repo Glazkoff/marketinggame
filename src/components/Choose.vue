@@ -99,11 +99,11 @@
           placeholder="3"
           :class="{
           'is-invalid':
-          (this.roomParams.month<=0 || this.roomParams.month>120 || this.roomParams.month - Math.floor(roomParams.month)!==0)
+          (this.roomParams.month<3 || this.roomParams.month>120 || this.roomParams.month - Math.floor(roomParams.month)!==0)
           }"
           @keypress.enter="createGame()"
         />
-        <div v-if="this.roomParams.month<=0" class="invalid-feedback mb-3" >
+        <div v-if="this.roomParams.month<3" class="invalid-feedback mb-3" >
          Количество месяцев должно быть больше 0!
         </div> 
         <div v-if="this.roomParams.month>120" class="invalid-feedback mb-3">
@@ -147,7 +147,7 @@
         <button
           class="btn btn-lg btn-danger btn-block"
           @click="createGame()"
-          :disabled="$v.roomParams.$invalid ||roomParams.month<=0 ||roomParams.money<15000 || roomParams.month>120 || roomParams.money>=1000000000 || roomParams.month - Math.floor(roomParams.month)!==0
+          :disabled="$v.roomParams.$invalid ||roomParams.month<3 ||roomParams.money<15000 || roomParams.month>120 || roomParams.money>=1000000000 || roomParams.month - Math.floor(roomParams.month)!==0
           || this.roomParams.money - Math.floor(roomParams.money)!==0"
 =======
         <div v-if="this.roomParams.month<=0" class="mb-3">
