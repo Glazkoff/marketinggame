@@ -724,6 +724,10 @@ export default {
 .gamer-round-data {
   min-width: unset !important;
   overflow: scroll;
+<<<<<<< HEAD
+  overflow-y:hidden;
+=======
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
 }
 ::-webkit-scrollbar {
   width: 12px;
@@ -873,7 +877,7 @@ export default {
 .play-information {
   transition: background-color 0.25s;
   width: 96%;
-  height: 96%;
+  height: 100%;
   background-color: #fff;
   margin: auto auto;
   border-radius: 8px;
@@ -950,9 +954,10 @@ export default {
   background-color: rgba(18, 202, 1, 0.438);
   grid-area: 2/2/3/3;
   height: 100%;
-  min-height: 100%;
+  min-height: 50%;
   max-height: 100%;
   display: flex;
+  overflow:auto;
 }
 
 #card-field::-webkit-scrollbar {
@@ -1071,6 +1076,26 @@ export default {
   }
 }
 @media screen and (max-width: 490px) {
+<<<<<<< HEAD
+  .play-information{
+    padding:1rem 0 0 0;
+  }
+  .main-side .pg-header{
+    position:relative;
+    height:5rem;
+  }
+  #playground{
+    padding:0;
+  }
+  .main-side #finish-screen{
+    margin-top:0rem;
+  }
+  .main-side .pg-header a{
+    padding: 2.2rem 0rem 0rem 0rem;
+    width: 10rem;
+    left: 0;
+    position: absolute;
+=======
   .main-side .pg-header{
     height:5rem;
   }
@@ -1080,6 +1105,7 @@ export default {
   .main-side .pg-header a{
     padding:2rem 0rem 0rem 5rem;
     width:3rem;
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
   }
   .col .gray-block{
     height:90%;
@@ -1095,6 +1121,12 @@ export default {
   .w-100{
     height:100%;
   }
+<<<<<<< HEAD
+  #direction-column .col-8{
+    max-width:100%;
+  }
+=======
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
 }
 @media screen and (max-width: 615px) {
   .col .gray-block{
@@ -1119,7 +1151,13 @@ export default {
  
    overflow-x: hidden
  }
+<<<<<<< HEAD
+  .play-information{
+    padding:2rem 0 0 0;
+  }
+=======
  
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
  #playground{
    display: flex;
    flex-direction: column;
@@ -1138,8 +1176,14 @@ export default {
   }
   
   #enemy-field{
+<<<<<<< HEAD
+    display: flex;
+    width: 100vw  !important;
+    min-height:20rem;
+=======
  display: flex;
     width: 100vw  !important;
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
   }
   #effects-field{
      display: flex;
@@ -1152,11 +1196,21 @@ export default {
     height:5rem;
   }
   .main-side #finish-screen{
+<<<<<<< HEAD
+    margin-top:0rem;
+  }
+  .main-side .pg-header a{
+    padding: 2.2rem 0rem 0rem 0rem;
+    width: 10rem;
+    left: 0;
+    position: absolute;
+=======
     margin-top:6rem;
   }
   .main-side .pg-header a{
     padding:2rem 0rem 0rem 5rem;
     width:3rem;
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
   }
   .col .gray-block{
     height:90%;
@@ -1188,6 +1242,30 @@ export default {
   .w-100{
     height:100%;
   }
+<<<<<<< HEAD
+}
+@media screen and (max-height: 729px) {
+  #card-field{
+    min-height:45%;
+  }
+  #effects-field{
+    min-height:55%;
+    overflow:auto;
+  }
+  #enemy-field{
+    min-height:70%;
+  }
+  #gamerlist{
+    max-height:100%;
+  }
+  .play-information{
+    padding:2rem 0 0 0;
+  }
+  .gamer-round-data{
+    overflow-y:hidden;
+  }
+=======
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
 }
 @media screen and (orientation: portrait) {
   /* #playground {
