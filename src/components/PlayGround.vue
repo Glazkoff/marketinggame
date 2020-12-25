@@ -110,7 +110,7 @@
                 <div class="col-7 data-group">
                   <ul class="list-group list-group-horizontal w-100">
                     <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                       style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                     >
                       Бюджет
@@ -130,7 +130,7 @@
                       </span>
                     </li>
                     <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center col-6"
+                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
                     >
                       Месяц
                       <span class="badge badge-primary badge-pill">
@@ -168,10 +168,12 @@
       </div>
     </div>
     <!-- Поле для карточек -->
+    
     <div
       id="card-field"
       style="transition: all 5s"
       :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
+   
     >
       <div class="loader-wrap h-100" v-if="cardsLoading">
         <Loader></Loader>
@@ -261,7 +263,8 @@
       <Effects></Effects>
     </div>
     <!-- Конец списка действующих игроков -->
-  </div>
+    </div>
+  
 </template>
 
 <script>
@@ -720,7 +723,11 @@ export default {
 <style>
 .gamer-round-data {
   min-width: unset !important;
-  overflow: auto;
+  overflow: scroll;
+<<<<<<< HEAD
+  overflow-y:hidden;
+=======
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
 }
 ::-webkit-scrollbar {
   width: 12px;
@@ -870,7 +877,7 @@ export default {
 .play-information {
   transition: background-color 0.25s;
   width: 96%;
-  height: 96%;
+  height: 100%;
   background-color: #fff;
   margin: auto auto;
   border-radius: 8px;
@@ -947,9 +954,10 @@ export default {
   background-color: rgba(18, 202, 1, 0.438);
   grid-area: 2/2/3/3;
   height: 100%;
-  min-height: 100%;
+  min-height: 50%;
   max-height: 100%;
   display: flex;
+  overflow:auto;
 }
 
 #card-field::-webkit-scrollbar {
@@ -1014,7 +1022,11 @@ export default {
 [v-cloak] {
   display: none;
 }
-
+@media screen and (max-height: 560px) {
+  .main-side{
+    overflow-y:scroll;
+  }
+}
 @media screen and (max-width: 1250px) {
   .list-group-item {
     padding: 8px !important;
@@ -1056,17 +1068,204 @@ export default {
   }
   #play-field {
     grid-area: 1/1/2/4;
+    width: 100vw;
+    margin: 0;
   }
   #enemy-field {
     grid-area: 2/3/3/4;
   }
 }
+@media screen and (max-width: 490px) {
+<<<<<<< HEAD
+  .play-information{
+    padding:1rem 0 0 0;
+  }
+  .main-side .pg-header{
+    position:relative;
+    height:5rem;
+  }
+  #playground{
+    padding:0;
+  }
+  .main-side #finish-screen{
+    margin-top:0rem;
+  }
+  .main-side .pg-header a{
+    padding: 2.2rem 0rem 0rem 0rem;
+    width: 10rem;
+    left: 0;
+    position: absolute;
+=======
+  .main-side .pg-header{
+    height:5rem;
+  }
+  .main-side #finish-screen{
+    margin-top:6rem;
+  }
+  .main-side .pg-header a{
+    padding:2rem 0rem 0rem 5rem;
+    width:3rem;
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
+  }
+  .col .gray-block{
+    height:90%;
+  }
+  #direction-column{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+<<<<<<< HEAD
+  #direction-column .col-8{
+    max-width:100%;
+  }
+=======
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
+}
+@media screen and (max-width: 615px) {
+  .col .gray-block{
+    height:90%;
+  }
+  #flex{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+}
 @media screen and (max-width: 730px) {
+ .main-side{
+   display: flex;
+   flex-direction: column;
+ 
+   overflow-x: hidden
+ }
+<<<<<<< HEAD
+  .play-information{
+    padding:2rem 0 0 0;
+  }
+=======
+ 
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
+ #playground{
+   display: flex;
+   flex-direction: column;
+ }
   .list-group-item {
     padding: 2px !important;
     padding-left: 8px !important;
     padding-right: 2px !important;
   }
+  
+   #card-field{
+     display: flex;
+    width: 100vw  !important;
+    min-height: 30vh;
+
+  }
+  
+  #enemy-field{
+<<<<<<< HEAD
+    display: flex;
+    width: 100vw  !important;
+    min-height:20rem;
+=======
+ display: flex;
+    width: 100vw  !important;
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
+  }
+  #effects-field{
+     display: flex;
+    width: 100vw  !important;
+    
+  }
+}
+@media screen and (max-width: 490px) {
+  .main-side .pg-header{
+    height:5rem;
+  }
+  .main-side #finish-screen{
+<<<<<<< HEAD
+    margin-top:0rem;
+  }
+  .main-side .pg-header a{
+    padding: 2.2rem 0rem 0rem 0rem;
+    width: 10rem;
+    left: 0;
+    position: absolute;
+=======
+    margin-top:6rem;
+  }
+  .main-side .pg-header a{
+    padding:2rem 0rem 0rem 5rem;
+    width:3rem;
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
+  }
+  .col .gray-block{
+    height:90%;
+  }
+  #direction-column{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+}
+@media screen and (max-width: 615px) {
+  .col .gray-block{
+    height:90%;
+  }
+  #flex{
+    flex-direction:column;
+    height:26rem;
+  }
+  .col .list-group{
+    margin:auto;
+    padding-left:1rem;
+  }
+  .w-100{
+    height:100%;
+  }
+<<<<<<< HEAD
+}
+@media screen and (max-height: 729px) {
+  #card-field{
+    min-height:45%;
+  }
+  #effects-field{
+    min-height:55%;
+    overflow:auto;
+  }
+  #enemy-field{
+    min-height:70%;
+  }
+  #gamerlist{
+    max-height:100%;
+  }
+  .play-information{
+    padding:2rem 0 0 0;
+  }
+  .gamer-round-data{
+    overflow-y:hidden;
+  }
+=======
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
 }
 @media screen and (orientation: portrait) {
   /* #playground {
@@ -1228,5 +1427,6 @@ export default {
   h3.card-text {
     font-size: 22px;
   }
+  
 }
 </style>
