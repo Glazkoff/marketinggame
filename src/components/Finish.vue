@@ -460,7 +460,7 @@
         </div>
       </div>
       <!-- <hr> -->
-      <div class="row mt-2">
+      <div class="row mt-2" id="direction-column-cards">
         <div class="col-6" v-if="hasSecondPosition">
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
@@ -786,6 +786,27 @@ export default {
 };
 </script>
 <style>
+@media screen and (max-width: 490px) {
+  #direction-column-cards{
+    flex-direction:column;
+  }
+  #direction-column-cards .col-6{
+    max-width:90%;
+    margin:auto;
+  }
+  #direction-column .col-8{
+    flex:0 0 50%;
+  }
+}
+@media screen and (max-width: 768px) {
+  #direction-column-cards .col-md-3 {
+    height:5rem;
+    width:25%;
+  }
+   #direction-column-cards .col-md-9 {
+    width:65%;
+  }
+}
 .gray-block {
   background-color: gray;
   width: 100%;

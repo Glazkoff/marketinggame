@@ -86,29 +86,70 @@
         <input
           type="number"
           min="3"
+<<<<<<< HEAD
+          step="1"
+=======
           max="120"
           step="3"
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
           v-model.number="roomParams.month"
           name="month"
           id="month"
           class="form-control form-control-lg mb-3"
           placeholder="3"
+          :class="{
+          'is-invalid':
+          (this.roomParams.month<3 || this.roomParams.month>120 || this.roomParams.month - Math.floor(roomParams.month)!==0)
+          }"
           @keypress.enter="createGame()"
         />
+        <div v-if="this.roomParams.month<3" class="invalid-feedback mb-3" >
+         Количество месяцев должно быть больше 0!
+        </div> 
+        <div v-if="this.roomParams.month>120" class="invalid-feedback mb-3">
+        Количество месяцев должно быть меньше 120!
+        </div>
+        <div v-if="this.roomParams.month - Math.floor(roomParams.month)!==0" class="invalid-feedback mb-3">
+        Количество месяцев должно быть целым числом!
+        </div>
         <label for="name" class>Бюджет за месяц</label>
         <br/>
         <input
           type="number"
           min="15000"
+<<<<<<< HEAD
+          step="15000"
+=======
           max="1000000000"
           step="1000"
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
           v-model.number="roomParams.money"
           name="money"
           id="money"
           class="form-control form-control-lg mb-3"
-          placeholder="100000"
+          placeholder="15000"
+          :class="{
+          'is-invalid':
+          (this.roomParams.money<=14999 || this.roomParams.money>=1000000000 || this.roomParams.money - Math.floor(roomParams.money)!==0)
+          }"
           @keypress.enter="createGame()"
         />
+<<<<<<< HEAD
+        <div v-if="this.roomParams.money<15000" class="invalid-feedback mb-3">
+        Бюджет на месяц должен быть больше 14 999!
+        </div> 
+        <div v-if="this.roomParams.money>=1000000000" class="invalid-feedback mb-3">
+        Бюджет на месяц должен быть меньше 1 000 000 000!
+        </div>
+        <div v-if="this.roomParams.money - Math.floor(roomParams.money)!==0" class="invalid-feedback mb-3">
+        Бюджет на месяц должен быть целым числом!
+        </div>
+        <button
+          class="btn btn-lg btn-danger btn-block"
+          @click="createGame()"
+          :disabled="$v.roomParams.$invalid ||roomParams.month<3 ||roomParams.money<15000 || roomParams.month>120 || roomParams.money>=1000000000 || roomParams.month - Math.floor(roomParams.month)!==0
+          || this.roomParams.money - Math.floor(roomParams.money)!==0"
+=======
         <div v-if="this.roomParams.month<=0" class="mb-3">
         Количество месяцев должно быть больше 0!
         </div>
@@ -126,6 +167,7 @@
           class="btn btn-lg btn-danger btn-block"
           @click="createGame()"
           :disabled="$v.roomParams.$invalid||roomParams.month<=0||roomParams.month>120||roomParams.money<15000||roomParams.money>=1000000000"
+>>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
         >
           Создать
         </button>
