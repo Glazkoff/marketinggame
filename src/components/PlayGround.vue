@@ -196,30 +196,36 @@
           </div>
         </transition>
         <transition-group
-          mode="out-in"
           name="cardwrap"
           id="card-wrap"
           tag="div"
           v-if="!isStart"
+        >
+        <!-- 
           type="transition"
           @before-enter="beforeEnter"
           @enter="enter"
           @leave="leave"
-        >
+          mode="out-in"
+         -->
           <!-- v-if="!isStart" -->
           <div
             class="card-box"
-            :draggable="card.cost <= gamerParams.money"
-            @dragstart.self="altdragstart"
+           
             v-for="(card, count) in cards"
             :key="count"
-            @dragend="altdragend"
+           
             :class="{
               'card-ml-0': card.oneOff,
               'card-ml-1': !card.oneOff && !isLastEffectStage(card.id),
               'card-ml-2': !card.oneOff && !hasThisEffect(card.id)
             }"
           >
+          <!-- 
+            @dragend="altdragend"
+            :draggable="card.cost <= gamerParams.money"
+            @dragstart.self="altdragstart"
+           -->
             <div
               class="card-box w-100 h-100 bottom-card bottom-card-1"
               v-if="!card.oneOff && !isLastEffectStage(card.id)"
@@ -626,19 +632,19 @@ export default {
     //   this.$store.state.isStart = false;
     //   this.playAnimation();
     // },
-    beforeEnter: function(el) {
-      console.log("befenterhook");
-    },
-    enter: function(el) {
-      this.playAnimation();
-      console.log("enterhook");
-    },
-    leave: function(el) {
-      el.style.opacity = 0;
-      el.style.height = 0;
-      console.log("leavehook");
-      // this.$store.commit("doAnimation");
-    },
+    // beforeEnter: function(el) {
+    //   console.log("befenterhook");
+    // },
+    // enter: function(el) {
+    //   this.playAnimation();
+    //   console.log("enterhook");
+    // },
+    // leave: function(el) {
+    //   el.style.opacity = 0;
+    //   el.style.height = 0;
+    //   console.log("leavehook");
+    //   // this.$store.commit("doAnimation");
+    // },
     altdrop(e) {
       e.preventDefault();
       console.log("drop");
