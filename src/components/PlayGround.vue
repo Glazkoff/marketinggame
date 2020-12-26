@@ -730,10 +730,7 @@ export default {
 .gamer-round-data {
   min-width: unset !important;
   overflow: scroll;
-<<<<<<< HEAD
   overflow-y:hidden;
-=======
->>>>>>> 2a7362a5cd9557f0b3d40a48d39953075f73dd1c
 }
 ::-webkit-scrollbar {
   width: 12px;
