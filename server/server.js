@@ -355,10 +355,10 @@ sequelize
   // .sync({
   //   force: true
   // })
-  // .sync({
-  //   alter: true
-  // })
-  .sync()
+  .sync({
+    alter: true
+  })
+  // .sync()
   .then(result => {
     // Users.create({
     //   login: "login",
