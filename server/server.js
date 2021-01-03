@@ -1699,6 +1699,11 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                   res.send(findRoom.dataValues);
                 }
               }
+              findRoom = await Rooms.findByPk(findRoom.room_id);
+              let gamerNamesObj = {
+                gamers: findRoom.users_steps_state
+              };
+              io.in(findRoom.room_id).emit("setGamers", gamerNamesObj);
             } else {
               console.log("Комната уже существует, вали отседа");
               res.status(400).send({
@@ -1707,12 +1712,6 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               });
             }
           }
-
-          findRoom = await Rooms.findByPk(findRoom.room_id);
-          let gamerNamesObj = {
-            gamers: findRoom.users_steps_state
-          };
-          io.in(findRoom.room_id).emit("setGamers", gamerNamesObj);
         }
       }
     }
