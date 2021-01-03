@@ -2031,6 +2031,35 @@ io.on("connection", async socket => {
     // });
     // console.log(chalk.bgRed("KICK", JSON.stringify(res)), "user" + data.gamerId);
     io.in("user" + data.gamerId).emit("kickUser");
+    //#region Удаление комнаты как последней для пользователя которого кикнули
+    await Users.update(
+      {
+        last_room: null
+      },
+      {
+        where: {user_id: data.gamerId}
+      }
+    )
+    //#endregion
+    //#region Удаление пользователя из комнаты 
+    let room = await Rooms.findOne({
+      where: {
+        room_id: data.roomId
+      },
+    })
+    await Rooms.update(
+      {
+        participants_id: room.participants_id.filter(
+          user => user != data.gamerId
+        )
+      },
+      {
+        where: {
+          room_id: data.roomId
+        }
+      }
+    )
+    //#endregion
   });
 
   // При выходе из комнаты
