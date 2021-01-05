@@ -4,6 +4,10 @@
       v-if="showReviewModal"
       @close="onCloseReviewModal()"
     ></ReviewModal>
+    <CheckModal
+      v-if="showCheckModal"
+      @close="onCloseCheckModal()"
+    ></CheckModal>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
     <p>Выбери, как ты начнёшь игру</p>
@@ -156,6 +160,7 @@
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
+import CheckModal from "@/components/CheckModal.vue";
 import {required} from "vuelidate/lib/validators";
 
 let apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
@@ -168,7 +173,8 @@ export default {
       roomParams: "",
       loading: false,
       joinError: "",
-      showReviewModal: false
+      showReviewModal: false,
+      showCheckModal: false,
     };
   },
   validations: {
@@ -186,7 +192,8 @@ export default {
   },
   components: {
     Loader,
-    ReviewModal
+    ReviewModal,
+    CheckModal,
   },
   computed: {
     gamerName() {
@@ -221,6 +228,12 @@ export default {
     },
     onShowReviewModal() {
       this.showReviewModal = true;
+    },
+    onCloseCheckModal() {
+      this.showCheckModal = false;
+    },
+    onShowCheckModal() {
+      this.showCheckModal = true;
     },
     logout() {
       try {
@@ -278,7 +291,7 @@ export default {
           if (res.data.status !== 400) {
             this.setRoomParams(res);
           } else{
-            alert(res.data.message)
+            this.showCheckModal = true;
           }
         })
         .catch(err => {
@@ -308,7 +321,7 @@ export default {
             this.loading = false;
           })
           .catch(err => {
-            this.joinError = err.data.message;
+            this.showCheckModal = true;
             console.log(err.data.message);
             this.loading = false;
           });
