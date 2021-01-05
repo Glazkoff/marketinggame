@@ -2521,7 +2521,7 @@ io.on("connection", async socket => {
             let usedCard = gamer["used_cards"];
             if (
               usedCard[changing.id] < 1 ||
-              typeof usedCard[changing.id] === undefined
+              typeof usedCard[changing.id] === 'undefined'
             ) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
@@ -2589,34 +2589,42 @@ io.on("connection", async socket => {
                 analyticsString += "параметр " + changing.param;
                 break;
             }
-
-            if (gamer["used_cards"][changing.id] >= 1) {
-              let changeCoef = changing.change;
-              if (gamer["used_cards"][changing.id] !== 0) {
-                for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
-                  changeCoef = (1 + changeCoef) / 2;
-                  if (changing.change >= 10) {
-                    changeCoef = Math.ceil(changeCoef);
+            if ((changing.param == "smmCount")||(changing.param == "socialsCoef")||(changing.param == "smmCoef")){
+              analyticsString +=
+              " со знаком " +
+              changing.operation +
+              " на " +
+              changing.change +
+              " (Нанять SMM-менеджера)";
+            }else{
+              if (gamer["used_cards"][changing.id] >= 1) {
+                let changeCoef = changing.change;
+                if (gamer["used_cards"][changing.id] !== 0) {
+                  for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
+                    changeCoef = (1 + changeCoef) / 2;
+                    if (changing.change >= 10) {
+                      changeCoef = Math.ceil(changeCoef);
+                    }
                   }
                 }
+                analyticsString +=
+                  " со знаком " +
+                  changing.operation +
+                  " на " +
+                  changeCoef +
+                  " (" +
+                  changing.from +
+                  ")";
+              } else {
+                analyticsString +=
+                  " со знаком " +
+                  changing.operation +
+                  " на " +
+                  changing.change +
+                  " (" +
+                  changing.from +
+                  ")";
               }
-              analyticsString +=
-                " со знаком " +
-                changing.operation +
-                " на " +
-                changeCoef +
-                " (" +
-                changing.from +
-                ")";
-            } else {
-              analyticsString +=
-                " со знаком " +
-                changing.operation +
-                " на " +
-                changing.change +
-                " (" +
-                changing.from +
-                ")";
             }
             // console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
             console.log('непонятно что 2323')
