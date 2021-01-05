@@ -2041,7 +2041,7 @@ io.on("connection", async socket => {
       }
     )
     //#endregion
-    //#region Удаление пользователя из комнаты 
+    //#region Удаление пользователя из комнаты
     let room = await Rooms.findOne({
       where: {
         room_id: data.roomId
@@ -2436,9 +2436,12 @@ io.on("connection", async socket => {
                 duration: card.duration
               };
               gamer.effects.push(effectObj);
-            } else {
+            } else if (gamer.effects[effectIndex].step<card.duration) {
               // Если эффект уже существует в массиве, увеличиваем на 1 его шаг
               gamer.effects[effectIndex].step++;
+              if (gamer.effects[effectIndex].step === card.duration) {
+                gamer.effects.splice(effectIndex, 1)
+              }
             }
           }
           // Иначе, если карточки одноразовые
