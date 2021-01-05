@@ -2518,7 +2518,7 @@ io.on("connection", async socket => {
             let usedCard = gamer["used_cards"];
             if (
               usedCard[changing.id] < 1 ||
-              typeof usedCard[changing.id] === "undefined"
+              typeof usedCard[changing.id] === undefined
             ) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
