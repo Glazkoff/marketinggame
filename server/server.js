@@ -2569,10 +2569,16 @@ io.on("connection", async socket => {
             }
             let analyticsString = "Обновлён  ";
             switch (changing.param) {
+              case "organicCoef":
+                analyticsString += 'параметр "Органика"';
+                break;
               case "organicCount":
                 analyticsString += 'параметр "Органика"';
                 break;
               case "contextCount":
+                analyticsString += 'параметр "Реклама: контекст"';
+                break;
+              case "contextCoef":
                 analyticsString += 'параметр "Реклама: контекст"';
                 break;
               case "socialsCount":
@@ -2584,19 +2590,40 @@ io.on("connection", async socket => {
               case "straightCount":
                 analyticsString += 'параметр "Прямой заход"';
                 break;
+              case "straightCoef":
+                analyticsString += 'параметр "Прямой заход"';
+                break;
+              case "smmCoef":
+                analyticsString += 'параметр Соц. медиа';
+                break;
+              case "socialsCoef":
+                analyticsString += 'параметр Реклама: соцсети';
+                break;
+              case "averageCheck":
+                analyticsString += 'параметр Средний';
+                break;
 
               default:
                 analyticsString += "параметр " + changing.param;
                 break;
             }
-            if ((changing.param == "smmCount")||(changing.param == "socialsCoef")||(changing.param == "smmCoef")){
+            if ((changing.param == "smmCount")||(changing.param == "socialsCoef")){
               analyticsString +=
               " со знаком " +
               changing.operation +
               " на " +
               changing.change +
               " (Нанять SMM-менеджера)";
-            }else{
+            }
+            else if((changing.param == "smmCoef")){
+              analyticsString +=
+              " со знаком " +
+              changing.operation +
+              " на " +
+              changing.change +
+              " (Улучшение юзабилити)";
+            } 
+            else{
               if (gamer["used_cards"][changing.id] >= 1) {
                 let changeCoef = changing.change;
                 if (gamer["used_cards"][changing.id] !== 0) {
