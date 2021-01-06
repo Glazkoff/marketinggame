@@ -2041,7 +2041,7 @@ io.on("connection", async socket => {
       }
     )
     //#endregion
-    //#region Удаление пользователя из комнаты 
+    //#region Удаление пользователя из комнаты
     let room = await Rooms.findOne({
       where: {
         room_id: data.roomId
@@ -2436,9 +2436,12 @@ io.on("connection", async socket => {
                 duration: card.duration
               };
               gamer.effects.push(effectObj);
-            } else {
+            } else if (gamer.effects[effectIndex].step<card.duration) {
               // Если эффект уже существует в массиве, увеличиваем на 1 его шаг
               gamer.effects[effectIndex].step++;
+              if (gamer.effects[effectIndex].step === card.duration) {
+                gamer.effects.splice(effectIndex, 1)
+              }
             }
           }
           // Иначе, если карточки одноразовые
@@ -2518,7 +2521,7 @@ io.on("connection", async socket => {
             let usedCard = gamer["used_cards"];
             if (
               usedCard[changing.id] < 1 ||
-              typeof usedCard[changing.id] === "undefined"
+              typeof usedCard[changing.id] === 'undefined'
             ) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
@@ -2566,10 +2569,16 @@ io.on("connection", async socket => {
             }
             let analyticsString = "Обновлён  ";
             switch (changing.param) {
+              case "organicCoef":
+                analyticsString += 'параметр "Органика"';
+                break;
               case "organicCount":
                 analyticsString += 'параметр "Органика"';
                 break;
               case "contextCount":
+                analyticsString += 'параметр "Реклама: контекст"';
+                break;
+              case "contextCoef":
                 analyticsString += 'параметр "Реклама: контекст"';
                 break;
               case "socialsCount":
@@ -2581,39 +2590,68 @@ io.on("connection", async socket => {
               case "straightCount":
                 analyticsString += 'параметр "Прямой заход"';
                 break;
+              case "straightCoef":
+                analyticsString += 'параметр "Прямой заход"';
+                break;
+              case "smmCoef":
+                analyticsString += 'параметр Соц. медиа';
+                break;
+              case "socialsCoef":
+                analyticsString += 'параметр Реклама: соцсети';
+                break;
+              case "averageCheck":
+                analyticsString += 'параметр Средний';
+                break;
 
               default:
                 analyticsString += "параметр " + changing.param;
                 break;
             }
-
-            if (gamer["used_cards"][changing.id] >= 1) {
-              let changeCoef = changing.change;
-              if (gamer["used_cards"][changing.id] !== 0) {
-                for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
-                  changeCoef = (1 + changeCoef) / 2;
-                  if (changing.change >= 10) {
-                    changeCoef = Math.ceil(changeCoef);
+            if ((changing.param == "smmCount")||(changing.param == "socialsCoef")){
+              analyticsString +=
+              " со знаком " +
+              changing.operation +
+              " на " +
+              changing.change +
+              " (Нанять SMM-менеджера)";
+            }
+            else if((changing.param == "smmCoef")){
+              analyticsString +=
+              " со знаком " +
+              changing.operation +
+              " на " +
+              changing.change +
+              " (Улучшение юзабилити)";
+            } 
+            else{
+              if (gamer["used_cards"][changing.id] >= 1) {
+                let changeCoef = changing.change;
+                if (gamer["used_cards"][changing.id] !== 0) {
+                  for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
+                    changeCoef = (1 + changeCoef) / 2;
+                    if (changing.change >= 10) {
+                      changeCoef = Math.ceil(changeCoef);
+                    }
                   }
                 }
+                analyticsString +=
+                  " со знаком " +
+                  changing.operation +
+                  " на " +
+                  changeCoef +
+                  " (" +
+                  changing.from +
+                  ")";
+              } else {
+                analyticsString +=
+                  " со знаком " +
+                  changing.operation +
+                  " на " +
+                  changing.change +
+                  " (" +
+                  changing.from +
+                  ")";
               }
-              analyticsString +=
-                " со знаком " +
-                changing.operation +
-                " на " +
-                changeCoef +
-                " (" +
-                changing.from +
-                ")";
-            } else {
-              analyticsString +=
-                " со знаком " +
-                changing.operation +
-                " на " +
-                changing.change +
-                " (" +
-                changing.from +
-                ")";
             }
             // console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
             console.log('непонятно что 2323')

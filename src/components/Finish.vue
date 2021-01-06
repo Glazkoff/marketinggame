@@ -87,7 +87,6 @@
           <h3 class="mb-0">Вы - победитель</h3>
 <!--      <p class="mb-0">Вам удалось заработать: {{firstPosition.money.toFixed(2)}}</p>
           <ul class="list-group col-10 offset-1 mt-3"> -->
-          <p class="mb-0">Вам удалось заработать:</p>
           <ul class="list-group col-lg-10 col offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
