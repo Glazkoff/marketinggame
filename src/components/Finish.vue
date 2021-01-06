@@ -696,6 +696,7 @@ export default {
       return this.$store.state.winners["3"]["id"] !== -1;
     },
     isWinner() {
+      console.log(this.$store.state.winners)
       return this.decoded.id === this.$store.state.winners[1].id;
     },
     isSecondWinner() {
@@ -749,6 +750,7 @@ export default {
       }
     },
     firstPosition() {
+      console.log(this.$store.state.winners)
       return this.$store.state.winners[1];
     },
     secondPosition() {

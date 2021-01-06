@@ -2518,7 +2518,7 @@ io.on("connection", async socket => {
             let usedCard = gamer["used_cards"];
             if (
               usedCard[changing.id] < 1 ||
-              typeof usedCard[changing.id] === undefined
+              typeof usedCard[changing.id] === "undefined"
             ) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
@@ -3105,23 +3105,29 @@ io.on("connection", async socket => {
           let a = gamersRate.shift();
           if (typeof a !== "undefined") {
             winners[index] = Object.assign(a);
-            let person = connectedNames.find(el => el.id === a.id);
-            if (typeof person !== "undefined") {
+            let person = await Users.findOne({
+              where: {
+                user_id: a.id,
+              }
+            })
+            console.log("INDEX " + index)
+            if (person !== null) {
               winners[index].name = person.name;
             }
           } else winners[index] = a;
         }
+
         io.sockets.to(room.roomId).emit("addMessage", {
           name: "Admin",
           text: `Конец игры в комнате!`
         });
-
         // console.log(chalk.bgBlue("Финиш в комнате #" + room.room_id));
         // console.log(chalk.bgBlue("Победители: " + JSON.stringify(winners)));
         console.log('победители 2825')
 
         await Rooms.update(
           {
+            completed: true,
             is_finished: true,
             winners: winners
           },
@@ -3143,7 +3149,7 @@ io.on("connection", async socket => {
           })
         }
         // #endregion
-
+        console.log(winners)
         io.in(room.room_id).emit("finish", winners);
       } else {
         // console.log(chalk.bgBlue("Игра продолжается"));

@@ -103,7 +103,7 @@
           @keypress.enter="createGame()"
         />
         <div v-if="this.roomParams.month<3" class="invalid-feedback mb-3" >
-         Количество месяцев должно быть больше 0!
+         Количество месяцев должно быть больше 2!
         </div> 
         <div v-if="this.roomParams.month>120" class="invalid-feedback mb-3">
         Количество месяцев должно быть меньше 120!
