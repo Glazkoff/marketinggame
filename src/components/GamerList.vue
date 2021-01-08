@@ -1,5 +1,9 @@
 <template>
   <div id="gamerlist">
+  <CheckModalKick
+      v-if="showCheckModalKick"
+      @close="onCloseCheckModalKick()"
+  ></CheckModalKick>
     <ul class="list-group" v-if="!isStart">
       <li
         class="list-group-item d-flex justify-content-between align-items-center active"
@@ -51,12 +55,17 @@
   </div>
 </template>
 <script>
+import CheckModalKick from "@/components/CheckModalKick.vue";
 export default {
   name: "gamerlist",
   data() {
     return {
-      manualStepCloseDisable: false
+      manualStepCloseDisable: false,
+      showCheckModalKick: false,
     };
+  },
+   components: {
+    CheckModalKick,
   },
   computed: {
     isStart() {
@@ -73,6 +82,12 @@ export default {
     }
   },
   methods: {
+    onCloseCheckModalKick() {
+      this.showCheckModalKick = false;
+    },
+    onShowCheckModalKick() {
+      this.showCheckModalKick = true;
+    },
     onManualStepClose() {
       // this.manualStepCloseDisable = true;
       this.$socket.emit("manualStepClose", this.roomId);
@@ -84,6 +99,7 @@ export default {
         gamerId: gamer.id
       };
       this.$socket.emit("kickUser", obj);
+      this.showCheckModalKick = true;
     }
   },
   mounted() {
