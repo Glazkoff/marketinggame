@@ -29,7 +29,7 @@
           'list-group-item-danger': gamer.isdisconnected
         }"
       >
-        <button v-if="isOwner" @click="kickUser(gamer)">&#x2715;</button>
+        <button v-if="isOwner && ownerId !== gamer.id && !gamer.isdisconnected" @click="kickUser(gamer)">&#x2715;</button>
         {{ gamer.name }}
         <span
           class="badge badge-primary badge-pill"
@@ -64,6 +64,9 @@ export default {
     },
     isOwner() {
       return this.$store.state.isOwner;
+    },
+    ownerId() {
+      return this.$store.state.ownerId;
     },
     gamers() {
       return this.$store.state.gamers;
