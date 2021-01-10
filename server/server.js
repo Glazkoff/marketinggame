@@ -1575,7 +1575,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 where: {user_id: decoded.id}
               }
             )
-            if (!user_last_room_valid.last_room) {
+            if (!user_last_room_valid.last_room || user_last_room_valid.last_room === findRoom.room_id) {
               const Op = Sequelize.Op
               let iskickedUser = await Rooms.findOne({
                 where: {
@@ -1726,7 +1726,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
             } else {
               res.status(400).send({
                 status: 400,
-                message: "Вы уже в игре!"
+                message: "Вы уже находитесь в другой комнате! Ваша последняя комната - " + user_last_room_valid.last_room
               });
             }
           }

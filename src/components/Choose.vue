@@ -7,6 +7,7 @@
     <CheckModal
       v-if="showCheckModal"
       @close="onCloseCheckModal()"
+      :errorMessage="errorMessage"
     ></CheckModal>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
@@ -104,7 +105,7 @@
         />
         <div v-if="this.roomParams.month<3" class="invalid-feedback mb-3" >
          Количество месяцев должно быть больше 2!
-        </div> 
+        </div>
         <div v-if="this.roomParams.month>120" class="invalid-feedback mb-3">
         Количество месяцев должно быть меньше 120!
         </div>
@@ -130,7 +131,7 @@
         />
         <div v-if="this.roomParams.money<15000" class="invalid-feedback mb-3">
         Бюджет на месяц должен быть больше 14 999!
-        </div> 
+        </div>
         <div v-if="this.roomParams.money>=1000000000" class="invalid-feedback mb-3">
         Бюджет на месяц должен быть меньше 1 000 000 000!
         </div>
@@ -175,6 +176,7 @@ export default {
       joinError: "",
       showReviewModal: false,
       showCheckModal: false,
+      errorMessage: ''
     };
   },
   validations: {
@@ -291,11 +293,13 @@ export default {
           if (res.data.status !== 400) {
             this.setRoomParams(res);
           } else{
+            this.errorMessage = res.data.message
             this.showCheckModal = true;
           }
         })
         .catch(err => {
-          console.log(err);
+          this.errorMessage = err
+          this.showCheckModal = true;
           this.loading = false;
         });
 
@@ -322,7 +326,7 @@ export default {
           })
           .catch(err => {
             this.showCheckModal = true;
-            console.log(err.data.message);
+            this.errorMessage = err.data.message
             this.loading = false;
           });
       }
