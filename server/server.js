@@ -1773,7 +1773,7 @@ app.get("/api/rooms/reset", async (req, res) => {
 
         //#endregion
         if (!room) {
-          res.status(401).send({
+          res.status(404).send({
             status: 401,
             message: "Нет активных игр!"
           });
@@ -1787,8 +1787,7 @@ app.get("/api/rooms/reset", async (req, res) => {
           if (!userInRoom) {
             res.status(400).send({
               status: 400,
-              message: "Нет активных игр!",
-              room
+              message: "Нет активных игр!"
             });
           } else {
             let usersState = await Rooms.findOne({
@@ -1837,10 +1836,23 @@ app.get("/api/rooms/reset", async (req, res) => {
                 effects: userInRoom.effects
               });
             } else {
-              res.status(404).send({
-                status: 404,
-                message: "Ошибка сервера"
-              });
+              if (room){
+                res.send({
+                  room_id: room.room_id,
+                  owner_id: room.owner_id,
+                  is_start: room.is_start,
+                  first_params: room.first_params,
+                  prev_room_params: userInRoom.prev_room_params,
+                  gamer_room_params: userInRoom.gamer_room_params,
+                  is_finished: room.is_finished,
+                  winners: room.winners
+                });
+              } else{
+                res.status(404).send({
+                  status: 404,
+                  message: "Ошибка сервера"
+                });
+              }
             }
           }
         }
