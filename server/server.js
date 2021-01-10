@@ -2375,9 +2375,8 @@ io.on("connection", async socket => {
       if (gamer.effects !== null) {
         // Проходимся по всему массиву эффектов, чтобы проверить,
         // прислали ли карточку для продления серии
-        gamer.effects.forEach(effect => {
-          // console.log(effect);
-          console.log('продление карточки 2059')
+        for(let effectId = 0; effectId< gamer.effects.length;effectId++) {
+          let effect = gamer.effects[effectId]
           let cardArrIndex = cardArr.findIndex(elem => elem === effect.id);
           // Если в пришедшем массиве ID карточек нет эффекта из цикла
           // (если не прислали повторно), то удаляем из массива эффектов игрока
@@ -2386,6 +2385,7 @@ io.on("connection", async socket => {
               elem => elem.id === effect.id
             );
             gamer.effects.splice(effectIndex, 1);
+            effectId--
           }
 
           // Добавление в объект использованных карточек
@@ -2396,12 +2396,12 @@ io.on("connection", async socket => {
               gamer["used_cards"][effect.id]++;
             }
           }
-        });
+        };
       }
 
       // Если пришедший массив не пустой
       if (cardArr.length !== 0) {
-        for (const effect of gamer.effects) {
+        for (let effect of gamer.effects) {
           // Если в пришедшем массиве нет уже существующего эффекта
           // (если не прислали повторно), то удаляем из массива эффектов игрока
           let cardArrIndex = cardArr.findIndex(elem => elem === effect.id);
@@ -2660,7 +2660,7 @@ io.on("connection", async socket => {
                 analyticsString +=
                   " со знаком " +
                   changing.operation +
-                  " в " +
+                  " на " +
                   changeCoef +
                   " (" +
                   changing.from +
@@ -2669,7 +2669,7 @@ io.on("connection", async socket => {
                 analyticsString +=
                   " со знаком " +
                   changing.operation +
-                  " в " +
+                  " на " +
                   changing.change +
                   " (" +
                   changing.from +
