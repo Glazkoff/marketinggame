@@ -2660,7 +2660,7 @@ io.on("connection", async socket => {
                 analyticsString +=
                   " со знаком " +
                   changing.operation +
-                  " на " +
+                  " в " +
                   changeCoef +
                   " (" +
                   changing.from +
@@ -2669,7 +2669,7 @@ io.on("connection", async socket => {
                 analyticsString +=
                   " со знаком " +
                   changing.operation +
-                  " на " +
+                  " в " +
                   changing.change +
                   " (" +
                   changing.from +
