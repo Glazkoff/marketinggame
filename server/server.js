@@ -1558,6 +1558,12 @@ app.post("/api/rooms/join/:id", async (req, res) => {
             room_id: req.params.id
           }
         });
+        if (findRoom.current_month>0) {
+          res.status(404).send({
+            status: 404,
+            message: "Игра в комнате уже началась!"
+          });
+        } else{
         if (!findRoom) {
           res.status(404).send({
             status: 404,
@@ -1732,6 +1738,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
           }
         }
       }
+    }
     }
   );
 });
