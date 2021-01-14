@@ -5,7 +5,7 @@
         <h5>Ошибка!</h5>
       </template>
       <template v-slot:body>
-        <p>Вы пытаетесь зайти в другую комнату, находясь в комнате с незавершенной игрой.</p>
+        <p>{{errorMessage}}</p>
       </template>
       <template v-slot:footer>
         <button type="button" class="btn btn-success" @click="sendClose()">
@@ -20,6 +20,7 @@
 import Modal from "@/components/Modal.vue";
 export default {
   name: "CheckModal",
+  props: ['errorMessage'],
   components: {
     Modal
   },

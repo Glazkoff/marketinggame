@@ -17,6 +17,7 @@ const store = new Vuex.Store({
     firstRoomParams: {},
     roomId: -1,
     userId: "",
+    ownerId: -1,
     gamerName: "",
     socketId: "",
     isAdmin: false,
@@ -127,6 +128,7 @@ const store = new Vuex.Store({
       state.firstRoomParams = res.data.first_params;
       state.isStart = res.data.is_start;
       state.roomId = res.data.room_id;
+      state.ownerId = res.data.owner_id;
       state.isFinish = res.data.is_finished;
       state.winners = res.data.winners;
       console.log("GAMERS:", res.data);
@@ -226,6 +228,7 @@ const store = new Vuex.Store({
       state.completedSessions = [];
       state.gameEvent = null;
       state.isOwner = false;
+      state.ownerId = -1;
       state.isStart = true;
       state.isFinish = false;
       state.stepDone = false;
