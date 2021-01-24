@@ -140,13 +140,13 @@
                               firstRoomParams.month - gamerParams.month + 1
                           "
                         > -->
-                        <h4>
-                          {{ firstRoomParams.month - gamerParams.month }} из
+                        <h4 v-if="firstRoomParams.month - gamerParams.month < firstRoomParams.month " >
+                          {{ firstRoomParams.month - gamerParams.month +1}} из
                           {{ firstRoomParams.month }}
                         </h4>
-                        <!-- <h4 v-else>
+                        <h4 v-else>
                           Завершено
-                        </h4> -->
+                        </h4>
                       </span>
                     </li>
                   </ul>
