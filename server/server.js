@@ -6,12 +6,12 @@ const Sequelize = require("sequelize");
 const path = require("path");
 const morgan = require("morgan");
 const compression = require("compression");
-// const helmet = require("helmet");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
+const helmet = require("helmet");
 const history = require("connect-history-api-fallback");
 
 const cors = require("cors");
@@ -19,34 +19,20 @@ const cors = require("cors");
 // База данных
 const db = require("./models/index");
 
-// const jwtAuth = require("socketio-jwt-auth");
-
 const app = express();
 let port = process.env.PORT || 3001;
 
-// if (process.env.PORT) {
+if (process.env.PORT) {
 // Корректная работа режима HTML5 history
 
 // Настрйока безоопасности
-// app.use(helmet());
-// }
+app.use(helmet());
+}
 
 // Сжатие gzip
 app.use(compression());
 
 // Настройка CORS
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   );
-//   res.header(
-//     "Access-Control-Allow-Methods",
-//     "GET, PATCH, PUT, POST, DELETE, OPTIONS"
-//   );
-//   next();
-// });
 app.use(cors());
 
 // Парсинг json - application/json
