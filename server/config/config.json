@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "polywebage_test",
+    "password": "Polyweb2021",
+    "database": "polywebage_test",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "polywebage_test",
+    "password": "Polyweb2021",
+    "database": "polywebage_test",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "polywebage",
+    "password": "Polyweb2020",
+    "database": "polywebage",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres"
+  }
+}
