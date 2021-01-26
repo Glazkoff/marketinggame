@@ -127,3 +127,11 @@ npm run lint
 ```
 
 ### ДОБАВЛЕН ДОМЕН ДЛЯ ТЕСТИРОВАНИЯ! ПРИВЯЗАНА ВЕТКА test
+
+
+---
+
+## v1.2
+- Используется инструмент sequelize-cli
+  - [Документация sequelize-cli](https://sequelize.org/v5/manual/migrations.html)
+

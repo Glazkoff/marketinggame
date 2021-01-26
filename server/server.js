@@ -23,10 +23,10 @@ const app = express();
 let port = process.env.PORT || 3001;
 
 if (process.env.PORT) {
-// Корректная работа режима HTML5 history
+  // Корректная работа режима HTML5 history
 
-// Настрйока безоопасности
-app.use(helmet());
+  // Настрйока безоопасности
+  app.use(helmet());
 }
 
 // Сжатие gzip
@@ -192,19 +192,19 @@ const UsersInRooms = sequelize.define("users_in_rooms", {
     defaultValue: []
   }
 });
-// Свзяь многие-ко-многим
-Users.belongsToMany(Rooms, {
-  through: UsersInRooms,
-  foreignKey: "user_id"
-});
-Rooms.belongsToMany(Users, {
-  through: UsersInRooms,
-  foreignKey: "room_id"
-});
-// Связь один-ко-многим
-Users.hasMany(Rooms, {
-  foreignKey: "owner_id"
-});
+// // Свзяь многие-ко-многим
+// Users.belongsToMany(Rooms, {
+//   through: UsersInRooms,
+//   foreignKey: "user_id"
+// });
+// Rooms.belongsToMany(Users, {
+//   through: UsersInRooms,
+//   foreignKey: "room_id"
+// });
+// // Связь один-ко-многим
+// Users.hasMany(Rooms, {
+//   foreignKey: "owner_id"
+// });
 
 // МОДЕЛЬ: Cards
 const Cards = sequelize.define("cards", {
@@ -333,15 +333,15 @@ const Reviews = sequelize.define("reviews", {
 });
 
 // TODO: сделать внешний ключ для автора отзыва
-Users.hasMany(Reviews, {
-  onDelete: "cascade",
-  foreignKey: "author_id",
-  as: "reviews"
-});
-Reviews.belongsTo(Users, {
-  foreignKey: "author_id",
-  as: "user"
-});
+// db.User.hasMany(Reviews, {
+//   onDelete: "cascade",
+//   foreignKey: "author_id",
+//   as: "reviews"
+// });
+// Reviews.belongsTo(Users, {
+//   foreignKey: "author_id",
+//   as: "user"
+// });
 
 // Синхронизация таблиц с БД
 sequelize
@@ -353,7 +353,7 @@ sequelize
   })
   // .sync()
   .then(result => {
-    // Users.create({
+    // db.User.create({
     //   login: "login",
     //   password: bcrypt.hashSync("password", salt),
     //   name: "Никита"
@@ -447,7 +447,7 @@ app.get("/api/admin/users/list", async (req, res) => {
   //         message: "Вы не авторизованы!"
   //       });
   //     } else {
-  let result = await Users.findAll({
+  let result = await db.User.findAll({
     attributes: ["user_id", "login", "name", "createdAt"],
     order: [["updatedAt", "DESC"]]
   });
@@ -517,7 +517,7 @@ app.get("/api/reviews", async (req, res) => {
       order: [["updatedAt", "DESC"]],
       include: [
         {
-          model: Users,
+          model: db.User,
           as: "user"
         }
       ]
@@ -647,7 +647,7 @@ app.get("/api/reviews", async (req, res) => {
       order: [["updatedAt", "DESC"]],
       include: [
         {
-          model: Users,
+          model: db.User,
           as: "user"
         }
       ]
@@ -681,7 +681,7 @@ app.get("/api/reviewslist", async (req, res) => {
       order: [["updatedAt", "DESC"]],
       include: [
         {
-          model: Users,
+          model: db.User,
           as: "user"
         }
       ]
@@ -1061,7 +1061,7 @@ app.delete("/api/admin/users/login/:login", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          await Users.destroy({
+          await db.User.destroy({
             where: {
               login: req.params.login
             }
@@ -1092,7 +1092,7 @@ app.delete("/api/admin/users/id/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          await Users.destroy({
+          await db.User.destroy({
             where: {
               user_id: req.params.id
             }
@@ -1122,7 +1122,7 @@ app.get("/api/admin/users/count", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Users.count();
+        let result = await db.User.count();
         let obj = { count: result };
         res.send(obj);
       }
@@ -1141,7 +1141,7 @@ app.get("/api/admin/users/list/:offset", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Users.findAll({
+        let result = await db.User.findAll({
           attributes: ["user_id", "login", "name", "createdAt"],
           order: [["updatedAt", "DESC"]],
           offset: 10 * (req.params.offset - 1),
@@ -1335,7 +1335,7 @@ app.post("/api/login", (req, res) => {
   //#endregion
   //#region Запрос на вытаскивание данных о пользователе
   else {
-    Users.findOne({
+    db.User.findOne({
       where: {
         login: req.body.login
       }
@@ -1357,9 +1357,8 @@ app.post("/api/login", (req, res) => {
           //#region Сравнение полученных и введенных паролей
           bcrypt.compare(req.body.password, user.password, function(
             err,
-            result
-          ) //#endregion
-          {
+            result //#endregion
+          ) {
             //#region Если расшифровка не удалась
             if (err) {
               console.log("Ошибка расшифровки: ", err);
@@ -1412,19 +1411,20 @@ app.post("/api/register", (req, res) => {
       message: "Пустой запрос!"
     });
   } else {
-    Users.findOne({
+    db.User.findOne({
       where: {
         login: req.body.login
       }
     })
       .then(user => {
         if (user) {
+          console.log("FUCK!", user);
           res.status(403).send({
             status: 403,
             message: "Пользователь с таким логином уже существет!"
           });
         } else {
-          Users.create({
+          db.User.create({
             login: req.body.login,
             password: bcrypt.hashSync(req.body.password, salt),
             name: req.body.name
@@ -1475,7 +1475,7 @@ app.post("/api/rooms", async (req, res) => {
         });
       } else {
         try {
-          let user_last_room_valid = await Users.findOne({
+          let user_last_room_valid = await db.User.findOne({
             where: { user_id: decoded.id }
           });
           console.log(user_last_room_valid.last_room);
@@ -1495,8 +1495,8 @@ app.post("/api/rooms", async (req, res) => {
             });
             result.dataValues.prev_room_params = result.first_params;
             result.dataValues.gamer_room_params = result.first_params;
-            //#region Добавление последней комнаты для пользователя
-            await Users.update(
+            // #region Добавление последней комнаты для пользователя
+            await db.User.update(
               {
                 last_room: result.room_id
               },
@@ -1564,7 +1564,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 message: "Игра в комнате была завершена!"
               });
             } else {
-              let user_last_room_valid = await Users.findOne({
+              let user_last_room_valid = await db.User.findOne({
                 where: { user_id: decoded.id }
               });
               if (
@@ -1582,7 +1582,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 });
                 if (!iskickedUser) {
                   //#region Добавление ласт рум к пользователю
-                  Users.update(
+                  db.User.update(
                     {
                       last_room: req.params.id
                     },
@@ -1598,7 +1598,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                   if (findRoom.winners) {
                     for (let index in findRoom.winners) {
                       if (findRoom.winners[index].id !== -1) {
-                        let user = await Users.findOne({
+                        let user = await db.User.findOne({
                           where: {
                             user_id: findRoom.winners[index].id
                           }
@@ -1750,7 +1750,7 @@ app.get("/api/rooms/reset", async (req, res) => {
         });
       } else {
         //#region Получение последней комнаты
-        let lastRoomId = await Users.findOne({
+        let lastRoomId = await db.User.findOne({
           where: {
             user_id: decoded.id
           },
@@ -1811,7 +1811,7 @@ app.get("/api/rooms/reset", async (req, res) => {
               if (room.winners) {
                 for (let index in room.winners) {
                   if (room.winners[index].id !== -1) {
-                    let user = await Users.findOne({
+                    let user = await db.User.findOne({
                       where: {
                         user_id: room.winners[index].id
                       }
@@ -1983,7 +1983,7 @@ io.on("connection", async socket => {
     // });
     //#region Правка нахождения комнаты для пользователя (кастом версия)
 
-    let user_last_room_id = await Users.findOne({
+    let user_last_room_id = await db.User.findOne({
       where: {
         user_id: socket.decoded_token.id
       }
@@ -2049,7 +2049,7 @@ io.on("connection", async socket => {
     // console.log(chalk.bgRed("KICK", JSON.stringify(res)), "user" + data.gamerId);
     io.in("user" + data.gamerId).emit("kickUser");
     //#region Удаление комнаты как последней для пользователя которого кикнули
-    await Users.update(
+    await db.User.update(
       {
         last_room: null
       },
@@ -2112,7 +2112,7 @@ io.on("connection", async socket => {
     }
     //#endregion
     //#region Обнуление last room пользователя при ручном выходе из комнаты
-    await Users.update(
+    await db.User.update(
       {
         last_room: null
       },
@@ -2165,7 +2165,7 @@ io.on("connection", async socket => {
 
       for (let index = 0; index < room.participants_id.length; index++) {
         const id = room.participants_id[index];
-        let user = await Users.findByPk(id);
+        let user = await db.User.findByPk(id);
         if (user) {
           participantsSteps.push({
             name: user.name,
@@ -3172,7 +3172,7 @@ io.on("connection", async socket => {
           let a = gamersRate.shift();
           if (typeof a !== "undefined") {
             winners[index] = Object.assign(a);
-            let person = await Users.findOne({
+            let person = await db.User.findOne({
               where: {
                 user_id: a.id
               }
@@ -3207,7 +3207,7 @@ io.on("connection", async socket => {
 
         // #region Очистка last_room после завершения игры
         for (const gamer of gamers) {
-          Users.update(
+          db.User.update(
             {
               last_room: null
             },
@@ -3861,7 +3861,7 @@ io.on("connection", async socket => {
 //   // console.log("Room", room);
 //   // let gamer;
 //   if (room !== undefined) {
-//     let refreshUser = disconnectedUsers.find(el => el.id === oldSocketId);
+//     let refreshUser = disconnecteddb.User.find(el => el.id === oldSocketId);
 //     if (refreshUser) {
 //       refreshUser.id = socket.id;
 //       // console.log("REFRESH USER", refreshUser);
