@@ -18,6 +18,19 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "owner_id",
         as: "own_rooms"
       });
+      User.belongsTo(models.Room, {
+        foreignKey: "last_room",
+        as: "about_last_room"
+      });
+      User.hasMany(models.UserInRoom, {
+        onDelete: "cascade",
+        foreignKey: "user_id",
+        as: "was_in_rooms"
+      });
+      User.belongsToMany(models.Room, {
+        through: models.UserInRoom,
+        foreignKey: "user_id"
+      });
     }
   }
   User.init(

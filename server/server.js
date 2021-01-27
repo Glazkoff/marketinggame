@@ -62,114 +62,14 @@ const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
   logging: false // TODO: УБРАТЬ
 });
 
-// МОДЕЛЬ: Rooms
-const Rooms = sequelize.define("rooms", {
-  room_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  owner_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  participants_id: {
-    type: Sequelize.JSONB,
-    allowNull: false
-  },
-  kicked_participants_id: {
-    type: Sequelize.JSONB,
-    allowNull: true
-  },
-  first_params: {
-    type: Sequelize.JSONB,
-    allowNull: false
-  },
-  is_start: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: true,
-    allowNull: false
-  },
-  budget_per_month: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  },
-  users_steps_state: {
-    type: Sequelize.ARRAY(Sequelize.JSONB),
-    allowNull: true
-    // defaultValue: []
-  },
-  current_month: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  },
-  is_finished: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-  winners: {
-    type: Sequelize.JSONB,
-    allowNull: true
-  }
-});
-
-// МОДЕЛЬ: UsersInRooms
-const UsersInRooms = sequelize.define("users_in_rooms", {
-  users_in_rooms_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  room_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  user_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  gamer_room_params: {
-    type: Sequelize.JSONB,
-    allowNull: false
-  },
-  prev_room_params: {
-    type: Sequelize.JSONB
-    // allowNull: false
-  },
-  effects: {
-    type: Sequelize.JSONB,
-    allowNull: true,
-    defaultValue: []
-  },
-  used_cards: {
-    type: Sequelize.JSONB,
-    allowNull: false,
-    defaultValue: {
-      "-1": 0
-    }
-  },
-  changes: {
-    type: Sequelize.JSONB,
-    allowNull: true,
-    defaultValue: []
-  }
-});
 // // Свзяь многие-ко-многим
 // Users.belongsToMany(Rooms, {
-//   through: UsersInRooms,
+//   through: UserInRooms,
 //   foreignKey: "user_id"
 // });
 // Rooms.belongsToMany(Users, {
-//   through: UsersInRooms,
+//   through: UserInRooms,
 //   foreignKey: "room_id"
-// });
-// // Связь один-ко-многим
-// Users.hasMany(Rooms, {
-//   foreignKey: "owner_id"
 // });
 
 // МОДЕЛЬ: Cards
@@ -1213,7 +1113,7 @@ app.get("/api/admin/rooms/:id/users", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await UsersInRooms.findAll({
+        let result = await db.UserInRoom.findAll({
           where: {
             room_id: req.params.id
           }
@@ -1236,7 +1136,7 @@ app.get("/api/admin/rooms/:id", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Rooms.findAll({
+        let result = await db.Room.findAll({
           where: {
             room_id: req.params.id
           }
@@ -1259,7 +1159,7 @@ app.get("/api/admin/rooms", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Rooms.findAll({
+        let result = await db.Room.findAll({
           order: [["room_id", "DESC"]]
         });
         res.send(result);
@@ -1429,13 +1329,13 @@ app.post("/api/rooms", async (req, res) => {
           });
           console.log(user_last_room_valid.last_room);
           if (!user_last_room_valid.last_room) {
-            let result = await Rooms.create({
+            let result = await db.Room.create({
               owner_id: decoded.id,
               participants_id: [decoded.id],
               first_params: req.body,
               budget_per_month: req.body.money
             });
-            await UsersInRooms.create({
+            await db.UserInRoom.create({
               user_id: decoded.id,
               room_id: result.room_id,
               current_month: result.first_params.month,
@@ -1492,7 +1392,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let findRoom = await Rooms.findOne({
+        let findRoom = await db.Room.findOne({
           where: {
             room_id: req.params.id
           }
@@ -1525,7 +1425,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                 user_last_room_valid.last_room === findRoom.room_id
               ) {
                 const Op = Sequelize.Op;
-                let iskickedUser = await Rooms.findOne({
+                let iskickedUser = await db.Room.findOne({
                   where: {
                     room_id: findRoom.room_id,
                     kicked_participants_id: {
@@ -1569,7 +1469,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                   });
                   if (isSet === -1) {
                     if (!findRoom.is_start) {
-                      await Rooms.update(
+                      await db.Room.update(
                         {
                           users_steps_state: sequelize.fn(
                             "array_append",
@@ -1594,7 +1494,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       );
                     }
                     participantsArray.push(decoded.id);
-                    await Rooms.update(
+                    await db.Room.update(
                       {
                         participants_id: participantsArray
                       },
@@ -1605,7 +1505,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       }
                     );
 
-                    let userInRoom = await UsersInRooms.create({
+                    let userInRoom = await db.UserInRoom.create({
                       user_id: decoded.id,
                       room_id: req.params.id,
                       current_month: findRoom.first_params.month,
@@ -1620,7 +1520,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       userInRoom.gamer_room_params;
                     res.send(findRoom.dataValues);
                   } else {
-                    let userInRoom = await UsersInRooms.findOne({
+                    let userInRoom = await db.UserInRoom.findOne({
                       where: {
                         user_id: decoded.id,
                         room_id: req.params.id
@@ -1641,7 +1541,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         findRoom.dataValues.users_steps_state[
                           index
                         ].isdisconnected = false;
-                        await Rooms.update(
+                        await db.Room.update(
                           {
                             users_steps_state:
                               findRoom.dataValues.users_steps_state
@@ -1663,7 +1563,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       res.send(findRoom.dataValues);
                     }
                   }
-                  findRoom = await Rooms.findByPk(findRoom.room_id);
+                  findRoom = await db.Room.findByPk(findRoom.room_id);
                   let gamerNamesObj = {
                     gamers: findRoom.users_steps_state
                   };
@@ -1691,7 +1591,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
 });
 
 // TODO: присылать события и список игроков
-// TODO: сделать JOIN у UsersInRooms и Rooms
+// TODO: сделать JOIN у UserInRooms и Rooms
 // Попытка переподключения
 app.get("/api/rooms/reset", async (req, res) => {
   await jwt.verify(
@@ -1716,7 +1616,7 @@ app.get("/api/rooms/reset", async (req, res) => {
         let room;
         const Op = Sequelize.Op;
 
-        room = await Rooms.findOne({
+        room = await db.Room.findOne({
           where: {
             participants_id: {
               [Op.contains]: decoded.id
@@ -1732,7 +1632,7 @@ app.get("/api/rooms/reset", async (req, res) => {
             message: "Нет активных игр!"
           });
         } else {
-          let userInRoom = await UsersInRooms.findOne({
+          let userInRoom = await db.UserInRoom.findOne({
             where: {
               user_id: decoded.id,
               room_id: room.room_id
@@ -1744,7 +1644,7 @@ app.get("/api/rooms/reset", async (req, res) => {
               message: "Нет активных игр!"
             });
           } else {
-            let usersState = await Rooms.findOne({
+            let usersState = await db.Room.findOne({
               attributes: ["users_steps_state"],
               where: {
                 room_id: room.room_id
@@ -1947,7 +1847,7 @@ io.on("connection", async socket => {
     });
 
     let last_room_id = user_last_room_id.last_room;
-    let room = await Rooms.findOne({
+    let room = await db.Room.findOne({
       where: {
         room_id: last_room_id
       }
@@ -1965,7 +1865,7 @@ io.on("connection", async socket => {
         gamers: room.users_steps_state
       };
       io.in(room.room_id).emit("setGamers", gamerNamesObj);
-      let res = await Rooms.update(
+      let res = await db.Room.update(
         {
           users_steps_state: room.users_steps_state
         },
@@ -2018,7 +1918,7 @@ io.on("connection", async socket => {
     );
     //#endregion
     //#region Удаление пользователя из комнаты и его добавление в "черный список" (кик)
-    let room = await Rooms.findOne({
+    let room = await db.Room.findOne({
       where: {
         room_id: data.roomId
       }
@@ -2029,7 +1929,7 @@ io.on("connection", async socket => {
     } else {
       room.kicked_participants_id = [data.gamerId];
     }
-    await Rooms.update(
+    await db.Room.update(
       {
         participants_id: room.participants_id.filter(
           user => user != data.gamerId
@@ -2052,7 +1952,7 @@ io.on("connection", async socket => {
     //   chalk.bgMagenta(`При выходе из комнаты`)
     // );
     //#region Поиск комнаты по id и присвоение её переменной
-    let usersState = await Rooms.findOne({
+    let usersState = await db.Room.findOne({
       attributes: ["users_steps_state"],
       where: {
         room_id: roomId
@@ -2084,7 +1984,7 @@ io.on("connection", async socket => {
     //#endregion
     if (index !== -1) {
       usersState.users_steps_state[index].isdisconnected = true;
-      await Rooms.update(
+      await db.Room.update(
         {
           users_steps_state: usersState.users_steps_state
         },
@@ -2117,7 +2017,7 @@ io.on("connection", async socket => {
     // console.log("SET START! ", data);
     console.log("1837 старт игры");
     try {
-      let room = await Rooms.findOne({
+      let room = await db.Room.findOne({
         where: {
           room_id: data.room_id
         }
@@ -2139,7 +2039,7 @@ io.on("connection", async socket => {
       // console.log(chalk.redBright(JSON.stringify(participantsSteps)));
 
       if (room) {
-        await Rooms.update(
+        await db.Room.update(
           {
             is_start: false,
             users_steps_state: participantsSteps
@@ -2171,7 +2071,7 @@ io.on("connection", async socket => {
     console.log("finish step in room 1891");
 
     // Находим состояние текущей комнаты в БД
-    let room = await Rooms.findOne({
+    let room = await db.Room.findOne({
       where: {
         room_id: roomId
       }
@@ -2191,7 +2091,7 @@ io.on("connection", async socket => {
       console.log("смена месяца 1912");
 
       // Обновляем в БД месяц
-      await Rooms.update(
+      await db.Room.update(
         {
           current_month: sequelize.literal("current_month + 1")
         },
@@ -2214,7 +2114,7 @@ io.on("connection", async socket => {
     });
 
     // Отправляем в БД данные о ходах игроков
-    await Rooms.update(
+    await db.Room.update(
       {
         users_steps_state: room.users_steps_state
       },
@@ -2226,7 +2126,7 @@ io.on("connection", async socket => {
     );
 
     // Находим все эффекты игроков для всех игроков данной комнаты
-    let usersEffects = await UsersInRooms.findAll({
+    let usersEffects = await db.UserInRoom.findAll({
       attributes: ["user_id", "effects"],
       where: {
         room_id: room.room_id
@@ -2242,7 +2142,7 @@ io.on("connection", async socket => {
 
     io.in(socket.roomId).emit("doNextStep");
     for (let gamerId of room.participants_id) {
-      let userInRoom = await UsersInRooms.findOne({
+      let userInRoom = await db.UserInRoom.findOne({
         where: {
           user_id: gamerId,
           room_id: room.room_id
@@ -2275,7 +2175,7 @@ io.on("connection", async socket => {
     // console.log(chalk.bgBlue("Шаг пользователя #" + socket.decoded_token.id));
     try {
       // Находим данные об игроке
-      let gamer = await UsersInRooms.findOne({
+      let gamer = await db.UserInRoom.findOne({
         where: {
           user_id: socket.decoded_token.id,
           room_id: socket.roomId
@@ -2285,7 +2185,7 @@ io.on("connection", async socket => {
 
       // Находим комнату, которая является последней, содержащей пользователя
       const Op = Sequelize.Op;
-      let room = await Rooms.findOne({
+      let room = await db.Room.findOne({
         where: {
           participants_id: {
             [Op.contains]: socket.decoded_token.id
@@ -2302,7 +2202,7 @@ io.on("connection", async socket => {
       ).isattacker = true;
 
       // Загружаем в БД, что ход был сделан
-      await Rooms.update(
+      await db.Room.update(
         {
           users_steps_state: room.users_steps_state
         },
@@ -2669,7 +2569,7 @@ io.on("connection", async socket => {
       });
 
       // Синхронизируем изменения с БД
-      UsersInRooms.update(
+      db.UserInRoom.update(
         {
           gamer_room_params: gamer.gamer_room_params,
           prev_room_params: gamer.prev_room_params,
@@ -2706,7 +2606,7 @@ io.on("connection", async socket => {
               }
             ]
           });
-          await Rooms.update(
+          await db.Room.update(
             {
               users_steps_state: sequelize.fn(
                 "array_append",
@@ -2742,7 +2642,7 @@ io.on("connection", async socket => {
               makeStep: true,
               isattacker: true
             });
-            await Rooms.update(
+            await db.Room.update(
               {
                 users_steps_state: room.users_steps_state,
                 isattacker: true
@@ -2769,7 +2669,7 @@ io.on("connection", async socket => {
             }
           ]
         });
-        await Rooms.update(
+        await db.Room.update(
           {
             users_steps_state: sequelize.fn(
               "array_append",
@@ -2848,7 +2748,7 @@ io.on("connection", async socket => {
           io.in(room.room_id).emit("setGamers", {
             gamers: room.users_steps_state
           });
-          await Rooms.update(
+          await db.Room.update(
             {
               users_steps_state: room.users_steps_state
             },
@@ -2884,7 +2784,7 @@ io.on("connection", async socket => {
 
       // Когда все пользователи в комнате сходили
       if (allGamersDoStep) {
-        let usersEffects = await UsersInRooms.findAll({
+        let usersEffects = await db.UserInRoom.findAll({
           attributes: ["user_id", "effects"],
           where: {
             room_id: room.room_id
@@ -2906,7 +2806,7 @@ io.on("connection", async socket => {
           //   )
           // );
           console.log("месяцы ещё есть 2586");
-          await Rooms.update(
+          await db.Room.update(
             {
               current_month: sequelize.literal("current_month + 1")
             },
@@ -2943,7 +2843,7 @@ io.on("connection", async socket => {
             // Если изменения при применении
             if (+eventChange.when === 0) {
               for (const gamerId of room.participants_id) {
-                let userInRoom = await UsersInRooms.findOne({
+                let userInRoom = await db.UserInRoom.findOne({
                   where: {
                     user_id: gamerId,
                     room_id: room.room_id
@@ -2968,7 +2868,7 @@ io.on("connection", async socket => {
                     );
                     break;
                 }
-                await UsersInRooms.update(
+                await db.UserInRoom.update(
                   {
                     gamer_room_params: userInRoom.gamer_room_params
                   },
@@ -2984,14 +2884,14 @@ io.on("connection", async socket => {
               // Если изменение в следующие месяцы
             } else {
               for (const gamerId of room.participants_id) {
-                let userInRoom = await UsersInRooms.findOne({
+                let userInRoom = await db.UserInRoom.findOne({
                   where: {
                     user_id: gamerId,
                     room_id: room.room_id
                   }
                 });
                 userInRoom.changes.push(eventChange);
-                await UsersInRooms.update(
+                await db.UserInRoom.update(
                   {
                     changes: userInRoom.changes
                   },
@@ -3013,7 +2913,7 @@ io.on("connection", async socket => {
         });
       }
       for (let gamerId of room.participants_id) {
-        let userInRoom = await UsersInRooms.findOne({
+        let userInRoom = await db.UserInRoom.findOne({
           where: {
             user_id: gamerId,
             room_id: room.room_id
@@ -3042,7 +2942,7 @@ io.on("connection", async socket => {
           index--;
         }
       }
-      UsersInRooms.update(
+      db.UserInRoom.update(
         {
           changes: gamer.changes
         },
@@ -3061,7 +2961,7 @@ io.on("connection", async socket => {
         // for (const gamer of gamers) {
         //         io.sockets.to(gamer.id).emit("setStartGame", gamer.data);
         //       }
-        let gamers = await UsersInRooms.findAll({
+        let gamers = await db.UserInRoom.findAll({
           where: {
             room_id: room.room_id
           }
@@ -3153,7 +3053,7 @@ io.on("connection", async socket => {
         // console.log(chalk.bgBlue("Победители: " + JSON.stringify(winners)));
         console.log("победители 2825");
 
-        await Rooms.update(
+        await db.Room.update(
           {
             is_finished: true,
             winners: winners
@@ -3562,7 +3462,7 @@ io.on("connection", async socket => {
     // );
     console.log("отключение пользователя 3217");
     const Op = Sequelize.Op;
-    let room = await Rooms.findOne({
+    let room = await db.Room.findOne({
       where: {
         participants_id: {
           [Op.contains]: socket.decoded_token.id
@@ -3596,7 +3496,7 @@ io.on("connection", async socket => {
         gamers: room.users_steps_state
       };
       io.in(room.room_id).emit("setGamers", gamerNamesObj);
-      let res = await Rooms.update(
+      let res = await db.Room.update(
         {
           users_steps_state: room.users_steps_state
         },

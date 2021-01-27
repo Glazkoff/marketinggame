@@ -17,6 +17,19 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "room_id",
         as: "reviews"
       });
+      Room.hasMany(models.User, {
+        foreignKey: "last_room",
+        as: "last_room_users"
+      });
+      Room.hasMany(models.UserInRoom, {
+        onDelete: "cascade",
+        foreignKey: "room_id",
+        as: "users_in_room"
+      });
+      Room.belongsToMany(models.User, {
+        through: models.UserInRoom,
+        foreignKey: "room_id"
+      });
     }
   }
   Room.init(
