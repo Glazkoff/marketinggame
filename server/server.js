@@ -62,36 +62,6 @@ const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
   logging: false // TODO: УБРАТЬ
 });
 
-// МОДЕЛЬ: Users
-const Users = sequelize.define("users", {
-  user_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  login: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  password: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  admin: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-  last_room: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  }
-});
-
 // МОДЕЛЬ: Rooms
 const Rooms = sequelize.define("rooms", {
   room_id: {
@@ -306,43 +276,6 @@ const GameConfig = sequelize.define("game_config", {
   }
 });
 
-// Модель: Reviews
-const Reviews = sequelize.define("reviews", {
-  review_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  author_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  room_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  rating: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  comment: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  }
-});
-
-// TODO: сделать внешний ключ для автора отзыва
-// db.User.hasMany(Reviews, {
-//   onDelete: "cascade",
-//   foreignKey: "author_id",
-//   as: "reviews"
-// });
-// Reviews.belongsTo(Users, {
-//   foreignKey: "author_id",
-//   as: "user"
-// });
-
 // Синхронизация таблиц с БД
 sequelize
   // .sync({
@@ -451,7 +384,9 @@ app.get("/api/admin/users/list", async (req, res) => {
     attributes: ["user_id", "login", "name", "createdAt"],
     order: [["updatedAt", "DESC"]]
   });
-  res.send({ users: result });
+  res.send({
+    users: result
+  });
   // }
   // }
   // );
@@ -473,7 +408,9 @@ app.get("/api/admin/globalconfig", async (req, res) => {
     order: [["createdAt", "DESC"]]
   });
   console.log("lastConfig", lastConfig);
-  res.send({ config: lastConfig.dataValues });
+  res.send({
+    config: lastConfig.dataValues
+  });
 });
 
 app.post("/api/admin/globalconfig", async (req, res) => {
@@ -513,7 +450,7 @@ app.get("/api/reviews", async (req, res) => {
     //         message: "Вы не авторизованы!"
     //       });
     //     } else {
-    let result = await Reviews.findAll({
+    let result = await db.Review.findAll({
       order: [["updatedAt", "DESC"]],
       include: [
         {
@@ -537,7 +474,7 @@ app.get("/api/reviews", async (req, res) => {
 
 app.post("/api/addreview", async (req, res) => {
   try {
-    let result = await Reviews.create({
+    let result = await db.Review.create({
       author_id: req.body.author_id,
       room_id: req.body.room_id,
       rating: req.body.rating,
@@ -554,7 +491,7 @@ app.post("/api/addreview", async (req, res) => {
 });
 
 app.delete("/api/deletereview/:id", async (req, res) => {
-  let result = await Reviews.destroy({
+  let result = await db.Review.destroy({
     where: {
       review_id: req.params.id
     }
@@ -577,7 +514,7 @@ app.delete("/api/reviews/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          let result = await Reviews.destroy({
+          let result = await db.Review.destroy({
             where: {
               review_id: req.params.id
             }
@@ -612,7 +549,8 @@ app.post("/api/reviews", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          let result = await Reviews.create({
+          console.log("JJJJ", decoded);
+          let result = await db.Review.create({
             author_id: decoded.id,
             room_id: req.body.room_id,
             rating: req.body.rating,
@@ -643,7 +581,7 @@ app.get("/api/reviews", async (req, res) => {
     //         message: "Вы не авторизованы!"
     //       });
     //     } else {
-    let result = await Reviews.findAll({
+    let result = await db.Review.findAll({
       order: [["updatedAt", "DESC"]],
       include: [
         {
@@ -677,7 +615,7 @@ app.get("/api/reviewslist", async (req, res) => {
     //         message: "Вы не авторизованы!"
     //       });
     //     } else {
-    let result = await Reviews.findAll({
+    let result = await db.Review.findAll({
       order: [["updatedAt", "DESC"]],
       include: [
         {
@@ -686,7 +624,9 @@ app.get("/api/reviewslist", async (req, res) => {
         }
       ]
     });
-    res.send({ reviews: result });
+    res.send({
+      reviews: result
+    });
     // }
     //   }
     // );
@@ -702,7 +642,7 @@ app.get("/api/reviewslist", async (req, res) => {
 // Добавить отзыв
 app.get("/api/reviews/:id", async (req, res) => {
   try {
-    let result = await Reviews.findOne({
+    let result = await db.Review.findOne({
       where: {
         review_id: req.params.id
       }
@@ -800,7 +740,9 @@ app.post("/api/admin/events/:id", async (req, res) => {
                 data_change: findEvent.data_change
               },
               {
-                where: { event_id: req.params.id }
+                where: {
+                  event_id: req.params.id
+                }
               }
             );
             res.send(a);
@@ -984,7 +926,9 @@ app.post("/api/admin/cards/:id", async (req, res) => {
                 data_change: findCard.data_change
               },
               {
-                where: { card_id: req.params.id }
+                where: {
+                  card_id: req.params.id
+                }
               }
             );
             res.send(a);
@@ -1066,7 +1010,9 @@ app.delete("/api/admin/users/login/:login", async (req, res) => {
               login: req.params.login
             }
           });
-          res.status(200).send({ message: "ok" });
+          res.status(200).send({
+            message: "ok"
+          });
         }
       }
     );
@@ -1097,7 +1043,9 @@ app.delete("/api/admin/users/id/:id", async (req, res) => {
               user_id: req.params.id
             }
           });
-          res.status(200).send({ message: "ok" });
+          res.status(200).send({
+            message: "ok"
+          });
         }
       }
     );
@@ -1123,7 +1071,9 @@ app.get("/api/admin/users/count", async (req, res) => {
         });
       } else {
         let result = await db.User.count();
-        let obj = { count: result };
+        let obj = {
+          count: result
+        };
         res.send(obj);
       }
     }
@@ -1371,6 +1321,7 @@ app.post("/api/login", (req, res) => {
             else if (result) {
               // console.log(result);
               //#region Создание токена найденного пользователя
+              console.log("TOKEN: ", user);
               const accessToken = jwt.sign(
                 {
                   id: user.user_id,
@@ -1476,7 +1427,9 @@ app.post("/api/rooms", async (req, res) => {
       } else {
         try {
           let user_last_room_valid = await db.User.findOne({
-            where: { user_id: decoded.id }
+            where: {
+              user_id: decoded.id
+            }
           });
           console.log(user_last_room_valid.last_room);
           if (!user_last_room_valid.last_room) {
@@ -1501,7 +1454,9 @@ app.post("/api/rooms", async (req, res) => {
                 last_room: result.room_id
               },
               {
-                where: { user_id: decoded.id }
+                where: {
+                  user_id: decoded.id
+                }
               }
             ).then(res => {
               console.log(res);
@@ -1565,7 +1520,9 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               });
             } else {
               let user_last_room_valid = await db.User.findOne({
-                where: { user_id: decoded.id }
+                where: {
+                  user_id: decoded.id
+                }
               });
               if (
                 !user_last_room_valid.last_room ||
@@ -1587,7 +1544,9 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       last_room: req.params.id
                     },
                     {
-                      where: { user_id: decoded.id }
+                      where: {
+                        user_id: decoded.id
+                      }
                     }
                   ).then(res => {
                     console.log(res);
@@ -1863,7 +1822,9 @@ app.get("/api/rooms/reset", async (req, res) => {
 });
 
 app.get("/api/test", (req, res) => {
-  res.send({ test: "asdd" });
+  res.send({
+    test: "asdd"
+  });
 });
 
 app.use(history());
@@ -2054,7 +2015,9 @@ io.on("connection", async socket => {
         last_room: null
       },
       {
-        where: { user_id: data.gamerId }
+        where: {
+          user_id: data.gamerId
+        }
       }
     );
     //#endregion
@@ -2117,7 +2080,9 @@ io.on("connection", async socket => {
         last_room: null
       },
       {
-        where: { user_id: socket.decoded_token.id }
+        where: {
+          user_id: socket.decoded_token.id
+        }
       }
     );
     //#endregion

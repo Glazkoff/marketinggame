@@ -134,4 +134,8 @@ npm run lint
 ## v1.2
 - Используется инструмент sequelize-cli
   - [Документация sequelize-cli](https://sequelize.org/v5/manual/migrations.html)
-
+  - Установите пакет pg глобально! 
+```
+npm i -g pg
+```
+- [Типы данных Sequelize](https://sequelize.org/v5/manual/data-types.html)
