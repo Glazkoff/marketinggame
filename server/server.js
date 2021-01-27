@@ -86,10 +86,6 @@ const Rooms = sequelize.define("rooms", {
     type: Sequelize.JSONB,
     allowNull: false
   },
-  completed: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
   is_start: {
     type: Sequelize.BOOLEAN,
     defaultValue: true,
@@ -1513,7 +1509,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
               message: "Такой комнаты не существует!"
             });
           } else {
-            if (findRoom.completed) {
+            if (findRoom.is_finished) {
               res.status(400).send({
                 status: 400,
                 message: "Игра в комнате была завершена!"
@@ -1938,7 +1934,7 @@ io.on("connection", async socket => {
     //     participants_id: {
     //       [Op.contains]: socket.decoded_token.id
     //     },
-    //     completed: false
+    //     is_finished: false
     //   },
     //   order: [["updatedAt", "DESC"]]
     // });
@@ -2294,7 +2290,7 @@ io.on("connection", async socket => {
           participants_id: {
             [Op.contains]: socket.decoded_token.id
           },
-          completed: false
+          is_finished: false
         },
         order: [["updatedAt", "DESC"]]
       });
@@ -3159,7 +3155,6 @@ io.on("connection", async socket => {
 
         await Rooms.update(
           {
-            completed: true,
             is_finished: true,
             winners: winners
           },
@@ -3572,7 +3567,7 @@ io.on("connection", async socket => {
         participants_id: {
           [Op.contains]: socket.decoded_token.id
         },
-        completed: false
+        is_finished: false
       },
       order: [["updatedAt", "DESC"]]
     });
@@ -3610,7 +3605,7 @@ io.on("connection", async socket => {
             participants_id: {
               [Op.contains]: socket.decoded_token.id
             },
-            completed: false
+            is_finished: false
           }
         }
       );

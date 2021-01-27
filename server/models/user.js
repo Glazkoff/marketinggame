@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "author_id",
         as: "reviews"
       });
+      User.hasMany(models.Room, {
+        onDelete: "cascade",
+        foreignKey: "owner_id",
+        as: "own_rooms"
+      });
     }
   }
   User.init(
