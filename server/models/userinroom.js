@@ -16,11 +16,16 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "user"
       });
+      UserInRoom.hasMany(models.UsedCards, {
+        onDelete: "cascade",
+        foreignKey: "user_in_room_id",
+        as: "used_cards"
+      });
     }
   }
   UserInRoom.init(
     {
-      users_in_rooms_id: {
+      user_in_room_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -54,13 +59,13 @@ module.exports = (sequelize, DataTypes) => {
       prev_room_params: {
         // TODO: Заменить на модель PrevRoomParams
         type: DataTypes.JSONB
-      },
-      used_cards: {
-        // TODO: Заменить на модель UsedCards
-        type: DataTypes.JSONB,
-        allowNull: false,
-        defaultValue: {}
       }
+      // used_cards: {
+      //   // TODO: Заменить на модель UsedCards
+      //   type: DataTypes.JSONB,
+      //   allowNull: false,
+      //   defaultValue: {}
+      // }
     },
     {
       sequelize,

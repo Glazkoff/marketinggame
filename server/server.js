@@ -1821,12 +1821,16 @@ io.on("connection", async socket => {
       }
     });
 
-    let last_room_id = user_last_room_id.last_room;
-    let room = await db.Room.findOne({
-      where: {
-        room_id: last_room_id
-      }
-    });
+    let room;
+
+    if (user_last_room_id) {
+      let last_room_id = user_last_room_id.last_room;
+      room = await db.Room.findOne({
+        where: {
+          room_id: last_room_id
+        }
+      });
+    }
     //#endregion
 
     if (room && room.users_steps_state !== null) {
@@ -2158,6 +2162,10 @@ io.on("connection", async socket => {
       });
       gamer = gamer.dataValues;
 
+      let userInRoom = await db.UserInRoom.findOne();
+      console.log(chalk.red(JSON.stringify(userInRoom)));
+      // userInRoom = userInRoom.dataValues;
+
       // Находим комнату, которая является последней, содержащей пользователя
       const Op = Sequelize.Op;
       let room = await db.Room.findOne({
@@ -2223,10 +2231,28 @@ io.on("connection", async socket => {
 
           // Добавление в объект использованных карточек
           if (effect.step === effect.duration) {
-            if (typeof gamer["used_cards"][effect.id] === "undefined") {
-              gamer["used_cards"][effect.id] = 1;
+            let usedCard = await db.UsedCards.findOne({
+              where: {
+                user_in_room_id: userInRoom.user_in_room_id,
+                card_id: effect.id
+              }
+            });
+            if (usedCard) {
+              await db.UsedCards.update(
+                { amount: usedCard.dataValues.amount + 1 },
+                {
+                  where: {
+                    user_in_room_id: userInRoom.user_in_room_id,
+                    card_id: effect.id
+                  }
+                }
+              );
             } else {
-              gamer["used_cards"][effect.id]++;
+              await db.UsedCards.create({
+                amount: 1,
+                user_in_room_id: userInRoom.user_in_room_id,
+                card_id: effect.id
+              });
             }
           }
         }
@@ -2376,11 +2402,13 @@ io.on("connection", async socket => {
             oneWayChangingId ||
             changing.event
           ) {
-            let usedCard = gamer["used_cards"];
-            if (
-              usedCard[changing.id] < 1 ||
-              typeof usedCard[changing.id] === "undefined"
-            ) {
+            let usedCard = await db.UsedCards.findOne({
+              where: {
+                user_in_room_id: userInRoom.user_in_room_id,
+                card_id: changing.id
+              }
+            });
+            if (!usedCard) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
                 case "+":
@@ -2400,8 +2428,8 @@ io.on("connection", async socket => {
               }
             } else {
               let changeCoef = changing.change;
-              if (gamer["used_cards"][changing.id] !== 0) {
-                for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
+              if (usedCard["amount"] !== 0) {
+                for (let i = 0; i < usedCard["amount"]; i++) {
                   changeCoef = (1 + changeCoef) / 2;
                   if (changing.change >= 10) {
                     changeCoef = Math.ceil(changeCoef);
@@ -2483,10 +2511,10 @@ io.on("connection", async socket => {
                 changing.change +
                 " (Улучшение юзабилити)";
             } else {
-              if (gamer["used_cards"][changing.id] >= 1) {
+              if (usedCard["amount"] >= 1) {
                 let changeCoef = changing.change;
-                if (gamer["used_cards"][changing.id] !== 0) {
-                  for (let i = 0; i < gamer["used_cards"][changing.id]; i++) {
+                if (usedCard["amount"] !== 0) {
+                  for (let i = 0; i < usedCard["amount"]; i++) {
                     changeCoef = (1 + changeCoef) / 2;
                     if (changing.change >= 10) {
                       changeCoef = Math.ceil(changeCoef);
@@ -2543,13 +2571,14 @@ io.on("connection", async socket => {
         return el.toDelete !== true;
       });
 
+      // TODO: понять, почему происходило обновление Used cards
+
       // Синхронизируем изменения с БД
       db.UserInRoom.update(
         {
           gamer_room_params: gamer.gamer_room_params,
           prev_room_params: gamer.prev_room_params,
           effects: gamer.effects,
-          used_cards: gamer["used_cards"],
           changes: gamer.changes
         },
         {

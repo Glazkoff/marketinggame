@@ -2,7 +2,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("UserInRooms", {
-      users_in_rooms_id: {
+      user_in_room_id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -37,12 +37,12 @@ module.exports = {
         // TODO: Заменить на модель PrevRoomParams
         type: Sequelize.JSONB
       },
-      used_cards: {
-        // TODO: Заменить на модель UsedCards
-        type: Sequelize.JSONB,
-        allowNull: false,
-        defaultValue: {}
-      },
+      // used_cards: {
+      //   // TODO: Заменить на модель UsedCards
+      //   type: Sequelize.JSONB,
+      //   allowNull: false,
+      //   defaultValue: {}
+      // },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
