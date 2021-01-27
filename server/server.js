@@ -147,31 +147,6 @@ const Updates = sequelize.define("updates", {
   }
 });
 
-// TODO:  Добавить заполнение таблицы DefaultRooms
-// Модель: DefaultRooms
-const DefaultRooms = sequelize.define("default_rooms", {
-  default_room_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  }
-});
-
-// Модель: GameConfig
-const GameConfig = sequelize.define("game_config", {
-  config_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  event_chance: {
-    type: Sequelize.DECIMAL,
-    allowNull: false
-  }
-});
-
 // Синхронизация таблиц с БД
 sequelize
   // .sync({
@@ -299,7 +274,7 @@ app.get("/api/admin/globalconfig", async (req, res) => {
   //         message: "Вы не авторизованы!"
   //       });
   //     } else {
-  let lastConfig = await GameConfig.findOne({
+  let lastConfig = await db.GameConfig.findOne({
     limit: 1,
     order: [["createdAt", "DESC"]]
   });
@@ -320,11 +295,11 @@ app.post("/api/admin/globalconfig", async (req, res) => {
   //         message: "Вы не авторизованы!"
   //       });
   //     } else {
-  let lastConfig = await GameConfig.findOne({
+  let lastConfig = await db.GameConfig.findOne({
     limit: 1,
     order: [["createdAt", "DESC"]]
   });
-  let result = await GameConfig.create({
+  let result = await db.GameConfig.create({
     event_chance: req.body.event_chance || lastConfig.event_chance
   });
   res.send(result);
@@ -1066,11 +1041,11 @@ app.post("/api/admin/config", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let lastConfig = await GameConfig.findOne({
+        let lastConfig = await db.GameConfig.findOne({
           limit: 1,
           order: [["createdAt", "DESC"]]
         });
-        let result = await GameConfig.create({
+        let result = await db.GameConfig.create({
           event_chance: req.body.event_chance || lastConfig.event_chance
         });
         res.send(result);
@@ -1091,7 +1066,7 @@ app.get("/api/admin/config", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await GameConfig.findOne({
+        let result = await db.GameConfig.findOne({
           limit: 1,
           order: [["createdAt", "DESC"]]
         });
@@ -2819,7 +2794,7 @@ io.on("connection", async socket => {
         }
       }
 
-      let lastConfig = await GameConfig.findOne({
+      let lastConfig = await db.GameConfig.findOne({
         limit: 1,
         order: [["createdAt", "DESC"]]
       });
