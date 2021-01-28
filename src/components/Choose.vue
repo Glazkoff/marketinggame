@@ -164,7 +164,7 @@ import ReviewModal from "@/components/ReviewModal.vue";
 import CheckModal from "@/components/CheckModal.vue";
 import {required} from "vuelidate/lib/validators";
 
-let apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
+let apiUrl = "/api";
 export default {
   name: "Choose",
   data() {
