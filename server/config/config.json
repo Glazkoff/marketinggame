@@ -14,9 +14,9 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "polywebage",
-    "password": "Polyweb2020",
-    "database": "polywebage",
+    "username": "polywebage_test",
+    "password": "Polyweb2021",
+    "database": "polywebage_test",
     "host": "pg2.sweb.ru",
     "dialect": "postgres"
   }
