@@ -17,7 +17,7 @@ Vue.use(Vuelidate);
 Vue.use(
   new VueSocketIO({
     debug: process.env.NODE_ENV !== "production",
-    connection: "/",
+    connection: process.env.VUE_APP_SOCKET_URL,
     vuex: {
       store,
       actionPrefix: "SOCKET_",
