@@ -4,7 +4,7 @@ import router from "../src/router";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 
-const apiUrl = process.env.VUE_APP_API_URL || "http://localhost:3001/api";
+const apiUrl = "/api";
 
 Vue.use(Vuex);
 
