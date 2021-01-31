@@ -1093,6 +1093,7 @@ app.get("/api/admin/rooms/:id/users", async (req, res) => {
             room_id: req.params.id
           }
         });
+        // let gamer_room_params = db.GamerRoomParams.findOne();
         res.send(result);
       }
     }
@@ -1566,7 +1567,6 @@ app.post("/api/rooms/join/:id", async (req, res) => {
 });
 
 // TODO: присылать события и список игроков
-// TODO: сделать JOIN у UserInRooms и Rooms
 // Попытка переподключения
 app.get("/api/rooms/reset", async (req, res) => {
   await jwt.verify(
@@ -1813,7 +1813,7 @@ io.on("connection", async socket => {
     //   },
     //   order: [["updatedAt", "DESC"]]
     // });
-    //#region Правка нахождения комнаты для пользователя (кастом версия)
+    // #region Правка нахождения комнаты для пользователя (кастом версия)
 
     let user_last_room_id = await db.User.findOne({
       where: {
@@ -1831,7 +1831,7 @@ io.on("connection", async socket => {
         }
       });
     }
-    //#endregion
+    // #endregion
 
     if (room && room.users_steps_state !== null) {
       let index = room.users_steps_state.findIndex(
@@ -2867,9 +2867,7 @@ io.on("connection", async socket => {
                       eventChange.change;
                     break;
                   default:
-                    console.log(
-                      "Что-то не так с событием 2644 карточка - " + card.id
-                    );
+                    console.log("Что-то не так с событием 2644 карточка - ");
                     break;
                 }
                 await db.UserInRoom.update(
