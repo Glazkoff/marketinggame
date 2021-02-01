@@ -62,16 +62,6 @@ const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
   logging: false // TODO: УБРАТЬ
 });
 
-// // Свзяь многие-ко-многим
-// Users.belongsToMany(Rooms, {
-//   through: UserInRooms,
-//   foreignKey: "user_id"
-// });
-// Rooms.belongsToMany(Users, {
-//   through: UserInRooms,
-//   foreignKey: "room_id"
-// });
-
 // МОДЕЛЬ: Cards
 const Cards = sequelize.define("cards", {
   card_id: {
@@ -1098,6 +1088,10 @@ app.get("/api/admin/rooms/:id/users", async (req, res) => {
               as: "gamer_room_params"
             },
             {
+              model: db.PrevRoomParams,
+              as: "prev_room_params"
+            },
+            {
               model: db.UsedCards,
               as: "used_cards"
             }
@@ -1323,11 +1317,12 @@ app.post("/api/rooms", async (req, res) => {
             let uir = await db.UserInRoom.create({
               user_id: decoded.id,
               room_id: result.room_id,
-              current_month: result.first_params.month,
-              prev_room_params: result.first_params
+              current_month: result.first_params.month
             });
             result.first_params.user_in_room_id = uir.user_in_room_id;
-            await db.GamerRoomParams.create(result.first_params);
+            let newGrp = await db.GamerRoomParams.create(result.first_params);
+            let newPrp = await db.PrevRoomParams.create(result.first_params);
+
             result.dataValues.prev_room_params = result.first_params;
             result.dataValues.gamer_room_params = result.first_params;
             // #region Добавление последней комнаты для пользователя
@@ -1494,13 +1489,12 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                     let userInRoom = await db.UserInRoom.create({
                       user_id: decoded.id,
                       room_id: req.params.id,
-                      current_month: findRoom.first_params.month,
-                      gamer_room_params: findRoom.first_params,
-                      prev_room_params: findRoom.first_params
+                      current_month: findRoom.first_params.month
                     });
                     findRoom.first_params.user_in_room_id =
                       userInRoom.user_in_room_id;
                     await db.GamerRoomParams.create(findRoom.first_params);
+                    await db.PrevRoomParams.create(findRoom.first_params);
 
                     findRoom.dataValues.first_params =
                       userInRoom.gamer_room_params;
@@ -1519,6 +1513,10 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         {
                           model: db.GamerRoomParams,
                           as: "gamer_room_params"
+                        },
+                        {
+                          model: db.PrevRoomParams,
+                          as: "prev_room_params"
                         }
                       ]
                     });
@@ -1636,6 +1634,10 @@ app.get("/api/rooms/reset", async (req, res) => {
               {
                 model: db.GamerRoomParams,
                 as: "gamer_room_params"
+              },
+              {
+                model: db.PrevRoomParams,
+                as: "prev_room_params"
               }
             ]
           });
@@ -2140,6 +2142,10 @@ io.on("connection", async socket => {
         {
           model: db.GamerRoomParams,
           as: "gamer_room_params"
+        },
+        {
+          model: db.PrevRoomParams,
+          as: "prev_room_params"
         }
       ]
     });
@@ -2162,6 +2168,10 @@ io.on("connection", async socket => {
           {
             model: db.GamerRoomParams,
             as: "gamer_room_params"
+          },
+          {
+            model: db.PrevRoomParams,
+            as: "prev_room_params"
           }
         ]
       });
@@ -2195,6 +2205,10 @@ io.on("connection", async socket => {
           {
             model: db.GamerRoomParams,
             as: "gamer_room_params"
+          },
+          {
+            model: db.PrevRoomParams,
+            as: "prev_room_params"
           }
         ]
       });
@@ -2209,6 +2223,10 @@ io.on("connection", async socket => {
           {
             model: db.GamerRoomParams,
             as: "gamer_room_params"
+          },
+          {
+            model: db.PrevRoomParams,
+            as: "prev_room_params"
           }
         ]
       });
@@ -2253,6 +2271,10 @@ io.on("connection", async socket => {
 
       // Копируем неизменённые данные в колонку "предыдущие парметры"
       gamer.prev_room_params = {
+        ...gamer.gamer_room_params.dataValues
+      };
+
+      gamer.gamer_room_params = {
         ...gamer.gamer_room_params.dataValues
       };
 
@@ -2423,7 +2445,12 @@ io.on("connection", async socket => {
       let expenses = clients * realCostAttract;
       gamer.gamer_room_params.expenses = expenses;
       let result = commCircul - expenses;
+      console.log(chalk.bgRed("*".repeat(50)));
+      console.log(chalk.bgRed(gamer.gamer_room_params.money));
+      console.log(chalk.bgRed(room.budget_per_month));
       gamer.gamer_room_params.money += room.budget_per_month;
+      console.log(chalk.bgRed(gamer.gamer_room_params.money));
+      console.log(chalk.bgRed("*".repeat(50)));
       messageArr.push(
         "Пришёл бюджет на месяц (+" + Math.ceil(room.budget_per_month) + "₽)"
       );
@@ -2637,7 +2664,6 @@ io.on("connection", async socket => {
 
       await db.UserInRoom.update(
         {
-          prev_room_params: gamer.prev_room_params,
           effects: gamer.effects,
           changes: gamer.changes
         },
@@ -2649,13 +2675,26 @@ io.on("connection", async socket => {
         }
       );
 
-      // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      await db.GamerRoomParams.update(gamer.gamer_room_params, {
+      let grp = await db.GamerRoomParams.update(gamer.gamer_room_params, {
         where: {
           user_in_room_id: gamer.user_in_room_id
         }
       });
+
+      let prp = await db.PrevRoomParams.update(gamer.prev_room_params, {
+        where: {
+          user_in_room_id: gamer.user_in_room_id
+        }
+      });
+
+      console.log(chalk.bgGreen("/*".repeat(50)));
+      console.log(gamer.gamer_room_params);
+      console.log(JSON.stringify(gamer.gamer_room_params));
+      console.log(gamer.prev_room_params);
+      console.log(JSON.stringify(gamer.prev_room_params));
+      console.log(chalk.bgGreen(grp));
+      console.log(chalk.bgGreen(prp));
+      console.log(chalk.bgGreen("/*".repeat(50)));
 
       // TODO: Посылаем событие на изменение статуса участника
       io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
@@ -2890,6 +2929,12 @@ io.on("connection", async socket => {
         limit: 1,
         order: [["createdAt", "DESC"]]
       });
+      if (lastConfig == null) {
+        lastConfig = await db.GameConfig.create({
+          event_chance: 0.0
+        });
+        lastConfig = lastConfig.dataValues;
+      }
       if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
         // if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
         // console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
@@ -2919,6 +2964,10 @@ io.on("connection", async socket => {
                     {
                       model: db.GamerRoomParams,
                       as: "gamer_room_params"
+                    },
+                    {
+                      model: db.PrevRoomParams,
+                      as: "prev_room_params"
                     }
                   ]
                 });
@@ -2959,6 +3008,10 @@ io.on("connection", async socket => {
                     {
                       model: db.GamerRoomParams,
                       as: "gamer_room_params"
+                    },
+                    {
+                      model: db.PrevRoomParams,
+                      as: "prev_room_params"
                     }
                   ]
                 });
@@ -2994,6 +3047,10 @@ io.on("connection", async socket => {
             {
               model: db.GamerRoomParams,
               as: "gamer_room_params"
+            },
+            {
+              model: db.PrevRoomParams,
+              as: "prev_room_params"
             }
           ]
         });
@@ -3047,6 +3104,10 @@ io.on("connection", async socket => {
             {
               model: db.GamerRoomParams,
               as: "gamer_room_params"
+            },
+            {
+              model: db.PrevRoomParams,
+              as: "prev_room_params"
             }
           ]
         });

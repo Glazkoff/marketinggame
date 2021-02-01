@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_in_room_id",
         as: "gamer_room_params"
       });
+      UserInRoom.hasOne(models.PrevRoomParams, {
+        onDelete: "cascade",
+        foreignKey: "user_in_room_id",
+        as: "prev_room_params"
+      });
     }
   }
   UserInRoom.init(
@@ -53,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSONB,
         allowNull: true,
         defaultValue: []
-      },
+      }
       // -------------------------------
       // TODO: удалить ниже
       // gamer_room_params: {
@@ -61,10 +66,10 @@ module.exports = (sequelize, DataTypes) => {
       //   type: DataTypes.JSONB,
       //   allowNull: false
       // },
-      prev_room_params: {
-        // TODO: Заменить на модель PrevRoomParams
-        type: DataTypes.JSONB
-      }
+      // prev_room_params: {
+      //   // TODO: Заменить на модель PrevRoomParams
+      //   type: DataTypes.JSONB
+      // }
       // used_cards: {
       //   // TODO: Заменить на модель UsedCards
       //   type: DataTypes.JSONB,
