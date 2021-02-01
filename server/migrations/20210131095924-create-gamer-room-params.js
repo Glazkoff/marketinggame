@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         alowNull: false
       },
-      conversiion: {
+      conversion: {
         type: Sequelize.FLOAT,
         alowNull: false
       },

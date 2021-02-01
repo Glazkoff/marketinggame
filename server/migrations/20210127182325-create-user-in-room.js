@@ -28,11 +28,11 @@ module.exports = {
       },
       // -------------------------------
       // TODO: удалить ниже
-      gamer_room_params: {
-        // TODO: Заменить на модель GamerRoomParams
-        type: Sequelize.JSONB,
-        allowNull: false
-      },
+      // gamer_room_params: {
+      //   // TODO: Заменить на модель GamerRoomParams
+      //   type: Sequelize.JSONB,
+      //   allowNull: false
+      // },
       prev_room_params: {
         // TODO: Заменить на модель PrevRoomParams
         type: Sequelize.JSONB

@@ -1091,9 +1091,18 @@ app.get("/api/admin/rooms/:id/users", async (req, res) => {
         let result = await db.UserInRoom.findAll({
           where: {
             room_id: req.params.id
-          }
+          },
+          include: [
+            {
+              model: db.GamerRoomParams,
+              as: "gamer_room_params"
+            },
+            {
+              model: db.UsedCards,
+              as: "used_cards"
+            }
+          ]
         });
-        // let gamer_room_params = db.GamerRoomParams.findOne();
         res.send(result);
       }
     }
@@ -1311,13 +1320,14 @@ app.post("/api/rooms", async (req, res) => {
               first_params: req.body,
               budget_per_month: req.body.money
             });
-            await db.UserInRoom.create({
+            let uir = await db.UserInRoom.create({
               user_id: decoded.id,
               room_id: result.room_id,
               current_month: result.first_params.month,
-              gamer_room_params: result.first_params,
               prev_room_params: result.first_params
             });
+            result.first_params.user_in_room_id = uir.user_in_room_id;
+            await db.GamerRoomParams.create(result.first_params);
             result.dataValues.prev_room_params = result.first_params;
             result.dataValues.gamer_room_params = result.first_params;
             // #region Добавление последней комнаты для пользователя
@@ -1488,6 +1498,10 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       gamer_room_params: findRoom.first_params,
                       prev_room_params: findRoom.first_params
                     });
+                    findRoom.first_params.user_in_room_id =
+                      userInRoom.user_in_room_id;
+                    await db.GamerRoomParams.create(findRoom.first_params);
+
                     findRoom.dataValues.first_params =
                       userInRoom.gamer_room_params;
                     findRoom.dataValues.prev_room_params =
@@ -1500,7 +1514,13 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       where: {
                         user_id: decoded.id,
                         room_id: req.params.id
-                      }
+                      },
+                      include: [
+                        {
+                          model: db.GamerRoomParams,
+                          as: "gamer_room_params"
+                        }
+                      ]
                     });
                     findRoom.dataValues.first_params =
                       userInRoom.gamer_room_params;
@@ -1600,7 +1620,7 @@ app.get("/api/rooms/reset", async (req, res) => {
           }
         });
 
-        //#endregion
+        // #endregion
         if (!room) {
           res.status(401).send({
             status: 401,
@@ -1611,7 +1631,13 @@ app.get("/api/rooms/reset", async (req, res) => {
             where: {
               user_id: decoded.id,
               room_id: room.room_id
-            }
+            },
+            include: [
+              {
+                model: db.GamerRoomParams,
+                as: "gamer_room_params"
+              }
+            ]
           });
           if (!userInRoom) {
             res.status(400).send({
@@ -2109,7 +2135,13 @@ io.on("connection", async socket => {
       attributes: ["user_id", "effects"],
       where: {
         room_id: room.room_id
-      }
+      },
+      include: [
+        {
+          model: db.GamerRoomParams,
+          as: "gamer_room_params"
+        }
+      ]
     });
 
     // Отправляем каждому игроку его эффекты
@@ -2125,9 +2157,14 @@ io.on("connection", async socket => {
         where: {
           user_id: gamerId,
           room_id: room.room_id
-        }
+        },
+        include: [
+          {
+            model: db.GamerRoomParams,
+            as: "gamer_room_params"
+          }
+        ]
       });
-      userInRoom = userInRoom.dataValues;
       userInRoom.gamer_room_params.month--;
       let obj = {
         data: {
@@ -2146,25 +2183,35 @@ io.on("connection", async socket => {
 
   // При выполнении хода
   socket.on("doStep", async function(cardArr) {
-    // console.log(
-    //   chalk.magenta(`(doStep)`),
-    //   chalk.bgMagenta(`При выполнении хода`)
-    // );
     console.log("ход сделан 1995");
-    // console.log(chalk.bgBlue("Шаг пользователя #" + socket.decoded_token.id));
     try {
       // Находим данные об игроке
       let gamer = await db.UserInRoom.findOne({
         where: {
           user_id: socket.decoded_token.id,
           room_id: socket.roomId
-        }
+        },
+        include: [
+          {
+            model: db.GamerRoomParams,
+            as: "gamer_room_params"
+          }
+        ]
       });
-      gamer = gamer.dataValues;
 
-      let userInRoom = await db.UserInRoom.findOne();
-      console.log(chalk.red(JSON.stringify(userInRoom)));
-      // userInRoom = userInRoom.dataValues;
+      // TODO: проверить почему и главное зачем
+      let userInRoom = await db.UserInRoom.findOne({
+        where: {
+          user_id: socket.decoded_token.id,
+          room_id: socket.roomId
+        },
+        include: [
+          {
+            model: db.GamerRoomParams,
+            as: "gamer_room_params"
+          }
+        ]
+      });
 
       // Находим комнату, которая является последней, содержащей пользователя
       const Op = Sequelize.Op;
@@ -2177,12 +2224,12 @@ io.on("connection", async socket => {
         },
         order: [["updatedAt", "DESC"]]
       });
-      room = room.dataValues;
+      // room = room.dataValues;
 
       // Устанавливаем текущему игроку, что ход был сделан
-      room.users_steps_state.find(
-        el => el.id === socket.decoded_token.id
-      ).isattacker = true;
+      let uss = room.users_steps_state;
+      uss.find(el => el.id === socket.decoded_token.id).isattacker = true;
+      room.users_steps_state = uss;
 
       // Загружаем в БД, что ход был сделан
       await db.Room.update(
@@ -2206,7 +2253,7 @@ io.on("connection", async socket => {
 
       // Копируем неизменённые данные в колонку "предыдущие парметры"
       gamer.prev_room_params = {
-        ...gamer.gamer_room_params
+        ...gamer.gamer_room_params.dataValues
       };
 
       // (?) Уменьшаем количество оставшихся месяцев
@@ -2228,7 +2275,10 @@ io.on("connection", async socket => {
             gamer.effects.splice(effectIndex, 1);
             effectId--;
           }
-
+          console.log("*".repeat(50));
+          console.log(chalk.bgCyan(effect.step));
+          console.log(chalk.bgCyan(effect.duration));
+          console.log("*".repeat(50));
           // Добавление в объект использованных карточек
           if (effect.step === effect.duration) {
             let usedCard = await db.UsedCards.findOne({
@@ -2237,6 +2287,9 @@ io.on("connection", async socket => {
                 card_id: effect.id
               }
             });
+            console.log("*".repeat(50));
+            console.log(chalk.bgCyan(usedCard));
+            console.log("*".repeat(50));
             if (usedCard) {
               await db.UsedCards.update(
                 { amount: usedCard.dataValues.amount + 1 },
@@ -2248,11 +2301,14 @@ io.on("connection", async socket => {
                 }
               );
             } else {
-              await db.UsedCards.create({
+              let uc = await db.UsedCards.create({
                 amount: 1,
                 user_in_room_id: userInRoom.user_in_room_id,
                 card_id: effect.id
               });
+              console.log("*".repeat(50));
+              console.log(chalk.bgCyan(uc));
+              console.log("*".repeat(50));
             }
           }
         }
@@ -2408,7 +2464,11 @@ io.on("connection", async socket => {
                 card_id: changing.id
               }
             });
-            if (!usedCard) {
+            console.log("--".repeat(40));
+            console.log(usedCard);
+            console.log(!usedCard);
+            console.log("--".repeat(40));
+            if (usedCard == null) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
                 case "+":
@@ -2511,33 +2571,35 @@ io.on("connection", async socket => {
                 changing.change +
                 " (Улучшение юзабилити)";
             } else {
-              if (usedCard["amount"] >= 1) {
-                let changeCoef = changing.change;
-                if (usedCard["amount"] !== 0) {
-                  for (let i = 0; i < usedCard["amount"]; i++) {
-                    changeCoef = (1 + changeCoef) / 2;
-                    if (changing.change >= 10) {
-                      changeCoef = Math.ceil(changeCoef);
+              if (usedCard !== null) {
+                if (usedCard["amount"] >= 1) {
+                  let changeCoef = changing.change;
+                  if (usedCard["amount"] !== 0) {
+                    for (let i = 0; i < usedCard["amount"]; i++) {
+                      changeCoef = (1 + changeCoef) / 2;
+                      if (changing.change >= 10) {
+                        changeCoef = Math.ceil(changeCoef);
+                      }
                     }
                   }
+                  analyticsString +=
+                    " со знаком " +
+                    changing.operation +
+                    " на " +
+                    changeCoef +
+                    " (" +
+                    changing.from +
+                    ")";
+                } else {
+                  analyticsString +=
+                    " со знаком " +
+                    changing.operation +
+                    " на " +
+                    changing.change +
+                    " (" +
+                    changing.from +
+                    ")";
                 }
-                analyticsString +=
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changeCoef +
-                  " (" +
-                  changing.from +
-                  ")";
-              } else {
-                analyticsString +=
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changing.change +
-                  " (" +
-                  changing.from +
-                  ")";
               }
             }
             // console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
@@ -2573,10 +2635,8 @@ io.on("connection", async socket => {
 
       // TODO: понять, почему происходило обновление Used cards
 
-      // Синхронизируем изменения с БД
-      db.UserInRoom.update(
+      await db.UserInRoom.update(
         {
-          gamer_room_params: gamer.gamer_room_params,
           prev_room_params: gamer.prev_room_params,
           effects: gamer.effects,
           changes: gamer.changes
@@ -2589,8 +2649,16 @@ io.on("connection", async socket => {
         }
       );
 
+      // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      await db.GamerRoomParams.update(gamer.gamer_room_params, {
+        where: {
+          user_in_room_id: gamer.user_in_room_id
+        }
+      });
+
       // TODO: Посылаем событие на изменение статуса участника
-      //     io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
+      io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
 
       let usersStepsState = [];
       // Если в комнате уже были шаги
@@ -2707,9 +2775,6 @@ io.on("connection", async socket => {
       if (room.users_steps_state !== null && room.participants_id !== null) {
         let activeParticipants = room.participants_id.length;
 
-        // console.log(
-        //   chalk.bgGreen(`--- НАЧИНАЕТСЯ ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ`)
-        // );
         // console.log(chalk.bgGreen(`${room.users_steps_state}`));
         console.log("подсчет участников сделавших ход 2491");
         // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
@@ -2774,7 +2839,6 @@ io.on("connection", async socket => {
       } else {
         console.log("Что-то не так с параметрами ходов пользователя 2549");
       }
-
       // Отправка сообщений об изменениях
       if (messageArr.length !== 0) {
         for (let index = 0; index < messageArr.length; index++) {
@@ -2822,7 +2886,6 @@ io.on("connection", async socket => {
           );
         }
       }
-
       let lastConfig = await db.GameConfig.findOne({
         limit: 1,
         order: [["createdAt", "DESC"]]
@@ -2830,7 +2893,7 @@ io.on("connection", async socket => {
       if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
         // if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
         // console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
-        console.log("сулучайное событие 2607 ");
+        console.log("случайное событие 2607 ");
 
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
@@ -2851,7 +2914,13 @@ io.on("connection", async socket => {
                   where: {
                     user_id: gamerId,
                     room_id: room.room_id
-                  }
+                  },
+                  include: [
+                    {
+                      model: db.GamerRoomParams,
+                      as: "gamer_room_params"
+                    }
+                  ]
                 });
                 switch (eventChange.operation) {
                   case "+":
@@ -2870,17 +2939,12 @@ io.on("connection", async socket => {
                     console.log("Что-то не так с событием 2644 карточка - ");
                     break;
                 }
-                await db.UserInRoom.update(
-                  {
-                    gamer_room_params: userInRoom.gamer_room_params
-                  },
-                  {
-                    where: {
-                      user_id: gamerId,
-                      room_id: room.room_id
-                    }
+
+                await db.GamerRoomParams.update(userInRoom.gamer_room_params, {
+                  where: {
+                    user_in_room_id: userInRoom.user_in_room_id
                   }
-                );
+                });
               }
 
               // Если изменение в следующие месяцы
@@ -2890,7 +2954,13 @@ io.on("connection", async socket => {
                   where: {
                     user_id: gamerId,
                     room_id: room.room_id
-                  }
+                  },
+                  include: [
+                    {
+                      model: db.GamerRoomParams,
+                      as: "gamer_room_params"
+                    }
+                  ]
                 });
                 userInRoom.changes.push(eventChange);
                 await db.UserInRoom.update(
@@ -2919,7 +2989,13 @@ io.on("connection", async socket => {
           where: {
             user_id: gamerId,
             room_id: room.room_id
-          }
+          },
+          include: [
+            {
+              model: db.GamerRoomParams,
+              as: "gamer_room_params"
+            }
+          ]
         });
         userInRoom = userInRoom.dataValues;
         let obj = {
@@ -2966,7 +3042,13 @@ io.on("connection", async socket => {
         let gamers = await db.UserInRoom.findAll({
           where: {
             room_id: room.room_id
-          }
+          },
+          include: [
+            {
+              model: db.GamerRoomParams,
+              as: "gamer_room_params"
+            }
+          ]
         });
         // console.log(chalk.red(JSON.stringify(gamers)));
         // gamers = gamers.dataValues;
@@ -3097,358 +3179,6 @@ io.on("connection", async socket => {
     } catch (error) {
       console.log(error);
     }
-    // TODO: Переделать под новую архитектуру
-
-    //     let iter = 0;
-    //     let indexEffArr;
-    //     for (let index = 0; index < gamer.changes.length; index++) {
-    //       let changing = gamer.changes[index];
-    //       indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id);
-
-    //       if (
-    //         indexEffArr === -1 &&
-    //         changing.id !== 3 &&
-    //         changing.id !== 7 &&
-    //         changing.event === undefined
-    //       ) {
-    //         for (let index = 0; index < gamer.changes.length; index++) {
-    //           if (gamer.changes[index].id === changing.id) {
-    //             gamer.changes.splice(index, 1);
-    //             index--;
-    //           }
-    //         }
-    //       }
-    //       // ***********************************************************************
-    //       if (changing.when === 1) {
-    //         // console.log("*****************************************************");
-    //         // console.log(changing);
-    //         // console.log("*****************************************************");
-    //         if (
-    //           gamer.effects.findIndex(elem => elem.id === changing.id) !== -1 ||
-    //           changing.id === 3 ||
-    //           changing.id === 7 ||
-    //           changing.event
-    //         ) {
-    //           if (
-    //             gamer.usedCards[changing.id] < 1 ||
-    //             typeof gamer.usedCards[changing.id] === "undefined"
-    //           ) {
-    //             switch (changing.operation) {
-    //               case "+":
-    //                 gamer.data[changing.param] += changing.change;
-    //                 break;
-    //               case "-":
-    //                 gamer.data[changing.param] -= changing.change;
-    //                 break;
-    //               case "*":
-    //                 gamer.data[changing.param] *= changing.change;
-    //                 break;
-    //               default:
-    //                 // console.log(
-    //                 //   "Что-то не так с операцией карточки по ID " + card.id
-    //                 // );
-    //                 messageArr.push(
-    //                   "Что-то не так с операцией карточки по ID " + card.id
-    //                 );
-    //                 break;
-    //             }
-    //           } else {
-    //             switch (changing.operation) {
-    //               case "+":
-    //                 gamer.data[changing.param] +=
-    //                   changing.change / Math.pow(2, gamer.usedCards[changing.id]);
-    //                 break;
-    //               case "-":
-    //                 gamer.data[changing.param] -=
-    //                   changing.change / Math.pow(2, gamer.usedCards[changing.id]);
-    //                 break;
-    //               case "*":
-    //                 gamer.data[changing.param] *=
-    //                   changing.change / Math.pow(2, gamer.usedCards[changing.id]);
-    //                 break;
-    //               default:
-    //                 // console.log(
-    //                 //   "Что-то не так с операцией карточки по ID " + card.id
-    //                 // );
-    //                 messageArr.push(
-    //                   "Что-то не так с операцией карточки по ID " + card.id
-    //                 );
-    //                 break;
-    //             }
-    //           }
-    //           let analyticsString = "Обновлён  ";
-    //           switch (changing.param) {
-    //             case "organicCount":
-    //               analyticsString += 'параметр "Органика"';
-    //               break;
-    //             case "contextCount":
-    //               analyticsString += 'параметр "Реклама: контекст"';
-    //               break;
-    //             case "socialsCount":
-    //               analyticsString += 'параметр "Реклама: соцсети"';
-    //               break;
-    //             case "smmCount":
-    //               analyticsString += 'параметр "Соц. медиа"';
-    //               break;
-    //             case "straightCount":
-    //               analyticsString += 'параметр "Прямой заход"';
-    //               break;
-
-    //             default:
-    //               analyticsString += "параметр " + changing.param;
-    //               break;
-    //           }
-
-    //           if (gamer.usedCards[changing.id] >= 1) {
-    //             analyticsString +=
-    //               " со знаком " +
-    //               changing.operation +
-    //               " на " +
-    //               changing.change / Math.pow(2, gamer.usedCards[changing.id]) +
-    //               " (" +
-    //               changing.from +
-    //               ")";
-    //           } else {
-    //             analyticsString +=
-    //               " со знаком " +
-    //               changing.operation +
-    //               " на " +
-    //               changing.change +
-    //               " (" +
-    //               changing.from +
-    //               ")";
-    //           }
-    //           // console.log(analyticsString);
-    //           messageArr.push(analyticsString);
-    //           let indForDelete = gamer.changes.findIndex(elem => {
-    //             return (
-    //               elem.id === changing.id &&
-    //               elem.change === changing.change &&
-    //               elem.param === changing.param
-    //             );
-    //           });
-    //           if (indForDelete !== -1) {
-    //             // console.log('Удалилась позиция ' + indForDelete)
-    //             // gamer.changes.splice(indForDelete, 1)
-    //           }
-
-    //         } else {
-    //           // console.log('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
-    //           // messageArr.push('УДАЛЁН параметр ' + changing.param + ' со знаком ' + changing.operation + ' на ' + changing.change)
-    //           for (let index = 0; index < gamer.changes.length; index++) {
-    //             if (gamer.changes[index].id === changing.id) {
-    //               messageArr.push(
-    //                 "УДАЛЁН параметр " +
-    //                 changing.param +
-    //                 " со знаком " +
-    //                 changing.operation +
-    //                 " на " +
-    //                 changing.change
-    //               );
-    //               // console.log(
-    //               //   "УДАЛЁН параметр " +
-    //               //   changing.param +
-    //               //   " со знаком " +
-    //               //   changing.operation +
-    //               //   " на " +
-    //               //   changing.change
-    //               // );
-    //               gamer.changes.splice(index, 1);
-    //             }
-    //           }
-    //         }
-    //         gamer.changes.splice(iter, 1);
-    //       } else {
-    //         iter++;
-    //       }
-    //     }
-
-    // ЗДЕСЬ ЗАКОНЧИЛИ
-
-    //     // console.log("ИЗМЕНЕНИЯ ИГРОКА");
-    //     // console.log(gamer.changes);
-    //     // Конец обработки пришедшего массива
-
-    //     let gamers = roomsState.find(el => el.roomId === socket.roomId).gamers;
-    //     // console.log("~~~~~gamers~~~~~~");
-    //     // console.log(gamers);
-    //     io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
-    //     room.attackers--;
-    //     // console.log("*");
-    //     // console.log("*");
-    //     // console.log("*");
-    //     // console.log("АТАКУЮЩИЕ");
-    //     // console.log(room.attackers);
-    //     // console.log("СОХРАНЁННЫЕ АТАКУЮЩИЕ");
-    //     // console.log(room.constAttackers);
-    //     // console.log("Игроки без хода: " + room.attackers);
-    //     if (messageArr.length !== 0) {
-    //       for (let index = 0; index < messageArr.length; index++) {
-    //         io.sockets.to(gamer.id).emit("addMessage", {
-    //           name: "ОТДЕЛ АНАЛИТИКИ",
-    //           text: messageArr[index]
-    //         });
-    //       }
-    //       messageArr = [];
-    //     }
-
-    //     // Если все в комнате завершили ход
-    //     if (room.attackers === 0) {
-    //       room.roomState.month--;
-    //       // console.log(room.roomState.month);
-    //       // console.log("Обновление данных для ВСЕХ");
-    //       setTimeout(() => {
-    //         if (
-    //           Math.floor(Math.random() * 10) % 2 === 0 &&
-    //           room.roomState.month > 0
-    //         ) {
-    //           let randomEvent = events[Math.floor(Math.random() * events.length)];
-    //           // console.log("Событие");
-    //           // console.log(randomEvent);
-    //           for (const eventChange of randomEvent.dataChange) {
-    //             if (eventChange.when === 0) {
-    //               for (const gamerPos of gamers) {
-    //                 switch (eventChange.operation) {
-    //                   case "+":
-    //                     gamerPos.data[eventChange.param] += eventChange.change;
-    //                     break;
-    //                   case "-":
-    //                     gamerPos.data[eventChange.param] -= eventChange.change;
-    //                     break;
-    //                   case "*":
-    //                     gamerPos.data[eventChange.param] *= eventChange.change;
-    //                     break;
-    //                   default:
-    //                     // console.log("Что-то не так с событием " + card.id);
-    //                     break;
-    //                 }
-    //               }
-    //               // console.log(
-    //               //   "Событием изменен параметр " +
-    //               //   eventChange.param +
-    //               //   " со знаком " +
-    //               //   eventChange.operation +
-    //               //   " на " +
-    //               //   eventChange.change
-    //               // );
-    //             } else {
-    //               for (const oneGamer of gamers) {
-    //                 oneGamer.changes.push(eventChange);
-    //               }
-    //             }
-    //           }
-    //           socket.emit("gameEvent");
-    //           io.sockets.to(room.roomId).emit("gameEvent", randomEvent);
-    //           io.sockets.to(room.roomId).emit("addMessage", {
-    //             name: "СОБЫТИЕ!",
-    //             text: `${randomEvent.description}`
-    //           });
-    //         }
-    //         for (const gamerUser of gamers) {
-    //           io.sockets.to(gamerUser.id).emit("setStartGame", gamerUser.data);
-    //         }
-    //         socket.emit("doNextStep");
-    //         io.sockets.to(socket.roomId).emit("doNextStep");
-    //         room.attackers = room.constAttackers;
-    //       }, 1000);
-    //     }
-    //     // СЮДА
-
-    //     for (let index = 0; index < gamer.changes.length; index++) {
-    //       const changing = gamer.changes[index];
-    //       changing.when--;
-    //       if (changing.when < 1) {
-    //         gamer.changes.splice(index, 1);
-    //         index--;
-    //       }
-    //     }
-
-    //     // console.log("Месяц:");
-    //     // console.log(gamer.data.month);
-    //     gamer.data.month--;
-    //     if (room.roomState.month === 0) {
-    //       for (const gamer of gamers) {
-    //         io.sockets.to(gamer.id).emit("setStartGame", gamer.data);
-    //       }
-    //       let gamersRate = [];
-    //       for (const gamer of gamers) {
-    //         let position = {
-    //           id: gamer.id,
-    //           money: (Math.ceil(
-    //                 gamer.data.organicCount *
-    //                 gamer.data.organicCoef *
-    //                 gamer.data.conversion
-    //               ) +
-    //               Math.ceil(
-    //                 gamer.data.contextCount *
-    //                 gamer.data.contextCoef *
-    //                 gamer.data.conversion
-    //               ) +
-    //               Math.ceil(
-    //                 gamer.data.socialsCount *
-    //                 gamer.data.socialsCoef *
-    //                 gamer.data.conversion
-    //               ) +
-    //               Math.ceil(
-    //                 gamer.data.smmCount *
-    //                 gamer.data.smmCoef *
-    //                 gamer.data.conversion
-    //               ) +
-    //               Math.ceil(
-    //                 gamer.data.straightCount *
-    //                 gamer.data.straightCoef *
-    //                 gamer.data.conversion
-    //               )) *
-    //             gamer.data.averageCheck
-    //         };
-    //         gamersRate.push(position);
-    //       }
-    //       gamersRate.sort((a, b) => {
-    //         if (a.money > b.money) {
-    //           return -1;
-    //         } else if (a.money < b.money) {
-    //           return 1;
-    //         }
-    //         return 0;
-    //       });
-    //       // console.log("Рейтинг игроков:");
-    //       // console.log(gamersRate);
-    //       let winners = {};
-    //       for (let index = 1; index < 4; index++) {
-    //         let a = gamersRate.shift();
-    //         if (typeof a !== "undefined") {
-    //           winners[index] = Object.assign(a);
-    //           let person = connectedNames.find(el => el.id === a.id);
-    //           if (typeof person !== "undefined") {
-    //             winners[index].name = person.name;
-    //           }
-    //         } else winners[index] = a;
-    //       }
-    //       // console.log(winners);
-    //       io.sockets.to(room.roomId).emit("addMessage", {
-    //         name: "Admin",
-    //         text: `Финито ля комедиа!`
-    //       });
-
-    //       io.sockets.to(room.roomId).emit("finish", winners);
-    //     } else {}
-    //     // console.log("---ДАННЫЕ ИГРОКА---");
-    //     // console.log(gamer.data);
-    //     // console.log("---ЭФФЕКТЫ ИГРОКА---");
-    //     // console.log(gamer.effects);
-    //     for (const gamer of gamers) {
-    //       io.sockets.to(gamer.id).emit("setEffects", gamer.effects);
-    //     }
-    //   } else {
-    //     // console.log("NEED USER DATA!");
-    //     let room = roomsState.find(el => el.roomId === socket.roomId);
-    //     // Поиск игрока
-    //     let gamer = room.gamers.find(el => el.id === socket.id);
-    //     // console.log("ROOM", room);
-    //     // console.log("GAMERS", room.gamers);
-    //     // console.log("SOCKETID", socket.id);
-    //     io.sockets.to(socket.id).emit("needUserData");
-    //   }
 
     io.sockets.to(socket.id).emit("addMessage", {
       name: "Admin",

@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      GamerRoomParams.belongsTo(models.UserInRoom, {
+        foreignKey: "user_in_room_id",
+        as: "user_in_room"
+      });
     }
   }
   GamerRoomParams.init(
@@ -39,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         alowNull: false
       },
-      conversiion: {
+      conversion: {
         type: DataTypes.FLOAT,
         alowNull: false
       },
