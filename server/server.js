@@ -1466,7 +1466,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                     // #endregion
 
                     // #region Добавление имени для победителей
-                    if (findRoom.winners) {
+                    if (findRoom.winners.length !== 0) {
                       for (let index in findRoom.winners) {
                         if (findRoom.winners[index].id !== -1) {
                           let user = await db.User.findOne({
@@ -1484,7 +1484,8 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       return el === decoded.id;
                     });
                     if (isSet === -1) {
-                      if (!findRoom.is_start) {
+                      if (findRoom.is_start) {
+                        // Добавляем шаги пользователя
                         await db.Room.update(
                           {
                             users_steps_state: sequelize.fn(
@@ -1528,9 +1529,19 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       });
                       findRoom.first_params.user_in_room_id =
                         userInRoom.user_in_room_id;
-                      await db.GamerRoomParams.create(findRoom.first_params);
-                      await db.PrevRoomParams.create(findRoom.first_params);
+                      let grp = await db.GamerRoomParams.create(
+                        findRoom.first_params
+                      );
+                      let prp = await db.PrevRoomParams.create(
+                        findRoom.first_params
+                      );
+                      userInRoom.gamer_room_params = grp.dataValues;
+                      userInRoom.prev_room_params = prp.dataValues;
 
+                      console.log(chalk.bgRed("()".repeat(50)));
+                      console.log(grp);
+                      console.log(prp);
+                      console.log(chalk.bgRed("()".repeat(50)));
                       findRoom.dataValues.first_params =
                         userInRoom.gamer_room_params;
                       findRoom.dataValues.prev_room_params =
@@ -1556,7 +1567,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         ]
                       });
                       findRoom.dataValues.first_params =
-                        userInRoom.gamer_room_params;
+                        userInRoom.gamer_room_params.dataValues;
                       findRoom.dataValues.prev_room_params =
                         userInRoom.prev_room_params.dataValues;
                       findRoom.dataValues.gamer_room_params =

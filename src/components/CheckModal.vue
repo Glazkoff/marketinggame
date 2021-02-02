@@ -5,7 +5,7 @@
         <h5>Ошибка!</h5>
       </template>
       <template v-slot:body>
-        <p>{{errorMessage}}</p>
+        <p>{{ errorMessage }}</p>
       </template>
       <template v-slot:footer>
         <button type="button" class="btn btn-success" @click="sendClose()">
@@ -20,7 +20,7 @@
 import Modal from "@/components/Modal.vue";
 export default {
   name: "CheckModal",
-  props: ['errorMessage'],
+  props: ["errorMessage"],
   components: {
     Modal
   },
@@ -35,6 +35,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
