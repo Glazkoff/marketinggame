@@ -139,3 +139,8 @@ npm run lint
 npm i -g pg
 ```
 - [Типы данных Sequelize](https://sequelize.org/v5/manual/data-types.html)
+
+
+### ОШИБКИ
+- Несостыковка обработки объекта winners (теперь через таблицу БД, объект в другом формате)
+- 

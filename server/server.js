@@ -1385,6 +1385,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
+        // Ищем комнату
         let findRoom = await db.Room.findOne({
           where: {
             room_id: req.params.id
@@ -1396,208 +1397,224 @@ app.post("/api/rooms/join/:id", async (req, res) => {
             }
           ]
         });
-        if (findRoom.current_month > 0) {
+
+        // Проверяем существует ли вообще комната
+        if (!findRoom) {
           res.status(404).send({
             status: 404,
-            message: "Игра в комнате уже началась!"
+            message: "Такой комнаты не существует!"
           });
         } else {
-          if (!findRoom) {
+          // Проверяем, не началась ли игра в комнате
+          if (findRoom.current_month > 0) {
             res.status(404).send({
               status: 404,
-              message: "Такой комнаты не существует!"
+              message: "Игра в комнате уже началась!"
             });
           } else {
+            // Проверяем, не была ли игра завершена
             if (findRoom.is_finished) {
               res.status(400).send({
                 status: 400,
                 message: "Игра в комнате была завершена!"
               });
             } else {
-              let user_last_room_valid = await db.User.findOne({
+              // Получаем объект пользователя
+              let user = await db.User.findOne({
                 where: {
                   user_id: decoded.id
                 }
               });
-              if (
-                !user_last_room_valid.last_room ||
-                user_last_room_valid.last_room === findRoom.room_id
-              ) {
-                const Op = Sequelize.Op;
-                let iskickedUser = await db.Room.findOne({
-                  where: {
-                    room_id: findRoom.room_id,
-                    kicked_participants_id: {
-                      [Op.contains]: decoded.id
-                    }
-                  },
-                  include: [
-                    {
-                      model: db.Winner,
-                      as: "winners"
-                    }
-                  ]
-                });
-                if (!iskickedUser) {
-                  //#region Добавление ласт рум к пользователю
-                  db.User.update(
-                    {
-                      last_room: req.params.id
-                    },
-                    {
-                      where: {
-                        user_id: decoded.id
-                      }
-                    }
-                  ).then(res => {
-                    console.log(res);
-                  });
-                  //#endregion
 
-                  // #region Добавление имени для победителей
-                  if (findRoom.winners) {
-                    for (let index in findRoom.winners) {
-                      if (findRoom.winners[index].id !== -1) {
-                        let user = await db.User.findOne({
-                          where: {
-                            user_id: findRoom.winners[index].id
-                          }
-                        });
-                        findRoom.winners[index].name = user.name;
+              if (user !== null) {
+                // Если не было последней комнаты
+                // или последняя комната равняется искомой
+                if (!user.last_room || user.last_room === findRoom.room_id) {
+                  const Op = Sequelize.Op;
+
+                  // Находим объект, если пользователь выкинут вручную
+                  let iskickedUser = await db.Room.findOne({
+                    where: {
+                      room_id: findRoom.room_id,
+                      kicked_participants_id: {
+                        [Op.contains]: decoded.id
                       }
-                    }
-                  }
-                  // #endregion
-                  let participantsArray = findRoom.participants_id;
-                  let isSet = participantsArray.findIndex(el => {
-                    return el === decoded.id;
-                  });
-                  if (isSet === -1) {
-                    if (!findRoom.is_start) {
-                      await db.Room.update(
-                        {
-                          users_steps_state: sequelize.fn(
-                            "array_append",
-                            sequelize.col("users_steps_state"),
-                            JSON.stringify({
-                              id: decoded.id,
-                              name: decoded.name,
-                              steps: [
-                                {
-                                  month: findRoom.current_month,
-                                  makeStep: true
-                                }
-                              ]
-                            })
-                          )
-                        },
-                        {
-                          where: {
-                            room_id: findRoom.room_id
-                          }
-                        }
-                      );
-                    }
-                    participantsArray.push(decoded.id);
-                    await db.Room.update(
+                    },
+                    include: [
                       {
-                        participants_id: participantsArray
+                        model: db.Winner,
+                        as: "winners"
+                      }
+                    ]
+                  });
+
+                  // Проверяем, если пользователь не выкинут вручную
+                  if (!iskickedUser) {
+                    // #region Добавление ласт рум к пользователю
+                    await db.User.update(
+                      {
+                        last_room: req.params.id
                       },
                       {
                         where: {
-                          room_id: req.params.id
+                          user_id: decoded.id
                         }
                       }
-                    );
-
-                    let userInRoom = await db.UserInRoom.create({
-                      user_id: decoded.id,
-                      room_id: req.params.id,
-                      current_month: findRoom.first_params.month
+                    ).then(res => {
+                      console.log(res);
                     });
-                    findRoom.first_params.user_in_room_id =
-                      userInRoom.user_in_room_id;
-                    await db.GamerRoomParams.create(findRoom.first_params);
-                    await db.PrevRoomParams.create(findRoom.first_params);
+                    // #endregion
 
-                    findRoom.dataValues.first_params =
-                      userInRoom.gamer_room_params;
-                    findRoom.dataValues.prev_room_params =
-                      userInRoom.prev_room_params;
-                    findRoom.dataValues.gamer_room_params =
-                      userInRoom.gamer_room_params;
-                    res.send(findRoom.dataValues);
-                  } else {
-                    let userInRoom = await db.UserInRoom.findOne({
-                      where: {
-                        user_id: decoded.id,
-                        room_id: req.params.id
-                      },
-                      include: [
-                        {
-                          model: db.GamerRoomParams,
-                          as: "gamer_room_params"
-                        },
-                        {
-                          model: db.PrevRoomParams,
-                          as: "prev_room_params"
+                    // #region Добавление имени для победителей
+                    if (findRoom.winners) {
+                      for (let index in findRoom.winners) {
+                        if (findRoom.winners[index].id !== -1) {
+                          let user = await db.User.findOne({
+                            where: {
+                              user_id: findRoom.winners[index].id
+                            }
+                          });
+                          findRoom.winners[index].name = user.name;
                         }
-                      ]
+                      }
+                    }
+                    // #endregion
+                    let participantsArray = findRoom.participants_id;
+                    let isSet = participantsArray.findIndex(el => {
+                      return el === decoded.id;
                     });
-                    findRoom.dataValues.first_params =
-                      userInRoom.gamer_room_params;
-                    findRoom.dataValues.prev_room_params =
-                      userInRoom.prev_room_params;
-                    findRoom.dataValues.gamer_room_params =
-                      userInRoom.gamer_room_params;
-
-                    if (findRoom.dataValues.users_steps_state !== null) {
-                      let index = findRoom.dataValues.users_steps_state.findIndex(
-                        el => el.id === decoded.id
-                      );
-                      if (index !== -1) {
-                        findRoom.dataValues.users_steps_state[
-                          index
-                        ].isdisconnected = false;
+                    if (isSet === -1) {
+                      if (!findRoom.is_start) {
                         await db.Room.update(
                           {
-                            users_steps_state:
-                              findRoom.dataValues.users_steps_state
+                            users_steps_state: sequelize.fn(
+                              "array_append",
+                              sequelize.col("users_steps_state"),
+                              JSON.stringify({
+                                id: decoded.id,
+                                name: decoded.name,
+                                steps: [
+                                  {
+                                    month: findRoom.current_month,
+                                    makeStep: true
+                                  }
+                                ]
+                              })
+                            )
                           },
                           {
                             where: {
-                              room_id: req.params.id
+                              room_id: findRoom.room_id
                             }
                           }
                         );
-                        let gamerNamesObj = {
-                          gamers: findRoom.dataValues.users_steps_state
-                        };
-
-                        res.send(findRoom.dataValues);
-                        io.in(req.params.id).emit("setGamers", gamerNamesObj);
                       }
-                    } else {
+                      participantsArray.push(decoded.id);
+                      await db.Room.update(
+                        {
+                          participants_id: participantsArray
+                        },
+                        {
+                          where: {
+                            room_id: req.params.id
+                          }
+                        }
+                      );
+
+                      let userInRoom = await db.UserInRoom.create({
+                        user_id: decoded.id,
+                        room_id: req.params.id,
+                        current_month: findRoom.first_params.month
+                      });
+                      findRoom.first_params.user_in_room_id =
+                        userInRoom.user_in_room_id;
+                      await db.GamerRoomParams.create(findRoom.first_params);
+                      await db.PrevRoomParams.create(findRoom.first_params);
+
+                      findRoom.dataValues.first_params =
+                        userInRoom.gamer_room_params;
+                      findRoom.dataValues.prev_room_params =
+                        userInRoom.prev_room_params;
+                      findRoom.dataValues.gamer_room_params =
+                        userInRoom.gamer_room_params;
                       res.send(findRoom.dataValues);
+                    } else {
+                      let userInRoom = await db.UserInRoom.findOne({
+                        where: {
+                          user_id: decoded.id,
+                          room_id: req.params.id
+                        },
+                        include: [
+                          {
+                            model: db.GamerRoomParams,
+                            as: "gamer_room_params"
+                          },
+                          {
+                            model: db.PrevRoomParams,
+                            as: "prev_room_params"
+                          }
+                        ]
+                      });
+                      findRoom.dataValues.first_params =
+                        userInRoom.gamer_room_params;
+                      findRoom.dataValues.prev_room_params =
+                        userInRoom.prev_room_params.dataValues;
+                      findRoom.dataValues.gamer_room_params =
+                        userInRoom.gamer_room_params.dataValues;
+
+                      if (findRoom.dataValues.users_steps_state !== null) {
+                        let index = findRoom.dataValues.users_steps_state.findIndex(
+                          el => el.id === decoded.id
+                        );
+                        if (index !== -1) {
+                          findRoom.dataValues.users_steps_state[
+                            index
+                          ].isdisconnected = false;
+                          await db.Room.update(
+                            {
+                              users_steps_state:
+                                findRoom.dataValues.users_steps_state
+                            },
+                            {
+                              where: {
+                                room_id: req.params.id
+                              }
+                            }
+                          );
+                          let gamerNamesObj = {
+                            gamers: findRoom.dataValues.users_steps_state
+                          };
+
+                          res.send(findRoom.dataValues);
+                          io.in(req.params.id).emit("setGamers", gamerNamesObj);
+                        }
+                      } else {
+                        res.send(findRoom.dataValues);
+                      }
                     }
+                    findRoom = await db.Room.findByPk(findRoom.room_id);
+                    let gamerNamesObj = {
+                      gamers: findRoom.users_steps_state
+                    };
+                    io.in(findRoom.room_id).emit("setGamers", gamerNamesObj);
+                  } else {
+                    res.status(400).send({
+                      status: 400,
+                      message: "Вы были исключены из игры!"
+                    });
                   }
-                  findRoom = await db.Room.findByPk(findRoom.room_id);
-                  let gamerNamesObj = {
-                    gamers: findRoom.users_steps_state
-                  };
-                  io.in(findRoom.room_id).emit("setGamers", gamerNamesObj);
                 } else {
                   res.status(400).send({
                     status: 400,
-                    message: "Вы были исключены из игры!"
+                    message:
+                      "Вы уже находитесь в другой комнате! Ваша последняя комната - " +
+                      user.last_room
                   });
                 }
               } else {
-                res.status(400).send({
-                  status: 400,
-                  message:
-                    "Вы уже находитесь в другой комнате! Ваша последняя комната - " +
-                    user_last_room_valid.last_room
+                res.status(404).send({
+                  status: 404,
+                  message: `Пользователь #${decoded.id} не найден `
                 });
               }
             }
@@ -1750,12 +1767,6 @@ app.get("/api/rooms/reset", async (req, res) => {
   );
 });
 
-app.get("/api/test", (req, res) => {
-  res.send({
-    test: "asdd"
-  });
-});
-
 app.use(history());
 
 // Запуск сервера на порте
@@ -1873,7 +1884,7 @@ io.on("connection", async socket => {
     // });
     // #region Правка нахождения комнаты для пользователя (кастом версия)
 
-    let user_last_room_id = await db.User.findOne({
+    let userLastRoomId = await db.User.findOne({
       where: {
         user_id: socket.decoded_token.id
       }
@@ -1881,11 +1892,11 @@ io.on("connection", async socket => {
 
     let room;
 
-    if (user_last_room_id) {
-      let last_room_id = user_last_room_id.last_room;
+    if (userLastRoomId) {
+      let lastRoomId = userLastRoomId.last_room;
       room = await db.Room.findOne({
         where: {
-          room_id: last_room_id
+          room_id: lastRoomId
         },
         include: [
           {

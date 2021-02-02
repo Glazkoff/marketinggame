@@ -52,11 +52,6 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.JSONB),
         allowNull: true
       },
-      // winners: {
-      //   // TODO: заменить моделью Winners
-      //   type: Sequelize.JSONB,
-      //   allowNull: true
-      // },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

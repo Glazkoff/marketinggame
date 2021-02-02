@@ -88,11 +88,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ARRAY(DataTypes.JSONB),
         allowNull: true
       }
-      // winners: {
-      //   // TODO: заменить моделью Winners
-      //   type: DataTypes.JSONB,
-      //   allowNull: true
-      // }
     },
     {
       sequelize,
