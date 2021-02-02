@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserInRoom,
         foreignKey: "room_id"
       });
+      Room.hasMany(models.Winner, {
+        foreignKey: "room_id",
+        as: "winners"
+      });
     }
   }
   Room.init(
@@ -83,12 +87,12 @@ module.exports = (sequelize, DataTypes) => {
         // TODO: заменить моделью UsersStepsStates
         type: DataTypes.ARRAY(DataTypes.JSONB),
         allowNull: true
-      },
-      winners: {
-        // TODO: заменить моделью Winners
-        type: DataTypes.JSONB,
-        allowNull: true
       }
+      // winners: {
+      //   // TODO: заменить моделью Winners
+      //   type: DataTypes.JSONB,
+      //   allowNull: true
+      // }
     },
     {
       sequelize,

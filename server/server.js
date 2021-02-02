@@ -1118,7 +1118,13 @@ app.get("/api/admin/rooms/:id", async (req, res) => {
         let result = await db.Room.findAll({
           where: {
             room_id: req.params.id
-          }
+          },
+          include: [
+            {
+              model: db.Winner,
+              as: "winners"
+            }
+          ]
         });
         res.send(result);
       }
@@ -1139,7 +1145,13 @@ app.get("/api/admin/rooms", async (req, res) => {
         });
       } else {
         let result = await db.Room.findAll({
-          order: [["room_id", "DESC"]]
+          order: [["room_id", "DESC"]],
+          include: [
+            {
+              model: db.Winner,
+              as: "winners"
+            }
+          ]
         });
         res.send(result);
       }
@@ -1376,7 +1388,13 @@ app.post("/api/rooms/join/:id", async (req, res) => {
         let findRoom = await db.Room.findOne({
           where: {
             room_id: req.params.id
-          }
+          },
+          include: [
+            {
+              model: db.Winner,
+              as: "winners"
+            }
+          ]
         });
         if (findRoom.current_month > 0) {
           res.status(404).send({
@@ -1412,7 +1430,13 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                     kicked_participants_id: {
                       [Op.contains]: decoded.id
                     }
-                  }
+                  },
+                  include: [
+                    {
+                      model: db.Winner,
+                      as: "winners"
+                    }
+                  ]
                 });
                 if (!iskickedUser) {
                   //#region Добавление ласт рум к пользователю
@@ -1615,7 +1639,13 @@ app.get("/api/rooms/reset", async (req, res) => {
               [Op.contains]: decoded.id
             },
             room_id: lastRoomId
-          }
+          },
+          include: [
+            {
+              model: db.Winner,
+              as: "winners"
+            }
+          ]
         });
 
         // #endregion
@@ -1856,7 +1886,13 @@ io.on("connection", async socket => {
       room = await db.Room.findOne({
         where: {
           room_id: last_room_id
-        }
+        },
+        include: [
+          {
+            model: db.Winner,
+            as: "winners"
+          }
+        ]
       });
     }
     // #endregion
@@ -1928,7 +1964,13 @@ io.on("connection", async socket => {
     let room = await db.Room.findOne({
       where: {
         room_id: data.roomId
-      }
+      },
+      include: [
+        {
+          model: db.Winner,
+          as: "winners"
+        }
+      ]
     });
     // Добавляем кикнутого пользователя
     if (room.kicked_participants_id !== null) {
@@ -2027,7 +2069,13 @@ io.on("connection", async socket => {
       let room = await db.Room.findOne({
         where: {
           room_id: data.room_id
-        }
+        },
+        include: [
+          {
+            model: db.Winner,
+            as: "winners"
+          }
+        ]
       });
       let participantsSteps = [];
 
@@ -2081,7 +2129,13 @@ io.on("connection", async socket => {
     let room = await db.Room.findOne({
       where: {
         room_id: roomId
-      }
+      },
+      include: [
+        {
+          model: db.Winner,
+          as: "winners"
+        }
+      ]
     });
     // console.log(chalk.bgRed(`[!!!] - (#${JSON.stringify(room)})`));
 
@@ -2240,6 +2294,12 @@ io.on("connection", async socket => {
           },
           is_finished: false
         },
+        include: [
+          {
+            model: db.Winner,
+            as: "winners"
+          }
+        ],
         order: [["updatedAt", "DESC"]]
       });
       // room = room.dataValues;
@@ -3209,6 +3269,31 @@ io.on("connection", async socket => {
             }
           }
         );
+
+        if (winners["1"].id !== -1) {
+          await db.Winner.create({
+            user_id: winners["1"].id,
+            room_id: room.room_id,
+            money: winners["1"].money,
+            place: 1
+          });
+        }
+        if (winners["2"].id !== -1) {
+          await db.Winner.create({
+            user_id: winners["2"].id,
+            room_id: room.room_id,
+            money: winners["2"].money,
+            place: 2
+          });
+        }
+        if (winners["3"].id !== -1) {
+          await db.Winner.create({
+            user_id: winners["3"].id,
+            room_id: room.room_id,
+            money: winners["3"].money,
+            place: 3
+          });
+        }
 
         // #region Очистка last_room после завершения игры
         for (const gamer of gamers) {
