@@ -42,11 +42,6 @@ module.exports = {
         type: Sequelize.JSONB,
         allowNull: false
       },
-      first_params: {
-        // TODO: заменить моделью RoomsFirstParams
-        type: Sequelize.JSONB,
-        allowNull: false
-      },
       users_steps_state: {
         // TODO: заменить моделью UsersStepsStates
         type: Sequelize.ARRAY(Sequelize.JSONB),

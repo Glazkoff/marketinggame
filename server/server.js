@@ -1123,6 +1123,10 @@ app.get("/api/admin/rooms/:id", async (req, res) => {
             {
               model: db.Winner,
               as: "winners"
+            },
+            {
+              model: db.RoomFirstParams,
+              as: "first_params"
             }
           ]
         });
@@ -1150,6 +1154,10 @@ app.get("/api/admin/rooms", async (req, res) => {
             {
               model: db.Winner,
               as: "winners"
+            },
+            {
+              model: db.RoomFirstParams,
+              as: "first_params"
             }
           ]
         });
@@ -1188,9 +1196,6 @@ app.post("/api/login", (req, res) => {
         }
         //#endregion
         else {
-          console.log("-".repeat(50));
-          console.log(user.dataValues);
-          console.log("-".repeat(50));
           //#region Сравнение полученных и введенных паролей
           bcrypt.compare(req.body.password, user.password, function(
             err,
@@ -1326,17 +1331,29 @@ app.post("/api/rooms", async (req, res) => {
               first_params: req.body,
               budget_per_month: req.body.money
             });
+
+            let firstParams = req.body;
+            firstParams.room_id = result.dataValues.room_id;
+            await db.RoomFirstParams.create(firstParams);
+            result.dataValues.first_params = firstParams;
+
             let uir = await db.UserInRoom.create({
               user_id: decoded.id,
               room_id: result.room_id,
-              current_month: result.first_params.month
+              current_month: result.dataValues.first_params.month
             });
-            result.first_params.user_in_room_id = uir.user_in_room_id;
-            let newGrp = await db.GamerRoomParams.create(result.first_params);
-            let newPrp = await db.PrevRoomParams.create(result.first_params);
+            result.dataValues.first_params.user_in_room_id =
+              uir.user_in_room_id;
+            let newGrp = await db.GamerRoomParams.create(
+              result.dataValues.first_params
+            );
+            let newPrp = await db.PrevRoomParams.create(
+              result.dataValues.first_params
+            );
 
-            result.dataValues.prev_room_params = result.first_params;
-            result.dataValues.gamer_room_params = result.first_params;
+            result.dataValues.prev_room_params = result.dataValues.first_params;
+            result.dataValues.gamer_room_params =
+              result.dataValues.first_params;
             // #region Добавление последней комнаты для пользователя
             await db.User.update(
               {
@@ -1350,7 +1367,8 @@ app.post("/api/rooms", async (req, res) => {
             ).then(res => {
               console.log(res);
             });
-            //#endregion
+            // #endregion
+
             res.send(result);
           } else {
             console.log("Комната уже существует, не создавай новые");
@@ -1394,6 +1412,10 @@ app.post("/api/rooms/join/:id", async (req, res) => {
             {
               model: db.Winner,
               as: "winners"
+            },
+            {
+              model: db.RoomFirstParams,
+              as: "first_params"
             }
           ]
         });
@@ -1444,6 +1466,10 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       {
                         model: db.Winner,
                         as: "winners"
+                      },
+                      {
+                        model: db.RoomFirstParams,
+                        as: "first_params"
                       }
                     ]
                   });
@@ -1538,10 +1564,6 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       userInRoom.gamer_room_params = grp.dataValues;
                       userInRoom.prev_room_params = prp.dataValues;
 
-                      console.log(chalk.bgRed("()".repeat(50)));
-                      console.log(grp);
-                      console.log(prp);
-                      console.log(chalk.bgRed("()".repeat(50)));
                       findRoom.dataValues.first_params =
                         userInRoom.gamer_room_params;
                       findRoom.dataValues.prev_room_params =
@@ -1603,7 +1625,19 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         res.send(findRoom.dataValues);
                       }
                     }
-                    findRoom = await db.Room.findByPk(findRoom.room_id);
+                    findRoom = await db.Room.findOne({
+                      where: { room_id: findRoom.room_id },
+                      include: [
+                        {
+                          model: db.Winner,
+                          as: "winners"
+                        },
+                        {
+                          model: db.RoomFirstParams,
+                          as: "first_params"
+                        }
+                      ]
+                    });
                     let gamerNamesObj = {
                       gamers: findRoom.users_steps_state
                     };
@@ -1672,6 +1706,10 @@ app.get("/api/rooms/reset", async (req, res) => {
             {
               model: db.Winner,
               as: "winners"
+            },
+            {
+              model: db.RoomFirstParams,
+              as: "first_params"
             }
           ]
         });
@@ -1913,6 +1951,10 @@ io.on("connection", async socket => {
           {
             model: db.Winner,
             as: "winners"
+          },
+          {
+            model: db.RoomFirstParams,
+            as: "first_params"
           }
         ]
       });
@@ -1991,6 +2033,10 @@ io.on("connection", async socket => {
         {
           model: db.Winner,
           as: "winners"
+        },
+        {
+          model: db.RoomFirstParams,
+          as: "first_params"
         }
       ]
     });
@@ -2096,6 +2142,10 @@ io.on("connection", async socket => {
           {
             model: db.Winner,
             as: "winners"
+          },
+          {
+            model: db.RoomFirstParams,
+            as: "first_params"
           }
         ]
       });
@@ -2156,6 +2206,10 @@ io.on("connection", async socket => {
         {
           model: db.Winner,
           as: "winners"
+        },
+        {
+          model: db.RoomFirstParams,
+          as: "first_params"
         }
       ]
     });
@@ -2320,6 +2374,10 @@ io.on("connection", async socket => {
           {
             model: db.Winner,
             as: "winners"
+          },
+          {
+            model: db.RoomFirstParams,
+            as: "first_params"
           }
         ],
         order: [["updatedAt", "DESC"]]
@@ -2379,10 +2437,7 @@ io.on("connection", async socket => {
             gamer.effects.splice(effectIndex, 1);
             effectId--;
           }
-          console.log("*".repeat(50));
-          console.log(chalk.bgCyan(effect.step));
-          console.log(chalk.bgCyan(effect.duration));
-          console.log("*".repeat(50));
+
           // Добавление в объект использованных карточек
           if (effect.step === effect.duration) {
             let usedCard = await db.UsedCards.findOne({
@@ -2391,9 +2446,7 @@ io.on("connection", async socket => {
                 card_id: effect.id
               }
             });
-            console.log("*".repeat(50));
-            console.log(chalk.bgCyan(usedCard));
-            console.log("*".repeat(50));
+
             if (usedCard) {
               await db.UsedCards.update(
                 { amount: usedCard.dataValues.amount + 1 },
@@ -2405,14 +2458,11 @@ io.on("connection", async socket => {
                 }
               );
             } else {
-              let uc = await db.UsedCards.create({
+              await db.UsedCards.create({
                 amount: 1,
                 user_in_room_id: userInRoom.user_in_room_id,
                 card_id: effect.id
               });
-              console.log("*".repeat(50));
-              console.log(chalk.bgCyan(uc));
-              console.log("*".repeat(50));
             }
           }
         }
@@ -2527,12 +2577,9 @@ io.on("connection", async socket => {
       let expenses = clients * realCostAttract;
       gamer.gamer_room_params.expenses = expenses;
       let result = commCircul - expenses;
-      console.log(chalk.bgRed("*".repeat(50)));
-      console.log(chalk.bgRed(gamer.gamer_room_params.money));
-      console.log(chalk.bgRed(room.budget_per_month));
+
       gamer.gamer_room_params.money += room.budget_per_month;
-      console.log(chalk.bgRed(gamer.gamer_room_params.money));
-      console.log(chalk.bgRed("*".repeat(50)));
+
       messageArr.push(
         "Пришёл бюджет на месяц (+" + Math.ceil(room.budget_per_month) + "₽)"
       );
@@ -2573,10 +2620,7 @@ io.on("connection", async socket => {
                 card_id: changing.id
               }
             });
-            console.log("--".repeat(40));
-            console.log(usedCard);
-            console.log(!usedCard);
-            console.log("--".repeat(40));
+
             if (usedCard == null) {
               // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
@@ -2768,15 +2812,6 @@ io.on("connection", async socket => {
           user_in_room_id: gamer.user_in_room_id
         }
       });
-
-      console.log(chalk.bgGreen("/*".repeat(50)));
-      console.log(gamer.gamer_room_params);
-      console.log(JSON.stringify(gamer.gamer_room_params));
-      console.log(gamer.prev_room_params);
-      console.log(JSON.stringify(gamer.prev_room_params));
-      console.log(chalk.bgGreen(grp));
-      console.log(chalk.bgGreen(prp));
-      console.log(chalk.bgGreen("/*".repeat(50)));
 
       // TODO: Посылаем событие на изменение статуса участника
       io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
@@ -3282,8 +3317,8 @@ io.on("connection", async socket => {
 
         await db.Room.update(
           {
-            is_finished: true,
-            winners: winners
+            is_finished: true
+            // winners: winners
           },
           {
             where: {

@@ -34,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "room_id",
         as: "winners"
       });
+      Room.hasOne(models.RoomFirstParams, {
+        onDelete: "cascade",
+        foreignKey: "room_id",
+        as: "first_params"
+      });
     }
   }
   Room.init(
@@ -78,16 +83,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSONB,
         allowNull: false
       },
-      first_params: {
-        // TODO: заменить моделью RoomsFirstParams
-        type: DataTypes.JSONB,
-        allowNull: false
-      },
       users_steps_state: {
         // TODO: заменить моделью UsersStepsStates
         type: DataTypes.ARRAY(DataTypes.JSONB),
         allowNull: true
       }
+      // --------------------------
     },
     {
       sequelize,

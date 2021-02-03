@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "room_id",
         as: "winners_room"
       });
+      Winner.belongsTo(models.User, {
+        foreignKey: "user_id",
+        as: "winners_user"
+      });
     }
   }
   Winner.init(
