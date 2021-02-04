@@ -1,10 +1,21 @@
 const {
   logSocketInEvent,
-  logSocketOutEvent
+  logSocketOutEvent,
+  logSocketError
 } = require("../global_functions/logs");
-const { sendGamers } = require("../global_functions/game_process");
+const {
+  sendGamers,
+  getOneOffCardsId
+} = require("../global_functions/game_process");
+const {
+  sendAdminMessage,
+  sendAnalyticsMessage,
+  sendEventMessage
+} = require("../global_functions/messages");
+const Sequelize = require("sequelize");
+const EVENTS = require("../events");
 
-module.exports = function(socket, io, db) {
+module.exports = function(socket, io, db, Cards) {
   // При выполнении хода
   socket.on("doStep", async function(cardArr) {
     // Логируем входящее событие
@@ -47,6 +58,7 @@ module.exports = function(socket, io, db) {
         ]
       });
 
+      // Находим номер последней комнаты
       let user = await db.User.findOne({
         where: {
           user_id: socket.decoded_token.id
@@ -54,7 +66,7 @@ module.exports = function(socket, io, db) {
         attributes: ["last_room"]
       });
 
-      // Находим комнату, которая является последней, содержащей пользователя
+      // Находим последнюю комнату пользователя
       let room = await db.Room.findOne({
         where: {
           room_id: user.last_room,
@@ -72,55 +84,22 @@ module.exports = function(socket, io, db) {
         ],
         order: [["updatedAt", "DESC"]]
       });
-      // room = room.dataValues;
 
       // Устанавливаем текущему игроку, что ход был сделан
 
-      // Устанавливаем, что пользователи комнаты
+      // Устанавливаем, что пользователь совершил ход
       await db.UserInRoom.update(
         {
-          isdisconnected: false
+          isdisconnected: false,
+          isattacker: false
         },
         {
           where: {
-            room_id: room.room_id
+            room_id: room.room_id,
+            user_id: socket.decoded_token.id
           }
         }
       );
-
-      // // Находим пользователя в комнате
-      // let usersInRoom = await db.UserInRoom.findAll({
-      //   where: {
-      //     user_in_room_id: userInRoom.user_in_room_id
-      //   },
-      //   attributes: ["isattacker", "isdisconnected"],
-      //   include: [
-      //     {
-      //       model: db.User,
-      //       as: "user",
-      //       attributes: ["user_id", "name"]
-      //     }
-      //   ]
-      // });
-
-      // // Формируем объект пользователей для фронтенда
-      // let gamersObj = [];
-      // if (usersInRoom.length !== 0) {
-      //   usersInRoom.forEach(el => {
-      //     gamersObj.push({
-      //       id: el.user.user_id,
-      //       name: el.user.name,
-      //       isattacker: el.isattacker,
-      //       isdisconnected: el.isdisconnected
-      //     });
-      //   });
-      // }
-      // let gamerNamesObj = {
-      //   gamers: gamersObj
-      // };
-
-      // // Отправляем объект с состояниями ходов игроков всем в комнате
-      // io.in(room.room_id).eit("setGamers", gamerNamesObj);
 
       // Отправляем объект с состояниями ходов игроков всем в комнате
       await sendGamers(io, db, room.room_id);
@@ -144,6 +123,7 @@ module.exports = function(socket, io, db) {
         for (let effectId = 0; effectId < gamer.effects.length; effectId++) {
           let effect = gamer.effects[effectId];
           let cardArrIndex = cardArr.findIndex(elem => elem === effect.id);
+
           // Если в пришедшем массиве ID карточек нет эффекта из цикла
           // (если не прислали повторно), то удаляем из массива эффектов игрока
           if (cardArrIndex === -1) {
@@ -156,6 +136,7 @@ module.exports = function(socket, io, db) {
 
           // Добавление в объект использованных карточек
           if (effect.step === effect.duration) {
+            // Находим карту для эффекта
             let usedCard = await db.UsedCards.findOne({
               where: {
                 user_in_room_id: userInRoom.user_in_room_id,
@@ -163,7 +144,9 @@ module.exports = function(socket, io, db) {
               }
             });
 
+            // Если карта нашлась
             if (usedCard) {
+              // Увеличиваем счётчик серий использований карты
               await db.UsedCards.update(
                 { amount: usedCard.dataValues.amount + 1 },
                 {
@@ -173,7 +156,10 @@ module.exports = function(socket, io, db) {
                   }
                 }
               );
-            } else {
+            }
+            // Если карта не нашлась
+            else {
+              // Создаём счётчик серий использований карты
               await db.UsedCards.create({
                 amount: 1,
                 user_in_room_id: userInRoom.user_in_room_id,
@@ -210,16 +196,18 @@ module.exports = function(socket, io, db) {
         for (const cardId of cardArr) {
           // TODO: сделать загрузку из БД
           // Находим объект карточки на основе пришедшего ID
-          // let card = CARDS.find(el => el.id === cardId);
           let card = await Cards.findOne({
             where: {
               card_id: cardId
             },
             order: [["updatedAt", "DESC"]]
           });
+
+          // Вычитаем стоимость карточки из кошелька
           gamer.gamer_room_params.money -= card.cost;
 
-          let oneWayCards = await getOneOffCardsId();
+          // Получаем одноразовые карточки
+          let oneWayCards = await getOneOffCardsId(Cards);
           let oneWayCardIndex = oneWayCards.findIndex(
             elem => elem.card_id === cardId
           );
@@ -309,7 +297,7 @@ module.exports = function(socket, io, db) {
         let changing = gamer.changes[index];
         // Для ID изменения changing.id индекс в массиве эфф. равен indexEffArr
         indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id);
-        let oneWayCards = await getOneOffCardsId();
+        let oneWayCards = await getOneOffCardsId(Cards);
         let oneWayChangingId = oneWayCards.findIndex(
           el => el.card_id === changing.id
         );
@@ -338,7 +326,6 @@ module.exports = function(socket, io, db) {
             });
 
             if (usedCard == null) {
-              // if (typeof gamer.used_сards[`${changing.id}`] === "undefined") {
               switch (changing.operation) {
                 case "+":
                   gamer.gamer_room_params[changing.param] += changing.change;
@@ -350,9 +337,7 @@ module.exports = function(socket, io, db) {
                   gamer.gamer_room_params[changing.param] *= changing.change;
                   break;
                 default:
-                  // messageArr.push(
-                  //   "Что-то не так с операцией карточки по ID " + card.id
-                  // );
+                  // Что-то не так с операцией карточки
                   break;
               }
             } else {
@@ -376,9 +361,7 @@ module.exports = function(socket, io, db) {
                   gamer.gamer_room_params[changing.param] *= changeCoef;
                   break;
                 default:
-                  // messageArr.push(
-                  //   "Что-то не так с операцией карточки по ID " + card.id
-                  // );
+                  // Что-то не так с операцией карточки
                   break;
               }
             }
@@ -471,8 +454,8 @@ module.exports = function(socket, io, db) {
                 }
               }
             }
-            console.log("непонятно что 2323");
             messageArr.push(analyticsString);
+
             let indForDelete = gamer.changes.findIndex(elem => {
               return (
                 elem.id === changing.id &&
@@ -480,6 +463,7 @@ module.exports = function(socket, io, db) {
                 elem.param === changing.param
               );
             });
+
             if (indForDelete !== -1) {
               gamer.changes[indForDelete].toDelete = true;
             }
@@ -681,18 +665,6 @@ module.exports = function(socket, io, db) {
 
         activeParticipants -= loosedParticipants;
 
-        console.log(
-          chalk.bgGreen(`РЕЗУЛЬТАТ! didStepCurrMonth: ${didStepCurrMonth} 2512`)
-        );
-        console.log(
-          chalk.bgGreen(
-            `РЕЗУЛЬТАТ! activeParticipants: ${activeParticipants} 2515`
-          )
-        );
-        console.log(
-          chalk.bgGreen(`--- ПОДСЧЁТ СХОДИВШИХ УЧАСТНИКОВ ЗАКОНЧЕН 2517`)
-        );
-
         // !!! Когда все в комнате сделали ход
         if (didStepCurrMonth === activeParticipants) {
           console.log("Все пользователи сделали ход 2521");
@@ -722,21 +694,15 @@ module.exports = function(socket, io, db) {
         }
         // Если число сходивших не равно количеству участников
         else {
-          console.log("Не все пользователи сделали ход 2543");
-          console.log("2544 За этот месяц: ", didStepCurrMonth);
-          console.log("2545 Активных участников: ", activeParticipants);
-          console.log(" 2546 Всего участников: ", participantsArray.length);
+          // Не все пользователи сделали ход
         }
       } else {
-        console.log("Что-то не так с параметрами ходов пользователя 2549");
+        // Что-то не так с параметрами ходов пользователя
       }
       // Отправка сообщений об изменениях
       if (messageArr.length !== 0) {
         for (let index = 0; index < messageArr.length; index++) {
-          io.sockets.to(socket.id).emit("addMessage", {
-            name: "ОТДЕЛ АНАЛИТИКИ ",
-            text: messageArr[index]
-          });
+          sendAnalyticsMessage(io, socket.id, messageArr[index]);
         }
         messageArr = [];
       }
@@ -753,21 +719,19 @@ module.exports = function(socket, io, db) {
           io.sockets
             .to("user" + userWithEffects.user_id)
             .emit("setEffects", userWithEffects.effects);
+          // Логирование исходящего события
+          logSocketOutEvent(
+            `setEffects (user${userWithEffects.user_id})`,
+            "Отправка эффектов"
+          );
         }
 
         // Если текущий месяц меньше количества запланированных
         if (room.first_params.month > room.current_month) {
           room.current_month++;
-          // console.log(
-          //   chalk.bgBlue(
-          //     "Сменился месяц в комнате #" + room.room_id,
-          //     `(${room.current_month}, ${room.first_params.month})`
-          //   )
-          // );
-          console.log("месяцы ещё есть 2586");
           await db.Room.update(
             {
-              current_month: sequelize.literal("current_month + 1")
+              current_month: Sequelize.literal("current_month + 1")
             },
             {
               where: {
@@ -787,21 +751,14 @@ module.exports = function(socket, io, db) {
         });
         lastConfig = lastConfig.dataValues;
       }
-      if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
-        // if (Math.floor(Math.random() * 10) % 2 === 0 && allGamersDoStep) {
-        // console.log(chalk.bgBlue("Случайное событие #" + room.room_id));
-        console.log("случайное событие 2607 ");
 
+      // Выбираем случайно гененрировать ли событие
+      if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
         let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
-        // console.log(
-        //   chalk.bgRed("Случайное событие #", JSON.stringify(randomEvent))
-        // );
-        console.log("выбор случайного события 2615");
-        if (randomEvent.dataChange !== undefined) {
-          // console.log(chalk.bgYellow("$1$"));
 
+        if (randomEvent.dataChange !== undefined) {
           // Для каждого изменения
           for (const eventChange of randomEvent.dataChange) {
             // Если изменения при применении
@@ -837,7 +794,7 @@ module.exports = function(socket, io, db) {
                       eventChange.change;
                     break;
                   default:
-                    console.log("Что-то не так с событием 2644 карточка - ");
+                    // Что-то не так с событием
                     break;
                 }
 
@@ -883,11 +840,14 @@ module.exports = function(socket, io, db) {
             }
           }
         }
+
+        // Отправляем случайное событие
         io.in(room.room_id).emit("gameEvent", randomEvent);
-        io.in(room.room_id).emit("addMessage", {
-          name: "СОБЫТИЕ!",
-          text: `${randomEvent.description}`
-        });
+        // Логируем исходящее событие
+        logSocketOutEvent("gameEvent", "Отправляем случайное событие");
+
+        // Отправляем случайное событие
+        sendEventMessage(io, room.room_id, randomEvent.description);
       }
       for (let gamerId of participantsArray) {
         let userInRoom = await db.UserInRoom.findOne({
@@ -943,8 +903,7 @@ module.exports = function(socket, io, db) {
 
       // Если игра завершается
       if (room.current_month >= room.first_params.month) {
-        // console.log(chalk.bgBlueBright("Игра завершается #" + room.room_id));
-        console.log("завершение игры 2736");
+        // Завершение игры
 
         let gamers = await db.UserInRoom.findAll({
           where: {
@@ -961,9 +920,7 @@ module.exports = function(socket, io, db) {
             }
           ]
         });
-        // console.log(chalk.red(JSON.stringify(gamers)));
-        // gamers = gamers.dataValues;
-        // console.log(chalk.red(gamers));
+
         let gamersRate = [];
         for (const gamer of gamers) {
           let position = {
@@ -1040,11 +997,8 @@ module.exports = function(socket, io, db) {
           } else winners[index] = a;
         }
 
-        io.sockets.to(room.roomId).emit("addMessage", {
-          name: "Admin",
-          text: `Конец игры в комнате!`
-        });
-        console.log("победители 2825");
+        // Отправляем сообщеник о конце игры
+        sendAdminMessage(io, room.roomId, `Конец игры в комнате!`);
 
         await db.Room.update(
           {
@@ -1096,26 +1050,25 @@ module.exports = function(socket, io, db) {
           );
         }
         // #endregion
-        console.log(winners);
+
+        // Отправляем событие о конце игры
         io.in(room.room_id).emit("finish", winners);
+        // Логируем исходящее событие
+        logSocketOutEvent("finish", "Событие о конце игры");
       } else {
-        // console.log(chalk.bgBlue("Игра продолжается"));
-        // console.log(chalk.bgBlue(room.current_month));
-        // console.log(chalk.bgBlue(room.first_params.month));
-        console.log("игра продолжается 2842");
+        // игра продолжается
       }
 
       //  TODO: send effects
       //     for (const gamer of gamers) {
       //       io.sockets.to(gamer.id).emit("setEffects", gamer.effects);
       //     }
-    } catch (error) {
-      console.log(error);
-    }
 
-    io.sockets.to(socket.id).emit("addMessage", {
-      name: "Admin",
-      text: `Вы сделали ход!`
-    });
+      // Отправляем сообщение о завершённом ходе
+      sendAdminMessage(io, socket.id, "Вы сделали ход!");
+    } catch (error) {
+      // Логируем ошибки
+      logSocketError("do_step", error);
+    }
   });
 };

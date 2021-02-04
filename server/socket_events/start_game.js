@@ -1,6 +1,7 @@
 const {
   logSocketInEvent,
-  logSocketOutEvent
+  logSocketOutEvent,
+  logSocketError
 } = require("../global_functions/logs");
 const { sendGamers } = require("../global_functions/game_process");
 
@@ -55,7 +56,7 @@ module.exports = function(socket, io, db) {
       // Отправляем всем в комнате состояние игроков
       await sendGamers(io, db, data.room_id);
     } catch (error) {
-      console.log(error);
+      logSocketError("start_game", error);
     }
   });
 };

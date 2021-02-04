@@ -28,5 +28,14 @@ module.exports = {
         chalk.red.bold(eventName) +
         chalk.blue(" " + "~".repeat(indentLength / 2) + "< : " + message)
     );
+  },
+
+  // Логирует ошибку
+  logSocketError(context, message) {
+    console.log(
+      chalk.bgRed("=".repeat(indentLength) + " ОШИБКА") +
+        chalk.italic.red(" : [" + context + "] ") +
+        chalk.underline.red(message)
+    );
   }
 };
