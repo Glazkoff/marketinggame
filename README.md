@@ -143,4 +143,69 @@ npm i -g pg
 
 ### ОШИБКИ
 - Несостыковка обработки объекта winners (теперь через таблицу БД, объект в другом формате)
-- 
+
+
+---
+
+# Модуль (???)
+- get /api/admin/users/list
+- get,post /api/admin/globalconfig
+- get /api/reviews
+- post /api/addreview
+- delete/api/deletereview/:id
+
+# Основное - /api
+
+## /admin
+
+### /events
+- get /api/admin/events
+- post /api/admin/events/:id
+- put /api/admin/events/description/:id
+
+### /cards
+- get /api/admin/cards
+- post /api/admin/cards/:id
+- post /api/admin/cards/oneoff/:id
+- put /api/admin/cards/description/:id
+
+### /users
+- get /api/admin/users/count
+- get /api/admin/users/list/:offset
+- delete /api/admin/users/login/:login
+- delete /api/admin/users/id/:id
+
+### /config
+- post,get /api/admin/config
+
+### /rooms
+- get /api/admin/rooms
+- get /api/admin/rooms/:id
+- get /api/admin/rooms/:id/users
+
+---
+
+## /reviews
+- delete /api/reviews/:id
+- post,get "/api/reviews
+- get /api/reviewslist
+- get /api/reviews/:id
+
+## /cards  
+- get /api/cards/oneoff
+- get /api/cards/:id
+- get /api/cards
+
+## /login
+- post /api/login
+
+## /register
+- post /api/register
+
+## /rooms  
+- get /api/default/room
+- post /api/rooms
+- post /api/rooms/join/:id
+- get /api/rooms/reset
+
+ 

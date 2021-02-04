@@ -227,6 +227,8 @@ async function trySetEvents() {
   }
 }
 
+app.use("/api", require("./api_routes/router"));
+
 /** ************************** Модуль API *********************** */
 
 // Список всех пользователей
@@ -1859,6 +1861,7 @@ app.get("/api/rooms/reset", async (req, res) => {
   );
 });
 
+// Поддержка HTML5 History mode для SPA
 app.use(history());
 
 // Запуск сервера на порте
@@ -1892,7 +1895,6 @@ io.use(function(socket, next) {
       decoded
     ) {
       if (err) {
-        console.log("socket io use 1655");
         return next(new Error("Authentication error"));
       }
       socket.decoded_token = decoded;
@@ -1903,6 +1905,7 @@ io.use(function(socket, next) {
   }
 });
 
+// Обработка каждого подключения сокета
 io.on("connection", async socket => {
   // Логируем подключение токена
   logSocketState("connection", "Пользователь подключён");
