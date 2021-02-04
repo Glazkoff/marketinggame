@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_in_room_id",
         as: "prev_room_params"
       });
+      UserInRoom.hasMany(models.UserStepState, {
+        onDelete: "cascade",
+        foreignKey: "user_in_room_id",
+        as: "user_steps_state"
+      });
     }
   }
   UserInRoom.init(
@@ -53,6 +58,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSONB,
         allowNull: true,
         defaultValue: []
+      },
+      isattacker: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true
+      },
+      isdisconnected: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: true
       }
     },
     {

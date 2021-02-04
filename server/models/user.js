@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserInRoom,
         foreignKey: "user_id"
       });
-      User.hasMany(models.Winners, {
+      User.hasMany(models.Winner, {
         onDelete: "cascade",
         foreignKey: "user_id",
         as: "was_winner"

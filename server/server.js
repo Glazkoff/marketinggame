@@ -1170,38 +1170,38 @@ app.get("/api/admin/rooms", async (req, res) => {
 // Авторизация
 app.post("/api/login", (req, res) => {
   // console.log("LOGIN: ", req.body);
-  //#region Проверка на пустые данные
+  // #region Проверка на пустые данные
   if (!req.body.login || !req.body.password) {
     res.status(400).send({
       status: 400,
       message: "Пустой запрос!"
     });
   }
-  //#endregion
-  //#region Запрос на вытаскивание данных о пользователе
+  // #endregion
+  // #region Запрос на вытаскивание данных о пользователе
   else {
     db.User.findOne({
       where: {
         login: req.body.login
       }
     })
-      //#endregion
+      // #endregion
       .then(user => {
-        //#region Проверка на существование пользователя
+        // #region Проверка на существование пользователя
         if (!user) {
           res.status(404).send({
             status: 404,
             message: "Неправильный логин или пароль!"
           });
         }
-        //#endregion
+        // #endregion
         else {
-          //#region Сравнение полученных и введенных паролей
+          // #region Сравнение полученных и введенных паролей
           bcrypt.compare(req.body.password, user.password, function(
             err,
-            result //#endregion
+            result // #endregion
           ) {
-            //#region Если расшифровка не удалась
+            // #region Если расшифровка не удалась
             if (err) {
               console.log("Ошибка расшифровки: ", err);
               res.status(500).send({
@@ -1209,10 +1209,10 @@ app.post("/api/login", (req, res) => {
                 message: err
               });
             }
-            //#endregion
+            // #endregion
             else if (result) {
               // console.log(result);
-              //#region Создание токена найденного пользователя
+              // #region Создание токена найденного пользователя
               console.log("TOKEN: ", user);
               const accessToken = jwt.sign(
                 {
@@ -1227,16 +1227,16 @@ app.post("/api/login", (req, res) => {
                 message: "Пользователь найден",
                 token: accessToken
               });
-              //#endregion
+              // #endregion
             }
-            //#region Пользователь не найден
+            // #region Пользователь не найден
             else {
               res.status(404).send({
                 status: 404,
                 message: "Неправильный логин или пароль"
               });
             }
-            //#endregion
+            // #endregion
           });
         }
       })
@@ -1246,7 +1246,6 @@ app.post("/api/login", (req, res) => {
 
 // Зарегистрироваться
 app.post("/api/register", (req, res) => {
-  // console.log("REGISTER: ", req.body);
   console.log(" app post 1296");
   if (!req.body.login || !req.body.password || !req.body.name) {
     res.status(400).send({
@@ -1305,8 +1304,6 @@ app.get("/api/default/room", (req, res) => {
 // Создание новой команты
 app.post("/api/rooms", async (req, res) => {
   console.log("Новая комната 1376");
-  // console.log(req.body);
-  // console.log();
   await jwt.verify(
     req.headers.authorization,
     JWTCONFIG.SECRET,
@@ -1318,13 +1315,13 @@ app.post("/api/rooms", async (req, res) => {
         });
       } else {
         try {
-          let user_last_room_valid = await db.User.findOne({
+          let userLastRoomValid = await db.User.findOne({
             where: {
               user_id: decoded.id
             }
           });
-          console.log(user_last_room_valid.last_room);
-          if (!user_last_room_valid.last_room) {
+          console.log(userLastRoomValid.last_room);
+          if (!userLastRoomValid.last_room) {
             let result = await db.Room.create({
               owner_id: decoded.id,
               participants_id: [decoded.id],
@@ -1344,16 +1341,13 @@ app.post("/api/rooms", async (req, res) => {
             });
             result.dataValues.first_params.user_in_room_id =
               uir.user_in_room_id;
-            let newGrp = await db.GamerRoomParams.create(
-              result.dataValues.first_params
-            );
-            let newPrp = await db.PrevRoomParams.create(
-              result.dataValues.first_params
-            );
+            await db.GamerRoomParams.create(result.dataValues.first_params);
+            await db.PrevRoomParams.create(result.dataValues.first_params);
 
             result.dataValues.prev_room_params = result.dataValues.first_params;
             result.dataValues.gamer_room_params =
               result.dataValues.first_params;
+
             // #region Добавление последней комнаты для пользователя
             await db.User.update(
               {
@@ -1376,7 +1370,7 @@ app.post("/api/rooms", async (req, res) => {
               status: 400,
               message:
                 "Вы уже находитесь в другой комнате! Ваша последняя комната - " +
-                user_last_room_valid.last_room
+                userLastRoomValid.last_room
             });
           }
         } catch (error) {
@@ -1428,7 +1422,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
           });
         } else {
           // Проверяем, не началась ли игра в комнате
-          if (findRoom.current_month > 0) {
+          if (!findRoom.is_start) {
             res.status(404).send({
               status: 404,
               message: "Игра в комнате уже началась!"
@@ -1505,37 +1499,18 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       }
                     }
                     // #endregion
+
+                    // Участники комнаты
                     let participantsArray = findRoom.participants_id;
+
+                    // Является ли участником комнаты
                     let isSet = participantsArray.findIndex(el => {
                       return el === decoded.id;
                     });
+
+                    // Если не является участником комнаты
                     if (isSet === -1) {
-                      if (findRoom.is_start) {
-                        // Добавляем шаги пользователя
-                        await db.Room.update(
-                          {
-                            users_steps_state: sequelize.fn(
-                              "array_append",
-                              sequelize.col("users_steps_state"),
-                              JSON.stringify({
-                                id: decoded.id,
-                                name: decoded.name,
-                                steps: [
-                                  {
-                                    month: findRoom.current_month,
-                                    makeStep: true
-                                  }
-                                ]
-                              })
-                            )
-                          },
-                          {
-                            where: {
-                              room_id: findRoom.room_id
-                            }
-                          }
-                        );
-                      }
+                      //  Установить участником
                       participantsArray.push(decoded.id);
                       await db.Room.update(
                         {
@@ -1548,6 +1523,7 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         }
                       );
 
+                      //  Привязать пользователя к комнате и установить все параметры
                       let userInRoom = await db.UserInRoom.create({
                         user_id: decoded.id,
                         room_id: req.params.id,
@@ -1570,8 +1546,12 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         userInRoom.prev_room_params;
                       findRoom.dataValues.gamer_room_params =
                         userInRoom.gamer_room_params;
+
                       res.send(findRoom.dataValues);
-                    } else {
+                    }
+                    //  Если уже является участником комнаты
+                    else {
+                      // Находим связку пользователя и комнаты
                       let userInRoom = await db.UserInRoom.findOne({
                         where: {
                           user_id: decoded.id,
@@ -1595,36 +1575,54 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                       findRoom.dataValues.gamer_room_params =
                         userInRoom.gamer_room_params.dataValues;
 
-                      if (findRoom.dataValues.users_steps_state !== null) {
-                        let index = findRoom.dataValues.users_steps_state.findIndex(
-                          el => el.id === decoded.id
-                        );
-                        if (index !== -1) {
-                          findRoom.dataValues.users_steps_state[
-                            index
-                          ].isdisconnected = false;
-                          await db.Room.update(
-                            {
-                              users_steps_state:
-                                findRoom.dataValues.users_steps_state
-                            },
-                            {
-                              where: {
-                                room_id: req.params.id
-                              }
-                            }
-                          );
-                          let gamerNamesObj = {
-                            gamers: findRoom.dataValues.users_steps_state
-                          };
-
-                          res.send(findRoom.dataValues);
-                          io.in(req.params.id).emit("setGamers", gamerNamesObj);
+                      // Устанавливаем, что пользователь подключён к комнате
+                      await db.UserInRoom.update(
+                        {
+                          isdisconnected: false
+                        },
+                        {
+                          where: {
+                            user_in_room_id: userInRoom.user_in_room_id
+                          }
                         }
-                      } else {
-                        res.send(findRoom.dataValues);
+                      );
+
+                      // Находим пользователя в комнате
+                      let usersInRoom = await db.UserInRoom.findAll({
+                        where: {
+                          room_id: req.params.id
+                        },
+                        attributes: ["isattacker", "isdisconnected"],
+                        include: [
+                          {
+                            model: db.User,
+                            as: "user",
+                            attributes: ["user_id", "name"]
+                          }
+                        ]
+                      });
+
+                      // Формируем объект пользователей для фронтенда
+                      let gamersObj = [];
+                      if (usersInRoom.length !== 0) {
+                        usersInRoom.forEach(el => {
+                          gamersObj.push({
+                            id: el.user.user_id,
+                            name: el.user.name,
+                            isattacker: el.isattacker,
+                            isdisconnected: el.isdisconnected
+                          });
+                        });
                       }
+                      let gamerNamesObj = {
+                        gamers: gamersObj
+                      };
+
+                      io.in(req.params.id).emit("setGamers", gamerNamesObj);
+                      res.send(findRoom.dataValues);
                     }
+
+                    // Находим комнату
                     findRoom = await db.Room.findOne({
                       where: { room_id: findRoom.room_id },
                       include: [
@@ -1638,8 +1636,34 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                         }
                       ]
                     });
+
+                    // Находим пользователя в комнате
+                    let usersInRoom = await db.UserInRoom.findAll({
+                      where: {
+                        room_id: findRoom.room_id
+                      },
+                      attributes: ["isattacker", "isdisconnected"],
+                      include: [
+                        {
+                          model: db.User,
+                          as: "user",
+                          attributes: ["user_id", "name"]
+                        }
+                      ]
+                    });
+
+                    // Формируем объект пользователей для фронтенда
+                    let gamersObj = [];
+                    if (usersInRoom.length !== 0) {
+                      usersInRoom.forEach(el => {
+                        gamersObj.push({
+                          id: el.user.user_id,
+                          name: el.user.name
+                        });
+                      });
+                    }
                     let gamerNamesObj = {
-                      gamers: findRoom.users_steps_state
+                      gamers: gamersObj
                     };
                     io.in(findRoom.room_id).emit("setGamers", gamerNamesObj);
                   } else {
@@ -1683,7 +1707,7 @@ app.get("/api/rooms/reset", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        //#region Получение последней комнаты
+        // #region Получение последней комнаты
         let lastRoomId = await db.User.findOne({
           where: {
             user_id: decoded.id
@@ -1743,21 +1767,52 @@ app.get("/api/rooms/reset", async (req, res) => {
               message: "Нет активных игр!"
             });
           } else {
-            let usersState = await db.Room.findOne({
-              attributes: ["users_steps_state"],
+            let usersState = await db.UserStepState.findAll({
               where: {
-                room_id: room.room_id
+                user_in_room_id: userInRoom.user_in_room_id
               }
             });
-            if (usersState.users_steps_state != null) {
-              let index = usersState.users_steps_state.findIndex(
-                el => el.id === decoded.id
+
+            if (usersState.length !== 0) {
+              // Устанавливаем, что пользователь подключён к комнате
+              await db.UserInRoom.update(
+                {
+                  isdisconnected: false
+                },
+                {
+                  where: {
+                    user_in_room_id: userInRoom.user_in_room_id
+                  }
+                }
               );
-              if (index !== -1) {
-                usersState.users_steps_state[index].isdisconnected = false;
+
+              // Находим пользователя в комнате
+              let usersInRoom = await db.UserInRoom.findAll({
+                where: {
+                  user_in_room_id: userInRoom.user_in_room_id
+                },
+                attributes: ["isattacker", "isdisconnected"],
+                include: [
+                  {
+                    model: db.User,
+                    as: "user",
+                    attributes: ["user_id", "name"]
+                  }
+                ]
+              });
+
+              // Формируем объект пользователей для фронтенда
+              let gamersObj = [];
+              if (usersInRoom.length !== 0) {
+                usersInRoom.forEach(el => {
+                  gamersObj.push({
+                    id: el.user.user_id,
+                    name: el.user.name
+                  });
+                });
               }
               let gamerNamesObj = {
-                gamers: usersState.users_steps_state
+                gamers: gamersObj
               };
               io.in(room.room_id).emit("setGamers", gamerNamesObj);
 
@@ -1831,12 +1886,6 @@ const io = require("socket.io")(server);
 
 let connections = [];
 let usersAndSockets = {};
-let connectedNames = [];
-
-let roomsState = [];
-let disconnectedUsers = [];
-let leaveUsers = [];
-let roomNumb = 10;
 
 /** ********************************************* **/
 /** ******Ниже описаны события Socket.io********* **/
@@ -1908,10 +1957,6 @@ io.on("connection", async socket => {
 
   // Прикрепление пользователя к комнате
   socket.on("subscribeRoom", async roomId => {
-    // console.log(
-    //   chalk.magenta(`(subscribeRoom)`),
-    //   chalk.bgMagenta(`Прикрепление пользователя к комнате ${roomId}`)
-    // );
     console.log("прикрепление пользователя к комнате 1716");
     socket.join(roomId, () => {
       socket.roomId = roomId;
@@ -1961,32 +2006,55 @@ io.on("connection", async socket => {
     }
     // #endregion
 
-    if (room && room.users_steps_state !== null) {
-      let index = room.users_steps_state.findIndex(
-        el => el.id === socket.decoded_token.id
-      );
-      if (index !== -1) {
-        room.users_steps_state[index].isdisconnected = false;
-      }
-      let gamerNamesObj = {
-        gamers: room.users_steps_state
-      };
-      io.in(room.room_id).emit("setGamers", gamerNamesObj);
-      let res = await db.Room.update(
+    // Находим пользователя в комнате
+    let usersInRoom = await db.UserInRoom.findAll({
+      where: {
+        room_id: room.room_id
+      },
+      attributes: ["isattacker", "isdisconnected"],
+      include: [
         {
-          users_steps_state: room.users_steps_state
+          model: db.User,
+          as: "user",
+          attributes: ["user_id", "name"]
+        }
+      ]
+    });
+
+    if (room && usersInRoom.length !== 0) {
+      // Устанавливаем, что пользователь подключён к комнате
+
+      // TODO: исправить ошибку
+      // UnhandledPromiseRejectionWarning: SequelizeDatabaseError:
+      // missing FROM - clause entry for table "room"
+
+      await db.UserInRoom.update(
+        {
+          isdisconnected: false
         },
         {
           where: {
-            room_id: room.room_id
+            room_id: room.room_id,
+            user_id: socket.decoded_token.id
           }
         }
       );
-      // console.log(res);
-      console.log("1758 обновление бд rooms ");
+
+      // Формируем объект пользователей для фронтенда
+      let gamersObj = [];
+      if (usersInRoom.length !== 0) {
+        usersInRoom.forEach(el => {
+          gamersObj.push({
+            id: el.user.user_id,
+            name: el.user.name
+          });
+        });
+      }
+      let gamerNamesObj = {
+        gamers: gamersObj
+      };
+      io.in(room.room_id).emit("setGamers", gamerNamesObj);
     }
-    /*
-     */
 
     io.in(roomId).emit("addMessage", {
       name: "Admin",
@@ -1998,10 +2066,6 @@ io.on("connection", async socket => {
 
   // Удалить пользователя из комнаты
   socket.on("kickUser", async data => {
-    // console.log(
-    //   chalk.magenta(`(kickUser)`),
-    //   chalk.bgMagenta(`Удалить пользователя из комнаты`)
-    // );
     console.log("kick user 1777");
     // TODO: удаление/изменение статуса из БД
     // console.log(chalk.bgRed("KICK", JSON.stringify(data)));
@@ -2012,7 +2076,8 @@ io.on("connection", async socket => {
     // });
     // console.log(chalk.bgRed("KICK", JSON.stringify(res)), "user" + data.gamerId);
     io.in("user" + data.gamerId).emit("kickUser");
-    //#region Удаление комнаты как последней для пользователя которого кикнули
+
+    // #region Удаление комнаты как последней для пользователя которого кикнули
     await db.User.update(
       {
         last_room: null
@@ -2023,8 +2088,9 @@ io.on("connection", async socket => {
         }
       }
     );
-    //#endregion
-    //#region Удаление пользователя из комнаты и его добавление в "черный список" (кик)
+    // #endregion
+
+    // #region Удаление пользователя из комнаты и его добавление в "черный список" (кик)
     let room = await db.Room.findOne({
       where: {
         room_id: data.roomId
@@ -2040,6 +2106,20 @@ io.on("connection", async socket => {
         }
       ]
     });
+
+    // Устанавливаем, что пользователь подключён к комнате
+    await db.UserInRoom.update(
+      {
+        isdisconnected: true
+      },
+      {
+        where: {
+          room_id: room.room_id,
+          user_id: socket.decoded_token.id
+        }
+      }
+    );
+
     // Добавляем кикнутого пользователя
     if (room.kicked_participants_id !== null) {
       room.kicked_participants_id.push(data.gamerId);
@@ -2059,35 +2139,40 @@ io.on("connection", async socket => {
         }
       }
     );
-    //#endregion
+    // #endregion
   });
 
   // При выходе из комнаты
   socket.on("roomLeave", async roomId => {
-    // console.log(
-    //   chalk.magenta(`(roomLeave)`),
-    //   chalk.bgMagenta(`При выходе из комнаты`)
-    // );
-    //#region Поиск комнаты по id и присвоение её переменной
-    let usersState = await db.Room.findOne({
-      attributes: ["users_steps_state"],
+    // #region Поиск комнаты по id и присвоение её переменной
+    // Находим пользователя в комнате
+    let usersInRoom = await db.UserInRoom.findAll({
       where: {
         room_id: roomId
-      }
+      },
+      attributes: ["isattacker", "isdisconnected"],
+      include: [
+        {
+          model: db.User,
+          as: "user",
+          attributes: ["user_id", "name"]
+        }
+      ]
     });
-    //#endregion
+    // #endregion
 
-    //#region Фикс ошибки выполнения нахождения индекса в try
+    // #region Фикс ошибки выполнения нахождения индекса в try
     let index = -1;
     try {
-      index = usersState.users_steps_state.findIndex(
-        el => el.id === socket.decoded_token.id
+      index = usersInRoom.findIndex(
+        el => el.user.user_id === socket.decoded_token.id
       );
     } catch (err) {
       console.log(" index пуст ");
     }
-    //#endregion
-    //#region Обнуление last room пользователя при ручном выходе из комнаты
+    // #endregion
+
+    // #region Обнуление last room пользователя при ручном выходе из комнаты
     await db.User.update(
       {
         last_room: null
@@ -2098,40 +2183,70 @@ io.on("connection", async socket => {
         }
       }
     );
-    //#endregion
+    // #endregion
+
     if (index !== -1) {
-      usersState.users_steps_state[index].isdisconnected = true;
-      await db.Room.update(
+      // TODO: isdisconnected - ???
+      // usersState.usrs_steps_state[index].isdisconnected = true;
+      // await db.Room.update(
+      //   {
+      //     usrs_steps_state: usersState.usrs_steps_state
+      //   },
+      //   {
+      //     where: {
+      //       room_id: roomId
+      //     }
+      //   }
+      // );
+
+      // Устанавливаем, что пользователь подключён к комнате
+      await db.UserInRoom.update(
         {
-          users_steps_state: usersState.users_steps_state
+          isdisconnected: true
         },
         {
           where: {
-            room_id: roomId
+            room_id: roomId,
+            user_id: socket.decoded_token.id
           }
         }
       );
 
+      // Находим пользователя в комнате
+      let usersInRoom = await db.UserInRoom.findAll({
+        where: {
+          room_id: roomId
+        },
+        attributes: ["isattacker", "isdisconnected"],
+        include: [
+          {
+            model: db.User,
+            as: "user",
+            attributes: ["user_id", "name"]
+          }
+        ]
+      });
+
+      // Формируем объект пользователей для фронтенда
+      let gamersObj = [];
+      if (usersInRoom.length !== 0) {
+        usersInRoom.forEach(el => {
+          gamersObj.push({
+            id: el.user.user_id,
+            name: el.user.name
+          });
+        });
+      }
       let gamerNamesObj = {
-        gamers: usersState.users_steps_state
+        gamers: gamersObj
       };
       io.in(roomId).emit("setGamers", gamerNamesObj);
-      // console.log(
-      //   chalk.bgBlue(
-      //     "Пользователь " + socket.decoded_token.id + " уходит из комнаты!"
-      //   )
-      // );
       console.log("добавление сообщения другим пользователям 1826");
     }
   });
   // TODO: присылать список игроков
   // При старте игры в комнате
   socket.on("startGame", async function(data) {
-    // console.log(
-    //   chalk.magenta(`(startGame)`),
-    //   chalk.bgMagenta(`При старте игры в комнате`)
-    // );
-    // console.log("SET START! ", data);
     console.log("1837 старт игры");
     try {
       let room = await db.Room.findOne({
@@ -2149,27 +2264,11 @@ io.on("connection", async socket => {
           }
         ]
       });
-      let participantsSteps = [];
-
-      for (let index = 0; index < room.participants_id.length; index++) {
-        const id = room.participants_id[index];
-        let user = await db.User.findByPk(id);
-        if (user) {
-          participantsSteps.push({
-            name: user.name,
-            id: id,
-            isattacker: false,
-            steps: []
-          });
-        }
-      }
-      // console.log(chalk.redBright(JSON.stringify(participantsSteps)));
 
       if (room) {
         await db.Room.update(
           {
-            is_start: false,
-            users_steps_state: participantsSteps
+            is_start: false
           },
           {
             where: {
@@ -2178,11 +2277,39 @@ io.on("connection", async socket => {
           }
         );
       }
-      // console.log(chalk.bgBlue("Старт в комнате #" + socket.roomId));
+
       console.log("start in room 1875");
       io.in(data.room_id).emit("SET_GAME_START", false);
+
+      // Находим пользователя в комнате
+      let usersInRoom = await db.UserInRoom.findAll({
+        where: {
+          room_id: data.room_id
+        },
+        attributes: ["isattacker", "isdisconnected"],
+        include: [
+          {
+            model: db.User,
+            as: "user",
+            attributes: ["user_id", "name"]
+          }
+        ]
+      });
+
+      // Формируем объект пользователей для фронтенда
+      let gamersObj = [];
+      if (usersInRoom.length !== 0) {
+        usersInRoom.forEach(el => {
+          gamersObj.push({
+            id: el.user.user_id,
+            name: el.user.name,
+            isattacker: el.isattacker,
+            isdisconnected: el.isdisconnected
+          });
+        });
+      }
       let gamerNamesObj = {
-        gamers: participantsSteps
+        gamers: gamersObj
       };
       io.in(data.room_id).emit("setGamers", gamerNamesObj);
     } catch (error) {
@@ -2192,9 +2319,6 @@ io.on("connection", async socket => {
 
   // При принудительном завершении хода
   socket.on("manualStepClose", async roomId => {
-    // console.log(
-    //   chalk.bgRed(`[!!!] - (#${roomId}) ПРИНУДИТЕЛЬНОЕ ЗАВЕРШЕНИЕ ХОДА`)
-    // );
     console.log("finish step in room 1891");
 
     // Находим состояние текущей комнаты в БД
@@ -2213,18 +2337,11 @@ io.on("connection", async socket => {
         }
       ]
     });
-    // console.log(chalk.bgRed(`[!!!] - (#${JSON.stringify(room)})`));
 
     // Если текущий месяц не больше максимального количества месяцев
     if (room.first_params.month > room.current_month) {
       // Увеличиваем на 1 текущий месяц
       room.current_month++;
-      // console.log(
-      //   chalk.bgBlue(
-      //     "Сменился месяц в комнате #" + room.room_id,
-      //     `(${room.current_month}, ${room.first_params.month})`
-      //   )
-      // );
       console.log("смена месяца 1912");
 
       // Обновляем в БД месяц
@@ -2240,20 +2357,10 @@ io.on("connection", async socket => {
       );
     }
 
-    // Устанавливаем каждому игроку состояние "сходившего"
-    room.users_steps_state.map(el => {
-      el.isattacker = false;
-    });
-
-    // Отправляем на клиенты информацию о ходах игроков
-    io.in(room.room_id).emit("setGamers", {
-      gamers: room.users_steps_state
-    });
-
-    // Отправляем в БД данные о ходах игроков
-    await db.Room.update(
+    // Устанавливаем каждому игроку состояние совершившего код
+    await db.UserInRoom.update(
       {
-        users_steps_state: room.users_steps_state
+        isattacker: false
       },
       {
         where: {
@@ -2261,6 +2368,40 @@ io.on("connection", async socket => {
         }
       }
     );
+
+    // Находим пользователя в комнате
+    let usersInRoom = await db.UserInRoom.findAll({
+      where: {
+        room_id: room.room_id
+      },
+      attributes: ["isattacker", "isdisconnected"],
+      include: [
+        {
+          model: db.User,
+          as: "user",
+          attributes: ["user_id", "name"]
+        }
+      ]
+    });
+
+    // Формируем объект пользователей для фронтенда
+    let gamersObj = [];
+    if (usersInRoom.length !== 0) {
+      usersInRoom.forEach(el => {
+        gamersObj.push({
+          id: el.user.user_id,
+          name: el.user.name,
+          isattacker: el.isattacker,
+          isdisconnected: el.isdisconnected
+        });
+      });
+    }
+    let gamerNamesObj = {
+      gamers: gamersObj
+    };
+
+    // Отправляем на клиенты информацию о ходах игроков
+    io.in(room.room_id).emit("setGamers", gamerNamesObj);
 
     // Находим все эффекты игроков для всех игроков данной комнаты
     let usersEffects = await db.UserInRoom.findAll({
@@ -2288,6 +2429,7 @@ io.on("connection", async socket => {
     }
 
     io.in(socket.roomId).emit("doNextStep");
+
     for (let gamerId of room.participants_id) {
       let userInRoom = await db.UserInRoom.findOne({
         where: {
@@ -2385,14 +2527,11 @@ io.on("connection", async socket => {
       // room = room.dataValues;
 
       // Устанавливаем текущему игроку, что ход был сделан
-      let uss = room.users_steps_state;
-      uss.find(el => el.id === socket.decoded_token.id).isattacker = true;
-      room.users_steps_state = uss;
 
-      // Загружаем в БД, что ход был сделан
-      await db.Room.update(
+      // Устанавливаем, что пользователи комнаты
+      await db.UserInRoom.update(
         {
-          users_steps_state: room.users_steps_state
+          isdisconnected: false
         },
         {
           where: {
@@ -2401,9 +2540,35 @@ io.on("connection", async socket => {
         }
       );
 
-      // Создаём объект с состояниями ходов игроков
+      // Находим пользователя в комнате
+      let usersInRoom = await db.UserInRoom.findAll({
+        where: {
+          user_in_room_id: userInRoom.user_in_room_id
+        },
+        attributes: ["isattacker", "isdisconnected"],
+        include: [
+          {
+            model: db.User,
+            as: "user",
+            attributes: ["user_id", "name"]
+          }
+        ]
+      });
+
+      // Формируем объект пользователей для фронтенда
+      let gamersObj = [];
+      if (usersInRoom.length !== 0) {
+        usersInRoom.forEach(el => {
+          gamersObj.push({
+            id: el.user.user_id,
+            name: el.user.name,
+            isattacker: el.isattacker,
+            isdisconnected: el.isdisconnected
+          });
+        });
+      }
       let gamerNamesObj = {
-        gamers: room.users_steps_state
+        gamers: gamersObj
       };
 
       // Отправляем объект с состояниями ходов игроков всем в комнате
@@ -2707,8 +2872,8 @@ io.on("connection", async socket => {
                 break;
             }
             if (
-              changing.param == "smmCount" ||
-              changing.param == "socialsCoef"
+              changing.param === "smmCount" ||
+              changing.param === "socialsCoef"
             ) {
               analyticsString +=
                 " со знаком " +
@@ -2716,7 +2881,7 @@ io.on("connection", async socket => {
                 " на " +
                 changing.change +
                 " (Нанять SMM-менеджера)";
-            } else if (changing.param == "smmCoef") {
+            } else if (changing.param === "smmCoef") {
               analyticsString +=
                 " со знаком " +
                 changing.operation +
@@ -2755,7 +2920,6 @@ io.on("connection", async socket => {
                 }
               }
             }
-            // console.log(chalk.bgRed("ПРОВЕРКА: ", JSON.stringify(changing)));
             console.log("непонятно что 2323");
             messageArr.push(analyticsString);
             let indForDelete = gamer.changes.findIndex(elem => {
@@ -2801,13 +2965,13 @@ io.on("connection", async socket => {
         }
       );
 
-      let grp = await db.GamerRoomParams.update(gamer.gamer_room_params, {
+      await db.GamerRoomParams.update(gamer.gamer_room_params, {
         where: {
           user_in_room_id: gamer.user_in_room_id
         }
       });
 
-      let prp = await db.PrevRoomParams.update(gamer.prev_room_params, {
+      await db.PrevRoomParams.update(gamer.prev_room_params, {
         where: {
           user_in_room_id: gamer.user_in_room_id
         }
@@ -2816,68 +2980,72 @@ io.on("connection", async socket => {
       // TODO: Посылаем событие на изменение статуса участника
       io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
 
-      let usersStepsState = [];
+      // Подсчёт всех ходов в комнате
+      let allUsersStepsStateCount = await db.UserStepState.count({
+        where: {
+          "$user_in_room.room_id$": room.room_id
+        },
+        include: [
+          {
+            model: db.UserInRoom,
+            as: "user_in_room",
+            attributes: []
+          }
+        ]
+      });
+
       // Если в комнате уже были шаги
-      if (room.users_steps_state !== null) {
-        let userStepState = room.users_steps_state.findIndex(
-          el => el.id === socket.decoded_token.id
-        );
+      if (allUsersStepsStateCount !== 0) {
+        let userStepsStateCount = await db.UserStepState.count({
+          where: {
+            user_in_room_id: userInRoom.user_in_room_id
+          }
+        });
+
         // Если пользователь делает шаг первый раз
-        if (userStepState === -1) {
-          room.users_steps_state.push({
-            id: socket.decoded_token.id,
-            isattacker: true,
-            steps: [
-              {
-                month: room.current_month,
-                makeStep: true
-              }
-            ]
+        if (userStepsStateCount === -1) {
+          await db.UserStepState.create({
+            user_in_room_id: userInRoom.user_in_room_id,
+            month: room.current_month,
+            makeStep: true
           });
-          await db.Room.update(
+
+          await db.UserInRoom.update(
             {
-              users_steps_state: sequelize.fn(
-                "array_append",
-                sequelize.col("users_steps_state"),
-                JSON.stringify({
-                  id: socket.decoded_token.id,
-                  isattacker: true,
-                  steps: [
-                    {
-                      month: room.current_month,
-                      makeStep: true
-                    }
-                  ]
-                })
-              )
+              isattacker: true,
+              isdisconnected: false
             },
             {
               where: {
-                room_id: room.room_id
+                user_in_room_id: userInRoom.user_in_room_id
               }
             }
           );
         }
         // Если пользователь уже делал шаг
         else {
-          let stepIsSet = room.users_steps_state[userStepState].steps.findIndex(
-            el => el.month === room.current_month
-          );
-          // Если пользователь делает шаг в этом месяце первый раз
-          if (stepIsSet === -1) {
-            room.users_steps_state[userStepState]["steps"].push({
+          let userCurrentStep = await db.UserStepState.findOne({
+            where: {
+              user_in_room_id: userInRoom.user_in_room_id,
+              month: room.current_month
+            }
+          });
+
+          // Если пользователь в этом месяце ещё не делал шаг
+          if (userCurrentStep === null) {
+            await db.UserStepState.create({
+              user_in_room_id: userInRoom.user_in_room_id,
               month: room.current_month,
-              makeStep: true,
-              isattacker: true
+              makeStep: true
             });
-            await db.Room.update(
+            await db.UserInRoom.update(
               {
-                users_steps_state: room.users_steps_state,
-                isattacker: true
+                isattacker: true,
+                isdisconnected: false
               },
               {
                 where: {
-                  room_id: room.room_id
+                  user_in_room_id: userInRoom.user_in_room_id
                 }
               }
             );
@@ -2886,36 +3054,20 @@ io.on("connection", async socket => {
       }
       // Если в комнате никто не делал шагов
       else {
-        room.users_steps_state = [];
-        room.users_steps_state.push({
-          id: socket.decoded_token.id,
-          isattacker: true,
-          steps: [
-            {
-              month: room.current_month,
-              makeStep: true
-            }
-          ]
+        await db.UserStepState.create({
+          user_in_room_id: userInRoom.user_in_room_id,
+          month: room.current_month,
+          makeStep: true
         });
-        await db.Room.update(
+
+        await db.UserInRoom.update(
           {
-            users_steps_state: sequelize.fn(
-              "array_append",
-              sequelize.col("users_steps_state"),
-              JSON.stringify({
-                id: socket.decoded_token.id,
-                steps: [
-                  {
-                    month: room.current_month,
-                    makeStep: true
-                  }
-                ]
-              })
-            )
+            isattacker: true,
+            isdisconnected: false
           },
           {
             where: {
-              room_id: room.room_id
+              user_in_room_id: userInRoom.user_in_room_id
             }
           }
         );
@@ -2928,29 +3080,41 @@ io.on("connection", async socket => {
       let allGamersDoStep = false;
 
       // Если корректно установлены параметры комнаты
-      if (room.users_steps_state !== null && room.participants_id !== null) {
+      if (room.participants_id !== null) {
         let activeParticipants = room.participants_id.length;
 
-        // console.log(chalk.bgGreen(`${room.users_steps_state}`));
         console.log("подсчет участников сделавших ход 2491");
-        // Для всех стейтов участников. Если в этом месяце сделан ход, увеличиваем количество сходивших
-        room.users_steps_state.forEach(el => {
-          if (
-            el["steps"].findIndex(elem => elem.month === room.current_month) !==
-            -1
-          ) {
-            didStepCurrMonth++;
-            // console.log(chalk.bgGreen(`didStepCurrMonth: ${didStepCurrMonth}`));
-            console.log("+месяц 2501");
-          }
-          if (el["isdisconnected"]) {
-            activeParticipants--;
-            // console.log(
-            //   chalk.bgGreen(`activeParticipants: ${activeParticipants}`)
-            // );
-            console.log("-участник 2508");
-          }
+
+        didStepCurrMonth = await db.UserStepState.count({
+          where: {
+            month: room.current_month,
+            "$user_in_room.room_id$": room.room_id
+          },
+          include: [
+            {
+              model: db.UserInRoom,
+              as: "user_in_room",
+              attributes: []
+            }
+          ]
         });
+
+        let loosedParticipants = await db.UserStepState.count({
+          where: {
+            "$user_in_room.isdisconnected$": true,
+            "$user_in_room.room_id$": room.room_id
+          },
+          include: [
+            {
+              model: db.UserInRoom,
+              as: "user_in_room",
+              attributes: []
+            }
+          ]
+        });
+
+        activeParticipants -= loosedParticipants;
+
         console.log(
           chalk.bgGreen(`РЕЗУЛЬТАТ! didStepCurrMonth: ${didStepCurrMonth} 2512`)
         );
@@ -2967,15 +3131,10 @@ io.on("connection", async socket => {
         if (didStepCurrMonth === activeParticipants) {
           console.log("Все пользователи сделали ход 2521");
           allGamersDoStep = true;
-          room.users_steps_state.map(el => {
-            el.isattacker = false;
-          });
-          io.in(room.room_id).emit("setGamers", {
-            gamers: room.users_steps_state
-          });
-          await db.Room.update(
+
+          await db.UserInRoom.update(
             {
-              users_steps_state: room.users_steps_state
+              isattacker: false
             },
             {
               where: {
@@ -2983,6 +3142,39 @@ io.on("connection", async socket => {
               }
             }
           );
+
+          // Находим пользователя в комнате
+          let usersInRoom = await db.UserInRoom.findAll({
+            where: {
+              user_in_room_id: userInRoom.user_in_room_id
+            },
+            attributes: ["isattacker", "isdisconnected"],
+            include: [
+              {
+                model: db.User,
+                as: "user",
+                attributes: ["user_id", "name"]
+              }
+            ]
+          });
+
+          // Формируем объект пользователей для фронтенда
+          let gamersObj = [];
+          if (usersInRoom.length !== 0) {
+            usersInRoom.forEach(el => {
+              gamersObj.push({
+                id: el.user.user_id,
+                name: el.user.name,
+                isattacker: el.isattacker,
+                isdisconnected: el.isdisconnected
+              });
+            });
+          }
+          let gamerNamesObj = {
+            gamers: gamersObj
+          };
+
+          io.in(room.room_id).emit("setGamers", gamerNamesObj);
           io.in(socket.roomId).emit("doNextStep");
         }
         // Если число сходивших не равно количеству участников
@@ -3406,45 +3598,55 @@ io.on("connection", async socket => {
       },
       order: [["updatedAt", "DESC"]]
     });
-    // console.log(
-    //   chalk.bgBlue(
-    //     `Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
-    //   )
-    // );
+
     console.log("пользователь отсоединен от сокета 3233");
-    socket.leave("user" + socket.decoded_token.id, () => {
-      // console.log(
-      //   chalk.bgBlue(
-      //     `(cb) Сокет отписан от user${socket.decoded_token.id} (${socket.decoded_token.name})`
-      //   )
-      // );
-    });
-    if (room && room.users_steps_state !== null) {
-      let index = room.users_steps_state.findIndex(
-        el => el.id === socket.decoded_token.id
-      );
-      // TODO: добавить изменение в БД
-      // if (index !== -1) {
-      //   room.users_steps_state[index].isdisconnected = true;
-      // }
-      let gamerNamesObj = {
-        gamers: room.users_steps_state
-      };
-      io.in(room.room_id).emit("setGamers", gamerNamesObj);
-      let res = await db.Room.update(
-        {
-          users_steps_state: room.users_steps_state
-        },
+    socket.leave("user" + socket.decoded_token.id, () => {});
+
+    if (room) {
+      await db.UserInRoom.update(
+        { isdisconnected: true },
         {
           where: {
-            participants_id: {
-              [Op.contains]: socket.decoded_token.id
-            },
-            is_finished: false
+            room_id: room.room_id,
+            user_id: socket.decoded_token.id
           }
         }
       );
-      // console.log(res);
+
+      // Находим пользователя в комнате
+      let usersInRoom = await db.UserInRoom.findAll({
+        where: {
+          room_id: room.room_id
+        },
+        attributes: ["isattacker", "isdisconnected"],
+        include: [
+          {
+            model: db.User,
+            as: "user",
+            attributes: ["user_id", "name"]
+          }
+        ]
+      });
+
+      // Формируем объект пользователей для фронтенда
+      let gamersObj = [];
+      if (usersInRoom.length !== 0) {
+        usersInRoom.forEach(el => {
+          console.log(chalk.bgRed(JSON.stringify(el)));
+          gamersObj.push({
+            id: el.user.user_id,
+            name: el.user.name,
+            isattacker: el.isattacker,
+            isdisconnected: el.isdisconnected
+          });
+        });
+      }
+      let gamerNamesObj = {
+        gamers: gamersObj
+      };
+
+      io.in(room.room_id).emit("setGamers", gamerNamesObj);
+
       console.log("room upd 3267");
     }
     connections.splice(connections.indexOf(socket.id), 1);

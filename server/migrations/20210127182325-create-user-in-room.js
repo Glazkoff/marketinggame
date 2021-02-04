@@ -26,6 +26,14 @@ module.exports = {
         allowNull: true,
         defaultValue: []
       },
+      isattacker: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true
+      },
+      isdisconnected: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       // -------------------------------
       // TODO: удалить ниже
       // gamer_room_params: {
@@ -33,10 +41,10 @@ module.exports = {
       //   type: Sequelize.JSONB,
       //   allowNull: false
       // },
-      prev_room_params: {
-        // TODO: Заменить на модель PrevRoomParams
-        type: Sequelize.JSONB
-      },
+      // prev_room_params: {
+      //   // TODO: Заменить на модель PrevRoomParams
+      //   type: Sequelize.JSONB
+      // },
       // used_cards: {
       //   // TODO: Заменить на модель UsedCards
       //   type: Sequelize.JSONB,
