@@ -75,20 +75,7 @@ module.exports = (sequelize, DataTypes) => {
       kicked_participants_id: {
         type: DataTypes.JSONB,
         allowNull: true
-      },
-      // --------------------------
-      // TODO: Ниже удалить
-      participants_id: {
-        // TODO: отказаться от participants_id
-        type: DataTypes.JSONB,
-        allowNull: false
-      },
-      users_steps_state: {
-        // TODO: заменить моделью UsersStepsStates
-        type: DataTypes.ARRAY(DataTypes.JSONB),
-        allowNull: true
       }
-      // --------------------------
     },
     {
       sequelize,

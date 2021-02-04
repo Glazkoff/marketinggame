@@ -35,18 +35,6 @@ module.exports = {
         type: Sequelize.JSONB,
         allowNull: true
       },
-      // --------------------------
-      // TODO: Ниже удалить
-      participants_id: {
-        // TODO: отказаться от participants_id
-        type: Sequelize.JSONB,
-        allowNull: false
-      },
-      users_steps_state: {
-        // TODO: заменить моделью UsersStepsStates
-        type: Sequelize.ARRAY(Sequelize.JSONB),
-        allowNull: true
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

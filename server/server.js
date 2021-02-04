@@ -124,18 +124,18 @@ const Events = sequelize.define("events", {
 
 // TODO:  Добавить заполнение таблицы Updates
 // МОДЕЛЬ: Updates
-const Updates = sequelize.define("updates", {
-  event_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  content: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  }
-});
+// const Updates = sequelize.define("updates", {
+//   event_id: {
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true,
+//     primaryKey: true,
+//     allowNull: false
+//   },
+//   content: {
+//     type: Sequelize.TEXT,
+//     allowNull: false
+//   }
+// });
 
 // Синхронизация таблиц с БД
 sequelize
@@ -375,7 +375,7 @@ app.delete("/api/reviews/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          let result = await db.Review.destroy({
+          await db.Review.destroy({
             where: {
               review_id: req.params.id
             }
@@ -1324,8 +1324,6 @@ app.post("/api/rooms", async (req, res) => {
           if (!userLastRoomValid.last_room) {
             let result = await db.Room.create({
               owner_id: decoded.id,
-              participants_id: [decoded.id],
-              first_params: req.body,
               budget_per_month: req.body.money
             });
 
@@ -1500,8 +1498,15 @@ app.post("/api/rooms/join/:id", async (req, res) => {
                     }
                     // #endregion
 
-                    // Участники комнаты
-                    let participantsArray = findRoom.participants_id;
+                    let participants = await db.UserInRoom.findAll({
+                      attributes: ["user_id"],
+                      where: {
+                        room_id: findRoom
+                      }
+                    });
+                    let participantsArray = participants.map(el => {
+                      return el.user_id;
+                    });
 
                     // Является ли участником комнаты
                     let isSet = participantsArray.findIndex(el => {
@@ -1510,19 +1515,6 @@ app.post("/api/rooms/join/:id", async (req, res) => {
 
                     // Если не является участником комнаты
                     if (isSet === -1) {
-                      //  Установить участником
-                      participantsArray.push(decoded.id);
-                      await db.Room.update(
-                        {
-                          participants_id: participantsArray
-                        },
-                        {
-                          where: {
-                            room_id: req.params.id
-                          }
-                        }
-                      );
-
                       //  Привязать пользователя к комнате и установить все параметры
                       let userInRoom = await db.UserInRoom.create({
                         user_id: decoded.id,
@@ -1717,13 +1709,9 @@ app.get("/api/rooms/reset", async (req, res) => {
         lastRoomId = lastRoomId.last_room;
 
         let room;
-        const Op = Sequelize.Op;
 
         room = await db.Room.findOne({
           where: {
-            participants_id: {
-              [Op.contains]: decoded.id
-            },
             room_id: lastRoomId
           },
           include: [
@@ -1969,7 +1957,7 @@ io.on("connection", async socket => {
     // const Op = Sequelize.Op;
     // let room = await Rooms.findOne({
     //   where: {
-    //     participants_id: {
+    //     prticipants_id: {
     //       [Op.contains]: socket.decoded_token.id
     //     },
     //     is_finished: false
@@ -2128,9 +2116,6 @@ io.on("connection", async socket => {
     }
     await db.Room.update(
       {
-        participants_id: room.participants_id.filter(
-          user => user != data.gamerId
-        ),
         kicked_participants_id: room.kicked_participants_id
       },
       {
@@ -2430,7 +2415,17 @@ io.on("connection", async socket => {
 
     io.in(socket.roomId).emit("doNextStep");
 
-    for (let gamerId of room.participants_id) {
+    let participants = await db.UserInRoom.findAll({
+      attributes: ["user_id"],
+      where: {
+        room_id: room.room_id
+      }
+    });
+    let participantsArray = participants.map(el => {
+      return el.user_id;
+    });
+
+    for (let gamerId of participantsArray) {
       let userInRoom = await db.UserInRoom.findOne({
         where: {
           user_id: gamerId,
@@ -2503,13 +2498,17 @@ io.on("connection", async socket => {
         ]
       });
 
+      let user = await db.User.findOne({
+        where: {
+          user_id: socket.decoded_token.id
+        },
+        attributes: ["last_room"]
+      });
+
       // Находим комнату, которая является последней, содержащей пользователя
-      const Op = Sequelize.Op;
       let room = await db.Room.findOne({
         where: {
-          participants_id: {
-            [Op.contains]: socket.decoded_token.id
-          },
+          room_id: user.last_room,
           is_finished: false
         },
         include: [
@@ -3079,9 +3078,19 @@ io.on("connection", async socket => {
       // Все ли пользователи ход? Нет по умолчанию
       let allGamersDoStep = false;
 
+      let participants = await db.UserInRoom.findAll({
+        attributes: ["user_id"],
+        where: {
+          room_id: room.room_id
+        }
+      });
+      let participantsArray = participants.map(el => {
+        return el.user_id;
+      });
+
       // Если корректно установлены параметры комнаты
-      if (room.participants_id !== null) {
-        let activeParticipants = room.participants_id.length;
+      if (participantsArray !== null) {
+        let activeParticipants = participantsArray.length;
 
         console.log("подсчет участников сделавших ход 2491");
 
@@ -3182,7 +3191,7 @@ io.on("connection", async socket => {
           console.log("Не все пользователи сделали ход 2543");
           console.log("2544 За этот месяц: ", didStepCurrMonth);
           console.log("2545 Активных участников: ", activeParticipants);
-          console.log(" 2546 Всего участников: ", room.participants_id.length);
+          console.log(" 2546 Всего участников: ", participantsArray.length);
         }
       } else {
         console.log("Что-то не так с параметрами ходов пользователя 2549");
@@ -3263,7 +3272,7 @@ io.on("connection", async socket => {
           for (const eventChange of randomEvent.dataChange) {
             // Если изменения при применении
             if (+eventChange.when === 0) {
-              for (const gamerId of room.participants_id) {
+              for (const gamerId of participantsArray) {
                 let userInRoom = await db.UserInRoom.findOne({
                   where: {
                     user_id: gamerId,
@@ -3307,7 +3316,7 @@ io.on("connection", async socket => {
 
               // Если изменение в следующие месяцы
             } else {
-              for (const gamerId of room.participants_id) {
+              for (const gamerId of participantsArray) {
                 let userInRoom = await db.UserInRoom.findOne({
                   where: {
                     user_id: gamerId,
@@ -3346,7 +3355,7 @@ io.on("connection", async socket => {
           text: `${randomEvent.description}`
         });
       }
-      for (let gamerId of room.participants_id) {
+      for (let gamerId of participantsArray) {
         let userInRoom = await db.UserInRoom.findOne({
           where: {
             user_id: gamerId,
@@ -3588,12 +3597,16 @@ io.on("connection", async socket => {
     //   chalk.bgMagenta(`При потере подключения #${socket.id}`)
     // );
     console.log("отключение пользователя 3217");
-    const Op = Sequelize.Op;
+    let user = await db.User.findOne({
+      where: {
+        user_id: socket.decoded_token.id
+      },
+      attributes: ["last_room"]
+    });
+
     let room = await db.Room.findOne({
       where: {
-        participants_id: {
-          [Op.contains]: socket.decoded_token.id
-        },
+        room_id: user.last_room,
         is_finished: false
       },
       order: [["updatedAt", "DESC"]]

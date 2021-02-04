@@ -34,23 +34,6 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
-      // -------------------------------
-      // TODO: удалить ниже
-      // gamer_room_params: {
-      //   // TODO: Заменить на модель GamerRoomParams
-      //   type: Sequelize.JSONB,
-      //   allowNull: false
-      // },
-      // prev_room_params: {
-      //   // TODO: Заменить на модель PrevRoomParams
-      //   type: Sequelize.JSONB
-      // },
-      // used_cards: {
-      //   // TODO: Заменить на модель UsedCards
-      //   type: Sequelize.JSONB,
-      //   allowNull: false,
-      //   defaultValue: {}
-      // },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
