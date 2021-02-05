@@ -14,10 +14,10 @@ router.use("/cards", require("./cards/cards"));
 // Работа админпанели с пользователями
 router.use("/users", require("./users/users"));
 
-//
-// router.use("/config", require("./config/config"));
+// Работа админпанели с глоабльной конфигурацией
+router.use("/config", require("./config/config"));
 
-//
-// router.use("/rooms", require("./rooms/rooms"));
+// Работа админпанели с комнатами
+router.use("/rooms", require("./rooms/rooms"));
 
 module.exports = router;
