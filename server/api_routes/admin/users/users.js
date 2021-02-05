@@ -27,7 +27,7 @@ router.get("/count", async (req, res) => {
       }
     );
   } catch (error) {
-    logRestApiError("admin/cards", error);
+    logRestApiError("admin/users", error);
     res.status(500).send({
       status: 500,
       message: "Ошибка сервера!"
@@ -59,7 +59,7 @@ router.get("/api/admin/users/list/:offset", async (req, res) => {
       }
     );
   } catch (error) {
-    logRestApiError("admin/cards", error);
+    logRestApiError("admin/users", error);
     res.status(500).send({
       status: 500,
       message: "Ошибка сервера!"
@@ -92,7 +92,7 @@ router.delete("/login/:login", async (req, res) => {
       }
     );
   } catch (error) {
-    logRestApiError("admin/cards", error);
+    logRestApiError("admin/users", error);
     res.status(500).send({
       status: 500,
       message: "Ошибка сервера!"
@@ -125,7 +125,7 @@ router.delete("/id/:id", async (req, res) => {
       }
     );
   } catch (error) {
-    logRestApiError("admin/cards", error);
+    logRestApiError("admin/users", error);
     res.status(500).send({
       status: 500,
       message: "Ошибка сервера!"

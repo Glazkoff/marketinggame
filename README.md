@@ -178,7 +178,7 @@ npm i -g pg
 - [x] delete /api/admin/users/id/:id
 
 ### /config
-- [] post,get /api/admin/config
+- [x] post,get /api/admin/config
 
 ### /rooms
 - [] get /api/admin/rooms
