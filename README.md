@@ -181,17 +181,17 @@ npm i -g pg
 - [x] post,get /api/admin/config
 
 ### /rooms
-- [] get /api/admin/rooms
-- [] get /api/admin/rooms/:id
-- [] get /api/admin/rooms/:id/users
+- [x] get /api/admin/rooms
+- [x] get /api/admin/rooms/:id
+- [x] get /api/admin/rooms/:id/users
 
 ---
 
 ## /reviews
-- [] delete /api/reviews/:id
-- [] post,get "/api/reviews
-- [] get /api/reviewslist
-- [] get /api/reviews/:id
+- [x] get, post "/api/reviews
+- [x] get /api/reviews/:id
+- [x] delete /api/reviews/:id
+
 
 ## /cards  
 - [] get /api/cards/oneoff

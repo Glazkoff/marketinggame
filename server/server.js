@@ -8,7 +8,7 @@ const morgan = require("morgan");
 const compression = require("compression");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const DBCONFIG = require("./db.config");
+// const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
 const helmet = require("helmet");
@@ -71,36 +71,36 @@ app.use(
 const salt = bcrypt.genSaltSync(10);
 
 // Создание подключения с БД
-const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
-  dialect: "postgres",
-  host: DBCONFIG.HOST,
-  logging: false // TODO: УБРАТЬ
-});
+// const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
+//   dialect: "postgres",
+//   host: DBCONFIG.HOST,
+//   logging: false // TODO: УБРАТЬ
+// });
 
 // Синхронизация таблиц с БД
-sequelize
-  // .sync({
-  //   force: true
-  // })
-  .sync({
-    alter: true
-  })
-  // .sync()
-  .then(result => {
-    // db.User.create({
-    //   login: "login",
-    //   password: bcrypt.hashSync("password", salt),
-    //   name: "Никита"
-    // })
-    //   .then(res => {
-    //     console.log(res.dataValues);
-    //   })
-    //   .catch(err => console.log(err));
-    trySetCards();
-    trySetEvents();
-    console.log("Подключено к БД");
-  })
-  .catch(err => console.log("Ошибка подключения к БД", err));
+// sequelize
+//   // .sync({
+//   //   force: true
+//   // })
+//   .sync({
+//     alter: true
+//   })
+//   // .sync()
+//   .then(result => {
+//     // db.User.create({
+//     //   login: "login",
+//     //   password: bcrypt.hashSync("password", salt),
+//     //   name: "Никита"
+//     // })
+//     //   .then(res => {
+//     //     console.log(res.dataValues);
+//     //   })
+//     //   .catch(err => console.log(err));
+//     trySetCards();
+//     trySetEvents();
+//     console.log("Подключено к БД");
+//   })
+//   .catch(err => console.log("Ошибка подключения к БД", err));
 
 // Константы
 const CARDS = require("./cards");
@@ -223,41 +223,6 @@ app.post("/api/admin/globalconfig", async (req, res) => {
   // );
 });
 
-// Список всех отзывов
-app.get("/api/reviews", async (req, res) => {
-  try {
-    // await jwt.verify(
-    //   req.headers.authorization,
-    //   JWTCONFIG.SECRET,
-    //   async (err, decoded) => {
-    //     if (err) {
-    //       res.status(401).send({
-    //         status: 401,
-    //         message: "Вы не авторизованы!"
-    //       });
-    //     } else {
-    let result = await db.Review.findAll({
-      order: [["updatedAt", "DESC"]],
-      include: [
-        {
-          model: db.User,
-          as: "user"
-        }
-      ]
-    });
-    res.send(result);
-    // }
-    //   }
-    // );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
 app.post("/api/addreview", async (req, res) => {
   try {
     let result = await db.Review.create({
@@ -286,162 +251,6 @@ app.delete("/api/deletereview/:id", async (req, res) => {
 });
 
 // ************************************************************************
-
-// Удалить отзыв
-app.delete("/api/reviews/:id", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          await db.Review.destroy({
-            where: {
-              review_id: req.params.id
-            }
-          });
-          // console.log(result);
-          console.log("app.delete 493");
-          res.sendStatus(200);
-        }
-      }
-    );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-// Добавить отзыв
-app.post("/api/reviews", async (req, res) => {
-  // console.log(chalk.bgRed(JSON.stringify(req.body)));
-  console.log("app.post 510");
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          console.log("JJJJ", decoded);
-          let result = await db.Review.create({
-            author_id: decoded.id,
-            room_id: req.body.room_id,
-            rating: req.body.rating,
-            comment: req.body.comment
-          });
-          res.send(result);
-        }
-      }
-    );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-app.get("/api/reviews", async (req, res) => {
-  try {
-    // await jwt.verify(
-    //   req.headers.authorization,
-    //   JWTCONFIG.SECRET,
-    //   async (err, decoded) => {
-    //     if (err) {
-    //       res.status(401).send({
-    //         status: 401,
-    //         message: "Вы не авторизованы!"
-    //       });
-    //     } else {
-    let result = await db.Review.findAll({
-      order: [["updatedAt", "DESC"]],
-      include: [
-        {
-          model: db.User,
-          as: "user"
-        }
-      ]
-    });
-    res.send(result);
-    // }
-    //   }
-    // );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-app.get("/api/reviewslist", async (req, res) => {
-  try {
-    // await jwt.verify(
-    //   req.headers.authorization,
-    //   JWTCONFIG.SECRET,
-    //   async (err, decoded) => {
-    //     if (err) {
-    //       res.status(401).send({
-    //         status: 401,
-    //         message: "Вы не авторизованы!"
-    //       });
-    //     } else {
-    let result = await db.Review.findAll({
-      order: [["updatedAt", "DESC"]],
-      include: [
-        {
-          model: db.User,
-          as: "user"
-        }
-      ]
-    });
-    res.send({
-      reviews: result
-    });
-    // }
-    //   }
-    // );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-// Добавить отзыв
-app.get("/api/reviews/:id", async (req, res) => {
-  try {
-    let result = await db.Review.findOne({
-      where: {
-        review_id: req.params.id
-      }
-    });
-    res.send(result);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
 
 // Получение списка одноразовых карточек
 app.get("/api/cards/oneoff", async (req, res) => {
@@ -1209,6 +1018,7 @@ app.get("/api/rooms/reset", async (req, res) => {
   );
 });
 
+// Подключение роутера API
 app.use("/api", require("./api_routes/router"));
 
 // Поддержка HTML5 History mode для SPA
@@ -1224,6 +1034,8 @@ const server = app
         chalk.underline.cyan(`http://localhost:${port}`)
     );
     console.log(chalk.yellow("-".repeat(50)));
+    trySetCards();
+    trySetEvents();
   });
 
 /** ************************************************************* */

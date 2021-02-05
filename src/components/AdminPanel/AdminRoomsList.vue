@@ -37,8 +37,10 @@
                 </p> -->
               </div>
               <ul class="list-group list-group-flush">
+                <!-- TODO: исправить -->
                 <li class="list-group-item">
-                  Количество игроков: {{ room.participants_id.length }}
+                  Количество игроков:
+                  <!-- {{ room.participants_id.length }} -->
                 </li>
                 <li class="list-group-item">
                   Игра началась:
