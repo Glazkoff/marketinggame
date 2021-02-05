@@ -30,10 +30,19 @@ module.exports = {
     );
   },
 
-  // Логирует ошибку
+  // Логирует ошибку сокета
   logSocketError(context, message) {
     console.log(
       chalk.bgRed("=".repeat(indentLength) + " ОШИБКА") +
+        chalk.italic.red(" : [" + context + "] ") +
+        chalk.underline.red(message)
+    );
+  },
+
+  // Логирует ошибку сокета
+  logRestApiError(context, message) {
+    console.log(
+      chalk.bgRed("=".repeat(indentLength) + " ОШИБКА REST API") +
         chalk.italic.red(" : [" + context + "] ") +
         chalk.underline.red(message)
     );
