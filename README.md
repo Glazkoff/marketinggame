@@ -172,10 +172,10 @@ npm i -g pg
 - [x] put /api/admin/cards/description/:id
 
 ### /users
-- [] get /api/admin/users/count
-- [] get /api/admin/users/list/:offset
-- [] delete /api/admin/users/login/:login
-- [] delete /api/admin/users/id/:id
+- [x] get /api/admin/users/count
+- [x] get /api/admin/users/list/:offset
+- [x] delete /api/admin/users/login/:login
+- [x] delete /api/admin/users/id/:id
 
 ### /config
 - [] post,get /api/admin/config
