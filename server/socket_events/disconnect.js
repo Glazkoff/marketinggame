@@ -15,14 +15,18 @@ module.exports = function(socket, io, db) {
         attributes: ["last_room"]
       });
 
-      // Находим объект последней комнаты пользователя
-      let room = await db.Room.findOne({
-        where: {
-          room_id: user.last_room,
-          is_finished: false
-        },
-        order: [["updatedAt", "DESC"]]
-      });
+      let room;
+
+      if (user) {
+        // Находим объект последней комнаты пользователя
+        room = await db.Room.findOne({
+          where: {
+            room_id: user.last_room,
+            is_finished: false
+          },
+          order: [["updatedAt", "DESC"]]
+        });
+      }
 
       // Отписка от канала пользователя
       socket.leave("user" + socket.decoded_token.id, () => {
