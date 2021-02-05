@@ -507,140 +507,140 @@ app.get("/api/cards/oneoff", async (req, res) => {
 });
 
 // Обновление статуса карточки: одно- или многоразовая
-app.post("/api/admin/cards/oneoff/:id", async (req, res) => {
-  await jwt.verify(
-    req.headers.authorization,
-    JWTCONFIG.SECRET,
-    async (err, decoded) => {
-      if (err) {
-        res.status(401).send({
-          status: 401,
-          message: "Вы не авторизованы!"
-        });
-      } else {
-        let result = await db.Card.update(
-          {
-            oneOff: req.body.oneOff
-          },
-          {
-            where: {
-              card_id: req.params.id
-            }
-          }
-        );
-        res.send(result);
-      }
-    }
-  );
-});
+// app.post("/api/admin/cards/oneoff/:id", async (req, res) => {
+//   await jwt.verify(
+//     req.headers.authorization,
+//     JWTCONFIG.SECRET,
+//     async (err, decoded) => {
+//       if (err) {
+//         res.status(401).send({
+//           status: 401,
+//           message: "Вы не авторизованы!"
+//         });
+//       } else {
+//         let result = await db.Card.update(
+//           {
+//             oneOff: req.body.oneOff
+//           },
+//           {
+//             where: {
+//               card_id: req.params.id
+//             }
+//           }
+//         );
+//         res.send(result);
+//       }
+//     }
+//   );
+// });
 
 // Добавление, редактирование или удаление параметра карточки
-app.post("/api/admin/cards/:id", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          // console.log(chalk.bgRed(JSON.stringify(req.body)));
-          console.log("app post 866");
-          let newParam = req.body;
-          let findCard = await db.Card.findOne({
-            where: {
-              card_id: req.params.id
-            }
-          });
-          if (JSON.stringify(findCard) !== "{}") {
-            let findCardParamIndex = findCard.data_change.findIndex(el => {
-              return el.param === req.body.param && el.when === req.body.when;
-            });
-            if (findCardParamIndex !== -1) {
-              if (req.body.toDelete) {
-                findCard.data_change.splice(findCardParamIndex, 1);
-              } else {
-                // console.log(chalk.bgYellow(JSON.stringify(findCard)));
-                console.log("app post 882");
-                findCard.data_change[findCardParamIndex] = newParam;
-              }
-            } else {
-              newParam.from = `${findCard.title} ${newParam.when}`;
-              findCard.data_change.push(newParam);
-            }
-            let a = await db.Card.update(
-              {
-                data_change: findCard.data_change
-              },
-              {
-                where: {
-                  card_id: req.params.id
-                }
-              }
-            );
-            res.send(a);
-          } else {
-            res.status(500).send({
-              message: "Error",
-              status: 500
-            });
-          }
-        }
-      }
-    );
-  } catch (e) {
-    console.log(e);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
+// app.post("/api/admin/cards/:id", async (req, res) => {
+//   try {
+//     await jwt.verify(
+//       req.headers.authorization,
+//       JWTCONFIG.SECRET,
+//       async (err, decoded) => {
+//         if (err) {
+//           res.status(401).send({
+//             status: 401,
+//             message: "Вы не авторизованы!"
+//           });
+//         } else {
+//           // console.log(chalk.bgRed(JSON.stringify(req.body)));
+//           console.log("app post 866");
+//           let newParam = req.body;
+//           let findCard = await db.Card.findOne({
+//             where: {
+//               card_id: req.params.id
+//             }
+//           });
+//           if (JSON.stringify(findCard) !== "{}") {
+//             let findCardParamIndex = findCard.data_change.findIndex(el => {
+//               return el.param === req.body.param && el.when === req.body.when;
+//             });
+//             if (findCardParamIndex !== -1) {
+//               if (req.body.toDelete) {
+//                 findCard.data_change.splice(findCardParamIndex, 1);
+//               } else {
+//                 // console.log(chalk.bgYellow(JSON.stringify(findCard)));
+//                 console.log("app post 882");
+//                 findCard.data_change[findCardParamIndex] = newParam;
+//               }
+//             } else {
+//               newParam.from = `${findCard.title} ${newParam.when}`;
+//               findCard.data_change.push(newParam);
+//             }
+//             let a = await db.Card.update(
+//               {
+//                 data_change: findCard.data_change
+//               },
+//               {
+//                 where: {
+//                   card_id: req.params.id
+//                 }
+//               }
+//             );
+//             res.send(a);
+//           } else {
+//             res.status(500).send({
+//               message: "Error",
+//               status: 500
+//             });
+//           }
+//         }
+//       }
+//     );
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).send({
+//       status: 500,
+//       message: "Ошибка сервера!"
+//     });
+//   }
+// });
 
 // Получение данных обо всех карточек для администратора
-app.get("/api/admin/cards", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          let result = await db.Card.findAll({
-            attributes: [
-              ["card_id", "id"],
-              "title",
-              "text",
-              "coefs",
-              "templateText",
-              "cost",
-              "duration",
-              "oneOff",
-              "data_change",
-              "createdAt",
-              "updatedAt"
-            ],
-            order: [["card_id", "ASC"]]
-          });
-          res.send(result);
-        }
-      }
-    );
-  } catch (e) {
-    console.log(e);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
+// app.get("/api/admin/cards", async (req, res) => {
+//   try {
+//     await jwt.verify(
+//       req.headers.authorization,
+//       JWTCONFIG.SECRET,
+//       async (err, decoded) => {
+//         if (err) {
+//           res.status(401).send({
+//             status: 401,
+//             message: "Вы не авторизованы!"
+//           });
+//         } else {
+//           let result = await db.Card.findAll({
+//             attributes: [
+//               ["card_id", "id"],
+//               "title",
+//               "text",
+//               "coefs",
+//               "templateText",
+//               "cost",
+//               "duration",
+//               "oneOff",
+//               "data_change",
+//               "createdAt",
+//               "updatedAt"
+//             ],
+//             order: [["card_id", "ASC"]]
+//           });
+//           res.send(result);
+//         }
+//       }
+//     );
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).send({
+//       status: 500,
+//       message: "Ошибка сервера!"
+//     });
+//   }
+// });
 
 // Удаление записи о пользователе
 app.delete("/api/admin/users/login/:login", async (req, res) => {

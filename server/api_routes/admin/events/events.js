@@ -99,7 +99,7 @@ router.post("/:id", async (req, res) => {
   }
 });
 
-// Изменение описания карточки через админпанель
+// Изменение описания события через админпанель
 router.put("/description/:id", async (req, res) => {
   try {
     await jwt.verify(
@@ -112,16 +112,14 @@ router.put("/description/:id", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          let result = await db.Card.update(
+          let result = await db.Event.update(
             {
               title: req.body.title,
-              coefs: req.body.coefs,
-              templateText: req.body.templateText,
-              text: req.body.text
+              description: req.body.description
             },
             {
               where: {
-                card_id: req.params.id
+                event_id: req.params.id
               }
             }
           );

@@ -166,10 +166,10 @@ npm i -g pg
 - [x] put /api/admin/events/description/:id
 
 ### /cards
-- [] get /api/admin/cards
-- [] post /api/admin/cards/:id
-- [] post /api/admin/cards/oneoff/:id
-- [] put /api/admin/cards/description/:id
+- [x] get /api/admin/cards
+- [x] post /api/admin/cards/:id
+- [x] post /api/admin/cards/oneoff/:id
+- [x] put /api/admin/cards/description/:id
 
 ### /users
 - [] get /api/admin/users/count
