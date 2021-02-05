@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const notFound = require("./404");
 
 router.use("/admin", require("./admin/admin"));
 
-router.use("*", function(req, res, next) {
-  res.status(404).send({ err: "Path" + req.originalUrl + " does not exist" });
-});
+router.use("*", notFound);
 
 module.exports = router;

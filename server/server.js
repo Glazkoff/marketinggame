@@ -77,81 +77,6 @@ const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
   logging: false // TODO: УБРАТЬ
 });
 
-// МОДЕЛЬ: Cards
-const Cards = sequelize.define("cards", {
-  card_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  title: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  text: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  coefs: {
-    type: Sequelize.JSONB,
-    defaultValue: []
-  },
-  templateText: {
-    type: Sequelize.TEXT
-  },
-  cost: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  duration: {
-    type: Sequelize.INTEGER
-  },
-  data_change: {
-    type: Sequelize.JSONB,
-    allowNull: false
-  },
-  oneOff: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  }
-});
-
-// МОДЕЛЬ: Events
-const Events = sequelize.define("events", {
-  event_id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  title: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  description: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  data_change: {
-    type: Sequelize.JSONB,
-    allowNull: false
-  }
-});
-
-// TODO:  Добавить заполнение таблицы Updates
-// МОДЕЛЬ: Updates
-// const Updates = sequelize.define("updates", {
-//   event_id: {
-//     type: Sequelize.INTEGER,
-//     autoIncrement: true,
-//     primaryKey: true,
-//     allowNull: false
-//   },
-//   content: {
-//     type: Sequelize.TEXT,
-//     allowNull: false
-//   }
-// });
-
 // Синхронизация таблиц с БД
 sequelize
   // .sync({
@@ -187,13 +112,13 @@ const DEFAULTROOMS = require("./defaultrooms");
 async function trySetCards() {
   // await Cards.destroy({ where: {} });
   for (let card of CARDS) {
-    let findCard = await Cards.findOne({
+    let findCard = await db.Card.findOne({
       where: {
         card_id: card.id
       }
     });
     if (JSON.stringify(findCard) === "null") {
-      Cards.create({
+      db.Card.create({
         card_id: card.id,
         title: card.title,
         text: card.text,
@@ -211,13 +136,13 @@ async function trySetCards() {
 async function trySetEvents() {
   // await Events.destroy({ where: {} });
   for (let event of EVENTS) {
-    let findEvent = await Events.findOne({
+    let findEvent = await db.Event.findOne({
       where: {
         event_id: event.id
       }
     });
     if (JSON.stringify(findEvent) === "null") {
-      Events.create({
+      db.Event.create({
         event_id: event.id,
         title: event.title,
         description: event.description,
@@ -537,7 +462,7 @@ app.put("/api/admin/events/description/:id", async (req, res) => {
         } else {
           // console.log(req.body);
           console.log("app.put 643");
-          let result = await Events.update(
+          let result = await db.Event.update(
             {
               title: req.body.title,
               description: req.body.description
@@ -545,145 +470,6 @@ app.put("/api/admin/events/description/:id", async (req, res) => {
             {
               where: {
                 event_id: req.params.id
-              }
-            }
-          );
-          res.send(result);
-        }
-      }
-    );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-// Добавление, редактирование или удаление параметра события
-app.post("/api/admin/events/:id", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          // console.log(chalk.bgRed(JSON.stringify(req.body)));
-          console.log("app post 682");
-          let newParam = req.body;
-          let findEvent = await Events.findOne({
-            where: {
-              event_id: req.params.id
-            }
-          });
-          if (JSON.stringify(findEvent) !== "{}") {
-            let findEventParamIndex = findEvent.data_change.findIndex(el => {
-              return el.param === req.body.param && el.when === req.body.when;
-            });
-            if (findEventParamIndex !== -1) {
-              if (req.body.toDelete) {
-                findEvent.data_change.splice(findEventParamIndex, 1);
-              } else {
-                // console.log(chalk.bgYellow(JSON.stringify(findEvent)));
-                console.log("app post 698");
-                findEvent.data_change[findEventParamIndex] = newParam;
-              }
-            } else {
-              newParam.from = `${findEvent.title} ${newParam.when}`;
-              findEvent.data_change.push(newParam);
-            }
-            let a = await Events.update(
-              {
-                data_change: findEvent.data_change
-              },
-              {
-                where: {
-                  event_id: req.params.id
-                }
-              }
-            );
-            res.send(a);
-          }
-        }
-      }
-    );
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-// Получение данных обо всех случайных событиях для администратора
-app.get("/api/admin/events", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          let result = await Events.findAll({
-            attributes: [
-              ["event_id", "id"],
-              "title",
-              "description",
-              "data_change",
-              "createdAt",
-              "updatedAt"
-            ],
-            order: [["event_id", "ASC"]]
-          });
-          res.send(result);
-        }
-      }
-    );
-  } catch (e) {
-    console.log(e);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-// Изменение описания карточки через админпанель
-app.put("/api/admin/cards/description/:id", async (req, res) => {
-  try {
-    await jwt.verify(
-      req.headers.authorization,
-      JWTCONFIG.SECRET,
-      async (err, decoded) => {
-        if (err) {
-          res.status(401).send({
-            status: 401,
-            message: "Вы не авторизованы!"
-          });
-        } else {
-          // console.log(req.body);
-          console.log("778 app put");
-          let result = await Cards.update(
-            {
-              title: req.body.title,
-              coefs: req.body.coefs,
-              templateText: req.body.templateText,
-              text: req.body.text
-            },
-            {
-              where: {
-                card_id: req.params.id
               }
             }
           );
@@ -712,7 +498,8 @@ app.get("/api/cards/oneoff", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await getOneOffCardsId(Cards);
+        // TODO: Вставить правильно db.Card
+        let result = await getOneOffCardsId(db.Card);
         res.send(result);
       }
     }
@@ -731,7 +518,7 @@ app.post("/api/admin/cards/oneoff/:id", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Cards.update(
+        let result = await db.Card.update(
           {
             oneOff: req.body.oneOff
           },
@@ -763,7 +550,7 @@ app.post("/api/admin/cards/:id", async (req, res) => {
           // console.log(chalk.bgRed(JSON.stringify(req.body)));
           console.log("app post 866");
           let newParam = req.body;
-          let findCard = await Cards.findOne({
+          let findCard = await db.Card.findOne({
             where: {
               card_id: req.params.id
             }
@@ -784,7 +571,7 @@ app.post("/api/admin/cards/:id", async (req, res) => {
               newParam.from = `${findCard.title} ${newParam.when}`;
               findCard.data_change.push(newParam);
             }
-            let a = await Cards.update(
+            let a = await db.Card.update(
               {
                 data_change: findCard.data_change
               },
@@ -826,7 +613,7 @@ app.get("/api/admin/cards", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          let result = await Cards.findAll({
+          let result = await db.Card.findAll({
             attributes: [
               ["card_id", "id"],
               "title",
@@ -978,7 +765,7 @@ app.get("/api/cards/:id", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Cards.findOne({
+        let result = await db.Card.findOne({
           where: {
             card_id: req.params.id
           },
@@ -1002,7 +789,7 @@ app.get("/api/cards", async (req, res) => {
           message: "Вы не авторизованы!"
         });
       } else {
-        let result = await Cards.findAll({
+        let result = await db.Card.findAll({
           attributes: [
             ["card_id", "id"],
             "title",
@@ -1954,7 +1741,8 @@ io.on("connection", async socket => {
   require("./socket_events/manual_step_close")(socket, io, db, Sequelize);
 
   // При выполнении хода
-  require("./socket_events/do_step")(socket, io, db, Cards);
+  // Добавить адекватную работу с db.Card
+  require("./socket_events/do_step")(socket, io, db, db.Card);
 
   // При потере подключения
   require("./socket_events/disconnect")(socket, io, db);
