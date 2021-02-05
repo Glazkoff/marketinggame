@@ -152,8 +152,6 @@ async function trySetEvents() {
   }
 }
 
-app.use("/api", require("./api_routes/router"));
-
 /** ************************** Модуль API *********************** */
 
 // Список всех пользователей
@@ -1210,6 +1208,8 @@ app.get("/api/rooms/reset", async (req, res) => {
     }
   );
 });
+
+app.use("/api", require("./api_routes/router"));
 
 // Поддержка HTML5 History mode для SPA
 app.use(history());
