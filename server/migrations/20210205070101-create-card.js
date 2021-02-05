@@ -4,6 +4,8 @@ module.exports = {
     await queryInterface.createTable("Cards", {
       card_id: {
         type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
         allowNull: false
       },
       title: {

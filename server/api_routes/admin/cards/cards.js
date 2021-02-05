@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router;
+const router = express.Router();
 const jwt = require("jsonwebtoken");
 const JWTCONFIG = require("../../../secret.config");
 const db = require("../../../models/index");
