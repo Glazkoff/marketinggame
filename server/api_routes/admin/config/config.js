@@ -6,7 +6,7 @@ const db = require("../../../models/index");
 const { logRestApiError } = require("../../../global_functions/logs");
 
 // Запись глобальной конфигурации для админпанели
-router.post("/api/admin/config", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,
@@ -39,7 +39,7 @@ router.post("/api/admin/config", async (req, res) => {
 });
 
 // Получение глобальной конфигурации для админпанели
-router.get("/api/admin/config", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,

@@ -36,7 +36,7 @@ router.get("/count", async (req, res) => {
 });
 
 // Получение списка пользователей с пагинацией
-router.get("/api/admin/users/list/:offset", async (req, res) => {
+router.get("/list/:offset", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,
