@@ -2,12 +2,22 @@ const express = require("express");
 const router = express.Router();
 const notFound = require("./404");
 
-// Работа с админпанелью
-router.use("/admin", require("./admin/admin"));
+function getRouter(io) {
+  // Работа с админпанелью
+  router.use("/admin", require("./admin/admin"));
 
-// Работа с отзывами
-router.use("/reviews", require("./reviews/reviews"));
+  // Работа с отзывами
+  router.use("/reviews", require("./reviews/reviews"));
 
-router.use("*", notFound);
+  // Работа с карточками
+  router.use("/cards", require("./cards/cards"));
 
-module.exports = router;
+  // Работа с комнатами
+  router.use("/rooms", require("./rooms/rooms")(io));
+
+  router.use("*", notFound);
+
+  return router;
+}
+
+module.exports = getRouter;

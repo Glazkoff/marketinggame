@@ -191,13 +191,10 @@ npm i -g pg
 - [x] get /api/reviews/:id
 - [x] delete /api/reviews/:id
 
-
 ## /cards  
 - [x] get /api/cards
 - [x] get /api/cards/:id
 - [x] get /api/cards/oneoff
-
-
 
 ## /login
 - [] post /api/login
@@ -206,9 +203,12 @@ npm i -g pg
 - [] post /api/register
 
 ## /rooms  
+
+- [x] post /api/rooms
+- [x] post /api/rooms/join/:id
+- [x] get /api/rooms/reset
+
+## /default
 - [] get /api/default/room
-- [] post /api/rooms
-- [] post /api/rooms/join/:id
-- [] get /api/rooms/reset
 
  

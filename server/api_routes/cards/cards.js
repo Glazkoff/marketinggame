@@ -37,7 +37,11 @@ router.get("/", async (req, res) => {
       }
     );
   } catch (error) {
-    logRestApiError("cards", "Получение данных о всех карточках");
+    logRestApiError("cards", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка получения данных о всех карточках!"
+    });
   }
 });
 
@@ -65,28 +69,40 @@ router.get("/:id", async (req, res) => {
       }
     );
   } catch (error) {
-    logRestApiError("cards", "Получение данных о конкретной карточке");
+    logRestApiError("cards", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка получения данных о конкретной карточке"
+    });
   }
 });
 
 // Получение списка одноразовых карточек
 router.get("/api/cards/oneoff", async (req, res) => {
-  await jwt.verify(
-    req.headers.authorization,
-    JWTCONFIG.SECRET,
-    async (err, decoded) => {
-      if (err) {
-        res.status(401).send({
-          status: 401,
-          message: "Вы не авторизованы!"
-        });
-      } else {
-        // TODO: Вставить правильно db.Card
-        let result = await getOneOffCardsId(db.Card);
-        res.send(result);
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          // TODO: Вставить правильно db.Card
+          let result = await getOneOffCardsId(db.Card);
+          res.send(result);
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    logRestApiError("cards", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка получения списка одноразовых карточек"
+    });
+  }
 });
 
 module.exports = router;
