@@ -100,7 +100,6 @@ app.use(
 // Константы
 const CARDS = require("./cards");
 const EVENTS = require("./events");
-const DEFAULTROOMS = require("./defaultrooms");
 
 // const ONEWAYCARDS = require("./onewaycards.js");
 
@@ -246,11 +245,6 @@ app.delete("/api/deletereview/:id", async (req, res) => {
 });
 
 // ************************************************************************
-
-// Получить комнату по умолчанию
-app.get("/api/default/room", (req, res) => {
-  res.send(DEFAULTROOMS[0]);
-});
 
 // Запуск сервера на порте
 const server = app

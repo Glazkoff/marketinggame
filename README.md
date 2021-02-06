@@ -207,6 +207,6 @@ npm i -g pg
 - [x] get /api/rooms/reset
 
 ## /default
-- [] get /api/default/room
+- [x] get /api/default/room
 
  
