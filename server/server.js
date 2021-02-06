@@ -252,81 +252,6 @@ app.delete("/api/deletereview/:id", async (req, res) => {
 
 // ************************************************************************
 
-// Получение списка одноразовых карточек
-app.get("/api/cards/oneoff", async (req, res) => {
-  await jwt.verify(
-    req.headers.authorization,
-    JWTCONFIG.SECRET,
-    async (err, decoded) => {
-      if (err) {
-        res.status(401).send({
-          status: 401,
-          message: "Вы не авторизованы!"
-        });
-      } else {
-        // TODO: Вставить правильно db.Card
-        let result = await getOneOffCardsId(db.Card);
-        res.send(result);
-      }
-    }
-  );
-});
-
-// Получение данных о конкретной карточке
-app.get("/api/cards/:id", async (req, res) => {
-  await jwt.verify(
-    req.headers.authorization,
-    JWTCONFIG.SECRET,
-    async (err, decoded) => {
-      if (err) {
-        res.status(401).send({
-          status: 401,
-          message: "Вы не авторизованы!"
-        });
-      } else {
-        let result = await db.Card.findOne({
-          where: {
-            card_id: req.params.id
-          },
-          order: [["updatedAt", "DESC"]]
-        });
-        res.send(result);
-      }
-    }
-  );
-});
-
-// Получение данных о всех карточках
-app.get("/api/cards", async (req, res) => {
-  await jwt.verify(
-    req.headers.authorization,
-    JWTCONFIG.SECRET,
-    async (err, decoded) => {
-      if (err) {
-        res.status(401).send({
-          status: 401,
-          message: "Вы не авторизованы!"
-        });
-      } else {
-        let result = await db.Card.findAll({
-          attributes: [
-            ["card_id", "id"],
-            "title",
-            "text",
-            "coefs",
-            "templateText",
-            "cost",
-            "duration",
-            "oneOff"
-          ],
-          order: [["card_id", "ASC"]]
-        });
-        res.send(result);
-      }
-    }
-  );
-});
-
 // Авторизация
 app.post("/api/login", (req, res) => {
   // #region Проверка на пустые данные
@@ -1116,7 +1041,7 @@ io.on("connection", async socket => {
   require("./socket_events/manual_step_close")(socket, io, db, Sequelize);
 
   // При выполнении хода
-  // Добавить адекватную работу с db.Card
+  // TODO: Добавить адекватную работу с db.Card
   require("./socket_events/do_step")(socket, io, db, db.Card);
 
   // При потере подключения

@@ -152,7 +152,6 @@ npm i -g pg
 # Модуль (???)
 - get /api/admin/users/list
 - get,post /api/admin/globalconfig
-- get /api/reviews
 - post /api/addreview
 - delete/api/deletereview/:id
 
@@ -194,9 +193,11 @@ npm i -g pg
 
 
 ## /cards  
-- [] get /api/cards/oneoff
-- [] get /api/cards/:id
-- [] get /api/cards
+- [x] get /api/cards
+- [x] get /api/cards/:id
+- [x] get /api/cards/oneoff
+
+
 
 ## /login
 - [] post /api/login
