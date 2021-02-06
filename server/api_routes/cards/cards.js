@@ -90,7 +90,6 @@ router.get("/api/cards/oneoff", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          // TODO: Вставить правильно db.Card
           let result = await getOneOffCardsId(db.Card);
           res.send(result);
         }

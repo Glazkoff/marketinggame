@@ -18,6 +18,7 @@ const {
   logSocketState,
   logSocketOutEvent
 } = require("./global_functions/logs");
+const { trySetCards, trySetEvents } = require("./global_functions/setters");
 
 // База данных
 const db = require("./models/index");
@@ -97,54 +98,7 @@ app.use(
 //   })
 //   .catch(err => console.log("Ошибка подключения к БД", err));
 
-// Константы
-const CARDS = require("./cards");
-const EVENTS = require("./events");
-
 // const ONEWAYCARDS = require("./onewaycards.js");
-
-async function trySetCards() {
-  // await Cards.destroy({ where: {} });
-  for (let card of CARDS) {
-    let findCard = await db.Card.findOne({
-      where: {
-        card_id: card.id
-      }
-    });
-    if (JSON.stringify(findCard) === "null") {
-      db.Card.create({
-        card_id: card.id,
-        title: card.title,
-        text: card.text,
-        cost: card.cost,
-        coefs: card.coefs,
-        templateText: card.templateText,
-        duration: card.duration,
-        data_change: card.data_change,
-        oneOff: card.oneOff
-      });
-    }
-  }
-}
-
-async function trySetEvents() {
-  // await Events.destroy({ where: {} });
-  for (let event of EVENTS) {
-    let findEvent = await db.Event.findOne({
-      where: {
-        event_id: event.id
-      }
-    });
-    if (JSON.stringify(findEvent) === "null") {
-      db.Event.create({
-        event_id: event.id,
-        title: event.title,
-        description: event.description,
-        data_change: event.data_change
-      });
-    }
-  }
-}
 
 /** ************************** Модуль API *********************** */
 
@@ -256,8 +210,8 @@ const server = app
         chalk.underline.cyan(`http://localhost:${port}`)
     );
     console.log(chalk.yellow("-".repeat(50)));
-    trySetCards();
-    trySetEvents();
+    trySetCards(db);
+    trySetEvents(db);
   });
 
 // Создание сервера Socket.io
@@ -346,7 +300,7 @@ io.on("connection", async socket => {
 
   // При выполнении хода
   // TODO: Добавить адекватную работу с db.Card
-  require("./socket_events/do_step")(socket, io, db, db.Card);
+  require("./socket_events/do_step")(socket, io, db);
 
   // При потере подключения
   require("./socket_events/disconnect")(socket, io, db);

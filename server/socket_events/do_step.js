@@ -15,7 +15,7 @@ const {
 const Sequelize = require("sequelize");
 const EVENTS = require("../events");
 
-module.exports = function(socket, io, db, Cards) {
+module.exports = function(socket, io, db) {
   // При выполнении хода
   socket.on("doStep", async function(cardArr) {
     // Логируем входящее событие
@@ -196,7 +196,7 @@ module.exports = function(socket, io, db, Cards) {
         for (const cardId of cardArr) {
           // TODO: сделать загрузку из БД
           // Находим объект карточки на основе пришедшего ID
-          let card = await Cards.findOne({
+          let card = await db.Cards.findOne({
             where: {
               card_id: cardId
             },
@@ -207,7 +207,7 @@ module.exports = function(socket, io, db, Cards) {
           gamer.gamer_room_params.money -= card.cost;
 
           // Получаем одноразовые карточки
-          let oneWayCards = await getOneOffCardsId(Cards);
+          let oneWayCards = await getOneOffCardsId(db.Cards);
           let oneWayCardIndex = oneWayCards.findIndex(
             elem => elem.card_id === cardId
           );
@@ -297,7 +297,7 @@ module.exports = function(socket, io, db, Cards) {
         let changing = gamer.changes[index];
         // Для ID изменения changing.id индекс в массиве эфф. равен indexEffArr
         indexEffArr = gamer.effects.findIndex(elem => elem.id === changing.id);
-        let oneWayCards = await getOneOffCardsId(Cards);
+        let oneWayCards = await getOneOffCardsId(db.Cards);
         let oneWayChangingId = oneWayCards.findIndex(
           el => el.card_id === changing.id
         );
