@@ -24,58 +24,58 @@ function getRoomsRouter(io) {
             let userLastRoomValid = await db.User.findOne({
               where: {
                 user_id: decoded.id
-              }
+              },
+              attributes: ["last_room"]
             });
-            console.log(userLastRoomValid.last_room);
-            if (!userLastRoomValid.last_room) {
-              let result = await db.Room.create({
-                owner_id: decoded.id,
-                budget_per_month: req.body.money
-              });
+            if (userLastRoomValid !== null) {
+              if (!userLastRoomValid.last_room) {
+                let result = await db.Room.create({
+                  owner_id: decoded.id,
+                  budget_per_month: req.body.money
+                });
 
-              let firstParams = req.body;
-              firstParams.room_id = result.dataValues.room_id;
-              await db.RoomFirstParams.create(firstParams);
-              result.dataValues.first_params = firstParams;
+                let firstParams = req.body;
+                firstParams.room_id = result.dataValues.room_id;
+                await db.RoomFirstParams.create(firstParams);
+                result.dataValues.first_params = firstParams;
 
-              let uir = await db.UserInRoom.create({
-                user_id: decoded.id,
-                room_id: result.room_id,
-                current_month: result.dataValues.first_params.month
-              });
-              result.dataValues.first_params.user_in_room_id =
-                uir.user_in_room_id;
-              await db.GamerRoomParams.create(result.dataValues.first_params);
-              await db.PrevRoomParams.create(result.dataValues.first_params);
+                let uir = await db.UserInRoom.create({
+                  user_id: decoded.id,
+                  room_id: result.room_id,
+                  current_month: result.dataValues.first_params.month
+                });
+                result.dataValues.first_params.user_in_room_id =
+                  uir.user_in_room_id;
+                await db.GamerRoomParams.create(result.dataValues.first_params);
+                await db.PrevRoomParams.create(result.dataValues.first_params);
 
-              result.dataValues.prev_room_params =
-                result.dataValues.first_params;
-              result.dataValues.gamer_room_params =
-                result.dataValues.first_params;
+                result.dataValues.prev_room_params =
+                  result.dataValues.first_params;
+                result.dataValues.gamer_room_params =
+                  result.dataValues.first_params;
 
-              // #region Добавление последней комнаты для пользователя
-              await db.User.update(
-                {
-                  last_room: result.room_id
-                },
-                {
-                  where: {
-                    user_id: decoded.id
+                // #region Добавление последней комнаты для пользователя
+                await db.User.update(
+                  {
+                    last_room: result.room_id
+                  },
+                  {
+                    where: {
+                      user_id: decoded.id
+                    }
                   }
-                }
-              ).then(res => {
-                console.log(res);
-              });
-              // #endregion
+                );
+                // #endregion
 
-              res.send(result);
-            } else {
-              res.send({
-                status: 400,
-                message:
-                  "Вы уже находитесь в другой комнате! Ваша последняя комната - " +
-                  userLastRoomValid.last_room
-              });
+                res.send(result);
+              } else {
+                res.send({
+                  status: 400,
+                  message:
+                    "Вы уже находитесь в другой комнате! Ваша последняя комната - " +
+                    userLastRoomValid.last_room
+                });
+              }
             }
           }
         }
@@ -188,9 +188,7 @@ function getRoomsRouter(io) {
                               user_id: decoded.id
                             }
                           }
-                        ).then(res => {
-                          console.log(res);
-                        });
+                        );
                         // #endregion
 
                         // #region Добавление имени для победителей

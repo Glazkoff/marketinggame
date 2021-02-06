@@ -45,8 +45,9 @@ router.get("/", async (req, res) => {
   }
 });
 
+// TODO: уточнить, используется ли
 // Получение данных о конкретной карточке
-router.get("/:id", async (req, res) => {
+router.get("/id/:id", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,
@@ -64,9 +65,6 @@ router.get("/:id", async (req, res) => {
             },
             order: [["updatedAt", "DESC"]]
           });
-          console.log("$".repeat(50));
-          console.log(result);
-          console.log("$".repeat(50));
           res.send(result);
         }
       }
@@ -81,7 +79,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Получение списка одноразовых карточек
-router.get("/api/cards/oneoff", async (req, res) => {
+router.get("/oneoff", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,

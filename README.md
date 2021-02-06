@@ -193,7 +193,7 @@ npm i -g pg
 
 ## /cards  
 - [x] get /api/cards
-- [x] get /api/cards/:id
+- [x] get /api/cards/id/:id
 - [x] get /api/cards/oneoff
 
 ## /auth

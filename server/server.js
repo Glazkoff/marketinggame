@@ -200,6 +200,15 @@ app.delete("/api/deletereview/:id", async (req, res) => {
 
 // ************************************************************************
 
+// Подключение роутера API
+// TODO: Добавить io в аргументы
+app.use(
+  "/api",
+  require("./api_routes/router")(
+    require("socket.io")(require("http").createServer(app))
+  )
+);
+
 // Поддержка HTML5 History mode для SPA
 app.use(history());
 
@@ -219,9 +228,6 @@ const server = app
 
 // Создание сервера Socket.io
 const io = require("socket.io")(server);
-
-// Подключение роутера API
-app.use("/api", require("./api_routes/router")(io));
 
 /** ************************************************************* */
 
@@ -299,7 +305,6 @@ io.on("connection", async socket => {
   require("./socket_events/manual_step_close")(socket, io, db, Sequelize);
 
   // При выполнении хода
-  // TODO: Добавить адекватную работу с db.Card
   require("./socket_events/do_step")(socket, io, db);
 
   // При потере подключения
