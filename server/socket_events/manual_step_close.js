@@ -4,8 +4,9 @@ const {
   logSocketError
 } = require("../global_functions/logs");
 const { sendGamers } = require("../global_functions/game_process");
+const Sequelize = require("Sequelize");
 
-module.exports = function(socket, io, db, Sequelize) {
+module.exports = function(socket, io, db) {
   // При принудительном завершении хода
   socket.on("manualStepClose", async roomId => {
     // Логирование входящего запроса

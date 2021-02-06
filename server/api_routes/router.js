@@ -21,6 +21,9 @@ function getRouter(io) {
   // Работа со значениями по умолчанию
   router.use("/default", require("./default/default"));
 
+  // Работа с информацией об обновлениях
+  router.use("/updates", require("./updates/updates"));
+
   router.use("*", notFound);
 
   return router;

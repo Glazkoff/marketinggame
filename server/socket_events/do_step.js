@@ -194,7 +194,6 @@ module.exports = function(socket, io, db) {
 
         // Обработка пришедшего массива ID карточек ------------------------------------------------
         for (const cardId of cardArr) {
-          // TODO: сделать загрузку из БД
           // Находим объект карточки на основе пришедшего ID
           let card = await db.Card.findOne({
             where: {

@@ -462,7 +462,6 @@ function getRoomsRouter(io) {
                     gamer_room_params: userInRoom.gamer_room_params,
                     is_finished: room.is_finished,
                     winners: room.winners,
-                    gamers: gamerNamesObj,
                     effects: userInRoom.effects
                   });
                 } else {

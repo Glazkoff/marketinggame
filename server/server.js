@@ -2,7 +2,6 @@
 const express = require("express");
 const serveStatic = require("serve-static");
 const bodyParser = require("body-parser");
-const Sequelize = require("sequelize");
 const path = require("path");
 const morgan = require("morgan");
 const compression = require("compression");
@@ -166,7 +165,7 @@ io.on("connection", async socket => {
   require("./socket_events/start_game")(socket, io, db);
 
   // При принудительном завершении хода
-  require("./socket_events/manual_step_close")(socket, io, db, Sequelize);
+  require("./socket_events/manual_step_close")(socket, io, db);
 
   // При выполнении хода
   require("./socket_events/do_step")(socket, io, db);

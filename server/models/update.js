@@ -1,48 +1,45 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class UsedCards extends Model {
+  class Update extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      UsedCards.belongsTo(models.UserInRoom, {
-        foreignKey: "user_in_room_id",
-        as: "user_in_room"
-      });
-      UsedCards.belongsTo(models.Card, {
-        foreignKey: "card_id",
-        as: "card"
-      });
+      // define association here
     }
   }
-  UsedCards.init(
+  Update.init(
     {
-      used_cards_id: {
+      update_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      user_in_room_id: {
+      version_major: {
         type: DataTypes.INTEGER,
         alowNull: false
       },
-      card_id: {
+      version_minor: {
         type: DataTypes.INTEGER,
         alowNull: false
       },
-      amount: {
+      version_patch: {
         type: DataTypes.INTEGER,
+        alowNull: false
+      },
+      content: {
+        type: DataTypes.TEXT,
         alowNull: false
       }
     },
     {
       sequelize,
-      modelName: "UsedCards"
+      modelName: "Update"
     }
   );
-  return UsedCards;
+  return Update;
 };
