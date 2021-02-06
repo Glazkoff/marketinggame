@@ -90,7 +90,7 @@ function getRoomsRouter(io) {
   });
 
   // Присоединение к комнате
-  router.post("/api/rooms/join/:id", async (req, res) => {
+  router.post("/join/:id", async (req, res) => {
     try {
       await jwt.verify(
         req.headers.authorization,
@@ -351,7 +351,7 @@ function getRoomsRouter(io) {
 
   // TODO: присылать события и список игроков
   // Попытка переподключения
-  router.get("/api/rooms/reset", async (req, res) => {
+  router.get("/reset", async (req, res) => {
     try {
       await jwt.verify(
         req.headers.authorization,

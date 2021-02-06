@@ -7,7 +7,6 @@ const path = require("path");
 const morgan = require("morgan");
 const compression = require("compression");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 // const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
@@ -65,9 +64,6 @@ app.use(
 // app.get(/.*/, function(req, res) {
 //   res.sendFile(path.join(__dirname, "../dist/index.html"));
 // });
-
-// Создание соли для хеширования
-const salt = bcrypt.genSaltSync(10);
 
 // Создание подключения с БД
 // const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
@@ -250,134 +246,6 @@ app.delete("/api/deletereview/:id", async (req, res) => {
 });
 
 // ************************************************************************
-
-// Авторизация
-app.post("/api/login", (req, res) => {
-  // #region Проверка на пустые данные
-  if (!req.body.login || !req.body.password) {
-    res.status(400).send({
-      status: 400,
-      message: "Пустой запрос!"
-    });
-  }
-  // #endregion
-  // #region Запрос на вытаскивание данных о пользователе
-  else {
-    db.User.findOne({
-      where: {
-        login: req.body.login
-      }
-    })
-      // #endregion
-      .then(user => {
-        // #region Проверка на существование пользователя
-        if (!user) {
-          res.status(404).send({
-            status: 404,
-            message: "Неправильный логин или пароль!"
-          });
-        }
-        // #endregion
-        else {
-          // #region Сравнение полученных и введенных паролей
-          bcrypt.compare(req.body.password, user.password, function(
-            err,
-            result // #endregion
-          ) {
-            // #region Если расшифровка не удалась
-            if (err) {
-              console.log("Ошибка расшифровки: ", err);
-              res.status(500).send({
-                status: 500,
-                message: err
-              });
-            }
-            // #endregion
-            else if (result) {
-              // console.log(result);
-              // #region Создание токена найденного пользователя
-              console.log("TOKEN: ", user);
-              const accessToken = jwt.sign(
-                {
-                  id: user.user_id,
-                  name: user.name,
-                  admin: user.admin
-                },
-                JWTCONFIG.SECRET
-              );
-              res.send({
-                status: 202,
-                message: "Пользователь найден",
-                token: accessToken
-              });
-              // #endregion
-            }
-            // #region Пользователь не найден
-            else {
-              res.status(404).send({
-                status: 404,
-                message: "Неправильный логин или пароль"
-              });
-            }
-            // #endregion
-          });
-        }
-      })
-      .catch(err => console.log(err));
-  }
-});
-
-// Зарегистрироваться
-app.post("/api/register", (req, res) => {
-  console.log(" app post 1296");
-  if (!req.body.login || !req.body.password || !req.body.name) {
-    res.status(400).send({
-      status: 400,
-      message: "Пустой запрос!"
-    });
-  } else {
-    db.User.findOne({
-      where: {
-        login: req.body.login
-      }
-    })
-      .then(user => {
-        if (user) {
-          console.log("FUCK!", user);
-          res.status(403).send({
-            status: 403,
-            message: "Пользователь с таким логином уже существет!"
-          });
-        } else {
-          db.User.create({
-            login: req.body.login,
-            password: bcrypt.hashSync(req.body.password, salt),
-            name: req.body.name
-          })
-            .then(user => {
-              res.send({
-                status: 202,
-                user: user.dataValues
-              });
-            })
-            .catch(err => {
-              console.log(err);
-              res.status(500).send({
-                status: 500,
-                message: "Ошибка сервера!"
-              });
-            });
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).send({
-          status: 500,
-          message: "Ошибка сервера!"
-        });
-      });
-  }
-});
 
 // Получить комнату по умолчанию
 app.get("/api/default/room", (req, res) => {

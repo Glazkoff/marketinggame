@@ -134,7 +134,7 @@ export default {
       };
       this.loading = true;
       axios
-        .post("/api/register", regData)
+        .post("/api/auth/register", regData)
         .then(res => {
           this.loading = false;
           this.serverSuccess = true;

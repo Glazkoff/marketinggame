@@ -196,11 +196,9 @@ npm i -g pg
 - [x] get /api/cards/:id
 - [x] get /api/cards/oneoff
 
-## /login
-- [] post /api/login
-
-## /register
-- [] post /api/register
+## /auth
+- [x] post /api/auth/login
+- [x] post /api/auth/register
 
 ## /rooms  
 
