@@ -46,5 +46,14 @@ module.exports = {
         chalk.italic.red(" : [" + context + "] ") +
         chalk.underline.red(message)
     );
+  },
+
+  // Логирует общую ошибку
+  logCommonError(context, message) {
+    console.log(
+      chalk.bgRed("=".repeat(indentLength) + " ОБЩАЯ ОШИБКА") +
+        chalk.italic.red(" : [" + context + "] ") +
+        chalk.underline.red(message)
+    );
   }
 };

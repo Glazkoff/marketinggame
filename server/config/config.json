@@ -4,7 +4,8 @@
     "password": "Polyweb2021",
     "database": "polywebage_test",
     "host": "pg2.sweb.ru",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "test": {
     "username": "polywebage_test",

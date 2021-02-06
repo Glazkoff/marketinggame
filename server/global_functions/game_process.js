@@ -1,4 +1,5 @@
-const { logSocketOutEvent, logSocketError } = require("./logs");
+const { logSocketOutEvent, logSocketError, logCommonError } = require("./logs");
+const db = require("../models/index");
 
 module.exports = {
   // Отправить состояния игроков в комнату
@@ -47,14 +48,14 @@ module.exports = {
   async getOneOffCardsId(Cards) {
     let result;
     try {
-      result = await Cards.findAll({
+      result = await db.Card.findAll({
         attributes: ["card_id"],
         where: {
           oneOff: true
         }
       });
     } catch (error) {
-      logSocketError("game_process", error);
+      logCommonError("game_process", error);
     }
     return result;
   }

@@ -200,6 +200,9 @@ app.delete("/api/deletereview/:id", async (req, res) => {
 
 // ************************************************************************
 
+// Поддержка HTML5 History mode для SPA
+app.use(history());
+
 // Запуск сервера на порте
 const server = app
   .use("/", serveStatic(path.join(__dirname, "../dist")))
@@ -219,9 +222,6 @@ const io = require("socket.io")(server);
 
 // Подключение роутера API
 app.use("/api", require("./api_routes/router")(io));
-
-// Поддержка HTML5 History mode для SPA
-app.use(history());
 
 /** ************************************************************* */
 

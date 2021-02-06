@@ -64,6 +64,9 @@ router.get("/:id", async (req, res) => {
             },
             order: [["updatedAt", "DESC"]]
           });
+          console.log("$".repeat(50));
+          console.log(result);
+          console.log("$".repeat(50));
           res.send(result);
         }
       }

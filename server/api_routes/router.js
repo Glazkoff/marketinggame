@@ -4,7 +4,7 @@ const notFound = require("./404");
 
 function getRouter(io) {
   // Работа с авторизацией и регистрацией
-  router.use("/auth", require("./rooms/rooms")(io));
+  router.use("/auth", require("./auth/auth"));
 
   // Работа с админпанелью
   router.use("/admin", require("./admin/admin"));

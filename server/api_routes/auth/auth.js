@@ -54,9 +54,7 @@ router.post("/login", (req, res) => {
               }
               // #endregion
               else if (result) {
-                // console.log(result);
                 // #region Создание токена найденного пользователя
-                console.log("TOKEN: ", user);
                 const accessToken = jwt.sign(
                   {
                     id: user.user_id,
