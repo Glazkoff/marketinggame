@@ -41,15 +41,15 @@ router.post("/login", (req, res) => {
           else {
             // #region Сравнение полученных и введенных паролей
             bcrypt.compare(req.body.password, user.password, function(
-              err,
+              error,
               result // #endregion
             ) {
               // #region Если расшифровка не удалась
-              if (err) {
-                console.log("Ошибка расшифровки: ", err);
+              if (error) {
+                logRestApiError("auth", error);
                 res.status(500).send({
                   status: 500,
-                  message: err
+                  message: error
                 });
               }
               // #endregion
@@ -108,7 +108,6 @@ router.post("/register", (req, res) => {
       })
         .then(user => {
           if (user) {
-            console.log("FUCK!", user);
             res.status(403).send({
               status: 403,
               message: "Пользователь с таким логином уже существет!"

@@ -7,7 +7,6 @@ const path = require("path");
 const morgan = require("morgan");
 const compression = require("compression");
 const jwt = require("jsonwebtoken");
-// const DBCONFIG = require("./db.config");
 const JWTCONFIG = require("./secret.config");
 const chalk = require("chalk");
 const helmet = require("helmet");
@@ -62,146 +61,11 @@ app.use(
   )
 );
 
-// app.get(/.*/, function(req, res) {
-//   res.sendFile(path.join(__dirname, "../dist/index.html"));
-// });
-
-// Создание подключения с БД
-// const sequelize = new Sequelize(DBCONFIG.DB, DBCONFIG.USER, DBCONFIG.PASSWORD, {
-//   dialect: "postgres",
-//   host: DBCONFIG.HOST,
-//   logging: false // TODO: УБРАТЬ
-// });
-
-// Синхронизация таблиц с БД
-// sequelize
-//   // .sync({
-//   //   force: true
-//   // })
-//   .sync({
-//     alter: true
-//   })
-//   // .sync()
-//   .then(result => {
-//     // db.User.create({
-//     //   login: "login",
-//     //   password: bcrypt.hashSync("password", salt),
-//     //   name: "Никита"
-//     // })
-//     //   .then(res => {
-//     //     console.log(res.dataValues);
-//     //   })
-//     //   .catch(err => console.log(err));
-//     trySetCards();
-//     trySetEvents();
-//     console.log("Подключено к БД");
-//   })
-//   .catch(err => console.log("Ошибка подключения к БД", err));
-
-// const ONEWAYCARDS = require("./onewaycards.js");
-
-/** ************************** Модуль API *********************** */
-
-// Список всех пользователей
-app.get("/api/admin/users/list", async (req, res) => {
-  // await jwt.verify(
-  //   req.headers.authorization,
-  //   JWTCONFIG.SECRET,
-  //   async (err, decoded) => {
-  //     if (err) {
-  //       res.status(401).send({
-  //         status: 401,
-  //         message: "Вы не авторизованы!"
-  //       });
-  //     } else {
-  let result = await db.User.findAll({
-    attributes: ["user_id", "login", "name", "createdAt"],
-    order: [["updatedAt", "DESC"]]
-  });
-  res.send({
-    users: result
-  });
-  // }
-  // }
-  // );
-});
-
-app.get("/api/admin/globalconfig", async (req, res) => {
-  // await jwt.verify(
-  //   req.headers.authorization,
-  //   JWTCONFIG.SECRET,
-  //   async (err, decoded) => {
-  //     if (err) {
-  //       res.status(401).send({
-  //         status: 401,
-  //         message: "Вы не авторизованы!"
-  //       });
-  //     } else {
-  let lastConfig = await db.GameConfig.findOne({
-    limit: 1,
-    order: [["createdAt", "DESC"]]
-  });
-  console.log("lastConfig", lastConfig);
-  res.send({
-    config: lastConfig.dataValues
-  });
-});
-
-app.post("/api/admin/globalconfig", async (req, res) => {
-  // await jwt.verify(
-  //   req.headers.authorization,
-  //   JWTCONFIG.SECRET,
-  //   async (err, decoded) => {
-  //     if (err) {
-  //       res.status(401).send({
-  //         status: 401,
-  //         message: "Вы не авторизованы!"
-  //       });
-  //     } else {
-  let lastConfig = await db.GameConfig.findOne({
-    limit: 1,
-    order: [["createdAt", "DESC"]]
-  });
-  let result = await db.GameConfig.create({
-    event_chance: req.body.event_chance || lastConfig.event_chance
-  });
-  res.send(result);
-  //     }
-  //   }
-  // );
-});
-
-app.post("/api/addreview", async (req, res) => {
-  try {
-    let result = await db.Review.create({
-      author_id: req.body.author_id,
-      room_id: req.body.room_id,
-      rating: req.body.rating,
-      comment: req.body.comment
-    });
-    res.send(result);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({
-      status: 500,
-      message: "Ошибка сервера!"
-    });
-  }
-});
-
-app.delete("/api/deletereview/:id", async (req, res) => {
-  let result = await db.Review.destroy({
-    where: {
-      review_id: req.params.id
-    }
-  });
-  res.sendStatus(200).send(result);
-});
-
-// ************************************************************************
+/** ********************************************************* **/
+/** ************* Ниже описан модуль REST API *************** **/
+/** ********************************************************* **/
 
 // Подключение роутера API
-// TODO: Добавить io в аргументы
 app.use(
   "/api",
   require("./api_routes/router")(
@@ -234,9 +98,9 @@ const io = require("socket.io")(server);
 let connections = [];
 let usersAndSockets = {};
 
-/** ********************************************* **/
-/** ******Ниже описаны события Socket.io********* **/
-/** ********************************************* **/
+/** ********************************************************* **/
+/** ****** Ниже описаны события WebSockets (Socket.io) ****** **/
+/** ********************************************************* **/
 
 // Промежуточный обработчик JWT при подключении сокета
 io.use(function(socket, next) {

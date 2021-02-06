@@ -48,22 +48,25 @@ module.exports = function(socket, io, db) {
         });
       }
 
-      // Находим пользователя в комнате
-      let usersInRoom = await db.UserInRoom.findAll({
-        where: {
-          room_id: room.room_id
-        },
-        attributes: ["isattacker", "isdisconnected"],
-        include: [
-          {
-            model: db.User,
-            as: "user",
-            attributes: ["user_id", "name"]
-          }
-        ]
-      });
+      let usersInRoom = [];
+      if (room !== null) {
+        // Находим пользователя в комнате
+        usersInRoom = await db.UserInRoom.findAll({
+          where: {
+            room_id: room.room_id
+          },
+          attributes: ["isattacker", "isdisconnected"],
+          include: [
+            {
+              model: db.User,
+              as: "user",
+              attributes: ["user_id", "name"]
+            }
+          ]
+        });
+      }
 
-      if (room && usersInRoom.length !== 0) {
+      if (room !== null && usersInRoom.length !== 0) {
         // Устанавливаем, что пользователь подключён к комнате
         await db.UserInRoom.update(
           {

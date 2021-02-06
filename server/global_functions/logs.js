@@ -32,11 +32,15 @@ module.exports = {
 
   // Логирует ошибку сокета
   logSocketError(context, message) {
+    console.log(chalk.red("=".repeat(indentLength * 4)));
     console.log(
       chalk.bgRed("=".repeat(indentLength) + " ОШИБКА") +
         chalk.italic.red(" : [" + context + "] ") +
         chalk.underline.red(message)
     );
+    console.log(" ");
+    console.trace();
+    console.log(chalk.red("=".repeat(indentLength * 4)));
   },
 
   // Логирует ошибку сокета

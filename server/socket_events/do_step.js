@@ -633,8 +633,6 @@ module.exports = function(socket, io, db) {
       if (participantsArray !== null) {
         let activeParticipants = participantsArray.length;
 
-        console.log("подсчет участников сделавших ход 2491");
-
         didStepCurrMonth = await db.UserStepState.count({
           where: {
             month: room.current_month,
@@ -667,7 +665,6 @@ module.exports = function(socket, io, db) {
 
         // !!! Когда все в комнате сделали ход
         if (didStepCurrMonth === activeParticipants) {
-          console.log("Все пользователи сделали ход 2521");
           allGamersDoStep = true;
 
           await db.UserInRoom.update(
@@ -990,7 +987,6 @@ module.exports = function(socket, io, db) {
                 user_id: a.id
               }
             });
-            console.log("INDEX " + index);
             if (person !== null) {
               winners[index].name = person.name;
             }
