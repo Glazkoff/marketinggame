@@ -59,5 +59,13 @@ module.exports = {
         chalk.italic.red(" : [" + context + "] ") +
         chalk.underline.red(message)
     );
+  },
+
+  // Логирует данные из БД
+  logDBdata(context, data) {
+    console.log(chalk.bgGreen("*".repeat(indentLength)));
+    console.log(chalk.bgGreen(" : [" + context + "] "));
+    console.log(chalk.green(JSON.stringify(data)));
+    console.log(chalk.bgGreen("*".repeat(indentLength)));
   }
 };

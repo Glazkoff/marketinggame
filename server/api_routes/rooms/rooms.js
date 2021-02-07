@@ -4,8 +4,9 @@ const jwt = require("jsonwebtoken");
 const Sequelize = require("sequelize");
 const JWTCONFIG = require("../../secret.config");
 const db = require("../../models/index");
-const { logRestApiError } = require("../../global_functions/logs");
+const { logRestApiError, logDBdata } = require("../../global_functions/logs");
 const { sendGamers } = require("../../global_functions/game_process");
+const chalk = require("chalk");
 
 function getRoomsRouter(io) {
   // Создание новой команты
@@ -28,7 +29,7 @@ function getRoomsRouter(io) {
               attributes: ["last_room"]
             });
             if (userLastRoomValid !== null) {
-              if (!userLastRoomValid.last_room) {
+              if (userLastRoomValid.last_room === null) {
                 let result = await db.Room.create({
                   owner_id: decoded.id,
                   budget_per_month: req.body.money
@@ -229,24 +230,71 @@ function getRoomsRouter(io) {
                             room_id: req.params.id,
                             current_month: findRoom.first_params.month
                           });
+
                           findRoom.first_params.user_in_room_id =
                             userInRoom.user_in_room_id;
-                          let grp = await db.GamerRoomParams.create(
-                            findRoom.first_params
-                          );
-                          let prp = await db.PrevRoomParams.create(
-                            findRoom.first_params
-                          );
+
+                          let grp = await db.GamerRoomParams.create({
+                            user_in_room_id:
+                              findRoom.first_params.user_in_room_id,
+                            first: findRoom.first_params.first,
+                            money: findRoom.first_params.money,
+                            month: findRoom.first_params.month,
+                            preset: findRoom.first_params.preset,
+                            conversion: findRoom.first_params.conversion,
+                            averageCheck: findRoom.first_params.averageCheck,
+                            marginalCost: findRoom.first_params.marginalCost,
+                            realCostAttract:
+                              findRoom.first_params.realCostAttract,
+                            smmCoef: findRoom.first_params.smmCoef,
+                            smmCount: findRoom.first_params.smmCount,
+                            contextCoef: findRoom.first_params.contextCoef,
+                            contextCount: findRoom.first_params.contextCount,
+                            organicCoef: findRoom.first_params.organicCoef,
+                            organicCount: findRoom.first_params.organicCount,
+                            socialsCoef: findRoom.first_params.socialsCoef,
+                            socialsCount: findRoom.first_params.socialsCount,
+                            straightCoef: findRoom.first_params.straightCoef,
+                            straightCount: findRoom.first_params.straightCount
+                          });
+
+                          let prp = await db.PrevRoomParams.create({
+                            user_in_room_id:
+                              findRoom.first_params.user_in_room_id,
+                            first: findRoom.first_params.first,
+                            money: findRoom.first_params.money,
+                            month: findRoom.first_params.month,
+                            preset: findRoom.first_params.preset,
+                            conversion: findRoom.first_params.conversion,
+                            averageCheck: findRoom.first_params.averageCheck,
+                            marginalCost: findRoom.first_params.marginalCost,
+                            realCostAttract:
+                              findRoom.first_params.realCostAttract,
+                            smmCoef: findRoom.first_params.smmCoef,
+                            smmCount: findRoom.first_params.smmCount,
+                            contextCoef: findRoom.first_params.contextCoef,
+                            contextCount: findRoom.first_params.contextCount,
+                            organicCoef: findRoom.first_params.organicCoef,
+                            organicCount: findRoom.first_params.organicCount,
+                            socialsCoef: findRoom.first_params.socialsCoef,
+                            socialsCount: findRoom.first_params.socialsCount,
+                            straightCoef: findRoom.first_params.straightCoef,
+                            straightCount: findRoom.first_params.straightCount
+                          });
+                          logDBdata("first_params", findRoom.first_params);
+                          logDBdata("prp", prp);
+
                           userInRoom.gamer_room_params = grp.dataValues;
                           userInRoom.prev_room_params = prp.dataValues;
 
-                          findRoom.dataValues.first_params =
-                            userInRoom.gamer_room_params;
-                          findRoom.dataValues.prev_room_params =
-                            userInRoom.prev_room_params;
+                          findRoom.dataValues.first_params = grp.dataValues;
+                          findRoom.dataValues.prev_room_params = prp.dataValues;
                           findRoom.dataValues.gamer_room_params =
-                            userInRoom.gamer_room_params;
-
+                            grp.dataValues;
+                          logDBdata(
+                            "Присоединение комнаты",
+                            findRoom.dataValues
+                          );
                           res.send(findRoom.dataValues);
                         }
                         //  Если уже является участником комнаты
