@@ -209,7 +209,7 @@ function getRoomsRouter(io) {
                         let participants = await db.UserInRoom.findAll({
                           attributes: ["user_id"],
                           where: {
-                            room_id: findRoom
+                            room_id: findRoom.room_id
                           }
                         });
                         let participantsArray = participants.map(el => {
