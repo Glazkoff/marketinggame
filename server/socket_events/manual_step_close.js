@@ -4,7 +4,7 @@ const {
   logSocketError
 } = require("../global_functions/logs");
 const { sendGamers } = require("../global_functions/game_process");
-const Sequelize = require("Sequelize");
+const Sequelize = require("sequelize");
 
 module.exports = function(socket, io, db) {
   // При принудительном завершении хода
