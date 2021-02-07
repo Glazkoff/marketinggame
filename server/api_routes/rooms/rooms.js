@@ -105,7 +105,7 @@ function getRoomsRouter(io) {
             // Ищем комнату
             let findRoom = await db.Room.findOne({
               where: {
-                room_id: req.params.id
+                room_id: +req.params.id
               },
               include: [
                 {
@@ -181,7 +181,7 @@ function getRoomsRouter(io) {
                         // #region Добавление ласт рум к пользователю
                         await db.User.update(
                           {
-                            last_room: req.params.id
+                            last_room: +req.params.id
                           },
                           {
                             where: {
@@ -255,7 +255,7 @@ function getRoomsRouter(io) {
                           let userInRoom = await db.UserInRoom.findOne({
                             where: {
                               user_id: decoded.id,
-                              room_id: req.params.id
+                              room_id: +req.params.id
                             },
                             include: [
                               {
@@ -311,7 +311,7 @@ function getRoomsRouter(io) {
                         });
 
                         // Отправляем состояние пользователей в комнате
-                        sendGamers(io, db, req.params.id);
+                        sendGamers(io, db, +req.params.id);
                       } else {
                         res.status(400).send({
                           status: 400,
