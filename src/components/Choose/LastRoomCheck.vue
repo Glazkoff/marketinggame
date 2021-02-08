@@ -3,6 +3,12 @@
     <div class="d-flex justify-content-center mt-3 mb-3" v-if="checkLoading">
       <div class="spinner-border" role="status"></div>
     </div>
+    <div class="alert alert-danger mt-3" role="alert" v-else-if="isError">
+      Произошла <strong>ошибка</strong>. <br />
+      <a href="#" class="alert-link" @click.prevent="updateLoading"
+        >Нажмите, чтобы обновить</a
+      >.
+    </div>
     <div class="alert alert-warning mt-3" role="alert" v-else-if="isInRoom">
       Вы уже состоите в комнате #<strong>{{ roomId }}</strong
       >. <br />
@@ -28,6 +34,7 @@ export default {
       checkLoading: true,
       isInRoom: false,
       lastRoomEmpty: false,
+      isError: false,
       roomId: 0
     };
   },
@@ -48,6 +55,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.checkLoading = false;
+        this.isError = true;
       }
     },
 
@@ -62,7 +70,14 @@ export default {
       } catch (error) {
         console.log(error);
         this.checkLoading = false;
+        this.isError = true;
       }
+    },
+
+    // Обновить загрузку
+    async updateLoading() {
+      this.isError = false;
+      await this.getLastRoom();
     }
   },
   async mounted() {
