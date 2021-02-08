@@ -6,6 +6,9 @@ function getRouter(io) {
   // Работа с авторизацией и регистрацией
   router.use("/auth", require("./auth/auth"));
 
+  // Работа с отзывами
+  router.use("/personal", require("./personal/personal")(io));
+
   // Работа с админпанелью
   router.use("/admin", require("./admin/admin"));
 

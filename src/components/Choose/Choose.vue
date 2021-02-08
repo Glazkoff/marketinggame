@@ -11,6 +11,7 @@
     ></CheckModal>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
+    <LastRoomCheck></LastRoomCheck>
     <p>Выбери, как ты начнёшь игру</p>
     <div class="btn-group btn-group-toggle mb-3">
       <label
@@ -182,6 +183,7 @@ import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
 import CheckModal from "@/components/CheckModal.vue";
+import LastRoomCheck from '@/components/Choose/LastRoomCheck.vue'
 import { required } from "vuelidate/lib/validators";
 
 let apiUrl = "/api";
@@ -215,7 +217,8 @@ export default {
   components: {
     Loader,
     ReviewModal,
-    CheckModal
+    CheckModal,
+    LastRoomCheck
   },
   computed: {
     gamerName() {
@@ -322,16 +325,6 @@ export default {
           this.showCheckModal = true;
           this.loading = false;
         });
-
-      // console.log(apiUrl);
-      // this.roomParams.month++;
-      // this.$store.state.isOwner = true;
-
-      // console.log("IS OWNER", this.$store.state.isOwner);
-      // this.$socket.emit("createRoom");
-      // this.$store.commit("copyData", this.roomParams);
-      // this.$router.push("main");
-      // this.$store.state.roomParams = Object.assign(this.roomParams);
     },
     joinGame() {
       if (this.$v.roomIdJoin.required) {

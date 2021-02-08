@@ -64,33 +64,32 @@ app.use(
 /** ************* Ниже описан модуль REST API *************** **/
 /** ********************************************************* **/
 
+// Создание HTTP сервера
+const http = require("http").createServer(app);
+
+// Создание сервера Socket.io
+const io = require("socket.io")(http);
+
 // Подключение роутера API
-app.use(
-  "/api",
-  require("./api_routes/router")(
-    require("socket.io")(require("http").createServer(app))
-  )
-);
+app.use("/api", require("./api_routes/router")(io));
 
 // Поддержка HTML5 History mode для SPA
 app.use(history());
 
-// Запуск сервера на порте
-const server = app
-  .use("/", serveStatic(path.join(__dirname, "../dist")))
-  .listen(port, () => {
-    console.log(chalk.yellow("-".repeat(50)));
-    console.log(
-      chalk.yellow(`Сервер запущен на `) +
-        chalk.underline.cyan(`http://localhost:${port}`)
-    );
-    console.log(chalk.yellow("-".repeat(50)));
-    trySetCards(db);
-    trySetEvents(db);
-  });
+// Настройка статики
+app.use("/", serveStatic(path.join(__dirname, "../dist")));
 
-// Создание сервера Socket.io
-const io = require("socket.io")(server);
+// Запуск и прослушка сервера
+http.listen(port, () => {
+  console.log(chalk.yellow("-".repeat(50)));
+  console.log(
+    chalk.yellow(`Сервер запущен на `) +
+      chalk.underline.cyan(`http://localhost:${port}`)
+  );
+  console.log(chalk.yellow("-".repeat(50)));
+  trySetCards(db);
+  trySetEvents(db);
+});
 
 /** ************************************************************* */
 

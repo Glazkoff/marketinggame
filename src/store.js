@@ -242,9 +242,6 @@ const store = new Vuex.Store({
         state.roomParams[key] = state.firstRoomParams[key];
       }
     },
-    // SOCKET_resetData(state) {
-    //   this.commit('resetData');
-    // },
     changeAdminNav(state) {
       state.adminNav = !state.adminNav;
     },
@@ -906,6 +903,43 @@ const store = new Vuex.Store({
     SOCKET_gameEvent(state, eventObj) {
       console.log(eventObj);
       state.commit("SOCKET_setGameEvent", eventObj);
+    },
+
+    // Получить информацию о последней комнате
+    GET_LAST_ROOM(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/personal/lastroom`,
+          method: "GET"
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log(
+              "Ошибка получения информации о последней комнате: ",
+              err
+            );
+            reject(err);
+          });
+      });
+    },
+
+    // Послать запрос на выход из последней комнаты пользователя
+    POST_GO_OUT_LAST_ROOM(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/personal/lastroom`,
+          method: "DELETE"
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("Ошибка выхода из последней комнаты: ", err);
+            reject(err);
+          });
+      });
     }
   }
 });

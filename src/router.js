@@ -2,7 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 import Main from "./views/Main.vue";
-import Choose from "./components/Choose.vue";
+import Choose from "./components/Choose/Choose.vue";
 import AdminRoomState from "./components/AdminPanel/AdminRoomState.vue";
 import AdminRooms from "./components/AdminPanel/AdminRooms.vue";
 import AdminStatistics from "./components/AdminPanel/AdminStatistics.vue";

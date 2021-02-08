@@ -149,12 +149,6 @@ npm i -g pg
 
 # Реорганизация REST API
 
-# Модуль (???)
-- get /api/admin/users/list
-- get,post /api/admin/globalconfig
-- post /api/addreview
-- delete/api/deletereview/:id
-
 # Основное - /api
 
 ## /admin
@@ -208,5 +202,10 @@ npm i -g pg
 
 ## /default
 - [x] get /api/default/room
+
+## /personal
+- [x] get /api/personal/lastroom
+
+
 
  

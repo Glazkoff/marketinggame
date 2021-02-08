@@ -13,7 +13,6 @@ module.exports = function(socket, io, db) {
     try {
       // Отправляем событие пользователю, которого мы хотим выкинуть
       io.in("user" + data.gamerId).emit("kickUser");
-
       // Логируем исходящее событие
       logSocketOutEvent("kickUser", "Сообщаем пользователю, что его выкинули");
 

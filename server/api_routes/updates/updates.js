@@ -10,6 +10,10 @@ router.get("/", async (req, res) => {
     res.send(updates);
   } catch (error) {
     logRestApiError("updates", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка получения полного списка инфорции об обновлениях!"
+    });
   }
 });
 
@@ -25,6 +29,10 @@ router.post("/", async (req, res) => {
     res.send(updates);
   } catch (error) {
     logRestApiError("updates", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка создания информации об обновлениях!"
+    });
   }
 });
 
