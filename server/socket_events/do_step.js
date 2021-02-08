@@ -91,7 +91,7 @@ module.exports = function(socket, io, db) {
       await db.UserInRoom.update(
         {
           isdisconnected: false,
-          isattacker: false
+          isattacker: true
         },
         {
           where: {
