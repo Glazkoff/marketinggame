@@ -213,9 +213,10 @@ const store = new Vuex.Store({
       });
       state.activeEffects = [...effects];
     },
+
+    // Выкинуть пользователя с главного экрана
     SOCKET_kickUser() {
-      console.log("====================");
-      router.push("/choose");
+      router.push("/choose").catch(() => {});
     },
     /* *********************************** */
     resetData(state) {

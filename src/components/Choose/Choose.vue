@@ -11,7 +11,7 @@
     ></CheckModal>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
-    <LastRoomCheck></LastRoomCheck>
+    <LastRoomCheck v-on:setRoomId="setRoomJoin"></LastRoomCheck>
     <p>Выбери, как ты начнёшь игру</p>
     <div class="btn-group btn-group-toggle mb-3">
       <label
@@ -183,7 +183,7 @@ import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
 import CheckModal from "@/components/CheckModal.vue";
-import LastRoomCheck from '@/components/Choose/LastRoomCheck.vue'
+import LastRoomCheck from "@/components/Choose/LastRoomCheck.vue";
 import { required } from "vuelidate/lib/validators";
 
 let apiUrl = "/api";
@@ -354,18 +354,10 @@ export default {
       this.$store.dispatch("SET_ROOM_PARAMS", res);
       this.$socket.emit("subscribeRoom", res.data.room_id);
       this.$router.push("main");
+    },
+    setRoomJoin(roomId) {
+      this.roomIdJoin = roomId;
     }
-    // Ниже методы необработаны
-
-    // reset() {
-    //   this.$store.commit("resetData");
-    //   this.roomParams = {};
-    //   this.roomParams = Object.assign(this.stateFirstParams);
-    //   console.log("RESET FROM BTN");
-    //   console.log(this.roomParams);
-    //   console.log("FIRST PARAMS");
-    //   console.log(Object.assign(this.stateFirstParams));
-    // }
   }
 };
 </script>

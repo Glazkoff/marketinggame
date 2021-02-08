@@ -44,12 +44,12 @@ export default {
       this.checkLoading = true;
       try {
         let result = await this.$store.dispatch("GET_LAST_ROOM");
-        console.log(result);
         if (result.last_room === null) {
           this.lastRoomEmpty = true;
         } else {
           this.roomId = result.last_room;
           this.isInRoom = true;
+          this.$emit("setRoomId", result.last_room);
         }
         this.checkLoading = false;
       } catch (error) {
@@ -67,6 +67,7 @@ export default {
         this.isInRoom = false;
         this.lastRoomEmpty = true;
         this.checkLoading = false;
+        this.$emit("setRoomId", "");
       } catch (error) {
         console.log(error);
         this.checkLoading = false;
