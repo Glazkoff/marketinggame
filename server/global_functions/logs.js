@@ -38,6 +38,13 @@ module.exports = {
         chalk.italic.red(" : [" + context + "] ") +
         chalk.underline.red(message)
     );
+    console.log();
+    if (message !== null) {
+      if (message.lineNumber !== undefined && message.lineNumber !== null) {
+        chalk.italic.red("Строка ошибки : " + message.lineNumber + "] ");
+      }
+    }
+    console.log();
     console.log(" ");
     console.trace();
     console.log(chalk.red("=".repeat(indentLength * 4)));

@@ -33,15 +33,15 @@ module.exports = {
         alowNull: false
       },
       averageCheck: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       marginalCost: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       realCostAttract: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       smmCoef: {
@@ -49,7 +49,7 @@ module.exports = {
         alowNull: false
       },
       smmCount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       contextCoef: {
@@ -57,7 +57,7 @@ module.exports = {
         alowNull: false
       },
       contextCount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       organicCoef: {
@@ -65,7 +65,7 @@ module.exports = {
         alowNull: false
       },
       organicCount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       socialsCoef: {
@@ -73,7 +73,7 @@ module.exports = {
         alowNull: false
       },
       socialsCount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       straightCoef: {
@@ -81,7 +81,7 @@ module.exports = {
         alowNull: false
       },
       straightCount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         alowNull: false
       },
       createdAt: {

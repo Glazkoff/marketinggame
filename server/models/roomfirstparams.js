@@ -47,15 +47,15 @@ module.exports = (sequelize, DataTypes) => {
         alowNull: false
       },
       averageCheck: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       marginalCost: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       realCostAttract: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       smmCoef: {
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         alowNull: false
       },
       smmCount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       contextCoef: {
@@ -71,7 +71,7 @@ module.exports = (sequelize, DataTypes) => {
         alowNull: false
       },
       contextCount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       organicCoef: {
@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
         alowNull: false
       },
       organicCount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       socialsCoef: {
@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
         alowNull: false
       },
       socialsCount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       },
       straightCoef: {
@@ -95,7 +95,7 @@ module.exports = (sequelize, DataTypes) => {
         alowNull: false
       },
       straightCount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         alowNull: false
       }
     },

@@ -499,6 +499,7 @@ module.exports = function(socket, io, db) {
         }
       );
 
+      // FIXME: !!!
       await db.GamerRoomParams.update(gamer.gamer_room_params, {
         where: {
           user_in_room_id: gamer.user_in_room_id

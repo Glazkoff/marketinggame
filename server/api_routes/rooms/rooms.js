@@ -4,9 +4,8 @@ const jwt = require("jsonwebtoken");
 const Sequelize = require("sequelize");
 const JWTCONFIG = require("../../secret.config");
 const db = require("../../models/index");
-const { logRestApiError, logDBdata } = require("../../global_functions/logs");
+const { logRestApiError } = require("../../global_functions/logs");
 const { sendGamers } = require("../../global_functions/game_process");
-const chalk = require("chalk");
 
 function getRoomsRouter(io) {
   // Создание новой команты
@@ -281,8 +280,6 @@ function getRoomsRouter(io) {
                             straightCoef: findRoom.first_params.straightCoef,
                             straightCount: findRoom.first_params.straightCount
                           });
-                          logDBdata("first_params", findRoom.first_params);
-                          logDBdata("prp", prp);
 
                           userInRoom.gamer_room_params = grp.dataValues;
                           userInRoom.prev_room_params = prp.dataValues;
@@ -291,10 +288,6 @@ function getRoomsRouter(io) {
                           findRoom.dataValues.prev_room_params = prp.dataValues;
                           findRoom.dataValues.gamer_room_params =
                             grp.dataValues;
-                          logDBdata(
-                            "Присоединение комнаты",
-                            findRoom.dataValues
-                          );
                           res.send(findRoom.dataValues);
                         }
                         //  Если уже является участником комнаты

@@ -5,7 +5,7 @@
     "database": "polywebage_test",
     "host": "pg2.sweb.ru",
     "dialect": "postgres",
-    "logging": false
+    "logging": true
   },
   "test": {
     "username": "polywebage_test",
