@@ -1,44 +1,37 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class UserStepState extends Model {
+  class MoneyResultState extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      UserStepState.belongsTo(models.UserInRoom, {
-        foreignKey: "user_in_room_id",
-        as: "user_in_room"
-      });
+      // define association here
     }
   }
-  UserStepState.init(
+  MoneyResultState.init(
     {
-      step_state_id: {
+      money_result_state_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },
-      user_in_room_id: {
+      step_state: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        alowNull: false
       },
-      month: {
+      money_for_month: {
         type: DataTypes.INTEGER,
-        allowNull: false
-      },
-      makeStep: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
+        alowNull: false
       }
     },
     {
       sequelize,
-      modelName: "UserStepState"
+      modelName: "MoneyResultState"
     }
   );
-  return UserStepState;
+  return MoneyResultState;
 };

@@ -1,7 +1,8 @@
 const {
   logSocketInEvent,
   logSocketOutEvent,
-  logSocketError
+  logSocketError,
+  logDBdata
 } = require("../global_functions/logs");
 const {
   sendGamers,
@@ -1047,6 +1048,7 @@ module.exports = function(socket, io, db) {
         }
         // #endregion
 
+        logDBdata("FINISH", winners);
         // Отправляем событие о конце игры
         io.in(room.room_id).emit("finish", winners);
         // Логируем исходящее событие

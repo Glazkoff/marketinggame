@@ -1,24 +1,20 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("UserStepStates", {
-      step_state_id: {
+    await queryInterface.createTable("MoneyResultStates", {
+      money_result_state_id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },
-      user_in_room_id: {
+      step_state: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        alowNull: false
       },
-      month: {
+      money_for_month: {
         type: Sequelize.INTEGER,
-        allowNull: false
-      },
-      makeStep: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
+        alowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +27,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("UserStepStates");
+    await queryInterface.dropTable("MoneyResultStates");
   }
 };
