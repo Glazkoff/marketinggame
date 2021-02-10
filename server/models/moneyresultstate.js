@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       money_for_month: {
         type: DataTypes.INTEGER,
         alowNull: false
+      },
+      clients_for_month: {
+        type: DataTypes.INTEGER,
+        alowNull: false
       }
     },
     {

@@ -120,7 +120,7 @@ module.exports = {
   calculateMoneyForMonth(gamerRoomParams) {
     let clients = module.exports.calculateClientsForMonth(gamerRoomParams);
     if (clients !== -1 && gamerRoomParams.averageCheck != null) {
-      return clients * gamerRoomParams.averageCheck;
+      return Math.ceil(clients * gamerRoomParams.averageCheck);
     } else {
       return -1;
     }

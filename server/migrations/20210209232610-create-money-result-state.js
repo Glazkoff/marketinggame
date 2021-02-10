@@ -16,6 +16,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         alowNull: false
       },
+      clients_for_month: {
+        type: Sequelize.INTEGER,
+        alowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -546,7 +546,8 @@ module.exports = function(socket, io, db) {
           // Фиксируем заработок за месяц
           await db.MoneyResultState.create({
             step_state_id: userStepState.step_state_id,
-            money_for_month: calculateMoneyForMonth(gamer.gamer_room_params)
+            money_for_month: calculateMoneyForMonth(gamer.gamer_room_params),
+            clients_for_month: calculateClientsForMonth(gamer.gamer_room_params)
           });
 
           await db.UserInRoom.update(
@@ -581,7 +582,10 @@ module.exports = function(socket, io, db) {
             // Фиксируем заработок за месяц
             await db.MoneyResultState.create({
               step_state_id: userStepState.step_state_id,
-              money_for_month: calculateMoneyForMonth(gamer.gamer_room_params)
+              money_for_month: calculateMoneyForMonth(gamer.gamer_room_params),
+              clients_for_month: calculateClientsForMonth(
+                gamer.gamer_room_params
+              )
             });
 
             await db.UserInRoom.update(
@@ -609,7 +613,8 @@ module.exports = function(socket, io, db) {
         // Фиксируем заработок за месяц
         await db.MoneyResultState.create({
           step_state_id: userStepState.step_state_id,
-          money_for_month: calculateMoneyForMonth(gamer.gamer_room_params)
+          money_for_month: calculateMoneyForMonth(gamer.gamer_room_params),
+          clients_for_month: calculateClientsForMonth(gamer.gamer_room_params)
         });
 
         await db.UserInRoom.update(
@@ -926,15 +931,32 @@ module.exports = function(socket, io, db) {
             {
               model: db.PrevRoomParams,
               as: "prev_room_params"
+            },
+            {
+              model: db.UserStepState,
+              as: "user_steps_state",
+              include: [
+                {
+                  model: db.MoneyResultState,
+                  as: "money_result_state"
+                }
+              ]
             }
           ]
         });
 
         let gamersRate = [];
         for (const gamer of gamers) {
+          let moneySum = 0;
+          let clientsSum = 0;
+          gamer.user_steps_state.forEach(state => {
+            moneySum += state.money_result_state.money_for_month;
+            clientsSum += state.money_result_state.clients_for_month;
+          });
           let position = {
             id: gamer.user_id,
-            money: calculateMoneyForMonth(gamer.gamer_room_params)
+            money: moneySum,
+            clients: clientsSum
           };
           gamersRate.push(position);
         }
@@ -1033,7 +1055,6 @@ module.exports = function(socket, io, db) {
         }
         // #endregion
 
-        logDBdata("FINISH", winners);
         // Отправляем событие о конце игры
         io.in(room.room_id).emit("finish", winners);
         // Логируем исходящее событие
