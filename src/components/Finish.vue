@@ -21,7 +21,8 @@
           <div class="card" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <div class="gray-block block-winner-img"></div>
+                <!-- <div class="gray-block block-winner-img"></div> -->
+                <div class="gray-block"></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -34,46 +35,8 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <!--                    <em
-                      >{{
-                        firstPosition !== undefined
-                          ? Math.ceil(
-                              firstPosition.money -
-                                (Math.ceil(
-                                  firstRoomParams.organicCount *
-                                    firstRoomParams.organicCoef *
-                                    firstRoomParams.conversion
-                                ) +
-                                  Math.ceil(
-                                    firstRoomParams.contextCount *
-                                      firstRoomParams.contextCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.socialsCount *
-                                      firstRoomParams.socialsCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.smmCount *
-                                      firstRoomParams.smmCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.straightCount *
-                                      firstRoomParams.straightCoef *
-                                      firstRoomParams.conversion
-                                  )) *
-                                  firstRoomParams.averageCheck
-                            )
-                          : ""
-                      }}
-                      ₽</em
-                    >-->
                     <em>
-                      {{
-                        (firstPosition.money - firstRoomParams.money).toFixed(2)
-                      }}
+                      {{ firstPosition.money | formatNumber }}
                       ₽</em
                     >
                   </p>
@@ -85,13 +48,19 @@
       </div>
       <div class="row" id="direction-column" v-if="isSomeWinner">
         <div class="col-lg-4 col">
-          <div class="gray-block block-winner-img"></div>
+          <!-- <div class="gray-block block-winner-img"></div> -->
+          <div
+            class="gray-block"
+            :class="{
+              'block-winner-img': isWinner,
+              'block-secondplace-img': isSecondWinner,
+              'block-thirdplace-img': isThirdWinner
+            }"
+          ></div>
         </div>
         <div class="col-lg-8 col text-center mt-0" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
-          <!--      <p class="mb-0">Вам удалось заработать: {{firstPosition.money.toFixed(2)}}</p>
-          <ul class="list-group col-10 offset-1 mt-3"> -->
           <ul class="list-group col-lg-10 col offset-1 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
@@ -116,7 +85,7 @@
                 >{{
                   gamerRoomParams !== undefined
                     ? Math.ceil(gamerData.clients)
-                    : ""
+                    : "" | formatNumber
                 }}
               </span>
             </li>
@@ -137,10 +106,6 @@
                 ₽</span
               >
             </li>
-            <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-              Прочие параметры
-              <span class="badge badge-primary badge-pill">-</span>
-            </li>-->
           </ul>
         </div>
         <div class="col-8 text-center mt-3" v-else-if="isPrizer">
@@ -165,35 +130,7 @@
                 <h4>
                   {{
                     gamerData !== undefined
-                      ? Math.ceil(
-                          gamerData.money -
-                            (Math.ceil(
-                              firstRoomParams.organicCount *
-                                firstRoomParams.organicCoef *
-                                firstRoomParams.conversion
-                            ) +
-                              Math.ceil(
-                                firstRoomParams.contextCount *
-                                  firstRoomParams.contextCoef *
-                                  firstRoomParams.conversion
-                              ) +
-                              Math.ceil(
-                                firstRoomParams.socialsCount *
-                                  firstRoomParams.socialsCoef *
-                                  firstRoomParams.conversion
-                              ) +
-                              Math.ceil(
-                                firstRoomParams.smmCount *
-                                  firstRoomParams.smmCoef *
-                                  firstRoomParams.conversion
-                              ) +
-                              Math.ceil(
-                                firstRoomParams.straightCount *
-                                  firstRoomParams.straightCoef *
-                                  firstRoomParams.conversion
-                              )) *
-                              firstRoomParams.averageCheck
-                        )
+                      ? Math.ceil(gamerData.money)
                       : "" | formatNumber
                   }}
                   ₽
@@ -204,116 +141,13 @@
               class="list-group-item d-flex justify-content-between align-items-center"
             >
               Привлечено клиентов:
-              <span class="badge badge-primary badge-pill"
-                >{{
-                  gamerRoomParams !== undefined
-                    ? Math.ceil(
-                        gamerRoomParams.organicCount *
-                          gamerRoomParams.organicCoef *
-                          gamerRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        gamerRoomParams.contextCount *
-                          gamerRoomParams.contextCoef *
-                          gamerRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        gamerRoomParams.socialsCount *
-                          gamerRoomParams.socialsCoef *
-                          gamerRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        gamerRoomParams.smmCount *
-                          gamerRoomParams.smmCoef *
-                          gamerRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        gamerRoomParams.straightCount *
-                          gamerRoomParams.straightCoef *
-                          gamerRoomParams.conversion
-                      ) -
-                      (Math.ceil(
-                        firstRoomParams.organicCount *
-                          firstRoomParams.organicCoef *
-                          firstRoomParams.conversion
-                      ) +
-                        Math.ceil(
-                          gamerRoomParams.contextCount *
-                            firstRoomParams.contextCoef *
-                            firstRoomParams.conversion
-                        ) +
-                        Math.ceil(
-                          firstRoomParams.socialsCount *
-                            firstRoomParams.socialsCoef *
-                            firstRoomParams.conversion
-                        ) +
-                        Math.ceil(
-                          firstRoomParams.smmCount *
-                            firstRoomParams.smmCoef *
-                            firstRoomParams.conversion
-                        ) +
-                        Math.ceil(
-                          firstRoomParams.straightCount *
-                            firstRoomParams.straightCoef *
-                            firstRoomParams.conversion
-                        ))
-                    : ""
-                }}
-                × {{ firstRoomParams.month }} мес. =
+              <span class="badge badge-primary badge-pill">
                 {{
-                  (Math.ceil(
-                    gamerRoomParams.organicCount *
-                      gamerRoomParams.organicCoef *
-                      gamerRoomParams.conversion
-                  ) +
-                    Math.ceil(
-                      gamerRoomParams.contextCount *
-                        gamerRoomParams.contextCoef *
-                        gamerRoomParams.conversion
-                    ) +
-                    Math.ceil(
-                      gamerRoomParams.socialsCount *
-                        gamerRoomParams.socialsCoef *
-                        gamerRoomParams.conversion
-                    ) +
-                    Math.ceil(
-                      gamerRoomParams.smmCount *
-                        gamerRoomParams.smmCoef *
-                        gamerRoomParams.conversion
-                    ) +
-                    Math.ceil(
-                      gamerRoomParams.straightCount *
-                        gamerRoomParams.straightCoef *
-                        gamerRoomParams.conversion
-                    ) -
-                    (Math.ceil(
-                      firstRoomParams.organicCount *
-                        firstRoomParams.organicCoef *
-                        firstRoomParams.conversion
-                    ) +
-                      Math.ceil(
-                        gamerRoomParams.contextCount *
-                          firstRoomParams.contextCoef *
-                          firstRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        firstRoomParams.socialsCount *
-                          firstRoomParams.socialsCoef *
-                          firstRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        firstRoomParams.smmCount *
-                          firstRoomParams.smmCoef *
-                          firstRoomParams.conversion
-                      ) +
-                      Math.ceil(
-                        firstRoomParams.straightCount *
-                          firstRoomParams.straightCoef *
-                          firstRoomParams.conversion
-                      ))) *
-                    firstRoomParams.month
-                }}</span
-              >
+                  gamerData !== undefined
+                    ? Math.ceil(gamerData.clients)
+                    : "" | formatNumber
+                }}
+              </span>
             </li>
             <li
               class="list-group-item d-flex justify-content-between align-items-center"
@@ -332,20 +166,21 @@
                 ₽</span
               >
             </li>
-            <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-              Прочие параметры
-              <span class="badge badge-primary badge-pill">-</span>
-            </li>-->
           </ul>
         </div>
       </div>
-      <!-- <hr> -->
       <div class="row mt-2" id="direction-column-cards">
         <div class="col-6" v-if="hasSecondPosition">
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <div class="gray-block block-secondplace-img"></div>
+                <div
+                  class="gray-block"
+                  :class="{
+                    'block-winner-img': isPrizer,
+                    'block-secondplace-img': isWinner || isLoozer
+                  }"
+                ></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -364,50 +199,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <!--                    <em
-                      >{{
-                        secondPosition !== undefined
-                          ? Math.ceil(
-                              secondPosition.money -
-                                (Math.ceil(
-                                  firstRoomParams.organicCount *
-                                    firstRoomParams.organicCoef *
-                                    firstRoomParams.conversion
-                                ) +
-                                  Math.ceil(
-                                    firstRoomParams.contextCount *
-                                      firstRoomParams.contextCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.socialsCount *
-                                      firstRoomParams.socialsCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.smmCount *
-                                      firstRoomParams.smmCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.straightCount *
-                                      firstRoomParams.straightCoef *
-                                      firstRoomParams.conversion
-                                  )) *
-                                  firstRoomParams.averageCheck
-                            )
-                          : ""
-                      }}
-                      ₽</em
-                    >-->
-                    <em
-                      >{{
-                        (secondPosition.money - firstRoomParams.money).toFixed(
-                          2
-                        )
-                      }}
-                      ₽</em
-                    >
+                    <em>{{ secondPosition.money | formatNumber }} ₽</em>
                   </p>
                 </div>
               </div>
@@ -418,7 +210,14 @@
           <div class="card mb-2" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <div class="gray-block block-thirdplace-img"></div>
+                <div
+                  class="gray-block"
+                  :class="{
+                    'block-thirdplace-img':
+                      isWinner || isSecondWinner || isLoozer,
+                    'block-secondplace-img': isThirdWinner
+                  }"
+                ></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -440,48 +239,7 @@
                   <p class="card-text">
                     Игроку удалось заработать
                     <br />
-                    <!--                    <em
-                      >{{
-                        thirdPosition !== undefined
-                          ? Math.ceil(
-                              thirdPosition.money -
-                                (Math.ceil(
-                                  firstRoomParams.organicCount *
-                                    firstRoomParams.organicCoef *
-                                    firstRoomParams.conversion
-                                ) +
-                                  Math.ceil(
-                                    firstRoomParams.contextCount *
-                                      firstRoomParams.contextCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.socialsCount *
-                                      firstRoomParams.socialsCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.smmCount *
-                                      firstRoomParams.smmCoef *
-                                      firstRoomParams.conversion
-                                  ) +
-                                  Math.ceil(
-                                    firstRoomParams.straightCount *
-                                      firstRoomParams.straightCoef *
-                                      firstRoomParams.conversion
-                                  )) *
-                                  firstRoomParams.averageCheck
-                            )
-                          : ""
-                      }}
-                      ₽</em
-                    >-->
-                    <em
-                      >{{
-                        (thirdPosition.money - firstRoomParams.money).toFixed(2)
-                      }}
-                      ₽</em
-                    >
+                    <em>{{ thirdPosition.money | formatNumber }} ₽</em>
                   </p>
                 </div>
               </div>
