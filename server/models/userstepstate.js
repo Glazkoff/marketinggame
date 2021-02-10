@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_in_room_id",
         as: "user_in_room"
       });
+      UserStepState.hasOne(models.MoneyResultState, {
+        onDelete: "cascade",
+        foreignKey: "step_state_id",
+        as: "money_result_state"
+      });
     }
   }
   UserStepState.init(

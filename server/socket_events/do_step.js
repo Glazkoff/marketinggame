@@ -6,7 +6,9 @@ const {
 } = require("../global_functions/logs");
 const {
   sendGamers,
-  getOneOffCardsId
+  getOneOffCardsId,
+  calculateMoneyForMonth,
+  calculateClientsForMonth
 } = require("../global_functions/game_process");
 const {
   sendAdminMessage,
@@ -262,17 +264,7 @@ module.exports = function(socket, io, db) {
       let messageArr = [];
 
       // Высчитывание всех параметров
-      let clients =
-        (gamer.gamer_room_params.organicCount *
-          gamer.gamer_room_params.organicCoef +
-          gamer.gamer_room_params.contextCount *
-            gamer.gamer_room_params.contextCoef +
-          gamer.gamer_room_params.socialsCount *
-            gamer.gamer_room_params.socialsCoef +
-          gamer.gamer_room_params.smmCount * gamer.gamer_room_params.smmCoef +
-          gamer.gamer_room_params.straightCount *
-            gamer.gamer_room_params.straightCoef) *
-        gamer.gamer_room_params.conversion;
+      let clients = calculateClientsForMonth(gamer.gamer_room_params);
       gamer.gamer_room_params.clients = Math.ceil(clients);
       let averageCheck = gamer.gamer_room_params.averageCheck;
       let realCostAttract = gamer.gamer_room_params.realCostAttract;
@@ -545,10 +537,16 @@ module.exports = function(socket, io, db) {
 
         // Если пользователь делает шаг первый раз
         if (userStepsStateCount === -1) {
-          await db.UserStepState.create({
+          let userStepState = await db.UserStepState.create({
             user_in_room_id: userInRoom.user_in_room_id,
             month: room.current_month,
             makeStep: true
+          });
+
+          // Фиксируем заработок за месяц
+          await db.MoneyResultState.create({
+            step_state_id: userStepState.step_state_id,
+            money_for_month: calculateMoneyForMonth(gamer.gamer_room_params)
           });
 
           await db.UserInRoom.update(
@@ -574,11 +572,18 @@ module.exports = function(socket, io, db) {
 
           // Если пользователь в этом месяце ещё не делал шаг
           if (userCurrentStep === null) {
-            await db.UserStepState.create({
+            let userStepState = await db.UserStepState.create({
               user_in_room_id: userInRoom.user_in_room_id,
               month: room.current_month,
               makeStep: true
             });
+
+            // Фиксируем заработок за месяц
+            await db.MoneyResultState.create({
+              step_state_id: userStepState.step_state_id,
+              money_for_month: calculateMoneyForMonth(gamer.gamer_room_params)
+            });
+
             await db.UserInRoom.update(
               {
                 isattacker: true,
@@ -595,10 +600,16 @@ module.exports = function(socket, io, db) {
       }
       // Если в комнате никто не делал шагов
       else {
-        await db.UserStepState.create({
+        let userStepState = await db.UserStepState.create({
           user_in_room_id: userInRoom.user_in_room_id,
           month: room.current_month,
           makeStep: true
+        });
+
+        // Фиксируем заработок за месяц
+        await db.MoneyResultState.create({
+          step_state_id: userStepState.step_state_id,
+          money_for_month: calculateMoneyForMonth(gamer.gamer_room_params)
         });
 
         await db.UserInRoom.update(
@@ -923,33 +934,7 @@ module.exports = function(socket, io, db) {
         for (const gamer of gamers) {
           let position = {
             id: gamer.user_id,
-            money:
-              (Math.ceil(
-                gamer.gamer_room_params.organicCount *
-                  gamer.gamer_room_params.organicCoef *
-                  gamer.gamer_room_params.conversion
-              ) +
-                Math.ceil(
-                  gamer.gamer_room_params.contextCount *
-                    gamer.gamer_room_params.contextCoef *
-                    gamer.gamer_room_params.conversion
-                ) +
-                Math.ceil(
-                  gamer.gamer_room_params.socialsCount *
-                    gamer.gamer_room_params.socialsCoef *
-                    gamer.gamer_room_params.conversion
-                ) +
-                Math.ceil(
-                  gamer.gamer_room_params.smmCount *
-                    gamer.gamer_room_params.smmCoef *
-                    gamer.gamer_room_params.conversion
-                ) +
-                Math.ceil(
-                  gamer.gamer_room_params.straightCount *
-                    gamer.gamer_room_params.straightCoef *
-                    gamer.gamer_room_params.conversion
-                )) *
-              gamer.gamer_room_params.averageCheck
+            money: calculateMoneyForMonth(gamer.gamer_room_params)
           };
           gamersRate.push(position);
         }

@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      MoneyResultState.belongsTo(models.UserStepState, {
+        foreignKey: "step_state_id",
+        as: "step_state"
+      });
     }
   }
   MoneyResultState.init(
@@ -19,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false
       },
-      step_state: {
+      step_state_id: {
         type: DataTypes.INTEGER,
         alowNull: false
       },

@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
-      step_state: {
+      step_state_id: {
         type: Sequelize.INTEGER,
         alowNull: false
       },
