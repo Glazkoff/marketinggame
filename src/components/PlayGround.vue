@@ -11,43 +11,13 @@
       >
         <!-- Обёртка случайного события с сервера -->
         <transition name="cardwrap">
-          <div class="event-box w-100 h-100" v-if="isEvent && !isStart">
-            <div class="container h-100">
-              <div class="row mt-2">
-                <div class="col-12">
-                  <h4 class="text-center">
-                    Cобытие!
-                    {{ event.title }}
-                  </h4>
-                  <hr />
-                </div>
-              </div>
-
-              <div class="row h-25">
-                <div class="col-12 h-100">
-                  <div class="gray-block"></div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-8 mt-2 offset-2">
-                  <p class="text-center">{{ event.description }}</p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-6 offset-3">
-                  <button
-                    style="display: block"
-                    class="btn btn-primary w-100"
-                    @click="closeEvent"
-                  >
-                    Продолжить
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Event
+            :event="event"
+            @close="closeEvent"
+            v-if="isEvent && !isStart"
+          ></Event>
         </transition>
-        <!-- Конец обёртки -->
+
         <!-- Начальный экран владельца комнаты -->
         <div
           class="owner-start-game d-flex align-content-between flex-wrap h-100"
@@ -98,63 +68,56 @@
             class="row h-100 justify-content-center align-items-start d-flex"
           >
             <div class="col-12 data-wrap" style="margin: auto auto;">
-              <div class="row">
-                <div
-                  class="col-5 d-flex align-content-center"
-                  style="vertical-align: middle"
-                >
-                  <h4 class="mb-0 d-block">
-                    Сейчас у вас ({{ gamerName }}) есть:
-                  </h4>
-                </div>
-                <div class="col-7 data-group">
-                  <ul class="list-group list-group-horizontal w-100">
-                    <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
-                      style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
-                    >
-                      Бюджет
-                      <span class="badge badge-primary badge-pill">
-                        <h4>
-                          {{ gamerParams.money }}₽
-                          <!-- <number
-                            class="bold transition"
-                            animationPaused
-                            ref="number1"
-                            :to="gamerParams.money"
-                            :duration="1.1"
-                            @click="playAnimation"
-                            easing="Power4.easeOut"
-                          />₽ -->
-                        </h4>
-                      </span>
-                    </li>
-                    <li
-                      class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
-                    >
-                      Месяц
-                      <span class="badge badge-primary badge-pill">
-                        <!-- <h4
-                          v-if="
-                            firstRoomParams.month <=
-                              firstRoomParams.month - gamerParams.month + 1
-                          "
-                        > -->
-                        <h4 v-if="firstRoomParams.month - gamerParams.month < firstRoomParams.month " >
-                          {{ firstRoomParams.month - gamerParams.month +1}} из
-                          {{ firstRoomParams.month }}
-                        </h4>
-                        <h4 v-else>
-                          Завершено
-                        </h4>
-                      </span>
-                    </li>
-                  </ul>
+              <div class="container-fluid pl-0 pr-0">
+                <div class="row">
+                  <div
+                    class="col-md-5 col-sm-12 d-flex align-content-center pt-sm-2 pb-sm-2"
+                    style="vertical-align: middle"
+                  >
+                    <h4 class="mb-0 d-block">
+                      Сейчас у вас ({{ gamerName }}) есть:
+                    </h4>
+                  </div>
+                  <div class="col-md-7 col-sm-12 data-group">
+                    <ul class="list-group list-group-horizontal w-100">
+                      <li
+                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                        style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
+                      >
+                        Бюджет
+                        <span class="badge badge-primary badge-pill">
+                          <h4>{{ gamerParams.money }}₽</h4>
+                        </span>
+                      </li>
+                      <li
+                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                      >
+                        Месяц
+                        <span class="badge badge-primary badge-pill">
+                          <h4
+                            v-if="
+                              firstRoomParams.month - gamerParams.month <
+                                firstRoomParams.month
+                            "
+                          >
+                            {{ firstRoomParams.month - gamerParams.month + 1 }}
+                            из
+                            {{ firstRoomParams.month }}
+                          </h4>
+                          <h4 v-else>
+                            Завершено
+                          </h4>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-              <DataTable></DataTable>
+              <div class="data-table">
+                <DataTable></DataTable>
+              </div>
               <button
-                class="btn btn-success w-100 mt-1 pr-2 btn-block"
+                class="btn btn-success w-100 mt-1 pr-2 btn-block mb-2"
                 :disabled="isStart || stepDone"
                 @click="makeStep()"
               >
@@ -168,12 +131,10 @@
       </div>
     </div>
     <!-- Поле для карточек -->
-    
     <div
       id="card-field"
-      style="transition: all 5s"
+      style="transition: all 5s, width 0s"
       :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
-   
     >
       <div class="loader-wrap h-100" v-if="cardsLoading">
         <Loader></Loader>
@@ -201,31 +162,16 @@
           tag="div"
           v-if="!isStart"
         >
-        <!-- 
-          type="transition"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @leave="leave"
-          mode="out-in"
-         -->
-          <!-- v-if="!isStart" -->
           <div
             class="card-box"
-           
             v-for="(card, count) in cards"
             :key="count"
-           
             :class="{
               'card-ml-0': card.oneOff,
               'card-ml-1': !card.oneOff && !isLastEffectStage(card.id),
               'card-ml-2': !card.oneOff && !hasThisEffect(card.id)
             }"
           >
-          <!-- 
-            @dragend="altdragend"
-            :draggable="card.cost <= gamerParams.money"
-            @dragstart.self="altdragstart"
-           -->
             <div
               class="card-box w-100 h-100 bottom-card bottom-card-1"
               v-if="!card.oneOff && !isLastEffectStage(card.id)"
@@ -269,8 +215,7 @@
       <Effects></Effects>
     </div>
     <!-- Конец списка действующих игроков -->
-    </div>
-  
+  </div>
 </template>
 
 <script>
@@ -278,6 +223,7 @@ import GamerList from "@/components/GamerList.vue";
 import Effects from "@/components/Effects.vue";
 import DataTable from "@/components/DataTable.vue";
 import Loader from "@/components/Loader.vue";
+import Event from "@/components/Event.vue";
 import numeral from "numeral";
 import Vue from "vue";
 Vue.filter("formatNumber", function(value) {
@@ -289,7 +235,8 @@ export default {
     GamerList,
     Effects,
     DataTable,
-    Loader
+    Loader,
+    Event
   },
   created() {
     this.$store.watch(
@@ -364,7 +311,6 @@ export default {
     );
     this.$store.commit("SET_CARDS", this.shuffle(this.cards));
     this.refreshCards = [...this.cards];
-    // this.$store.commit("doAnimation");
   },
   data() {
     return {
@@ -376,84 +322,17 @@ export default {
       dragnode: undefined,
       params: {},
       refreshCards: [],
-      // cards: [
-      // {
-      //   id: 1,
-      //   title: "Нанять SMM-менеджера",
-      //   text: `Трафик из соц.медиа: 2й мес - к-т 1.1, 3й - 1.8. Конверсия в звонки по соц.сетям: 3й мес - 1.5`,
-      //   coefs: [1.1, 1.8, 1.5],
-      //   templateText:
-      //     "Трафик из соц.медиа: 2й мес - к-т @coef0, 3й - @coef1. Конверсия в звонки по соц.сетям: 3й мес - @coef2",
-      //   cost: 80000
-      // },
-      // {
-      //   id: 2,
-      //   title: "Заказать SEO-оптимизацию",
-      //   text:
-      //     "Органика растет в 2 раза на 3й мес применения. 1й мес просто стоимости привлечения - 1.5, 3й мес падение - 0.3",
-      //   coefs: [2, 1.5, 0.3],
-      //   templateText:
-      //     "Органика растет в @coef0 раза на 3й мес применения. 1й мес просто стоимости привлечения - @coef1, 3й мес падение - @coef2",
-      //   cost: 50000
-      // },
-      // {
-      //   id: 3,
-      //   title: "Улучшение юзабилити",
-      //   text:
-      //     "Конверсия в звонки по всем каналам: 3й - 1.1. Стоимость привлечения: 1 и 2й - 0.8. Средний чек: 3й - 1.5",
-      //   cost: 20000,
-      //   oneOff: true
-      // },
-      // {
-      //   id: 4,
-      //   title: "Реклама в соцсетях",
-      //   text:
-      //     "Трафик по рекламе: 1й мес +4500. Стоимость привлечения: 1-3 мес - 1.1",
-      //   coefs: [4500, 1.1],
-      //   templateText:
-      //     "Трафик по рекламе: 1й мес +@coef0. Стоимость привлечения: 1-3 мес - @coef1",
-      //   cost: 25000
-      // },
-      // {
-      //   id: 5,
-      //   title: "PR-компания компании",
-      //   text: "Стоимость привелечения: 1й - 1.3, 2й - 1.1, 3й - 1.2",
-      //   coefs: [1.3, 1.1, 1.2],
-      //   templateText:
-      //     "Стоимость привелечения: 1й - @coef0, 2й - @coef1, 3й - @coef2",
-      //   cost: 30000
-      // },
-      // {
-      //   id: 6,
-      //   title: "Контекстная рекламная компания",
-      //   text:
-      //     "Трафик из контекста: 1й мес- +6000 визитов, 2 и 3й - 1.1. Конверсия в звонки: 1й - 1.5. Стоимость привлечения: каждый мес -  1.3",
-      //   coefs: [6000, 1.1, 1.5, 1.3],
-      //   templateText:
-      //     "Трафик из контекста: 1й мес - +@coef0 визитов, 2 и 3й - @coef1. Конверсия в звонки: 1й - @coef2. Стоимость привлечения: каждый мес - @coef3",
-      //   cost: 35000
-      // },
-      // {
-      //   id: 7,
-      //   title: "Размещение информации в справочниках",
-      //   text: "Трафик type-in: 1-3й - 1,2. ",
-      //   cost: 20000,
-      //   oneOff: true
-      // }
-      // ],
       number: 0,
       tweenedNumber: 0
     };
   },
   mounted() {
     this.number = this.$store.state.roomParams.money;
-    // this.$store.commit("doAnimation");
     this.playAnimation();
     this.getCards();
   },
   watch: {
     number: function(newValue) {
-      // TweenLite.to(this.$data, 1, { tweenedNumber: newValue })
       if (this.$refs.number1 !== undefined) {
         this.$refs.number1.play();
       }
@@ -461,7 +340,6 @@ export default {
     money: function(newValue) {
       setTimeout(() => {
         this.playAnimation();
-        // this.$store.commit('doAnimation')
       }, 50);
     }
   },
@@ -499,7 +377,6 @@ export default {
       return this.$store.state.gamerName;
     },
     gamerParams() {
-      // let a = this.$store.state.roomParams;
       return this.$store.state.roomParams;
     },
     firstRoomParams() {
@@ -526,9 +403,6 @@ export default {
     // При клике на кнопку "Начать"
     startGame() {
       this.$socket.emit("startGame", { room_id: this.$store.state.roomId });
-      // this.$socket.emit("startGame", a);
-      // this.$store.commit("SOCKET_calcAllParams");
-      // this.$store.state.isStart = false;
       this.playAnimation();
     },
     async makeStep() {
@@ -536,12 +410,6 @@ export default {
       this.$socket.emit("doStep", this.usedCards);
       let stepArr = [];
       for (const val of this.usedCards) {
-        console.log(
-          "$$$: ",
-          this.refreshCards,
-          this.refreshCards.find(el => el.id === val),
-          val
-        );
         let cardObj = {
           id: val,
           title: this.refreshCards.find(el => el.id === val).title
@@ -554,7 +422,6 @@ export default {
       let oneOffCards = this.oneOffCardList;
       for (const cardIndex of oneOffCards) {
         let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex);
-        console.log("ОДНОРАЗОВЫЕ КАРТОЧКИ");
         if (usedIndex !== -1) {
           let spliceIndex = this.refreshCards.findIndex(
             elem => elem.id === cardIndex
@@ -575,7 +442,6 @@ export default {
           }
         }, 100);
       }
-      // this.$store.commit("doAnimation");
     },
     isLastEffectStage(id) {
       let effectId = this.effects.findIndex(elem => elem.id === id);
@@ -619,32 +485,6 @@ export default {
       this.$store.commit("SPLICE_CARD", this.cards[index].id);
       this.playAnimation();
     },
-    // startGame() {
-    //   console.log("Стейт комнаты");
-    //   let a = Object.assign(this.$store.state.roomParams);
-    //   console.log(a);
-    //   // this.refreshCards = Object.assign(this.cards);
-    //   console.log(this.cards);
-    //   console.log(this.refreshCards);
-    //   this.$socket.emit("startGame", a);
-    //   this.$store.commit("SOCKET_calcAllParams");
-    //   // this.$store.state.isOwner = false;
-    //   this.$store.state.isStart = false;
-    //   this.playAnimation();
-    // },
-    // beforeEnter: function(el) {
-    //   console.log("befenterhook");
-    // },
-    // enter: function(el) {
-    //   this.playAnimation();
-    //   console.log("enterhook");
-    // },
-    // leave: function(el) {
-    //   el.style.opacity = 0;
-    //   el.style.height = 0;
-    //   console.log("leavehook");
-    //   // this.$store.commit("doAnimation");
-    // },
     altdrop(e) {
       e.preventDefault();
       console.log("drop");
@@ -727,10 +567,13 @@ export default {
 </script>
 
 <style>
+.data-table {
+  width: 100%;
+  overflow-x: auto;
+}
 .gamer-round-data {
   min-width: unset !important;
-  overflow: scroll;
-  overflow-y:hidden;
+  overflow: hidden;
 }
 ::-webkit-scrollbar {
   width: 12px;
@@ -847,7 +690,7 @@ export default {
   height: 100%;
   max-height: calc(100vh - 40px);
   position: relative;
-  padding-top: 40px;
+  padding-top: 50px;
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: 1.6fr 1fr;
@@ -864,6 +707,7 @@ export default {
   background-color: rgba(123, 45, 64, 0.3);
   grid-area: 1/1/2/2;
   display: flex;
+  /* min-height: 16rem; */
 }
 
 #card-field {
@@ -880,7 +724,7 @@ export default {
 .play-information {
   transition: background-color 0.25s;
   width: 96%;
-  height: 100%;
+  height: 96%;
   background-color: #fff;
   margin: auto auto;
   border-radius: 8px;
@@ -960,7 +804,7 @@ export default {
   min-height: 50%;
   max-height: 100%;
   display: flex;
-  overflow:auto;
+  overflow: auto;
 }
 
 #card-field::-webkit-scrollbar {
@@ -1026,8 +870,8 @@ export default {
   display: none;
 }
 @media screen and (max-height: 560px) {
-  .main-side{
-    overflow-y:scroll;
+  .main-side {
+    overflow-y: scroll;
   }
 }
 @media screen and (max-width: 1250px) {
@@ -1071,7 +915,7 @@ export default {
   }
   #play-field {
     grid-area: 1/1/2/4;
-    width: 100vw;
+    width: 100%;
     margin: 0;
   }
   #enemy-field {
@@ -1079,200 +923,170 @@ export default {
   }
 }
 @media screen and (max-width: 490px) {
-  .play-information{
-    padding:1rem 0 0 0;
+  .play-information {
+    padding: 0;
   }
-  .main-side .pg-header{
-    position:relative;
-    height:5rem;
+  .main-side .pg-header {
+    position: relative;
+    height: 5rem;
   }
-  #playground{
-    padding:0;
+  #playground {
+    padding: 0;
   }
-  .main-side #finish-screen{
-    margin-top:0rem;
+  .main-side #finish-screen {
+    margin-top: 0rem;
   }
-  .main-side .pg-header a{
+  .main-side .pg-header a {
     padding: 2.2rem 0rem 0rem 0rem;
     width: 10rem;
     left: 0;
     position: absolute;
   }
-  .col .gray-block{
-    height:90%;
+  .col .gray-block {
+    height: 90%;
   }
-  #direction-column{
-    flex-direction:column;
-    height:26rem;
+  #direction-column {
+    flex-direction: column;
+    height: 26rem;
   }
-  .col .list-group{
-    margin:auto;
-    padding-left:1rem;
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
   }
-  .w-100{
-    height:100%;
+  .w-100 {
+    height: 100%;
   }
-  #direction-column .col-8{
-    max-width:100%;
+  #direction-column .col-8 {
+    max-width: 100%;
   }
 }
 @media screen and (max-width: 615px) {
-  .col .gray-block{
-    height:90%;
+  .col .gray-block {
+    height: 90%;
   }
-  #flex{
-    flex-direction:column;
-    height:26rem;
+  #flex {
+    flex-direction: column;
+    height: 26rem;
   }
-  .col .list-group{
-    margin:auto;
-    padding-left:1rem;
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
   }
-  .w-100{
-    height:100%;
+  .w-100 {
+    height: 100%;
   }
 }
+
 @media screen and (max-width: 730px) {
- .main-side{
-   display: flex;
-   flex-direction: column;
- 
-   overflow-x: hidden
- }
-  .play-information{
-    padding:2rem 0 0 0;
+  .main-side {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
   }
- #playground{
-   display: flex;
-   flex-direction: column;
- }
+  .play-information {
+    padding: 0;
+    height: 100%;
+  }
+  #play-field {
+    margin: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  #playground {
+    display: flex;
+    flex-direction: column;
+  }
   .list-group-item {
     padding: 2px !important;
     padding-left: 8px !important;
     padding-right: 2px !important;
   }
-  
-   #card-field{
-     display: flex;
-    width: 100vw  !important;
-    min-height: 30vh;
 
-  }
-  
-  #enemy-field{
+  #card-field {
     display: flex;
-    width: 100vw  !important;
-    min-height:20rem;
+    width: 100vw !important;
+    min-height: 30vh;
   }
-  #effects-field{
-     display: flex;
-    width: 100vw  !important;
-    
+
+  #enemy-field {
+    display: flex;
+    width: 100% !important;
+    min-height: 20rem;
+  }
+  #effects-field {
+    display: flex;
+    width: 100% !important;
   }
 }
+
 @media screen and (max-width: 490px) {
-  .main-side .pg-header{
-    height:5rem;
+  .main-side .pg-header {
+    height: 5rem;
   }
-  .main-side #finish-screen{
-    margin-top:0rem;
+  .main-side #finish-screen {
+    margin-top: 0rem;
   }
-  .main-side .pg-header a{
+  .main-side .pg-header a {
     padding: 2.2rem 0rem 0rem 0rem;
     width: 10rem;
     left: 0;
     position: absolute;
   }
-  .col .gray-block{
-    height:90%;
+  .col .gray-block {
+    height: 90%;
   }
-  #direction-column{
-    flex-direction:column;
-    height:26rem;
+  #direction-column {
+    flex-direction: column;
+    height: 26rem;
   }
-  .col .list-group{
-    margin:auto;
-    padding-left:1rem;
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
   }
-  .w-100{
-    height:100%;
+  .w-100 {
+    height: 100%;
   }
 }
 @media screen and (max-width: 615px) {
-  .col .gray-block{
-    height:90%;
+  .col .gray-block {
+    height: 90%;
   }
-  #flex{
-    flex-direction:column;
-    height:26rem;
+  #flex {
+    flex-direction: column;
+    height: 26rem;
   }
-  .col .list-group{
-    margin:auto;
-    padding-left:1rem;
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
   }
-  .w-100{
-    height:100%;
+  .w-100 {
+    height: 100%;
   }
 }
 @media screen and (max-height: 729px) {
-  #card-field{
-    min-height:45%;
+  #card-field {
+    min-height: 45%;
   }
-  #effects-field{
-    min-height:55%;
-    overflow:auto;
+  #effects-field {
+    min-height: 55%;
+    overflow: auto;
   }
-  #enemy-field{
-    min-height:70%;
+  #enemy-field {
+    min-height: 70%;
   }
-  #gamerlist{
-    max-height:100%;
+  #gamerlist {
+    max-height: 100%;
   }
-  .play-information{
-    padding:2rem 0 0 0;
+  .play-information {
+    padding: 2rem 0 0 0;
   }
-  .gamer-round-data{
-    overflow-y:hidden;
+  .gamer-round-data {
+    overflow-y: hidden;
   }
 }
 @media screen and (orientation: portrait) {
-  /* #playground {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 3fr 2fr 1fr;
-  }
-  #play-field {
-    grid-area: 1/1/2/3;
-  }
-  #enemy-field {
-    grid-area: 3/1/4/2;
-  }
-  #effects-field {
-    grid-area: 3/2/4/3;
-  }
-  #card-field {
-    grid-area: 2/1/3/3;
-  } */
 }
 @media screen and (max-width: 640px) {
-  /* #playground {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 3fr 2fr 1fr;
-  }
-  #play-field {
-    grid-area: 1/1/2/3;
-  }
-  #enemy-field {
-    grid-area: 3/1/4/2;
-  }
-  #effects-field {
-    grid-area: 3/2/4/3;
-  }
-  #card-field {
-    grid-area: 2/1/3/3;
-  } */
-  /* .container {
-    max-width: unset;
-  } */
 }
 @media (min-width: 576px) {
   .gamer-round-data {
@@ -1341,6 +1155,7 @@ export default {
   }
 
   #playground {
+    padding-top: 0;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 2.4fr 2fr 1.2fr;
   }
@@ -1352,6 +1167,7 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 0;
+    padding: 0;
   }
   .main-side {
     max-height: unset;
@@ -1395,6 +1211,5 @@ export default {
   h3.card-text {
     font-size: 22px;
   }
-  
 }
 </style>

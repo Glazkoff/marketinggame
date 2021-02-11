@@ -214,8 +214,5 @@ export default {
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  #playground {
-    padding-top: 40px;
-  }
 }
 </style>

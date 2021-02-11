@@ -767,7 +767,11 @@ module.exports = function(socket, io, db) {
       }
 
       // Выбираем случайно гененрировать ли событие
-      if (Math.random() < lastConfig.event_chance && allGamersDoStep) {
+      if (
+        Math.random() < lastConfig.event_chance &&
+        allGamersDoStep &&
+        !(room.current_month >= room.first_params.month)
+      ) {
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
         let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];

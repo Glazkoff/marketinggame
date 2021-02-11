@@ -61,7 +61,7 @@
         <div class="col-lg-8 col text-center mt-0" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
-          <ul class="list-group col-lg-10 col offset-1 mt-3">
+          <ul class="list-group offset-lg-1 col-lg-10 col pr-0 pl-0 mt-3">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -249,7 +249,7 @@
       </div>
       <div class="row">
         <div
-          class="col-lg-8 align-content-center justify-content-between pr-0 finish-table"
+          class="col-lg-8 align-content-center justify-content-between pr-0 pl-0 finish-table"
         >
           <DataTable is-finish-table="true"></DataTable>
         </div>
@@ -279,7 +279,7 @@
           </div>
         </div>
       </div>
-      <div class="row mt-2">
+      <div class="row mt-2 mb-2">
         <div class="col-6 align-content-center justify-content-between">
           <router-link
             to="Choose"
@@ -375,11 +375,19 @@ export default {
       }
     },
     isLoozer() {
-      return !(
-        this.decoded.id === this.$store.state.winners[1].id ||
-        this.decoded.id === this.$store.state.winners[2].id ||
-        this.decoded.id === this.$store.state.winners[3].id
-      );
+      if (
+        this.$store.state.winners[1] !== undefined &&
+        this.$store.state.winners[2] !== undefined &&
+        this.$store.state.winners[3] !== undefined
+      ) {
+        return !(
+          this.decoded.id === this.$store.state.winners[1].id ||
+          this.decoded.id === this.$store.state.winners[2].id ||
+          this.decoded.id === this.$store.state.winners[3].id
+        );
+      } else {
+        return false;
+      }
     },
     isSomeWinner() {
       return (
@@ -469,12 +477,11 @@ export default {
   margin: auto auto;
   background-color: #fff;
   width: 96%;
-  margin-top: 50px;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
 }
 .finish-table {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 .finish-table .table td {
   font-size: 0.7rem;
@@ -528,6 +535,10 @@ export default {
 }
 #finish-screen .card-body p {
   font-size: 0.8rem;
+}
+
+#stepsBox {
+  overflow-y: auto;
 }
 
 #stepsBox::-webkit-scrollbar {
