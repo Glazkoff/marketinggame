@@ -56,6 +56,17 @@
               </td>
             </tr>
             <tr>
+              <th scope="row" class="border-right border-left">Стоимость</th>
+              <td
+                class="text-center border-right text-wrap"
+                :colspan="card.duration"
+                v-for="card in cards"
+                :key="card.id"
+              >
+                {{ card.cost }}₽
+              </td>
+            </tr>
+            <tr>
               <th scope="row" class="border-right border-left">Описание</th>
               <td
                 class="text-center border-right text-wrap"

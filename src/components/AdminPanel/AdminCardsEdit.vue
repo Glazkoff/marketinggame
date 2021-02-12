@@ -96,7 +96,6 @@
       </div>
       <div class="text-center" v-else-if="isError">
         <h1 class="mb-1 text-danger">Произошла ошибка!</h1>
-
         <p class="mb-1 text-danger">
           Возможно, данная карточка удалена или не существует
         </p>
@@ -111,10 +110,20 @@
             <label for="card-description">Название карточки</label>
             <input
               class="form-control"
-              id="card-description"
+              id="card-title"
               type="text"
               disabled
               :value="card.title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="card-description">Стоимость карточки</label>
+            <input
+              class="form-control"
+              id="card-cost"
+              type="text"
+              disabled
+              :value="card.cost + '₽'"
             />
           </div>
           <div class="form-group">
@@ -147,6 +156,16 @@
               class="form-control form-control-input"
               :disabled="descriptionSaveLoading"
               v-model.trim="newCardDescription.title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="title">Стоимость карточки</label>
+            <input
+              type="number"
+              id="cost"
+              class="form-control form-control-input"
+              :disabled="descriptionSaveLoading"
+              v-model.trim="newCardDescription.cost"
             />
           </div>
           <div class="form-group">
@@ -250,6 +269,16 @@
               class="form-control form-control-input"
               :disabled="descriptionSaveLoading"
               v-model.trim="newCardDescription.title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="title">Стоимость карточки</label>
+            <input
+              type="number"
+              id="cost"
+              class="form-control form-control-input"
+              :disabled="descriptionSaveLoading"
+              v-model.trim="newCardDescription.cost"
             />
           </div>
           <div class="form-group">
@@ -622,10 +651,12 @@ export default {
           res => {
             this.descriptionSaveLoading = false;
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
+            this.getAdminCards();
           },
           err => {
             this.descriptionSaveLoading = false;
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
+            this.getAdminCards();
             console.log(err);
           }
         );
@@ -638,6 +669,7 @@ export default {
     onDescriptionChange() {
       this.newCardDescription.coefs = this.card.coefs;
       this.newCardDescription.text = this.card.text;
+      this.newCardDescription.cost = this.card.cost;
       this.newCardDescription.templateText = this.card.templateText;
       this.newCardDescription.title = this.card.title;
       this.newCardDescription.isEdit = !this.newCardDescription.isEdit;

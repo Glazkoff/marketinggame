@@ -274,7 +274,8 @@ router.put("/:id/description", async (req, res) => {
               description: req.body.description,
               coefs: req.body.coefs,
               templateText: req.body.templateText,
-              text: req.body.text
+              text: req.body.text,
+              cost: req.body.cost
             },
             {
               where: {
