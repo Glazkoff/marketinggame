@@ -16,7 +16,6 @@ const {
   sendEventMessage
 } = require("../global_functions/messages");
 const Sequelize = require("sequelize");
-const EVENTS = require("../events");
 
 module.exports = function(socket, io, db) {
   // При выполнении хода
@@ -772,6 +771,11 @@ module.exports = function(socket, io, db) {
         allGamersDoStep &&
         !(room.current_month >= room.first_params.month)
       ) {
+        const EVENTS = await db.Event.findAll({
+          where: {
+            is_draft: false
+          }
+        });
         // TODO: сделать загрузку массива
         // Получаем случайный объект из массива событий
         let randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];

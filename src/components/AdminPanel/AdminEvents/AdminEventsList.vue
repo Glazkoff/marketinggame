@@ -2,6 +2,13 @@
   <div>
     <h3>Список случайных событий</h3>
     <div class="container-fluid">
+      <button
+        class="btn btn-success btn-block mb-4"
+        v-if="!eventsLoading"
+        @click="addEvent"
+      >
+        Добавить случайное событие
+      </button>
       <div class="loader-wrap h-100" v-if="eventsLoading">
         <Loader></Loader>
       </div>
@@ -18,6 +25,22 @@
               >
                 <router-link :to="`/admin/events/edit/${event.id}`"
                   >(редактировать)</router-link
+                ><br />
+                <a href="#" class="text-danger" @click="deleteEvent(event.id)"
+                  >(удалить)</a
+                ><br />
+                <a
+                  v-if="event.is_draft"
+                  href="#"
+                  class="text-success"
+                  @click="publishEvent(event.id)"
+                  >(опубликовать)</a
+                ><a
+                  v-else
+                  href="#"
+                  class="text-secondary"
+                  @click="makeDraftEvent(event.id)"
+                  >(сделать черновиком)</a
                 ><br />{{ event.id }}
               </th>
             </tr>
@@ -270,18 +293,21 @@ export default {
     }
   },
   mounted() {
-    this.eventsLoading = true;
-    this.$store.dispatch("GET_ADMIN_EVENTS").then(
-      res => {
-        this.eventsLoading = false;
-      },
-      err => {
-        this.eventsLoading = false;
-        console.log(err);
-      }
-    );
+    this.getEvents();
   },
   methods: {
+    getEvents() {
+      this.eventsLoading = true;
+      this.$store.dispatch("GET_ADMIN_EVENTS").then(
+        res => {
+          this.eventsLoading = false;
+        },
+        err => {
+          this.eventsLoading = false;
+          console.log(err);
+        }
+      );
+    },
     getFormatChange(dataChange, param, when) {
       let findDataChange = dataChange.find(el => {
         return el.param === param && el.when === when - 1;
@@ -291,6 +317,58 @@ export default {
       } else {
         return "" + findDataChange.operation + findDataChange.change;
       }
+    },
+    addEvent() {
+      this.eventsLoading = true;
+      this.$store.dispatch("POST_ADMIN_EVENTS").then(
+        res => {
+          this.getEvents();
+        },
+        err => {
+          this.getEvents();
+          console.log(err);
+        }
+      );
+    },
+    deleteEvent(eventId) {
+      this.eventsLoading = true;
+      this.$store.dispatch("DELETE_ADMIN_EVENTS", eventId).then(
+        res => {
+          this.getEvents();
+        },
+        err => {
+          this.getEvents();
+          console.log(err);
+        }
+      );
+    },
+    publishEvent(eventId) {
+      this.eventsLoading = true;
+      this.$store
+        .dispatch("PUT_ADMIN_EVENTS_DRAFT", { eventId, is_draft: false })
+        .then(
+          res => {
+            this.getEvents();
+          },
+          err => {
+            this.getEvents();
+            console.log(err);
+          }
+        );
+    },
+    makeDraftEvent(eventId) {
+      this.eventsLoading = true;
+      this.$store
+        .dispatch("PUT_ADMIN_EVENTS_DRAFT", { eventId, is_draft: true })
+        .then(
+          res => {
+            this.getEvents();
+          },
+          err => {
+            this.getEvents();
+            console.log(err);
+          }
+        );
     }
   }
 };

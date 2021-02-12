@@ -178,7 +178,7 @@ router.post("/:id", async (req, res) => {
   }
 });
 
-// Добавление, редактирование или удаление параметра карточки
+// Сделать черновиком или опубликовать карточку
 router.put("/:id/is_draft", async (req, res) => {
   try {
     await jwt.verify(

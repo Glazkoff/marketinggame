@@ -24,12 +24,76 @@ router.get("/", async (req, res) => {
               "title",
               "description",
               "data_change",
+              "is_draft",
               "createdAt",
               "updatedAt"
             ],
             order: [["event_id", "ASC"]]
           });
           res.send(result);
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("events", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Добавление нового тестового случайного события
+router.post("/", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          let result = await db.Event.create({
+            title: "Тестовое событие",
+            description: "Описание тестового события",
+            data_change: [],
+            is_draft: true
+          });
+          res.send(result);
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("events", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Добавление, редактирование или удаление параметра события
+router.delete("/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          await db.Event.destroy({
+            where: {
+              event_id: req.params.id
+            }
+          });
+          res.send({ message: "OK", status: 200 });
         }
       }
     );
@@ -92,6 +156,46 @@ router.post("/:id", async (req, res) => {
     );
   } catch (error) {
     logRestApiError("events", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Сделать черновиком или опубликовать событие
+router.put("/:id/is_draft", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          if (req.body.is_draft != null) {
+            let a = await db.Event.update(
+              {
+                is_draft: req.body.is_draft
+              },
+              {
+                where: {
+                  event_id: req.params.id
+                }
+              }
+            );
+            res.send(a);
+          } else {
+            throw new Error("is_draft is not stated!");
+          }
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("admin/cards", error);
     res.status(500).send({
       status: 500,
       message: "Ошибка сервера!"

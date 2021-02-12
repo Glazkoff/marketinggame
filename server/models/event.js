@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
       data_change: {
         type: DataTypes.JSONB,
         allowNull: false
+      },
+      is_draft: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     },
     {

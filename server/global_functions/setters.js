@@ -38,7 +38,6 @@ module.exports = {
       });
       if (findEvent === null) {
         db.Event.create({
-          event_id: event.id,
           title: event.title,
           description: event.description,
           data_change: event.data_change

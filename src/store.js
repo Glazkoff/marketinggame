@@ -845,6 +845,52 @@ const store = new Vuex.Store({
           });
       });
     },
+    POST_ADMIN_EVENTS(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events`,
+          method: "POST"
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    DELETE_ADMIN_EVENTS(state, eventId) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events/${eventId}`,
+          method: "DELETE"
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    PUT_ADMIN_EVENTS_DRAFT(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/events/${data.eventId}/is_draft`,
+          method: "PUT",
+          data
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
     POST_ADMIN_EVENT_PARAMS(state, data) {
       return new Promise((resolve, reject) => {
         axios({

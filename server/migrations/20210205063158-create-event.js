@@ -20,6 +20,10 @@ module.exports = {
         type: Sequelize.JSONB,
         allowNull: false
       },
+      is_draft: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
