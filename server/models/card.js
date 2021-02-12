@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       oneOff: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+      },
+      is_draft: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     },
     {

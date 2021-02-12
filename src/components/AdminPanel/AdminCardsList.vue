@@ -1,6 +1,11 @@
 <template>
   <div>
     <h3 class="mb-3">Список карточек</h3>
+    <div class="container-fluid" v-if="!cardsLoading">
+      <button class="btn btn-success btn-block mb-4" @click="addCard">
+        Добавить карточку
+      </button>
+    </div>
     <div class="container-fluid">
       <div class="loader-wrap h-100" v-if="cardsLoading">
         <Loader></Loader>
@@ -18,6 +23,22 @@
               >
                 <router-link :to="`/admin/cards/edit/${card.id}`"
                   >(редактировать)</router-link
+                ><br />
+                <a href="#" class="text-danger" @click="deleteCard(card.id)"
+                  >(удалить)</a
+                ><br />
+                <a
+                  v-if="card.is_draft"
+                  href="#"
+                  class="text-success"
+                  @click="publishCard(card.id)"
+                  >(опубликовать)</a
+                ><a
+                  v-else
+                  href="#"
+                  class="text-secondary"
+                  @click="makeDraftCard(card.id)"
+                  >(сделать черновиком)</a
                 ><br />{{ card.id }}
               </th>
             </tr>
@@ -279,19 +300,74 @@ export default {
       } else {
         return "" + findDataChange.operation + findDataChange.change;
       }
+    },
+    addCard() {
+      this.cardsLoading = true;
+      this.$store.dispatch("POST_ADMIN_CARDS").then(
+        res => {
+          this.getCards();
+        },
+        err => {
+          this.getCards();
+          console.log(err);
+        }
+      );
+    },
+    deleteCard(cardId) {
+      this.cardsLoading = true;
+      this.$store.dispatch("DELETE_ADMIN_CARDS", cardId).then(
+        res => {
+          this.getCards();
+        },
+        err => {
+          this.getCards();
+          console.log(err);
+        }
+      );
+    },
+    getCards() {
+      this.cardsLoading = true;
+      this.$store.dispatch("GET_ADMIN_CARDS").then(
+        res => {
+          this.cardsLoading = false;
+        },
+        err => {
+          this.cardsLoading = false;
+          console.log(err);
+        }
+      );
+    },
+    publishCard(cardId) {
+      this.cardsLoading = true;
+      this.$store
+        .dispatch("PUT_ADMIN_CARDS_DRAFT", { cardId, is_draft: false })
+        .then(
+          res => {
+            this.getCards();
+          },
+          err => {
+            this.getCards();
+            console.log(err);
+          }
+        );
+    },
+    makeDraftCard(cardId) {
+      this.cardsLoading = true;
+      this.$store
+        .dispatch("PUT_ADMIN_CARDS_DRAFT", { cardId, is_draft: true })
+        .then(
+          res => {
+            this.getCards();
+          },
+          err => {
+            this.getCards();
+            console.log(err);
+          }
+        );
     }
   },
   mounted() {
-    this.cardsLoading = true;
-    this.$store.dispatch("GET_ADMIN_CARDS").then(
-      res => {
-        this.cardsLoading = false;
-      },
-      err => {
-        this.cardsLoading = false;
-        console.log(err);
-      }
-    );
+    this.getCards();
   }
 };
 </script>

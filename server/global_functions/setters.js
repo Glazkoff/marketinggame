@@ -15,7 +15,6 @@ module.exports = {
       });
       if (findCard === null) {
         db.Card.create({
-          card_id: card.id,
           title: card.title,
           text: card.text,
           cost: card.cost,

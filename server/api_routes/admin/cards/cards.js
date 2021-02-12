@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
               "cost",
               "duration",
               "oneOff",
+              "is_draft",
               "data_change",
               "createdAt",
               "updatedAt"
@@ -35,6 +36,73 @@ router.get("/", async (req, res) => {
             order: [["card_id", "ASC"]]
           });
           res.send(result);
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("admin/cards", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Создание новой тестовой карточки через админпанель
+router.post("/", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          db.Card.create({
+            title: "Название новой карточки",
+            text: "Текст новой карточки",
+            templateText: "",
+            cost: 10000,
+            duration: 3,
+            oneOff: true,
+            is_draft: true,
+            data_change: []
+          });
+          res.send({ status: 200, message: "OK" });
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("admin/cards", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
+// Удаление карточки через админпанель
+router.delete("/:id", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          await db.Card.destroy({
+            where: {
+              card_id: req.params.id
+            }
+          });
+          res.send({ message: "OK", status: 200 });
         }
       }
     );
@@ -110,8 +178,49 @@ router.post("/:id", async (req, res) => {
   }
 });
 
+// Добавление, редактирование или удаление параметра карточки
+router.put("/:id/is_draft", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          console.log(req.body);
+          if (req.body.is_draft != null) {
+            let a = await db.Card.update(
+              {
+                is_draft: req.body.is_draft
+              },
+              {
+                where: {
+                  card_id: req.params.id
+                }
+              }
+            );
+            res.send(a);
+          } else {
+            throw new Error("is_draft is not stated!");
+          }
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("admin/cards", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
+
 // Обновление статуса карточки: одно- или многоразовая
-router.post("/oneoff/:id", async (req, res) => {
+router.post("/:id/oneoff", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,
@@ -147,7 +256,7 @@ router.post("/oneoff/:id", async (req, res) => {
 });
 
 // Изменение описания карточки через админпанель
-router.put("/description/:id", async (req, res) => {
+router.put("/:id/description", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,
@@ -162,6 +271,7 @@ router.put("/description/:id", async (req, res) => {
           let result = await db.Card.update(
             {
               title: req.body.title,
+              description: req.body.description,
               coefs: req.body.coefs,
               templateText: req.body.templateText,
               text: req.body.text
@@ -184,4 +294,5 @@ router.put("/description/:id", async (req, res) => {
     });
   }
 });
+
 module.exports = router;

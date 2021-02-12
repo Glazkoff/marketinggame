@@ -717,6 +717,36 @@ const store = new Vuex.Store({
           });
       });
     },
+    POST_ADMIN_CARDS(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards`,
+          method: "POST"
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    DELETE_ADMIN_CARDS(state, cardId) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards/${cardId}`,
+          method: "DELETE"
+        })
+          .then(resp => {
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
     POST_ADMIN_CARD_PARAMS(state, data) {
       return new Promise((resolve, reject) => {
         axios({
@@ -726,6 +756,22 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             // state.commit("SET_ADMIN_CARD_PARAMS", data);
+            resolve(resp.data);
+          })
+          .catch(err => {
+            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    PUT_ADMIN_CARDS_DRAFT(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/admin/cards/${data.cardId}/is_draft`,
+          method: "PUT",
+          data
+        })
+          .then(resp => {
             resolve(resp.data);
           })
           .catch(err => {
@@ -753,7 +799,7 @@ const store = new Vuex.Store({
     POST_ADMIN_CARD_ONEOFF(state, data) {
       return new Promise((resolve, reject) => {
         axios({
-          url: `${apiUrl}/admin/cards/oneoff/${data.id}`,
+          url: `${apiUrl}/admin/cards/${data.id}/oneoff`,
           method: "POST",
           data
         })
@@ -769,7 +815,7 @@ const store = new Vuex.Store({
     PUT_ADMIN_CARD_DESCRIPTION(state, data) {
       return new Promise((resolve, reject) => {
         axios({
-          url: `${apiUrl}/admin/cards/description/${data.id}`,
+          url: `${apiUrl}/admin/cards/${data.id}/description`,
           method: "PUT",
           data
         })
@@ -834,11 +880,12 @@ const store = new Vuex.Store({
     PUT_ADMIN_EVENT_DESCRIPTION(state, data) {
       return new Promise((resolve, reject) => {
         axios({
-          url: `${apiUrl}/admin/events/description/${data.id}`,
+          url: `${apiUrl}/admin/events/${data.id}/description`,
           method: "PUT",
           data
         })
           .then(resp => {
+            console.log(data);
             state.commit("SET_ADMIN_EVENT_DESCRIPTION", data);
             resolve(resp.data);
           })

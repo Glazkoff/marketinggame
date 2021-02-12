@@ -30,7 +30,10 @@ router.get("/", async (req, res) => {
               "duration",
               "oneOff"
             ],
-            order: [["card_id", "ASC"]]
+            order: [["card_id", "ASC"]],
+            where: {
+              is_draft: false
+            }
           });
           res.send(result);
         }

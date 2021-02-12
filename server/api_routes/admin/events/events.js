@@ -100,7 +100,7 @@ router.post("/:id", async (req, res) => {
 });
 
 // Изменение описания события через админпанель
-router.put("/description/:id", async (req, res) => {
+router.put("/:id/description", async (req, res) => {
   try {
     await jwt.verify(
       req.headers.authorization,

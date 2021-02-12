@@ -613,7 +613,9 @@ export default {
     onDescriptionSave() {
       this.newCardDescription.id = this.$route.params.id;
       this.descriptionSaveLoading = true;
-      this.newCardDescription.text = this.finalText;
+      if (this.finalText !== "") {
+        this.newCardDescription.text = this.finalText;
+      }
       this.$store
         .dispatch("PUT_ADMIN_CARD_DESCRIPTION", this.newCardDescription)
         .then(
