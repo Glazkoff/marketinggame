@@ -46,8 +46,12 @@ function getRoomsRouter(io) {
                 });
                 result.dataValues.first_params.user_in_room_id =
                   uir.user_in_room_id;
-                await db.GamerRoomParams.create(result.dataValues.first_params);
-                await db.PrevRoomParams.create(result.dataValues.first_params);
+                await db.GamerRoomParams.create(
+                  result.dataValues.first_params
+                );
+                await db.PrevRoomParams.create(
+                  result.dataValues.first_params
+                );
 
                 result.dataValues.prev_room_params =
                   result.dataValues.first_params;
