@@ -13,7 +13,7 @@
     <a href="" @click.prevent="logout()">Выйти</a>
     <LastRoomCheck v-on:setRoomId="setRoomJoin"></LastRoomCheck>
     <p>Выбери, как ты начнёшь игру</p>
-    <div class="btn-group btn-group-toggle mb-3">
+    <div class="btn-group btn-group-toggle mb-3" :class="{'btn-group-vertical': this.width< 500}">
       <label
         class="btn btn-lg"
         :class="{
@@ -198,7 +198,8 @@ export default {
       joinError: "",
       showReviewModal: false,
       showCheckModal: false,
-      errorMessage: ""
+      errorMessage: "",
+      width: 0
     };
   },
   validations: {
@@ -246,6 +247,7 @@ export default {
         clearInterval(a);
       }
     }, 200);
+    window.addEventListener('resize', this.updateWidth);
   },
   methods: {
     onCloseReviewModal() {
@@ -357,7 +359,10 @@ export default {
     },
     setRoomJoin(roomId) {
       this.roomIdJoin = roomId;
-    }
+    },
+    updateWidth() {
+    this.width = window.innerWidth;
+  },
   }
 };
 </script>
