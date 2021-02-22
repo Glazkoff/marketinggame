@@ -897,7 +897,7 @@ export default {
     z-index: 200000;
     background: #fff;
     box-shadow: 100px 0px 200px rgba(20, 20, 20, 0.8);
-    max-width: 300px;
+    max-width: calc(100vw - 30px);
     width: 300px;
     min-height: 100vh;
   }

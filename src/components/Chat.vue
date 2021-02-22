@@ -142,6 +142,11 @@ export default {
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
   }
 }
+@media screen and (max-width: 330px){
+  .chatClosed {
+    left: calc(30px - 100vw);
+  }
+}
 .chat-btn {
   cursor: pointer;
   transition-duration: 0.5s;
