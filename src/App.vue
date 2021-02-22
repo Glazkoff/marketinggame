@@ -294,4 +294,9 @@ body {
     max-width: calc(100vw - 2rem) !important;
   }
 }
+@media screen and (max-height: 600px), (max-width: 500px){
+  body{
+    overflow-y: scroll;
+  }
+}
 </style>
