@@ -246,10 +246,9 @@ h2#chat {
   grid-area: 1/1/2/2;
   margin: 8px;
 }
-
 .message {
   width: 100%;
   max-width: 100%;
-  word-wrap: break-word;
+  word-break: break-word;
 }
 </style>
