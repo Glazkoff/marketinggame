@@ -13,7 +13,7 @@
     <a href="" @click.prevent="logout()">Выйти</a>
     <LastRoomCheck v-on:setRoomId="setRoomJoin"></LastRoomCheck>
     <p>Выбери, как ты начнёшь игру</p>
-    <div class="btn-group btn-group-toggle mb-3" :class="{'btn-group-vertical': this.width< 500}">
+    <div class="btn-group-toggle mb-3" :class="{'btn-group-vertical': this.width<500, 'btn-group':this.width>=500 }">
       <label
         class="btn btn-lg"
         :class="{
