@@ -569,7 +569,7 @@ export default {
 <style>
 .data-table {
   width: 100%;
-  overflow-x: auto;
+  overflow: auto;
 }
 .gamer-round-data {
   min-width: unset !important;
@@ -707,7 +707,6 @@ export default {
   background-color: rgba(123, 45, 64, 0.3);
   grid-area: 1/1/2/2;
   display: flex;
-  /* min-height: 16rem; */
 }
 
 #card-field {
@@ -869,6 +868,11 @@ export default {
 [v-cloak] {
   display: none;
 }
+@media screen and (max-height: 750px){
+  #play-field{
+    min-height: 490px;
+  }
+}
 @media screen and (max-height: 560px) {
   .main-side {
     overflow-y: scroll;
@@ -908,7 +912,7 @@ export default {
     display: flex;
   }
 }
-@media screen and (max-width: 970px) {
+@media screen and (max-width: 1024px) {
   #playground {
     grid-template-columns: 2fr 1fr 1fr;
     grid-template-rows: 1.6fr 1fr;
@@ -977,7 +981,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 730px), (max-height: 630px) {
   .main-side {
     display: flex;
     flex-direction: column;
@@ -1064,16 +1068,21 @@ export default {
   }
 }
 @media screen and (max-height: 729px) {
+  #playground {
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
   #card-field {
     min-height: 45%;
+    /*min-height: 230px;*/
   }
   #effects-field {
     min-height: 55%;
     overflow: auto;
   }
-  #enemy-field {
-    min-height: 70%;
-  }
+  /*#enemy-field {*/
+  /*  min-height: 70%;*/
+  /*}*/
   #gamerlist {
     max-height: 100%;
   }
