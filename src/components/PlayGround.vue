@@ -981,7 +981,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 730px), (max-height: 630px) {
+@media screen and (max-width: 730px), (max-height: 750px) {
   .main-side {
     display: flex;
     flex-direction: column;
@@ -1073,8 +1073,8 @@ export default {
     grid-template-rows: 1fr 1fr;
   }
   #card-field {
-    min-height: 45%;
-    /*min-height: 230px;*/
+    /*min-height: 45%;*/
+    min-height: 240px;
   }
   #effects-field {
     min-height: 55%;
