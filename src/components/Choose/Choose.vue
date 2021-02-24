@@ -199,7 +199,7 @@ export default {
       showReviewModal: false,
       showCheckModal: false,
       errorMessage: "",
-      width: 0
+      width: window.innerWidth
     };
   },
   validations: {
