@@ -3,10 +3,10 @@ const {
   logSocketOutEvent,
   logSocketError
 } = require("../global_functions/logs");
-const { sendGamers } = require("../global_functions/game_process");
+const {sendGamers} = require("../global_functions/game_process");
 const Sequelize = require("sequelize");
 
-module.exports = function(socket, io, db) {
+module.exports = function (socket, io, db) {
   // При принудительном завершении хода
   socket.on("manualStepClose", async roomId => {
     // Логирование входящего запроса
@@ -46,6 +46,39 @@ module.exports = function(socket, io, db) {
             }
           }
         );
+      }
+
+      // Поиск игроков, которые сделали ход
+      let attackers = await db.UserInRoom.findAll({
+        where: {
+          isattacker: true,
+          room_id: room.room_id
+        },
+        include: [
+          {
+            model: db.GamerRoomParams,
+            as: "gamer_room_params"
+          }]
+      });
+
+      // Получаем gamer_room_params_id каждого из атакующих
+      if (attackers.length > 0) {
+        let attackersKey = []
+        for (let index in attackers) {
+          attackersKey.push(attackers[index].gamer_room_params.gamer_room_params_id)
+        }
+
+        // Для каждого из атакующих возвращаем правильный подсчет месяцев
+        await db.GamerRoomParams.update(
+          {
+            month: Sequelize.literal("month + 1")
+          },
+          {
+            where: {
+              gamer_room_params_id: attackersKey
+            }
+          }
+        )
       }
 
       // Устанавливаем каждому игроку состояние совершившего ход
@@ -127,7 +160,9 @@ module.exports = function(socket, io, db) {
             }
           ]
         });
+
         userInRoom.gamer_room_params.month--;
+
         let obj = {
           data: {
             room_id: room.room_id,
