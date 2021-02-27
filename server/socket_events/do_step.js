@@ -641,6 +641,7 @@ module.exports = function(socket, io, db) {
           room_id: room.room_id
         }
       });
+
       let participantsArray = participants.map(el => {
         return el.user_id;
       });
@@ -663,24 +664,17 @@ module.exports = function(socket, io, db) {
           ]
         });
 
-        let loosedParticipants = await db.UserStepState.count({
+        let loosedParticipants = await db.UserInRoom.count({
           where: {
-            "$user_in_room.isdisconnected$": true,
-            "$user_in_room.room_id$": room.room_id
-          },
-          include: [
-            {
-              model: db.UserInRoom,
-              as: "user_in_room",
-              attributes: []
-            }
-          ]
+            isdisconnected: true,
+            room_id: room.room_id
+          }
         });
 
         activeParticipants -= loosedParticipants;
 
         // !!! Когда все в комнате сделали ход
-        if (didStepCurrMonth === activeParticipants) {
+        if (didStepCurrMonth >= activeParticipants) {
           allGamersDoStep = true;
 
           await db.UserInRoom.update(
