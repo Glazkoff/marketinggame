@@ -54,7 +54,7 @@ module.exports = function(socket, io, db) {
         {
           where: {
             room_id: room.room_id,
-            user_id: socket.decoded_token.id
+            user_id: data.gamerId
           }
         }
       );
