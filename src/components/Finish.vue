@@ -16,13 +16,12 @@
           </h4>
         </div>
       </div>
-      <div class="row" v-if="isLoozer">
+      <div class="row" id="first-for-looser" v-if="isLoozer">
         <div class="col-6 offset-3">
           <div class="card" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-3">
-                <!-- <div class="gray-block block-winner-img"></div> -->
-                <div class="gray-block"></div>
+                <div class="gray-block block-winner-img"></div>
               </div>
               <div class="col-md-9">
                 <div class="card-body">
@@ -447,14 +446,21 @@ export default {
 </script>
 <style>
 @media screen and (max-width: 490px) {
-  #direction-column-cards {
+  #direction-column-cards, #first-for-looser {
     flex-direction: column;
   }
   #direction-column-cards .col-6 {
     max-width: 90%;
     margin: auto;
   }
+  #first-for-looser .col-6 {
+    max-width: 90%;
+    margin: auto;
+  }
   #direction-column .col-8 {
+    flex: 0 0 50%;
+  }
+  #first-for-looser .col-8 {
     flex: 0 0 50%;
   }
 }
@@ -463,7 +469,14 @@ export default {
     height: 5rem;
     width: 25%;
   }
+  #first-for-looser .col-md-3{
+    height: 5rem;
+    width: 25%;
+  }
   #direction-column-cards .col-md-9 {
+    width: 65%;
+  }
+  #first-for-looser .col-md-9{
     width: 65%;
   }
 }
