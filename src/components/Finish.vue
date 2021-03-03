@@ -487,7 +487,7 @@ export default {
 }
 
 #finish-screen {
-  margin: auto auto;
+  margin: auto;
   background-color: #fff;
   width: 96%;
   border-radius: 8px;
