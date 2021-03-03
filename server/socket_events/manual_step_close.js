@@ -3,7 +3,7 @@ const {
   logSocketOutEvent,
   logSocketError
 } = require("../global_functions/logs");
-const {sendGamers} = require("../global_functions/game_process");
+const {sendGamers, finishGame} = require("../global_functions/game_process");
 const Sequelize = require("sequelize");
 
 module.exports = function (socket, io, db) {
@@ -63,9 +63,9 @@ module.exports = function (socket, io, db) {
 
       // Получаем gamer_room_params_id каждого из атакующих
       if (attackers.length > 0) {
-        let attackersKey = []
+        let attackersId = []
         for (let index in attackers) {
-          attackersKey.push(attackers[index].gamer_room_params.gamer_room_params_id)
+          attackersId.push(attackers[index].gamer_room_params.gamer_room_params_id)
         }
 
         // Для каждого из атакующих возвращаем правильный подсчет месяцев
@@ -75,7 +75,7 @@ module.exports = function (socket, io, db) {
           },
           {
             where: {
-              gamer_room_params_id: attackersKey
+              gamer_room_params_id: attackersId
             }
           }
         )
@@ -187,6 +187,15 @@ module.exports = function (socket, io, db) {
 
         // Отправка новых данных состояния пользователю
         io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
+
+        // Если игра завершается
+        if (room.current_month >= room.first_params.month) {
+          // Завершение игры
+          await finishGame(io, db, room)
+        } else {
+          // игра продолжается
+        }
+
         // Логируем исходящее событие
         logSocketOutEvent(
           `SET_GAME_PARAMS (user${gamerId})`,

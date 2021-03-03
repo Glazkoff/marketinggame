@@ -8,7 +8,8 @@ const {
   sendGamers,
   getOneOffCardsId,
   calculateMoneyForMonth,
-  calculateClientsForMonth
+  calculateClientsForMonth,
+  finishGame
 } = require("../global_functions/game_process");
 const {
   sendAdminMessage,
@@ -920,147 +921,7 @@ module.exports = function(socket, io, db) {
       // Если игра завершается
       if (room.current_month >= room.first_params.month) {
         // Завершение игры
-
-        let gamers = await db.UserInRoom.findAll({
-          where: {
-            room_id: room.room_id
-          },
-          include: [
-            {
-              model: db.GamerRoomParams,
-              as: "gamer_room_params"
-            },
-            {
-              model: db.PrevRoomParams,
-              as: "prev_room_params"
-            },
-            {
-              model: db.UserStepState,
-              as: "user_steps_state",
-              include: [
-                {
-                  model: db.MoneyResultState,
-                  as: "money_result_state"
-                }
-              ]
-            }
-          ]
-        });
-
-        let gamersRate = [];
-        for (const gamer of gamers) {
-          let moneySum = 0;
-          let clientsSum = 0;
-          gamer.user_steps_state.forEach(state => {
-            moneySum += state.money_result_state.money_for_month;
-            clientsSum += state.money_result_state.clients_for_month;
-          });
-          let position = {
-            id: gamer.user_id,
-            money: moneySum,
-            clients: clientsSum
-          };
-          gamersRate.push(position);
-        }
-
-        if (gamers.length === 1) {
-          let position = {
-            id: -1,
-            money: 0
-          };
-          gamersRate.push(position);
-          gamersRate.push(position);
-        } else {
-          let position = {
-            id: -1,
-            money: 0
-          };
-          gamersRate.push(position);
-        }
-
-        gamersRate.sort((a, b) => {
-          if (a.money > b.money) {
-            return -1;
-          } else if (a.money < b.money) {
-            return 1;
-          }
-          return 0;
-        });
-
-        let winners = {};
-        for (let index = 1; index < 4; index++) {
-          let a = gamersRate.shift();
-          if (typeof a !== "undefined") {
-            winners[index] = Object.assign(a);
-            let person = await db.User.findOne({
-              where: {
-                user_id: a.id
-              }
-            });
-            if (person !== null) {
-              winners[index].name = person.name;
-            }
-          } else winners[index] = a;
-        }
-
-        // Отправляем сообщеник о конце игры
-        sendAdminMessage(io, room.roomId, `Конец игры в комнате!`);
-
-        await db.Room.update(
-          {
-            is_finished: true
-          },
-          {
-            where: {
-              room_id: room.room_id
-            }
-          }
-        );
-
-        if (winners["1"].id !== -1) {
-          await db.Winner.create({
-            user_id: winners["1"].id,
-            room_id: room.room_id,
-            money: winners["1"].money,
-            place: 1
-          });
-        }
-        if (winners["2"].id !== -1) {
-          await db.Winner.create({
-            user_id: winners["2"].id,
-            room_id: room.room_id,
-            money: winners["2"].money,
-            place: 2
-          });
-        }
-        if (winners["3"].id !== -1) {
-          await db.Winner.create({
-            user_id: winners["3"].id,
-            room_id: room.room_id,
-            money: winners["3"].money,
-            place: 3
-          });
-        }
-
-        // #region Очистка last_room после завершения игры
-        for (const gamer of gamers) {
-          db.User.update(
-            {
-              last_room: null
-            },
-            {
-              where: {
-                user_id: gamer.user_id
-              }
-            }
-          );
-        }
-        // #endregion
-
-        // Отправляем событие о конце игры
-        io.in(room.room_id).emit("finish", winners);
-        // Логируем исходящее событие
-        logSocketOutEvent("finish", "Событие о конце игры");
+        await finishGame(io, db, room)
       } else {
         // игра продолжается
       }
