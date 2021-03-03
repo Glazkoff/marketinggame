@@ -186,7 +186,8 @@ export default {
   height: 100%;
 }
 .main-side {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   max-height: calc(100vh - 40px);
 }
 .pg-header {
