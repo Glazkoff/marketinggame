@@ -615,6 +615,7 @@ export default {
 .bottom-card {
   position: absolute !important;
 }
+
 .bottom-card-1 {
   width: 100%;
   height: 100%;
@@ -690,7 +691,6 @@ export default {
   height: 100%;
   max-height: calc(100vh - 40px);
   position: relative;
-  padding-top: 50px;
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: 1.6fr 1fr;
@@ -930,22 +930,14 @@ export default {
   .play-information {
     padding: 0;
   }
-  .main-side .pg-header {
-    position: relative;
-    height: 5rem;
-  }
+
   #playground {
     padding: 0;
   }
   .main-side #finish-screen {
     margin-top: 0rem;
   }
-  .main-side .pg-header a {
-    padding: 2.2rem 0rem 0rem 0rem;
-    width: 10rem;
-    left: 0;
-    position: absolute;
-  }
+
   .col .gray-block {
     height: 90%;
   }
@@ -1024,17 +1016,11 @@ export default {
 }
 
 @media screen and (max-width: 490px) {
-  .main-side .pg-header {
-    height: 5rem;
-  }
   .main-side #finish-screen {
     margin-top: 0rem;
   }
   .main-side .pg-header a {
-    padding: 2.2rem 0rem 0rem 0rem;
-    width: 10rem;
-    left: 0;
-    position: absolute;
+    width: 11rem;
   }
   .col .gray-block {
     height: 90%;
@@ -1051,6 +1037,7 @@ export default {
     height: 100%;
   }
 }
+
 @media screen and (max-width: 615px) {
   .col .gray-block {
     height: 90%;

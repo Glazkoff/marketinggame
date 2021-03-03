@@ -190,7 +190,7 @@ export default {
   max-height: calc(100vh - 40px);
 }
 .pg-header {
-  position: absolute;
+  position: relative;
   z-index: 100;
   top: 0;
   left: 0;
@@ -203,10 +203,7 @@ export default {
   flex-wrap: wrap;
   padding: 0.5rem;
 }
-.pg-header a {
-  margin: auto 1rem !important;
-  margin-left: 1rem;
-}
+
 @media screen and (max-width: 320px) {
   .pg-header {
     flex-direction: row;
