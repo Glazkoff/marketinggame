@@ -127,65 +127,6 @@ module.exports = {
     }
   },
 
-  async isCurrentStepFinished(io, db, room){
-    // Статус хода по умолчанию
-    let stepStatus = {
-      finished: false, // Закончен ли ход
-      activeParticipants: 0, // Активные=Неотключенные участники комнаты
-      didStepCurrMonth: 0 // Количество ходов всех игроков за текущий месяц
-    }
-
-    let participants = await db.UserInRoom.findAll({
-      attributes: ["user_id"],
-      where: {
-        room_id: room.room_id
-      }
-    });
-
-    let participantsArray = participants.map(el => {
-      return el.user_id;
-    });
-
-    // Если корректно установлены параметры комнаты
-    if (participantsArray !== null) {
-      stepStatus.activeParticipants = participantsArray.length;
-
-      // Подсчет ходов за текущий месяц
-      stepStatus.didStepCurrMonth = await db.UserStepState.count({
-        where: {
-          month: room.current_month,
-          "$user_in_room.room_id$": room.room_id
-        },
-        include: [
-          {
-            model: db.UserInRoom,
-            as: "user_in_room",
-            attributes: []
-          }
-        ]
-      });
-
-      // Подсчет отключенных игроков
-      let loosedParticipants = await db.UserInRoom.count({
-        where: {
-          isdisconnected: true,
-          room_id: room.room_id
-        }
-      });
-
-      // Подсчет активных игроков
-      stepStatus.activeParticipants -= loosedParticipants;
-
-      // Все ли сделали ход?
-      stepStatus.finished = stepStatus.didStepCurrMonth >= stepStatus.activeParticipants;
-
-      return stepStatus
-    }
-    else {
-      // Что-то не так с параметрами ходов пользователя
-    }
-  },
-
   async finishGame(io, db, room){
     let gamers = await db.UserInRoom.findAll({
       where: {
