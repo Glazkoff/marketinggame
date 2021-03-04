@@ -698,7 +698,6 @@ export default {
 
 #play-field,
 #card-field {
-  margin: auto auto;
   width: 100%;
   height: 100%;
 }
@@ -713,8 +712,7 @@ export default {
   grid-area: 2/1/3/2;
   overflow-x: scroll;
   overflow-y: hidden;
-  width: 96%;
-  height: 96%;
+  height: calc(96% - 40px);
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
@@ -741,7 +739,7 @@ export default {
 
 #card-wrap {
   display: flex;
-  height: 100%;
+  height: 96%;
   transition: all 0.4s;
   max-height: 100%;
 }
@@ -801,7 +799,7 @@ export default {
   grid-area: 2/2/3/3;
   height: 100%;
   min-height: 50%;
-  max-height: 100%;
+  max-height: calc(96% - 40px);
   display: flex;
   overflow: auto;
 }
