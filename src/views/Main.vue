@@ -10,9 +10,9 @@
       :style="{ display: isFinish ? 'flex' : 'unset' }"
       :class="{ 'full-screen': !adminNav }"
     >
-      <div class="pg-header">
+      <div class="pg-header align-items-center">
         <h3 class="ml-1 mb-0">Комната #{{ roomNumber }}</h3>
-        <router-link to="choose" class="mb-2 ml-1 mr-2"
+        <router-link to="choose" class="ml-1"
           >Выйти из комнаты</router-link
         >
       </div>
@@ -210,6 +210,9 @@ export default {
     height: auto;
     justify-content: space-between;
     flex-wrap: wrap;
+  }
+  .pg-header h3{
+    font-size: 1.5em;
   }
 }
 </style>

@@ -1018,7 +1018,7 @@ export default {
     margin-top: 0rem;
   }
   .main-side .pg-header a {
-    width: 11rem;
+    width: 13.5rem;
   }
   .col .gray-block {
     height: 90%;
@@ -1145,7 +1145,10 @@ export default {
 }
 @media screen and (max-width: 320px) and (orientation: portrait) {
   .card-box {
-    min-width: 132px;
+    min-width: 172px;
+  }
+  .card-box h3{
+    padding-bottom: 1em;
   }
 
   #playground {
