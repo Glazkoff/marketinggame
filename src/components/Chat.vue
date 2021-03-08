@@ -110,6 +110,7 @@ export default {
 .adminBg {
   background: rgba(226, 226, 226, 0.329);
 }
+
 .chat-count {
   min-width: 20px;
   height: 20px;
@@ -122,11 +123,13 @@ export default {
   color: #fff;
   display: flex;
 }
+
 .chat-count span {
   display: block;
   margin: auto auto;
   font-weight: bold;
 }
+
 @media screen and (max-width: 1090px) {
   .mess-block {
     max-width: unset;
@@ -142,11 +145,13 @@ export default {
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
   }
 }
+
 @media screen and (max-width: 330px){
   .chatClosed {
     left: calc(30px - 100vw);
   }
 }
+
 .chat-btn {
   cursor: pointer;
   transition-duration: 0.5s;
@@ -161,6 +166,7 @@ export default {
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
   border-radius: 8px;
 }
+
 .chat-btn-icon {
   margin: auto auto;
   padding-left: 8px;
@@ -168,19 +174,23 @@ export default {
   width: 30px;
   color: #fff;
 }
+
 .adminMess {
   color: rgb(255, 50, 90);
 }
+
 h2#chat {
   display: block;
   box-sizing: border-box;
   height: 40px;
   margin-bottom: 0;
 }
+
 .messageField::-webkit-scrollbar {
   width: 10px;
   background-color: #f5f5f5;
 }
+
 .messageField::-webkit-scrollbar-track {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.1);
@@ -200,20 +210,17 @@ h2#chat {
 .messageField::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
+
 .messageField {
-  min-height: calc(100vh - 120px);
-  max-height: calc(100vh - 120px);
+  height: calc(100vh - 120px);
   overflow-y: scroll;
   margin-bottom: 70px;
   overflow-x: auto;
 }
-.chatField {
-  height: auto;
-}
+
 .sideBox {
   position: relative;
   height: 100%;
-  /* width: 300px; */
   max-width: 20vw;
   grid-area: 1/1/2/2;
   border-right: 1px solid gray;
@@ -223,21 +230,28 @@ h2#chat {
   box-shadow: 2px 60px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.5s;
 }
+
 .mess-block {
   max-width: 15vw;
 }
+
 .message:last-child {
   margin-bottom: 5px;
 }
+
 .message {
   display: grid;
   grid-template-columns: 1fr 5fr;
   grid-template-rows: 1fr;
+  width: 100%;
+  word-break: break-word;
 }
+
 .nickname {
   font-weight: bold;
   margin-top: 5px;
 }
+
 .avatar {
   width: 32px;
   height: 32px;
@@ -245,10 +259,5 @@ h2#chat {
   background-color: #808080;
   grid-area: 1/1/2/2;
   margin: 8px;
-}
-.message {
-  width: 100%;
-  max-width: 100%;
-  word-break: break-word;
 }
 </style>
