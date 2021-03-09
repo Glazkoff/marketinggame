@@ -102,15 +102,19 @@
             'is-invalid':
               this.roomParams.month < 3 ||
               this.roomParams.month > 120 ||
+              this.roomParams.month % 3 !== 0 ||
               this.roomParams.month - Math.floor(roomParams.month) !== 0
           }"
           @keypress.enter="createGame()"
         />
+        <div v-if="this.roomParams.month % 3 !== 0" class="invalid-feedback mb-3">
+          Количество месяцев должно быть кратно 3!
+        </div>
         <div v-if="this.roomParams.month < 3" class="invalid-feedback mb-3">
           Количество месяцев должно быть больше 2!
         </div>
         <div v-if="this.roomParams.month > 120" class="invalid-feedback mb-3">
-          Количество месяцев должно быть меньше 120!
+          Количество месяцев должно быть меньше или равно 120!
         </div>
         <div
           v-if="this.roomParams.month - Math.floor(roomParams.month) !== 0"
@@ -159,6 +163,7 @@
             $v.roomParams.$invalid ||
               roomParams.month < 3 ||
               roomParams.money < 15000 ||
+              roomParams.month % 3 !== 0 ||
               roomParams.month > 120 ||
               roomParams.money >= 1000000000 ||
               roomParams.month - Math.floor(roomParams.month) !== 0 ||
