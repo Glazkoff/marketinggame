@@ -3,8 +3,10 @@ const {
   logSocketOutEvent,
   logSocketError
 } = require("../global_functions/logs");
+const {isCurrentStepFinished} = require("../global_functions/game_process");
+const Sequelize = require("sequelize");
 
-module.exports = function(socket, io, db) {
+module.exports = function (socket, io, db) {
   // Удалить пользователя из комнаты
   socket.on("kickUser", async data => {
     // Логируем входящее событие
@@ -16,20 +18,7 @@ module.exports = function(socket, io, db) {
       // Логируем исходящее событие
       logSocketOutEvent("kickUser", "Сообщаем пользователю, что его выкинули");
 
-      // #region Удаление комнаты как последней для пользователя которого кикнули
-      await db.User.update(
-        {
-          last_room: null
-        },
-        {
-          where: {
-            user_id: data.gamerId
-          }
-        }
-      );
-      // #endregion
-
-      // #region Удаление пользователя из комнаты и его добавление в "черный список" (кик)
+      // Находим информацию о комнате
       let room = await db.Room.findOne({
         where: {
           room_id: data.roomId
@@ -46,7 +35,19 @@ module.exports = function(socket, io, db) {
         ]
       });
 
-      // Устанавливаем, что пользователь подключён к комнате
+      // Удаление информации о последней комнаты у пользователя
+      await db.User.update(
+        {
+          last_room: null
+        },
+        {
+          where: {
+            user_id: data.gamerId
+          }
+        }
+      );
+
+      // Отключаем пользователя от комнаты
       await db.UserInRoom.update(
         {
           isdisconnected: true
@@ -59,7 +60,7 @@ module.exports = function(socket, io, db) {
         }
       );
 
-      // Добавляем кикнутого пользователя
+      // Добавляем пользователя в массив кикнутых игроков
       if (room.kicked_participants_id !== null) {
         room.kicked_participants_id.push(data.gamerId);
       } else {
@@ -75,7 +76,39 @@ module.exports = function(socket, io, db) {
           }
         }
       );
-      // #endregion
+
+      // Если кикнутый участник был последним для завершения хода
+      if ((await isCurrentStepFinished(io, db, room)).finished) {
+        // Если текущий месяц не больше максимального количества месяцев
+        if (room.first_params.month > room.current_month) {
+          await db.Room.update(
+            {
+              current_month: Sequelize.literal("current_month + 1")
+            },
+            {
+              where: {
+                room_id: room.room_id
+              }
+            }
+          )
+        }
+
+        // Устанавливаем каждому игроку состояние совершившего ход
+        await db.UserInRoom.update(
+          {
+            isattacker: false
+          },
+          {
+            where: {
+              room_id: room.room_id
+            }
+          }
+        );
+        io.in(socket.roomId).emit("doNextStep");
+        // Логируем исходящее событие
+        logSocketOutEvent(`doNextStep`, "Начинаем следующий ход");
+      }
+
     } catch (error) {
       // Логируем ошибки
       logSocketError("kick_user", error);

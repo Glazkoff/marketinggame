@@ -268,7 +268,66 @@ module.exports = {
     // Логируем исходящее событие
     logSocketOutEvent("finish", "Событие о конце игры");
   },
-  
+
+  async isCurrentStepFinished(io, db, room){
+    // Статус хода по умолчанию
+    let stepStatus = {
+      finished: false, // Закончен ли ход
+      activeParticipants: 0, // Активные=Неотключенные участники комнаты
+      didStepCurrMonth: 0 // Количество ходов всех игроков за текущий месяц
+    }
+
+    let participants = await db.UserInRoom.findAll({
+      attributes: ["user_id"],
+      where: {
+        room_id: room.room_id
+      }
+    });
+
+    let participantsArray = participants.map(el => {
+      return el.user_id;
+    });
+
+    // Если корректно установлены параметры комнаты
+    if (participantsArray !== null) {
+      stepStatus.activeParticipants = participantsArray.length;
+
+      // Подсчет ходов за текущий месяц
+      stepStatus.didStepCurrMonth = await db.UserStepState.count({
+        where: {
+          month: room.current_month,
+          "$user_in_room.room_id$": room.room_id
+        },
+        include: [
+          {
+            model: db.UserInRoom,
+            as: "user_in_room",
+            attributes: []
+          }
+        ]
+      });
+
+      // Подсчет отключенных игроков
+      let loosedParticipants = await db.UserInRoom.count({
+        where: {
+          isdisconnected: true,
+          room_id: room.room_id
+        }
+      });
+
+      // Подсчет активных игроков
+      stepStatus.activeParticipants -= loosedParticipants;
+
+      // Все ли сделали ход?
+      stepStatus.finished = stepStatus.didStepCurrMonth >= stepStatus.activeParticipants;
+
+      return stepStatus
+    }
+    else {
+      // Что-то не так с параметрами ходов пользователя
+    }
+  },
+
   async cardsProcessing(gamer, cardArr) {
     // Если у пользователя не отсутсвуют активные эффекты
     if (gamer.effects !== null) {
@@ -277,7 +336,7 @@ module.exports = {
       for (let effectId = 0; effectId < gamer.effects.length; effectId++) {
         let effect = gamer.effects[effectId];
         let cardArrIndex = cardArr.findIndex(elem => elem === effect.id);
-  
+
         // Если в пришедшем массиве ID карточек нет эффекта из цикла
         // (если не прислали повторно), то удаляем из массива эффектов игрока
         if (cardArrIndex === -1) {
@@ -297,7 +356,7 @@ module.exports = {
               card_id: effect.id
             }
           });
-          
+
           // Если карта нашлась
           if (usedCard) {
             // Увеличиваем счётчик серий использований карты
@@ -323,7 +382,7 @@ module.exports = {
         }
       }
     }
-  
+
     // Если пришедший массив не пустой
     if (cardArr.length !== 0) {
       for (let effect of gamer.effects) {
@@ -336,7 +395,7 @@ module.exports = {
           );
           gamer.effects.splice(effectIndex, 1);
         }
-        
+
         // Если действие эффекта закончилось
         if (effect.step === effect.duration) {
           let effectIndex = gamer.effects.findIndex(
@@ -345,8 +404,8 @@ module.exports = {
           gamer.effects.splice(effectIndex, 1);
         }
       }
-  
-      // Обработка пришедшего массива ID карточек 
+
+      // Обработка пришедшего массива ID карточек
       for (const cardId of cardArr) {
         // Находим объект карточки на основе пришедшего ID
         let card = await db.Card.findOne({
@@ -355,17 +414,17 @@ module.exports = {
           },
           order: [["updatedAt", "DESC"]]
         });
-  
+
         // Вычитаем стоимость карточки из кошелька
         gamer.gamer_room_params.money -= card.cost;
-  
+
         // Получаем одноразовые карточки
         let oneWayCards = await module.exports.getOneOffCardsId();
         let oneWayCardIndex = oneWayCards.findIndex(
           elem => elem.card_id === cardId
         );
         let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId);
-  
+
         // Если карточка не является одноразовой
         if (oneWayCardIndex === -1) {
           // Если эффекта ещё нет (карточка выбрасывается первый раз)
@@ -378,7 +437,7 @@ module.exports = {
               }
               gamer.changes.push(changeObj);
             }
-  
+
             // Добавляем в массив эффектов
             let effectObj = {
               id: cardId,
