@@ -1,6 +1,6 @@
 <template>
   <div id="finish-screen">
-    <div class="container mt-2">
+    <div class="container">
       <div class="row" v-if="isLoozer">
         <div class="col-12">
           <h2 class="text-center h-100">
@@ -8,7 +8,7 @@
           </h2>
         </div>
       </div>
-      <hr v-if="isLoozer" style="margin: 0" />
+      <hr v-if="isLoozer" style="margin: 0"/>
       <div class="row" v-if="isLoozer">
         <div class="col-12">
           <h4 class="text-center h-100 mt-2 mb-3">
@@ -16,28 +16,26 @@
           </h4>
         </div>
       </div>
-      <div class="row" id="first-for-looser" v-if="isLoozer">
-        <div class="col-6 offset-3">
+      <div class="row justify-content-center" id="first-for-looser" v-if="isLoozer">
+        <div class="col-sm-6">
           <div class="card" style="max-width: 540px;">
-            <div class="row no-gutters">
-              <div class="col-md-3">
+            <div class="row no-gutters card-result">
+              <div class="col-3 card-result-img">
                 <div class="gray-block block-winner-img"></div>
               </div>
-              <div class="col-md-9">
+              <div class="col-9 card-result-text">
                 <div class="card-body">
                   <h5 class="card-title">
                     Первое место -
-                    <strong>{{
-                      firstPosition !== undefined ? firstPosition.name : ""
-                    }}</strong>
+                    <strong>
+                      {{
+                        firstPosition !== undefined ? firstPosition.name : ""
+                      }}</strong>
                   </h5>
                   <p class="card-text">
                     Игроку удалось заработать
-                    <br />
-                    <em>
-                      {{ firstPosition.money | formatNumber }}
-                      ₽</em
-                    >
+                    <br/>
+                    <em>{{ firstPosition.money | formatNumber }} ₽</em>
                   </p>
                 </div>
               </div>
@@ -57,10 +55,10 @@
             }"
           ></div>
         </div>
-        <div class="col-lg-8 col text-center mt-0" v-if="isWinner">
+        <div class="col-lg-8 col text-center" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
-          <ul class="list-group offset-lg-1 col-lg-10 col pr-0 pl-0 mt-3">
+          <ul class="list-group offset-lg-1 col-12 col-lg-10 pr-0">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -81,7 +79,7 @@
             >
               Привлечено клиентов:
               <span class="badge badge-primary badge-pill"
-                >{{
+              >{{
                   gamerRoomParams !== undefined
                     ? Math.ceil(gamerData.clients)
                     : "" | formatNumber
@@ -93,7 +91,7 @@
             >
               Потрачено на продвижение:
               <span class="badge badge-primary badge-pill"
-                >{{
+              >{{
                   (firstRoomParams.money * firstRoomParams.month -
                     (gamerRoomParams.money - firstRoomParams.money))
                     | formatNumber
@@ -120,7 +118,7 @@
                 : thirdPosition.money.toFixed(2)
             }}
           </p>
-          <ul class="list-group col-10 offset-1 mt-3">
+          <ul class="list-group col-12 col-lg-10 offset-lg-1 mt-3 pr-0">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -153,7 +151,7 @@
             >
               Потрачено на продвижение:
               <span class="badge badge-primary badge-pill"
-                >{{
+              >{{
                   (firstRoomParams.money * firstRoomParams.month -
                     (gamerRoomParams.money - firstRoomParams.money))
                     | formatNumber
@@ -169,10 +167,10 @@
         </div>
       </div>
       <div class="row mt-2" id="direction-column-cards">
-        <div class="col-6" v-if="hasSecondPosition">
+        <div class="col-sm-6" v-if="hasSecondPosition">
           <div class="card mb-2" style="max-width: 540px;">
-            <div class="row no-gutters">
-              <div class="col-md-3">
+            <div class="row no-gutters card-result">
+              <div class="col-3 card-result-img">
                 <div
                   class="gray-block"
                   :class="{
@@ -181,23 +179,23 @@
                   }"
                 ></div>
               </div>
-              <div class="col-md-9">
+              <div class="col-9 card-result-text">
                 <div class="card-body">
                   <h5 class="card-title" v-if="isWinner || isLoozer">
                     Второе место -
                     <strong>{{
-                      secondPosition !== undefined ? secondPosition.name : ""
-                    }}</strong>
+                        secondPosition !== undefined ? secondPosition.name : ""
+                      }}</strong>
                   </h5>
                   <h5 class="card-title" v-if="isPrizer">
                     Первое место -
                     <strong>{{
-                      secondPosition !== undefined ? secondPosition.name : ""
-                    }}</strong>
+                        secondPosition !== undefined ? secondPosition.name : ""
+                      }}</strong>
                   </h5>
                   <p class="card-text">
                     Игроку удалось заработать
-                    <br />
+                    <br/>
                     <em>{{ secondPosition.money | formatNumber }} ₽</em>
                   </p>
                 </div>
@@ -205,10 +203,10 @@
             </div>
           </div>
         </div>
-        <div class="col-6" v-if="hasThirdPosition">
+        <div class="col-sm-6" v-if="hasThirdPosition">
           <div class="card mb-2" style="max-width: 540px;">
-            <div class="row no-gutters">
-              <div class="col-md-3">
+            <div class="row no-gutters card-result">
+              <div class="col-3 card-result-img">
                 <div
                   class="gray-block"
                   :class="{
@@ -218,7 +216,7 @@
                   }"
                 ></div>
               </div>
-              <div class="col-md-9">
+              <div class="col-9 card-result-text">
                 <div class="card-body">
                   <h5
                     class="card-title"
@@ -226,18 +224,18 @@
                   >
                     Третье место -
                     <strong>{{
-                      thirdPosition != undefined ? thirdPosition.name : ""
-                    }}</strong>
+                        thirdPosition != undefined ? thirdPosition.name : ""
+                      }}</strong>
                   </h5>
                   <h5 class="card-title" v-if="isThirdWinner">
                     Второе место -
                     <strong>{{
-                      thirdPosition != undefined ? thirdPosition.name : ""
-                    }}</strong>
+                        thirdPosition != undefined ? thirdPosition.name : ""
+                      }}</strong>
                   </h5>
                   <p class="card-text">
                     Игроку удалось заработать
-                    <br />
+                    <br/>
                     <em>{{ thirdPosition.money | formatNumber }} ₽</em>
                   </p>
                 </div>
@@ -285,7 +283,8 @@
             tag="button"
             class="btn btn-info w-100"
             style="margin: auto auto; display: block;"
-            >Cоздать новую комнату</router-link
+          >Cоздать новую комнату
+          </router-link
           >
         </div>
         <div class="col-6">
@@ -449,37 +448,22 @@ export default {
   #direction-column-cards, #first-for-looser {
     flex-direction: column;
   }
-  #direction-column-cards .col-6 {
-    max-width: 90%;
-    margin: auto;
-  }
-  #first-for-looser .col-6 {
-    max-width: 90%;
-    margin: auto;
-  }
+
   #direction-column .col-8 {
     flex: 0 0 50%;
   }
+
   #first-for-looser .col-8 {
     flex: 0 0 50%;
   }
 }
+
 @media screen and (max-width: 768px) {
-  #direction-column-cards .col-md-3 {
+  .card-result-img {
     height: 5rem;
-    width: 25%;
-  }
-  #first-for-looser .col-md-3{
-    height: 5rem;
-    width: 25%;
-  }
-  #direction-column-cards .col-md-9 {
-    width: 65%;
-  }
-  #first-for-looser .col-md-9{
-    width: 65%;
   }
 }
+
 .gray-block {
   background-color: gray;
   width: 100%;
@@ -493,59 +477,63 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
 }
+
 .finish-table {
   overflow-x: auto;
 }
+
 .finish-table .table td {
   font-size: 0.7rem;
 }
+
 #finish-screen .list-group-item:first-child {
   font-size: 1.1rem;
 }
+
 #finish-screen .list-group-item {
   padding-top: 0.3rem !important;
   padding-bottom: 0.3rem !important;
   font-size: 0.9rem;
 }
+
 #finish-screen .list-group-item:first-child span h4 {
   font-size: 1rem;
   margin-bottom: 0;
 }
-#finish-screen ul {
-  margin-top: 4px !important;
-}
+
 #finish-screen .table thead th,
 .table td,
 .table th {
   white-space: nowrap;
 }
+
 .gamer-round-data .table th {
   white-space: unset;
 }
+
 .gamer-round-data h4 {
   font-size: 1.1rem;
 }
-#finish-screen .container {
-  max-width: unset;
-  margin-top: 0;
-}
+
 .steps {
   overflow-y: scroll;
   overflow-x: auto;
   max-height: 300px;
 }
+
 .steps p {
   font-size: 0.9rem;
-  /* white-space: nowrap; */
 }
+
 #finish-screen .card-body {
-  padding: 0.45rem;
-  padding-left: 0.8rem;
+  padding: 0.45rem 0.45rem 0.45rem 0.8rem;
 }
+
 #finish-screen .card-body h5 {
   margin-bottom: 0;
   font-size: 0.9rem;
 }
+
 #finish-screen .card-body p {
   font-size: 0.8rem;
 }
@@ -565,6 +553,7 @@ export default {
   background: rgba(0, 0, 0, 0.1);
   border: 1px solid #ccc;
 }
+
 #stepsBox::-webkit-scrollbar-thumb {
   border-radius: 2px;
   background: linear-gradient(top, #fff, #e4e4e4);
@@ -578,12 +567,15 @@ export default {
 #stepsBox::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
+
 .block-winner-img {
   background: url("../assets/1.svg") no-repeat 50% 50%;
 }
+
 .block-secondplace-img {
   background: url("../assets/2.svg") no-repeat 50% 50%;
 }
+
 .block-thirdplace-img {
   background: url("../assets/3.svg") no-repeat 50% 50%;
 }
