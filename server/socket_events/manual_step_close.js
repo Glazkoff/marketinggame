@@ -3,7 +3,7 @@ const {
   logSocketOutEvent,
   logSocketError
 } = require("../global_functions/logs");
-const {sendGamers, finishGame} = require("../global_functions/game_process");
+const {sendGamers, finishGame, cardsProcessing} = require("../global_functions/game_process");
 const Sequelize = require("sequelize");
 
 module.exports = function (socket, io, db) {
@@ -97,6 +97,7 @@ module.exports = function (socket, io, db) {
       sendGamers(io, db, room.room_id);
 
       // Находим все эффекты игроков для всех игроков данной комнаты
+      // TODO: Добить UsedCard и подключить в стягиваемые модели
       let usersEffects = await db.UserInRoom.findAll({
         attributes: ["user_id", "effects"],
         where: {
@@ -116,6 +117,9 @@ module.exports = function (socket, io, db) {
 
       // Отправляем каждому игроку его эффекты
       for (const userWithEffects of usersEffects) {
+
+        // Обработка карточек на обнуление или прибавление эффектов
+        cardsProcessing(userWithEffects, [])
         io.sockets
           .to("user" + userWithEffects.user_id)
           .emit("setEffects", userWithEffects.effects);
