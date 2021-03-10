@@ -735,7 +735,7 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
-  z-index: -3;
+  z-index: 1000;
 }
 
 .play-information {
@@ -965,7 +965,7 @@ export default {
   }
 
   #enemy-field, #effects-field, #card-field {
-    background-color: #fff;
+    background-color: rgba(255,255,255,.4);
     border-radius: 0;
   }
 }
