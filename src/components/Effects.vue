@@ -7,7 +7,7 @@
     >
       <h6>Длительные события</h6>
     </li>
-    <ul class="list-group" v-if="!isStart">
+    <ul class="list-group effects-body" v-if="!isStart">
       <li
         class="list-group-item d-flex justify-content-between align-items-center"
         v-for="(effect, count) in effects"
@@ -24,7 +24,7 @@
             'badge-info': count % 2 == 1,
             'badge-secondary': count % 2 == 0
           }"
-          >Шаг: {{ effect.step }} из {{ effect.duration }}</span
+        >Шаг: {{ effect.step }} из {{ effect.duration }}</span
         >
         <!-- <span
           class="badge badge-primary badge-pill"
@@ -56,20 +56,16 @@ export default {
 <style>
 #effectslist {
   background-color: #fff;
-  margin: auto auto;
+  margin: auto;
   width: 96%;
   height: 97%;
-
   max-height: 97%;
   min-height: 97%;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
-  overflow-y: scroll;
   position: relative;
 }
-#effectslist ul {
-  padding-top: 64px;
-}
+
 #effects-head {
   position: absolute;
   top: 0;
@@ -77,29 +73,40 @@ export default {
   height: 64px;
   z-index: 1000;
 }
-#effectslist::-webkit-scrollbar {
+
+.list-group .list-group-item:first-child {
+  border-radius: 0 !important;
+}
+
+.effects-body {
+  overflow-y: auto;
+  margin-top: 64px;
+  height: calc(100% - 64px);
+}
+
+.effects-body::-webkit-scrollbar {
   width: 4px;
   height: 8px;
   background-color: #f5f5f5;
 }
 
-#effectslist::-webkit-scrollbar-track {
+.effects-body::-webkit-scrollbar-track {
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.1);
   border: 1px solid #ccc;
 }
 
-#effectslist::-webkit-scrollbar-thumb {
+.effects-body::-webkit-scrollbar-thumb {
   border-radius: 2px;
   background: linear-gradient(top, #fff, #e4e4e4);
   border: 1px solid #aaa;
 }
 
-#effectslist::-webkit-scrollbar-thumb:hover {
+.effects-body::-webkit-scrollbar-thumb:hover {
   background: #fff;
 }
 
-#effectslist::-webkit-scrollbar-thumb:active {
+.effects-body::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
 </style>
