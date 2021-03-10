@@ -735,6 +735,7 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
+  z-index: -3;
 }
 
 .play-information {
@@ -959,10 +960,12 @@ export default {
 
   #enemy-field {
     grid-area: 2/3/3/4;
+    min-height: 50%;
+    max-height: calc(96% - 40px);
   }
 
   #enemy-field, #effects-field, #card-field {
-    background-color: white;
+    background-color: #fff;
     border-radius: 0;
   }
 }
@@ -1068,6 +1071,7 @@ export default {
     display: flex;
     width: 100% !important;
   }
+
   #enemy-field, #effects-field, #card-field {
     background-color: rgba(123, 45, 64, 0.3);
     border-radius: 0;
