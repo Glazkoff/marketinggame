@@ -8,11 +8,10 @@
       </li>
       <li
         v-if="isOwner"
-        class="list-group-item d-flex justify-content-between align-items-center list-group-item-primardy"
+        class="list-group-item d-flex justify-content-between align-items-center list-group-item-primary"
       >
         <button
           @click="onManualStepClose()"
-          :disabled="manualStepCloseDisable"
           id="close-step"
           class="btn btn-block btn-danger"
         >
@@ -20,7 +19,7 @@
         </button>
       </li>
       <li
-        class="list-group-item d-flex justify-content-between align-items-center"
+        class="list-group-item d-flex align-items-center"
         v-for="(gamer, count) in gamers"
         :key="count"
         :class="{
@@ -30,7 +29,8 @@
         }"
       >
         <button v-if="isOwner && ownerId !== gamer.id && !gamer.isdisconnected" @click="kickUser(gamer)">&#x2715;</button>
-        {{ gamer.name }}
+        <div class="justify-content-between w-100 d-flex">
+           {{ gamer.name }}
         <span
           class="badge badge-primary badge-pill"
           v-if="gamer.isattacker && !gamer.isdisconnected"
@@ -46,6 +46,7 @@
           v-else-if="gamer.isdisconnected"
           >Отключён</span
         >
+        </div>
       </li>
     </ul>
   </div>
@@ -53,11 +54,6 @@
 <script>
 export default {
   name: "gamerlist",
-  data() {
-    return {
-      manualStepCloseDisable: false
-    };
-  },
   computed: {
     isStart() {
       return this.$store.state.isStart;
@@ -77,7 +73,6 @@ export default {
   },
   methods: {
     onManualStepClose() {
-      // this.manualStepCloseDisable = true;
       this.$socket.emit("manualStepClose", this.roomId);
     },
     kickUser(gamer) {
@@ -95,12 +90,9 @@ export default {
 };
 </script>
 <style>
-button:disabled {
-  cursor: not-allowed;
-}
 #gamerlist {
   background-color: #fff;
-  margin: auto auto;
+  margin: auto;
   width: 96%;
   height: 97%;
   max-height: 52vh;
@@ -109,6 +101,7 @@ button:disabled {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
 }
+
 #gamerlist::-webkit-scrollbar {
   width: 8px;
   height: 16px;
@@ -134,8 +127,8 @@ button:disabled {
 #gamerlist::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
+
 .list-group-item button:not(#close-step) {
-  display: block;
   background-color: transparent;
   border: none;
   transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -144,7 +137,7 @@ button:disabled {
   font-size: 1.5rem;
   line-height: 1.5rem;
   padding: 0;
-  margin: 0;
+  margin-right: 10px;
   text-align: center;
   vertical-align: middle;
   box-sizing: border-box;
