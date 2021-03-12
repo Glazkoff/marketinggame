@@ -69,7 +69,7 @@
           <div
             class="row h-100 justify-content-center align-items-start d-flex"
           >
-            <div class="col-12 data-wrap" style="margin: auto auto;">
+            <div class="col-12 data-wrap m-auto">
               <div class="container-fluid pl-0 pr-0">
                 <div class="row">
                   <div
@@ -81,22 +81,25 @@
                     </h4>
                   </div>
                   <div class="col-md-7 col-sm-12 data-group">
-                    <ul class="list-group list-group-horizontal w-100">
+                    <ul class="list-group w-100"
+                        :class="{'list-group-vertical': this.width<320, 'list-group-horizontal':this.width>=320 }"
+                    >
                       <li
-                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center rounded-0"
                         style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                       >
                         Бюджет
                         <span class="badge badge-primary badge-pill">
-                          <h4>{{ gamerParams.money }}₽</h4>
+                          <h4 class="mb-0">{{ gamerParams.money }}₽</h4>
                         </span>
                       </li>
                       <li
-                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center rounded-0"
                       >
                         Месяц
                         <span class="badge badge-primary badge-pill">
                           <h4
+                            class="mb-0"
                             v-if="
                               firstRoomParams.month - gamerParams.month <
                                 firstRoomParams.month
@@ -106,7 +109,9 @@
                             из
                             {{ firstRoomParams.month }}
                           </h4>
-                          <h4 v-else>
+                          <h4
+                            class="mb-0"
+                            v-else>
                             Завершено
                           </h4>
                         </span>
@@ -186,7 +191,7 @@
             ></div>
             <div class="inner-card-wrap">
               <div class="card-head">
-                <h6 class="card-title text-center pl-2 pr-2 mb-1">
+                <h6 class="card-title text-center px-2 mb-0 m-auto d-block">
                   {{ card.title }}
                 </h6>
               </div>
@@ -310,10 +315,11 @@ export default {
             }
           }
         });
-      }
+      },
     );
     this.$store.commit("SET_CARDS", this.shuffle(this.cards));
     this.refreshCards = [...this.cards];
+    window.addEventListener('resize', this.updateWidth);
   },
   data() {
     return {
@@ -326,7 +332,8 @@ export default {
       params: {},
       refreshCards: [],
       number: 0,
-      tweenedNumber: 0
+      tweenedNumber: 0,
+      width: window.innerWidth
     };
   },
   mounted() {
@@ -549,6 +556,9 @@ export default {
           console.log(err);
         }
       );
+    },
+    updateWidth() {
+      this.width = window.innerWidth;
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -584,35 +594,9 @@ export default {
   overflow: hidden;
 }
 
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-  background-color: #f5f5f5;
-}
-
-::-webkit-scrollbar-track {
-  border-radius: 2px;
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 2px;
-  background: linear-gradient(top, #fff, #e4e4e4);
-  border: 1px solid #aaa;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-}
-
-::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(left, #0079fb, #1e98ba);
-}
 
 #main-data .list-group-item {
-  padding-top: 0.45rem !important;
-  padding-bottom: 0.45rem !important;
+  padding: 0.45rem 0 !important;
 }
 
 .card-ml-0 {
@@ -645,10 +629,6 @@ export default {
   transform: translateX(-20px) translateY(20px);
   z-index: -2;
   background: #ebebeb !important;
-}
-
-.list-group-horizontal li.list-group-item {
-  border-radius: 0 !important;
 }
 
 .dark-cover {
@@ -743,7 +723,7 @@ export default {
   width: 96%;
   height: 96%;
   background-color: #fff;
-  margin: auto auto;
+  margin: auto;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
@@ -773,13 +753,13 @@ export default {
 .card-head {
   height: 30%;
   box-sizing: border-box;
-  margin-bottom: 4px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
 }
 
 .card-head h6 {
-  display: block;
-  margin: auto !important;
   font-size: 16px;
 }
 
@@ -824,32 +804,6 @@ export default {
   overflow: auto;
 }
 
-#card-field::-webkit-scrollbar {
-  width: 4px;
-  height: 16px;
-  background-color: #f5f5f5;
-}
-
-#card-field::-webkit-scrollbar-track {
-  border-radius: 2px;
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
-}
-
-#card-field::-webkit-scrollbar-thumb {
-  border-radius: 2px;
-  background: linear-gradient(top, #fff, #e4e4e4);
-  border: 1px solid #aaa;
-}
-
-#card-field::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-}
-
-#card-field::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(left, #0079fb, #1e98ba);
-}
-
 .event-box {
   background: #fff;
   border-radius: 8px;
@@ -861,14 +815,6 @@ export default {
   padding-right: 0;
 }
 
-.data-group .list-group-horizontal .list-group-item {
-  padding: 0.1rem 0.5rem;
-}
-
-.data-group .list-group-horizontal .list-group-item h4 {
-  margin-bottom: 0;
-}
-
 .inner-card-wrap {
   height: 85%;
   display: flex;
@@ -877,13 +823,12 @@ export default {
 }
 
 .inner-card-wrap small {
-  padding-right: 10px;
-  padding-left: 10px;
+  margin: 0 10px;
   font-size: 0.7rem;
 }
 
 .inner-card-wrap h3 {
-  padding-bottom: 8px;
+  padding-bottom: .5rem;
 }
 
 .inner-card-wrap h6 {
@@ -894,23 +839,24 @@ export default {
   display: none;
 }
 
-@media screen and (max-height: 750px) {
-  #play-field {
-    min-height: 490px;
-  }
-}
-
-@media screen and (max-height: 560px) {
-  .main-side {
-    overflow-y: scroll;
-  }
-}
-
 @media screen and (max-width: 1250px) {
   .list-group-item {
-    padding: 8px !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+    padding: 8px 12px !important;
+  }
+}
+
+@media screen and (max-width: 1100px) and (orientation: landscape) {
+  #nav {
+    display: none;
+  }
+
+  #view {
+    height: 100vh;
+  }
+
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
   }
 }
 
@@ -965,64 +911,12 @@ export default {
   }
 
   #enemy-field, #effects-field, #card-field {
-    background-color: rgba(255,255,255,.4);
+    background-color: rgba(255, 255, 255, .4);
     border-radius: 0;
   }
-}
 
-@media screen and (max-width: 490px) {
-  .play-information {
-    padding: 0;
-  }
-
-  #playground {
-    padding: 0;
-  }
-
-  .main-side #finish-screen {
-    margin-top: 0rem;
-  }
-
-  .col .gray-block {
-    height: 90%;
-  }
-
-  #direction-column {
-    flex-direction: column;
-    height: 26rem;
-  }
-
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-
-  .w-100 {
-    height: 100%;
-  }
-
-  #direction-column .col-8 {
-    max-width: 100%;
-  }
-}
-
-@media screen and (max-width: 615px) {
-  .col .gray-block {
-    height: 90%;
-  }
-
-  #flex {
-    flex-direction: column;
-    height: 26rem;
-  }
-
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-
-  .w-100 {
-    height: 100%;
+  .gamer-round-data {
+    max-width: unset !important;
   }
 }
 
@@ -1040,8 +934,8 @@ export default {
 
   #play-field {
     margin: 0;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: .5rem 0;
+    min-height: 490px;
   }
 
   #playground {
@@ -1050,9 +944,11 @@ export default {
   }
 
   .list-group-item {
-    padding: 2px !important;
-    padding-left: 8px !important;
-    padding-right: 2px !important;
+    padding: 2px 0 2px 8px !important;
+  }
+
+  #gamerlist .list-group-item:nth-child(2) {
+    padding: .5rem !important;
   }
 
   #card-field {
@@ -1078,31 +974,27 @@ export default {
   }
 }
 
-@media screen and (max-width: 490px) {
-  .main-side #finish-screen {
-    margin-top: 0rem;
+@media screen and (max-height: 729px) {
+  #playground {
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
   }
 
-  .main-side .pg-header a {
-    width: 13.5rem;
+  #card-field {
+    min-height: 240px;
   }
 
-  .col .gray-block {
-    height: 90%;
+  #effects-field {
+    min-height: 55%;
+    overflow: auto;
   }
 
-  #direction-column {
-    flex-direction: column;
-    height: 26rem;
+  #gamerlist {
+    max-height: 100%;
   }
 
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-
-  .w-100 {
-    height: 100%;
+  .gamer-round-data {
+    overflow-y: hidden;
   }
 }
 
@@ -1126,61 +1018,55 @@ export default {
   }
 }
 
-@media screen and (max-height: 729px) {
+@media screen and (max-height: 560px) {
+  .main-side {
+    overflow-y: scroll;
+  }
+}
+
+@media screen and (max-width: 490px) {
+  .main-side #finish-screen {
+    margin-top: 0rem;
+  }
+
   #playground {
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    padding: 0;
   }
 
-  #card-field {
-    /*min-height: 45%;*/
-    min-height: 240px;
+  .main-side .pg-header a {
+    width: 13.5rem;
   }
 
-  #effects-field {
-    min-height: 55%;
-    overflow: auto;
+  .col .gray-block {
+    height: 90%;
   }
 
-  /*#enemy-field {*/
-  /*  min-height: 70%;*/
-  /*}*/
-  #gamerlist {
-    max-height: 100%;
+  #direction-column {
+    flex-direction: column;
+    height: 26rem;
+  }
+
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
+  }
+
+  #direction-column .col-8 {
+    max-width: 100%;
+  }
+
+  .w-100 {
+    height: 100%;
   }
 
   .play-information {
-    padding: 2rem 0 0 0;
-  }
-
-  .gamer-round-data {
-    overflow-y: hidden;
-  }
-}
-
-@media screen and (orientation: portrait) {
-}
-
-@media screen and (max-width: 640px) {
-}
-
-@media (min-width: 576px) {
-  .gamer-round-data {
-    max-width: unset !important;
+    padding: 0;
   }
 }
 
 @media screen and (max-width: 450px) {
-  .list-group-item {
-    padding: 2px !important;
-    padding-left: 4px !important;
-    padding-right: 2px !important;
-  }
-
   .data-wrap {
-    padding: 0 !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
+    padding: 0 4px !important;
   }
 
   #nav {
@@ -1210,37 +1096,8 @@ export default {
   }
 }
 
-@media screen and (max-width: 1100px) and (orientation: landscape) {
-  #nav {
-    display: none;
-  }
-
-  #view {
-    height: 100vh;
-  }
-
-  #playground {
-    max-height: 100vh;
-    height: 100vh;
-  }
-}
-
-@media (orientation: portrait) {
-  #nav {
-    display: none;
-  }
-
-  #view {
-    height: 100vh;
-  }
-
-  #playground {
-    max-height: 100vh;
-    height: 100vh;
-  }
-}
-
 @media screen and (max-width: 320px) and (orientation: portrait) {
+
   .card-box {
     min-width: 172px;
   }
@@ -1260,7 +1117,6 @@ export default {
   }
 
   .play-information {
-    /* margin: 0; */
     width: 100%;
     height: 100%;
     border-radius: 0;
@@ -1279,7 +1135,7 @@ export default {
 
   .data-wrap button {
     font-size: 12px !important;
-    margin-top: 2px !important;
+    /*margin-top: 2px !important;*/
     font-weight: bold;
   }
 
@@ -1287,18 +1143,8 @@ export default {
     height: 0;
   }
 
-  .card-head h6 {
-    font-size: 14px;
-    margin-bottom: 8px !important;
-    margin-top: 8px !important;
-  }
-
   #effects-head {
     height: 40px;
-  }
-
-  #effects-head h6 {
-    margin: 0 !important;
   }
 
   .card-text {
@@ -1318,5 +1164,78 @@ export default {
   h3.card-text {
     font-size: 22px;
   }
+
+  .effects-body {
+    margin-top: 0;
+    height: 100%;
+  }
+}
+
+@media (orientation: portrait) {
+  #nav {
+    display: none;
+  }
+
+  #view {
+    height: 100vh;
+  }
+
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
+}
+
+#card-field::-webkit-scrollbar {
+  width: 4px;
+  height: 16px;
+  background-color: #f5f5f5;
+}
+
+#card-field::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+#card-field::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: linear-gradient(top, #fff, #e4e4e4);
+  border: 1px solid #aaa;
+}
+
+#card-field::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
+
+#card-field::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(left, #0079fb, #1e98ba);
+}
+
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: linear-gradient(top, #fff, #e4e4e4);
+  border: 1px solid #aaa;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(left, #0079fb, #1e98ba);
 }
 </style>

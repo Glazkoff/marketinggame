@@ -5,7 +5,7 @@
       class="list-group-item d-flex justify-content-between align-items-center active bg-info w-100"
       id="effects-head"
     >
-      <h6>Длительные события</h6>
+      <h6 class="mb-0">Длительные события</h6>
     </li>
     <ul class="list-group effects-body" v-if="!isStart">
       <li

@@ -28,24 +28,25 @@
           'list-group-item-danger': gamer.isdisconnected
         }"
       >
-        <button v-if="isOwner && ownerId !== gamer.id && !gamer.isdisconnected" @click="kickUser(gamer)">&#x2715;</button>
+        <button v-if="isOwner && ownerId !== gamer.id && !gamer.isdisconnected" @click="kickUser(gamer)">&#x2715;
+        </button>
         <div class="justify-content-between w-100 d-flex">
-           {{ gamer.name }}
-        <span
-          class="badge badge-primary badge-pill"
-          v-if="gamer.isattacker && !gamer.isdisconnected"
+          {{ gamer.name }}
+          <span
+            class="badge badge-primary badge-pill gamer-status"
+            v-if="gamer.isattacker && !gamer.isdisconnected"
           >Сделал ход</span
-        >
-        <span
-          class="badge badge-warning badge-pill"
-          v-else-if="!gamer.isattacker && !gamer.isdisconnected"
+          >
+          <span
+            class="badge badge-warning badge-pill gamer-status"
+            v-else-if="!gamer.isattacker && !gamer.isdisconnected"
           >Размышляет</span
-        >
-        <span
-          class="badge badge-danger badge-pill"
-          v-else-if="gamer.isdisconnected"
+          >
+          <span
+            class="badge badge-danger badge-pill gamer-status"
+            v-else-if="gamer.isdisconnected"
           >Отключён</span
-        >
+          >
         </div>
       </li>
     </ul>
@@ -147,6 +148,7 @@ export default {
   user-select: none;
   position: relative;
 }
+
 .list-group-item button:not(#close-step)::before {
   outline: none;
   display: none;
@@ -171,11 +173,17 @@ export default {
   transition-delay: 1.4s;
   transition: 0.2s ease-in-out;
 }
+
 .list-group-item button:not(#close-step):hover::before {
   opacity: 1;
   display: block;
 }
+
 .list-group-item button:not(#close-step):hover {
   transform: rotate(90deg) scale(1.2);
+}
+
+.gamer-status {
+  align-self: center;
 }
 </style>

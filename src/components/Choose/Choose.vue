@@ -51,8 +51,8 @@
     </div>
     <transition name="slideUp" mode="out-in" appear>
       <div class v-if="toggle == 'join' && !loading">
-        <label for="name" class>Номер комнаты</label>
-        <br />
+        <label for="roomIdJoin" class>Номер комнаты</label>
+        <br/>
         <input
           type="number"
           min="0"
@@ -87,8 +87,8 @@
         </button>
       </div>
       <div class v-if="toggle == 'create' && !loading">
-        <label for="name" class>Количество месяцев</label>
-        <br />
+        <label for="month" class>Количество месяцев</label>
+        <br/>
         <input
           type="number"
           min="3"
@@ -122,8 +122,8 @@
         >
           Количество месяцев должно быть целым числом!
         </div>
-        <label for="name" class>Бюджет за месяц</label>
-        <br />
+        <label for="money" class>Бюджет за месяц</label>
+        <br/>
         <input
           type="number"
           min="15000"
@@ -189,7 +189,7 @@ import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
 import CheckModal from "@/components/CheckModal.vue";
 import LastRoomCheck from "@/components/Choose/LastRoomCheck.vue";
-import { required } from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 
 let apiUrl = "/api";
 export default {
@@ -366,8 +366,8 @@ export default {
       this.roomIdJoin = roomId;
     },
     updateWidth() {
-    this.width = window.innerWidth;
-  },
+      this.width = window.innerWidth;
+    },
   }
 };
 </script>
@@ -375,7 +375,7 @@ export default {
 <style>
 @media screen and (max-width: 320px) {
   .card.p-4 {
-    padding: 0.7rem !important;
+    /*padding: 0.7rem !important;*/
   }
 }
 

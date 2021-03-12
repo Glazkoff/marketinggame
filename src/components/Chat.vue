@@ -126,7 +126,7 @@ export default {
 
 .chat-count span {
   display: block;
-  margin: auto auto;
+  margin: auto;
   font-weight: bold;
 }
 
@@ -134,19 +134,22 @@ export default {
   .mess-block {
     max-width: unset;
   }
+
   .chatOpened {
     left: 0px;
   }
+
   .chatOpened .chat-btn {
     border-radius: 0;
   }
+
   .chatClosed {
     left: -300px;
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
   }
 }
 
-@media screen and (max-width: 330px){
+@media screen and (max-width: 330px) {
   .chatClosed {
     left: calc(30px - 100vw);
   }
@@ -168,7 +171,7 @@ export default {
 }
 
 .chat-btn-icon {
-  margin: auto auto;
+  margin: auto;
   padding-left: 8px;
   display: block;
   width: 30px;
