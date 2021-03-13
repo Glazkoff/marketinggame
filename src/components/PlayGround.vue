@@ -2,13 +2,7 @@
   <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
     <div id="play-field">
       <div
-        class="play-information"
-        :class="{ dragstart: dragstart, dragover: dragover }"
-        @dragenter.prevent="dragov"
-        @dragover.prevent
-        @drop.prevent="altdrop"
-        @dragleave="dragleave"
-      >
+        class="play-information">
         <!-- Обёртка случайного события с сервера -->
         <transition name="cardwrap">
           <Event
@@ -148,7 +142,7 @@
       </div>
       <div class="h-100" v-else>
         <transition mode="out-in" name="fade" type="transition">
-          <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
+          <div v-if="stepDone" class="dark-cover h-100 w-100">
             <div class="container h-100 w-100">
               <div
                 class="row h-100 justify-content-md-center align-content-center"
@@ -326,9 +320,6 @@ export default {
       usedCards: [],
       cardsLoading: false,
       clientsRendered: true,
-      dragstart: false,
-      dragover: false,
-      dragnode: undefined,
       params: {},
       refreshCards: [],
       number: 0,
@@ -494,54 +485,6 @@ export default {
       this.$store.commit("changeMoney", change);
       this.$store.commit("SPLICE_CARD", this.cards[index].id);
       this.playAnimation();
-    },
-    altdrop(e) {
-      e.preventDefault();
-      console.log("drop");
-      this.dragovered = false;
-      this.dragstart = false;
-      if (typeof this.dragnode !== "undefined") {
-        if (this.dragnode.parentNode.id === "card-wrap") {
-          let i = 0;
-          for (const iterator of this.dragnode.parentNode.childNodes) {
-            if (iterator === this.dragnode) {
-              break;
-            }
-            i++;
-          }
-          this.usedCards.push(this.cards[i].id);
-          let change = -this.cards[i].cost;
-          this.$store.commit("changeMoney", change);
-          this.$store.commit("SPLICE_CARD", this.cards[i].id);
-        }
-      }
-      this.dragnode = undefined;
-      this.playAnimation();
-    },
-    altdragstart(e) {
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.dropEffect = "move";
-      e.dataTransfer.setData("text/plain", null);
-      e.target.style.opacity = 0.5;
-      e.target.style.transform = "scale(0.8)";
-      this.dragstart = true;
-      this.dragnode = e.target;
-    },
-    altdragend(e) {
-      e.target.style.opacity = "";
-      e.target.style.transform = "";
-      this.dragnode = undefined;
-      this.dragover = false;
-      this.dragstart = false;
-    },
-    dragov(e) {
-      console.log("over");
-      e.dataTransfer.dropEffect = "move";
-      this.dragover = true;
-    },
-    dragleave(e) {
-      console.log("leave");
-      this.dragover = false;
     },
     getCards() {
       console.log("GET CARDS!");
@@ -729,14 +672,6 @@ export default {
   position: relative;
 }
 
-.dragstart {
-  border: 8px dashed gray;
-}
-
-.dragover {
-  background-color: #d8d8d8;
-}
-
 #card-wrap {
   display: flex;
   height: 96%;
@@ -772,7 +707,6 @@ export default {
   min-width: 180px;
   margin-right: 16px;
   user-select: none;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.2);
