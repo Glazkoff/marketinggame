@@ -3,7 +3,7 @@ const {
   logSocketOutEvent,
   logSocketError
 } = require("../global_functions/logs");
-const { sendGamers } = require("../global_functions/game_process");
+const { sendGamers, finishGame } = require("../global_functions/game_process");
 
 module.exports = function(socket, io, db) {
   // При старте игры в комнате
@@ -12,6 +12,8 @@ module.exports = function(socket, io, db) {
     logSocketInEvent("startGame", "При старте игры в комнате");
 
     try {
+      let month = 0;
+      
       // Пробуем найти комнату
       let room = await db.Room.findOne({
         where: {
@@ -53,6 +55,31 @@ module.exports = function(socket, io, db) {
         "Отправляем комнате - игра в комнате началась"
       );
 
+      
+      setInterval(async function() {
+        let room = await db.Room.findOne({
+          where: {
+            room_id: data.room_id
+          },
+          include: [
+            {
+              model: db.Winner,
+              as: "winners"
+            },
+            {
+              model: db.RoomFirstParams,
+              as: "first_params"
+            }
+          ]
+        });
+        if (room.current_month === month) {
+            finishGame(io, db, room);
+        } else {
+          month++;
+        }
+      }, 3600000);
+      
+      
       // Отправляем всем в комнате состояние игроков
       await sendGamers(io, db, data.room_id);
     } catch (error) {
