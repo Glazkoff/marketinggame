@@ -2,13 +2,7 @@
   <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
     <div id="play-field">
       <div
-        class="play-information"
-        :class="{ dragstart: dragstart, dragover: dragover }"
-        @dragenter.prevent="dragov"
-        @dragover.prevent
-        @drop.prevent="altdrop"
-        @dragleave="dragleave"
-      >
+        class="play-information">
         <!-- Обёртка случайного события с сервера -->
         <transition name="cardwrap">
           <Event
@@ -29,7 +23,8 @@
                 <h1 class="text-center">Начать игру</h1>
                 <p>
                   Если все игроки подключились к комнате, вы можете запустить
-                  <mark>первый раунд</mark> в созданной вами комнате.
+                  <mark>первый раунд</mark>
+                  в созданной вами комнате.
                 </p>
                 <div
                   class="btn btn-primary btn-lg btn-block mt-3"
@@ -55,7 +50,8 @@
                 <p>
                   Когда все игроки подключатся к комнате, создатель комнаты
                   запустит
-                  <mark>первый раунд</mark> в созданной комнате.
+                  <mark>первый раунд</mark>
+                  в созданной комнате.
                 </p>
               </div>
             </div>
@@ -67,7 +63,7 @@
           <div
             class="row h-100 justify-content-center align-items-start d-flex"
           >
-            <div class="col-12 data-wrap" style="margin: auto auto;">
+            <div class="col-12 data-wrap m-auto">
               <div class="container-fluid pl-0 pr-0">
                 <div class="row">
                   <div
@@ -79,22 +75,25 @@
                     </h4>
                   </div>
                   <div class="col-md-7 col-sm-12 data-group">
-                    <ul class="list-group list-group-horizontal w-100">
+                    <ul class="list-group w-100"
+                        :class="{'list-group-vertical': this.width<320, 'list-group-horizontal':this.width>=320 }"
+                    >
                       <li
-                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center rounded-0"
                         style="border-right: 1px solid rgba(0, 0, 0, 0.125); z-index: 20"
                       >
                         Бюджет
                         <span class="badge badge-primary badge-pill">
-                          <h4>{{ gamerParams.money }}₽</h4>
+                          <h4 class="mb-0">{{ gamerParams.money }}₽</h4>
                         </span>
                       </li>
                       <li
-                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center"
+                        class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center rounded-0"
                       >
                         Месяц
                         <span class="badge badge-primary badge-pill">
                           <h4
+                            class="mb-0"
                             v-if="
                               firstRoomParams.month - gamerParams.month <
                                 firstRoomParams.month
@@ -104,7 +103,9 @@
                             из
                             {{ firstRoomParams.month }}
                           </h4>
-                          <h4 v-else>
+                          <h4
+                            class="mb-0"
+                            v-else>
                             Завершено
                           </h4>
                         </span>
@@ -141,7 +142,7 @@
       </div>
       <div class="h-100" v-else>
         <transition mode="out-in" name="fade" type="transition">
-          <div v-if="stepDone" class="dark-cover h-100 w-100" draggable="false">
+          <div v-if="stepDone" class="dark-cover h-100 w-100">
             <div class="container h-100 w-100">
               <div
                 class="row h-100 justify-content-md-center align-content-center"
@@ -184,7 +185,7 @@
             ></div>
             <div class="inner-card-wrap">
               <div class="card-head">
-                <h6 class="card-title text-center pl-2 pr-2 mb-1">
+                <h6 class="card-title text-center px-2 mb-0 m-auto d-block">
                   {{ card.title }}
                 </h6>
               </div>
@@ -194,7 +195,7 @@
               </h3>
             </div>
             <button
-              class="btn btn-dark pl-2"
+              class="btn btn-dark pl-2 card-button"
               @click="dropFromBtn(count)"
               :disabled="stepDone || card.cost > gamerParams.money"
             >
@@ -226,7 +227,8 @@ import Loader from "@/components/Loader.vue";
 import Event from "@/components/Event.vue";
 import numeral from "numeral";
 import Vue from "vue";
-Vue.filter("formatNumber", function(value) {
+
+Vue.filter("formatNumber", function (value) {
   return numeral(value).format("0,0");
 });
 export default {
@@ -250,7 +252,7 @@ export default {
           if (cardIndex !== -1) {
             this.refreshCards[cardIndex].coefs = this.refreshCards[
               cardIndex
-            ].coefs.map(coef => {
+              ].coefs.map(coef => {
               // Изменение каждого коэф. после трёх ходов подряд
               let res = Math.ceil(((1 + coef) / 2) * 10) / 10;
               if (coef >= 10) {
@@ -307,23 +309,22 @@ export default {
             }
           }
         });
-      }
+      },
     );
     this.$store.commit("SET_CARDS", this.shuffle(this.cards));
     this.refreshCards = [...this.cards];
+    window.addEventListener('resize', this.updateWidth);
   },
   data() {
     return {
       usedCards: [],
       cardsLoading: false,
       clientsRendered: true,
-      dragstart: false,
-      dragover: false,
-      dragnode: undefined,
       params: {},
       refreshCards: [],
       number: 0,
-      tweenedNumber: 0
+      tweenedNumber: 0,
+      width: window.innerWidth
     };
   },
   mounted() {
@@ -332,12 +333,12 @@ export default {
     this.getCards();
   },
   watch: {
-    number: function(newValue) {
+    number: function (newValue) {
       if (this.$refs.number1 !== undefined) {
         this.$refs.number1.play();
       }
     },
-    money: function(newValue) {
+    money: function (newValue) {
       setTimeout(() => {
         this.playAnimation();
       }, 50);
@@ -402,7 +403,7 @@ export default {
   methods: {
     // При клике на кнопку "Начать"
     startGame() {
-      this.$socket.emit("startGame", { room_id: this.$store.state.roomId });
+      this.$socket.emit("startGame", {room_id: this.$store.state.roomId});
       this.playAnimation();
     },
     async makeStep() {
@@ -485,54 +486,6 @@ export default {
       this.$store.commit("SPLICE_CARD", this.cards[index].id);
       this.playAnimation();
     },
-    altdrop(e) {
-      e.preventDefault();
-      console.log("drop");
-      this.dragovered = false;
-      this.dragstart = false;
-      if (typeof this.dragnode !== "undefined") {
-        if (this.dragnode.parentNode.id === "card-wrap") {
-          let i = 0;
-          for (const iterator of this.dragnode.parentNode.childNodes) {
-            if (iterator === this.dragnode) {
-              break;
-            }
-            i++;
-          }
-          this.usedCards.push(this.cards[i].id);
-          let change = -this.cards[i].cost;
-          this.$store.commit("changeMoney", change);
-          this.$store.commit("SPLICE_CARD", this.cards[i].id);
-        }
-      }
-      this.dragnode = undefined;
-      this.playAnimation();
-    },
-    altdragstart(e) {
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.dropEffect = "move";
-      e.dataTransfer.setData("text/plain", null);
-      e.target.style.opacity = 0.5;
-      e.target.style.transform = "scale(0.8)";
-      this.dragstart = true;
-      this.dragnode = e.target;
-    },
-    altdragend(e) {
-      e.target.style.opacity = "";
-      e.target.style.transform = "";
-      this.dragnode = undefined;
-      this.dragover = false;
-      this.dragstart = false;
-    },
-    dragov(e) {
-      console.log("over");
-      e.dataTransfer.dropEffect = "move";
-      this.dragover = true;
-    },
-    dragleave(e) {
-      console.log("leave");
-      this.dragover = false;
-    },
     getCards() {
       console.log("GET CARDS!");
       this.cardsLoading = true;
@@ -546,6 +499,9 @@ export default {
           console.log(err);
         }
       );
+    },
+    updateWidth() {
+      this.width = window.innerWidth;
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -567,51 +523,37 @@ export default {
 </script>
 
 <style>
+.card-button {
+  border-radius: 8px;
+}
+
 .data-table {
   width: 100%;
   overflow: auto;
 }
+
 .gamer-round-data {
   min-width: unset !important;
   overflow: hidden;
 }
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-  background-color: #f5f5f5;
-}
-::-webkit-scrollbar-track {
-  border-radius: 2px;
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
-}
 
-::-webkit-scrollbar-thumb {
-  border-radius: 2px;
-  background: linear-gradient(top, #fff, #e4e4e4);
-  border: 1px solid #aaa;
-}
 
-::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-}
-
-::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(left, #0079fb, #1e98ba);
-}
 #main-data .list-group-item {
-  padding-top: 0.45rem !important;
-  padding-bottom: 0.45rem !important;
+  padding: 0.45rem 0 !important;
 }
+
 .card-ml-0 {
   margin-left: 0;
 }
+
 .card-ml-1 {
   margin-left: 10px;
 }
+
 .card-ml-2 {
   margin-left: 20px;
 }
+
 .bottom-card {
   position: absolute !important;
 }
@@ -623,6 +565,7 @@ export default {
   z-index: -1;
   background: #f7f7f7 !important;
 }
+
 .bottom-card-2 {
   width: 100%;
   height: 100%;
@@ -630,9 +573,7 @@ export default {
   z-index: -2;
   background: #ebebeb !important;
 }
-.list-group-horizontal li.list-group-item {
-  border-radius: 0 !important;
-}
+
 .dark-cover {
   opacity: 0.9;
   position: absolute;
@@ -647,6 +588,7 @@ export default {
   color: #fff;
   z-index: 1000;
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.6s;
@@ -716,6 +658,7 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
+  z-index: 1000;
 }
 
 .play-information {
@@ -723,18 +666,10 @@ export default {
   width: 96%;
   height: 96%;
   background-color: #fff;
-  margin: auto auto;
+  margin: auto;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
-}
-
-.dragstart {
-  border: 8px dashed gray;
-}
-
-.dragover {
-  background-color: #d8d8d8;
 }
 
 #card-wrap {
@@ -753,13 +688,13 @@ export default {
 .card-head {
   height: 30%;
   box-sizing: border-box;
-  margin-bottom: 4px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
 }
 
 .card-head h6 {
-  display: block;
-  margin: auto auto !important;
   font-size: 16px;
 }
 
@@ -772,7 +707,6 @@ export default {
   min-width: 180px;
   margin-right: 16px;
   user-select: none;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -804,6 +738,388 @@ export default {
   overflow: auto;
 }
 
+.event-box {
+  background: #fff;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 2000;
+}
+
+#main-data {
+  padding-right: 0;
+}
+
+.inner-card-wrap {
+  height: 85%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.inner-card-wrap small {
+  margin: 0 10px;
+  font-size: 0.7rem;
+}
+
+.inner-card-wrap h3 {
+  padding-bottom: .5rem;
+}
+
+.inner-card-wrap h6 {
+  font-size: 0.9rem;
+}
+
+[v-cloak] {
+  display: none;
+}
+
+@media screen and (max-width: 1250px) {
+  .list-group-item {
+    padding: 8px 12px !important;
+  }
+}
+
+@media screen and (max-width: 1100px) and (orientation: landscape) {
+  #nav {
+    display: none;
+  }
+
+  #view {
+    height: 100vh;
+  }
+
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
+}
+
+@media screen and (max-width: 1090px) {
+  #splitScr {
+    grid-template-rows: 1fr !important;
+    grid-template-columns: 1fr !important;
+    position: relative;
+  }
+
+  .main-side {
+    grid-area: 1/1/2/2;
+    display: block;
+  }
+
+  .sideBox {
+    position: absolute;
+    grid-area: unset !important;
+    z-index: 200000;
+    background: #fff;
+    box-shadow: 100px 0px 200px rgba(20, 20, 20, 0.8);
+    max-width: calc(100vw - 30px);
+    width: 300px;
+    min-height: 100vh;
+  }
+
+  .mess-block {
+    max-width: unset;
+  }
+
+  .chat-btn {
+    display: flex;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  #playground {
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1.6fr 1fr;
+  }
+
+  #play-field {
+    grid-area: 1/1/2/4;
+    width: 100%;
+    margin: 0;
+  }
+
+  #enemy-field {
+    grid-area: 2/3/3/4;
+    min-height: 50%;
+    max-height: calc(96% - 40px);
+  }
+
+  #enemy-field, #effects-field, #card-field {
+    background-color: rgba(255, 255, 255, .4);
+    border-radius: 0;
+  }
+
+  .gamer-round-data {
+    max-width: unset !important;
+  }
+}
+
+@media screen and (max-width: 876px), (max-height: 750px) {
+  .main-side {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .play-information {
+    padding: 0;
+    height: 100%;
+  }
+
+  #play-field {
+    margin: 0;
+    padding: .5rem 0;
+    min-height: 490px;
+  }
+
+  #playground {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .list-group-item {
+    padding: 2px 0 2px 8px !important;
+  }
+
+  #gamerlist .list-group-item:nth-child(2) {
+    padding: .5rem !important;
+  }
+
+  #card-field {
+    display: flex;
+    width: 100vw !important;
+    min-height: 30vh;
+  }
+
+  #enemy-field {
+    display: flex;
+    width: 100% !important;
+    min-height: 20rem;
+  }
+
+  #effects-field {
+    display: flex;
+    width: 100% !important;
+  }
+
+  #enemy-field, #effects-field, #card-field {
+    background-color: rgba(123, 45, 64, 0.3);
+    border-radius: 0;
+  }
+}
+
+@media screen and (max-height: 729px) {
+  #playground {
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  #card-field {
+    min-height: 240px;
+  }
+
+  #effects-field {
+    min-height: 55%;
+    overflow: auto;
+  }
+
+  #gamerlist {
+    max-height: 100%;
+  }
+
+  .gamer-round-data {
+    overflow-y: hidden;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .col .gray-block {
+    height: 90%;
+  }
+
+  #flex {
+    flex-direction: column;
+    height: 26rem;
+  }
+
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
+  }
+
+  .w-100 {
+    height: 100%;
+  }
+}
+
+@media screen and (max-height: 560px) {
+  .main-side {
+    overflow-y: scroll;
+  }
+}
+
+@media screen and (max-width: 490px) {
+  .main-side #finish-screen {
+    margin-top: 0rem;
+  }
+
+  #playground {
+    padding: 0;
+  }
+
+  .main-side .pg-header a {
+    width: 13.5rem;
+  }
+
+  .col .gray-block {
+    height: 90%;
+  }
+
+  #direction-column {
+    flex-direction: column;
+    height: 26rem;
+  }
+
+  .col .list-group {
+    margin: auto;
+    padding-left: 1rem;
+  }
+
+  #direction-column .col-8 {
+    max-width: 100%;
+  }
+
+  .w-100 {
+    height: 100%;
+  }
+
+  .play-information {
+    padding: 0;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .data-wrap {
+    padding: 0 4px !important;
+  }
+
+  #nav {
+    display: none;
+  }
+
+  #view {
+    height: 100vh;
+  }
+
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
+
+  #main-data {
+    font-size: 12px;
+    margin-top: 0px !important;
+  }
+
+  .badge h4 {
+    font-size: 18px;
+  }
+
+  .card-image {
+    height: 0;
+  }
+}
+
+@media screen and (max-width: 320px) and (orientation: portrait) {
+
+  .card-box {
+    min-width: 172px;
+  }
+
+  .card-box h3 {
+    padding-bottom: 1em;
+  }
+
+  #playground {
+    padding-top: 0;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 2.4fr 2fr 1.2fr;
+  }
+
+  #gamerlist h3 {
+    font-size: 16px;
+  }
+
+  .play-information {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .main-side {
+    max-height: unset;
+  }
+
+  .play-information h4 {
+    font-size: 14px;
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .data-wrap button {
+    font-size: 12px !important;
+    /*margin-top: 2px !important;*/
+    font-weight: bold;
+  }
+
+  .gray-block {
+    height: 0;
+  }
+
+  #effects-head {
+    height: 40px;
+  }
+
+  .card-text {
+    padding-top: 2px;
+    line-height: 16px;
+    margin-bottom: 0 !important;
+  }
+
+  ul.list-group {
+    overflow-x: hidden;
+  }
+
+  #effects-field #effectslist ul {
+    padding-top: 40px;
+  }
+
+  h3.card-text {
+    font-size: 22px;
+  }
+
+  .effects-body {
+    margin-top: 0;
+    height: 100%;
+  }
+}
+
+@media (orientation: portrait) {
+  #nav {
+    display: none;
+  }
+
+  #view {
+    height: 100vh;
+  }
+
+  #playground {
+    max-height: 100vh;
+    height: 100vh;
+  }
+}
+
 #card-field::-webkit-scrollbar {
   width: 4px;
   height: 16px;
@@ -830,383 +1146,30 @@ export default {
   background: linear-gradient(left, #0079fb, #1e98ba);
 }
 
-.event-box {
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: linear-gradient(top, #fff, #e4e4e4);
+  border: 1px solid #aaa;
+}
+
+::-webkit-scrollbar-thumb:hover {
   background: #fff;
-  border-radius: 8px;
-  position: absolute;
-  z-index: 2000;
-}
-#main-data {
-  padding-right: 0;
-}
-.data-group .list-group-horizontal .list-group-item {
-  padding: 0.1rem 0.5rem;
-}
-.data-group .list-group-horizontal .list-group-item h4 {
-  margin-bottom: 0;
-}
-.inner-card-wrap {
-  height: 85%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.inner-card-wrap small {
-  padding-right: 10px;
-  padding-left: 10px;
-  font-size: 0.7rem;
-}
-.inner-card-wrap h3 {
-  padding-bottom: 8px;
-}
-.inner-card-wrap h6 {
-  font-size: 0.9rem;
 }
 
-[v-cloak] {
-  display: none;
-}
-@media screen and (max-height: 750px){
-  #play-field{
-    min-height: 490px;
-  }
-}
-@media screen and (max-height: 560px) {
-  .main-side {
-    overflow-y: scroll;
-  }
-}
-@media screen and (max-width: 1250px) {
-  .list-group-item {
-    padding: 8px !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-}
-@media screen and (max-width: 1090px) {
-  #splitScr {
-    grid-template-rows: 1fr !important;
-    grid-template-columns: 1fr !important;
-    position: relative;
-  }
-  .main-side {
-    grid-area: 1/1/2/2;
-    display: block;
-  }
-  .sideBox {
-    position: absolute;
-    grid-area: unset !important;
-    z-index: 200000;
-    background: #fff;
-    box-shadow: 100px 0px 200px rgba(20, 20, 20, 0.8);
-    max-width: calc(100vw - 30px);
-    width: 300px;
-    min-height: 100vh;
-  }
-  .mess-block {
-    max-width: unset;
-  }
-  .chat-btn {
-    display: flex;
-  }
-}
-@media screen and (max-width: 1024px) {
-  #playground {
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 1.6fr 1fr;
-  }
-  #play-field {
-    grid-area: 1/1/2/4;
-    width: 100%;
-    margin: 0;
-  }
-  #enemy-field {
-    grid-area: 2/3/3/4;
-  }
-}
-@media screen and (max-width: 490px) {
-  .play-information {
-    padding: 0;
-  }
-
-  #playground {
-    padding: 0;
-  }
-  .main-side #finish-screen {
-    margin-top: 0rem;
-  }
-
-  .col .gray-block {
-    height: 90%;
-  }
-  #direction-column {
-    flex-direction: column;
-    height: 26rem;
-  }
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-  .w-100 {
-    height: 100%;
-  }
-  #direction-column .col-8 {
-    max-width: 100%;
-  }
-}
-@media screen and (max-width: 615px) {
-  .col .gray-block {
-    height: 90%;
-  }
-  #flex {
-    flex-direction: column;
-    height: 26rem;
-  }
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-  .w-100 {
-    height: 100%;
-  }
-}
-
-@media screen and (max-width: 730px), (max-height: 750px) {
-  .main-side {
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
-  .play-information {
-    padding: 0;
-    height: 100%;
-  }
-  #play-field {
-    margin: 0;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-  #playground {
-    display: flex;
-    flex-direction: column;
-  }
-  .list-group-item {
-    padding: 2px !important;
-    padding-left: 8px !important;
-    padding-right: 2px !important;
-  }
-
-  #card-field {
-    display: flex;
-    width: 100vw !important;
-    min-height: 30vh;
-  }
-
-  #enemy-field {
-    display: flex;
-    width: 100% !important;
-    min-height: 20rem;
-  }
-  #effects-field {
-    display: flex;
-    width: 100% !important;
-  }
-}
-
-@media screen and (max-width: 490px) {
-  .main-side #finish-screen {
-    margin-top: 0rem;
-  }
-  .main-side .pg-header a {
-    width: 13.5rem;
-  }
-  .col .gray-block {
-    height: 90%;
-  }
-  #direction-column {
-    flex-direction: column;
-    height: 26rem;
-  }
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-  .w-100 {
-    height: 100%;
-  }
-}
-
-@media screen and (max-width: 615px) {
-  .col .gray-block {
-    height: 90%;
-  }
-  #flex {
-    flex-direction: column;
-    height: 26rem;
-  }
-  .col .list-group {
-    margin: auto;
-    padding-left: 1rem;
-  }
-  .w-100 {
-    height: 100%;
-  }
-}
-@media screen and (max-height: 729px) {
-  #playground {
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-  #card-field {
-    /*min-height: 45%;*/
-    min-height: 240px;
-  }
-  #effects-field {
-    min-height: 55%;
-    overflow: auto;
-  }
-  /*#enemy-field {*/
-  /*  min-height: 70%;*/
-  /*}*/
-  #gamerlist {
-    max-height: 100%;
-  }
-  .play-information {
-    padding: 2rem 0 0 0;
-  }
-  .gamer-round-data {
-    overflow-y: hidden;
-  }
-}
-@media screen and (orientation: portrait) {
-}
-@media screen and (max-width: 640px) {
-}
-@media (min-width: 576px) {
-  .gamer-round-data {
-    max-width: unset !important;
-  }
-}
-@media screen and (max-width: 450px) {
-  .list-group-item {
-    padding: 2px !important;
-    padding-left: 4px !important;
-    padding-right: 2px !important;
-  }
-  .data-wrap {
-    padding: 0 !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
-  }
-  #nav {
-    display: none;
-  }
-  #view {
-    height: 100vh;
-  }
-  #playground {
-    max-height: 100vh;
-    height: 100vh;
-  }
-  #main-data {
-    font-size: 12px;
-    margin-top: 0px !important;
-  }
-  .badge h4 {
-    font-size: 18px;
-  }
-  .card-image {
-    height: 0;
-  }
-}
-@media screen and (max-width: 1100px) and (orientation: landscape) {
-  #nav {
-    display: none;
-  }
-  #view {
-    height: 100vh;
-  }
-  #playground {
-    max-height: 100vh;
-    height: 100vh;
-  }
-}
-@media (orientation: portrait) {
-  #nav {
-    display: none;
-  }
-  #view {
-    height: 100vh;
-  }
-  #playground {
-    max-height: 100vh;
-    height: 100vh;
-  }
-}
-@media screen and (max-width: 320px) and (orientation: portrait) {
-  .card-box {
-    min-width: 172px;
-  }
-  .card-box h3{
-    padding-bottom: 1em;
-  }
-
-  #playground {
-    padding-top: 0;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 2.4fr 2fr 1.2fr;
-  }
-  #gamerlist h3 {
-    font-size: 16px;
-  }
-  .play-information {
-    /* margin: 0; */
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-    padding: 0;
-  }
-  .main-side {
-    max-height: unset;
-  }
-
-  .play-information h4 {
-    font-size: 14px;
-    margin-top: 4px !important;
-    margin-bottom: 4px !important;
-  }
-  .data-wrap button {
-    font-size: 12px !important;
-    margin-top: 2px !important;
-    font-weight: bold;
-  }
-  .gray-block {
-    height: 0;
-  }
-  .card-head h6 {
-    font-size: 14px;
-    margin-bottom: 8px !important;
-    margin-top: 8px !important;
-  }
-  #effects-head {
-    height: 40px;
-  }
-  #effects-head h6 {
-    margin: 0 !important;
-  }
-  .card-text {
-    padding-top: 2px;
-    line-height: 16px;
-    margin-bottom: 0 !important;
-  }
-  ul.list-group {
-    overflow-x: hidden;
-  }
-  #effects-field #effectslist ul {
-    padding-top: 40px;
-  }
-  h3.card-text {
-    font-size: 22px;
-  }
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(left, #0079fb, #1e98ba);
 }
 </style>

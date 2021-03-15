@@ -9,6 +9,7 @@ const {
   getOneOffCardsId,
   calculateMoneyForMonth,
   calculateClientsForMonth,
+  isCurrentStepFinished,
   finishGame,
   cardsProcessing
 } = require("../global_functions/game_process");
@@ -19,9 +20,9 @@ const {
 } = require("../global_functions/messages");
 const Sequelize = require("sequelize");
 
-module.exports = function(socket, io, db) {
+module.exports = function (socket, io, db) {
   // При выполнении хода
-  socket.on("doStep", async function(cardArr) {
+  socket.on("doStep", async function (cardArr) {
     // Логируем входящее событие
     logSocketInEvent("doStep", "При выполнении хода");
 
@@ -216,7 +217,6 @@ module.exports = function(socket, io, db) {
                   break;
                 default:
                   // Что-то не так с операцией карточки
-                  
                   break;
               }
             }
@@ -493,11 +493,7 @@ module.exports = function(socket, io, db) {
         );
       }
 
-      // Количество пользователей в команте, которые сделали ход в текцщий месяц
-      let didStepCurrMonth = 0;
-
-      // Все ли пользователи ход? Нет по умолчанию
-      let allGamersDoStep = false;
+      const allGamersDoStep = (await isCurrentStepFinished(io, db, room)).finished
 
       let participants = await db.UserInRoom.findAll({
         attributes: ["user_id"],
@@ -510,66 +506,36 @@ module.exports = function(socket, io, db) {
         return el.user_id;
       });
 
-      // Если корректно установлены параметры комнаты
-      if (participantsArray !== null) {
-        let activeParticipants = participantsArray.length;
+      // Когда все в комнате сделали ход
+      if (allGamersDoStep) {
 
-        didStepCurrMonth = await db.UserStepState.count({
-          where: {
-            month: room.current_month,
-            "$user_in_room.room_id$": room.room_id
+        await db.UserInRoom.update(
+          {
+            isattacker: false
           },
-          include: [
-            {
-              model: db.UserInRoom,
-              as: "user_in_room",
-              attributes: []
+          {
+            where: {
+              room_id: room.room_id
             }
-          ]
-        });
-
-        let loosedParticipants = await db.UserInRoom.count({
-          where: {
-            isdisconnected: true,
-            room_id: room.room_id
           }
-        });
+        );
 
-        activeParticipants -= loosedParticipants;
+        // Отправляем состояние игроков всем в комнате
+        sendGamers(io, db, room.room_id);
 
-        // !!! Когда все в комнате сделали ход
-        if (didStepCurrMonth >= activeParticipants) {
-          allGamersDoStep = true;
-
-          await db.UserInRoom.update(
-            {
-              isattacker: false
-            },
-            {
-              where: {
-                room_id: room.room_id
-              }
-            }
-          );
-
-          // Отправляем состояние игроков всем в комнате
-          sendGamers(io, db, room.room_id);
-
-          // Отправляем начало нового хода
-          io.in(socket.roomId).emit("doNextStep");
-          // Логируем исходящее событие
-          logSocketOutEvent(
-            "changeGamerStatus",
-            "Отправляем комнате изменение статуса участника"
-          );
-        }
-        // Если число сходивших не равно количеству участников
-        else {
-          // Не все пользователи сделали ход
-        }
-      } else {
-        // Что-то не так с параметрами ходов пользователя
+        // Отправляем начало нового хода
+        io.in(socket.roomId).emit("doNextStep");
+        // Логируем исходящее событие
+        logSocketOutEvent(
+          "changeGamerStatus",
+          "Отправляем комнате изменение статуса участника"
+        );
       }
+      // Если число сходивших не равно количеству участников
+      else {
+        // Не все пользователи сделали ход
+      }
+
       // Отправка сообщений об изменениях
       if (messageArr.length !== 0) {
         for (let index = 0; index < messageArr.length; index++) {

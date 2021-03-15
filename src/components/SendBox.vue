@@ -59,6 +59,7 @@ textarea {
   width: 100%;
   box-sizing: border-box;
 }
+
 .inputBox {
   position: absolute;
   bottom: 0;
@@ -67,6 +68,7 @@ textarea {
   display: flex;
   justify-content: center;
 }
+
 .inputBox button {
   border-radius: 0;
 }
