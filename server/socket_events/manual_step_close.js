@@ -166,6 +166,7 @@ module.exports = function (socket, io, db) {
         });
 
         userInRoom.gamer_room_params.month--;
+        userInRoom.gamer_room_params.money += room.budget_per_month
 
         let obj = {
           data: {
@@ -180,7 +181,8 @@ module.exports = function (socket, io, db) {
 
         await db.GamerRoomParams.update(
           {
-            month: userInRoom.gamer_room_params.month
+            month: userInRoom.gamer_room_params.month,
+            money: userInRoom.gamer_room_params.money
           },
           {
             where: {
