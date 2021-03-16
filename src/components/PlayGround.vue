@@ -887,7 +887,6 @@ export default {
 
   #card-field {
     display: flex;
-    width: 100vw !important;
     min-height: 30vh;
   }
 
