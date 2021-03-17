@@ -96,7 +96,6 @@ export default {
   margin: auto;
   width: 96%;
   height: 97%;
-  max-height: 52vh;
   overflow-y: auto;
   overflow-x: hidden;
   border-radius: 8px;

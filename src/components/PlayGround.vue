@@ -655,6 +655,7 @@ export default {
   overflow-x: scroll;
   overflow-y: hidden;
   height: calc(96% - 40px);
+  min-height: 240px;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
@@ -794,7 +795,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 1090px) {
+@media screen and (max-width: 1090px), (max-height: 729px) {
   #splitScr {
     grid-template-rows: 1fr !important;
     grid-template-columns: 1fr !important;
@@ -826,7 +827,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1200px) {
   #playground {
     grid-template-columns: 2fr 1fr 1fr;
     grid-template-rows: 1.6fr 1fr;
@@ -854,7 +855,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 876px), (max-height: 750px) {
+@media screen and (max-width: 876px),(max-height: 729px) {
   .main-side {
     display: flex;
     flex-direction: column;
@@ -887,7 +888,7 @@ export default {
 
   #card-field {
     display: flex;
-    min-height: 30vh;
+    min-height: 240px;
   }
 
   #enemy-field {
@@ -904,30 +905,6 @@ export default {
   #enemy-field, #effects-field, #card-field {
     background-color: rgba(123, 45, 64, 0.3);
     border-radius: 0;
-  }
-}
-
-@media screen and (max-height: 729px) {
-  #playground {
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  #card-field {
-    min-height: 240px;
-  }
-
-  #effects-field {
-    min-height: 55%;
-    overflow: auto;
-  }
-
-  #gamerlist {
-    max-height: 100%;
-  }
-
-  .gamer-round-data {
-    overflow-y: hidden;
   }
 }
 
@@ -948,12 +925,6 @@ export default {
 
   .w-100 {
     height: 100%;
-  }
-}
-
-@media screen and (max-height: 560px) {
-  .main-side {
-    overflow-y: scroll;
   }
 }
 
@@ -1030,7 +1001,6 @@ export default {
 }
 
 @media screen and (max-width: 320px) and (orientation: portrait) {
-
   .card-box {
     min-width: 172px;
   }

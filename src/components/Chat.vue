@@ -130,7 +130,7 @@ export default {
   font-weight: bold;
 }
 
-@media screen and (max-width: 1090px) {
+@media screen and (max-width: 1090px), (max-height: 729px) {
   .mess-block {
     max-width: unset;
   }
