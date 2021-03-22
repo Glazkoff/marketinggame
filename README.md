@@ -201,7 +201,7 @@ npm i -g pg
 
 - [x] post /api/rooms
 - [x] post /api/rooms/join/:id
-- [x] get /api/rooms/reset
+- [x] get /api/rooms/reset/:id
 
 ## /default
 - [x] get /api/default/room

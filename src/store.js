@@ -97,13 +97,13 @@ const store = new Vuex.Store({
     },
     TRY_RESET_ROOM_PARAMS: state => {
       axios({
-        url: `${apiUrl}/rooms/reset`,
-        // data: user,
+        url: `${apiUrl}/rooms/reset/${state.state.roomId}`,
         method: "GET"
       })
         .then(
           resp => {
             console.log("TRY_RESET_ROOM_PARAMS");
+            
           },
           err => {
             console.log(err);
@@ -304,134 +304,6 @@ const store = new Vuex.Store({
       let index = state.admin.reviews.findIndex(el => el.review_id === id);
       state.admin.reviews.splice(index, 1);
     }
-    // SET_ADMIN_CARD_PARAMS(state, data) {
-    //   console.log("MUT", data);
-    //   console.log("MUT", state.admin.cards);
-    //   let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
-    //   console.log(cardIndex, data.id);
-    //   if (cardIndex !== -1) {
-    //     let cardParamIndex = state.admin.cards[cardIndex].data_change.findIndex(
-    //       el => {
-    //         return el.param === data.param && el.when === data.when;
-    //       }
-    //     );
-    //     if (cardParamIndex !== 1) {
-    //       for (const prop in data) {
-    //         console.log(
-    //           "!!!",
-    //           prop,
-    //           state.admin.cards[cardIndex].data_change[cardParamIndex][prop]
-    //         );
-    //         state.admin.cards[cardIndex].data_change[cardParamIndex][prop] =
-    //           data.prop;
-    //       }
-    //       // state.admin.cards[cardIndex].data_change[cardParamIndex];
-    //     }
-    //   }
-    // }
-    // copyData(state, data) {
-    //   state.roomParams = {}
-    //   for (var key in data) {
-    //     state.roomParams[key] = data[key]
-    //   }
-    // },
-
-    // setOwner(state) {
-    //   state.isOwner = true
-    // },
-    // SOCKET_setOwner(state) {
-    //   state.isOwner = true
-    // },
-    // notNotOwner(state) {
-    //   state.isOwner = !state.isOwner
-    //   state.isOwner = !state.isOwner
-    // },
-    // // setRoomId(state, number) {
-    // //   state.roomId = number
-    // // },
-    // // setRoomParams(state, {
-    // //   month
-    // // }) {
-    // //   console.log('MONTH STATE', month)
-    // //   state.roomParams.month = month
-    // // },
-
-    // SOCKET_roomNotFound() {
-    //   this.commit('resetData');
-    //   router.push('/choose')
-    // },
-
-    // SOCKET_setRoomNumber(state, roomId) {
-    //   state.roomId = roomId
-    // },
-
-    // setStateFromLS(state) {
-    //   let stateLS = localStorage.getItem('store')
-    //   console.log('store', stateLS)
-    //   if (stateLS) {
-    //     this.replaceState(
-    //       Object.assign(state, JSON.parse(localStorage.getItem('store')))
-    //     )
-    //   }
-    // },
-
-    // SOCKET_setStartGame(state, roomParams) {
-    //   // console.log('SET START GAME');
-    //   for (var key in state.roomParams) {
-    //     state.prevRoomParams[key] = state.roomParams[key]
-    //   }
-    //   // console.log('~~~~~~~PREV~~~~~~')
-    //   // console.log(state.prevRoomParams)
-    //   if (state.isStart) {
-    //     state.firstRoomParams.month = roomParams.month + 0
-    //   }
-    //   state.isStart = false
-    //   // if (state.roomParams.month == undefined) {
-    //   state.roomParams = roomParams
-    //   // console.log('Тут')
-    //   // console.log(state.roomParams)
-    //   let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
-    //   state.roomParams.clients = Math.ceil(clients)
-    //   // console.log('Клиенты: ' + clients)
-    //   let commCircul = clients * state.roomParams.averageCheck
-    //   state.roomParams.commCircul = commCircul
-    //   // console.log('commCircul: ' + commCircul)
-    //   let expenses = Math.ceil(clients * state.roomParams.realCostAttract)
-    //   state.roomParams.expenses = expenses
-    //   // console.log('expenses: ' + expenses)
-    //   let result = commCircul - expenses
-    //   // console.log('result: ' + result)
-    //   let resultPerClient = result / clients
-    //   state.roomParams.moneyPerClient = Math.ceil(resultPerClient)
-    //   // }
-    //   state.roomParams = roomParams
-    // },
-
-    // SOCKET_changeGamerStatus(state, id) {
-    //   for (const gamer of state.gamers) {
-    //     if (gamer.id === id) {
-    //       gamer.isattacker = true
-    //       break
-    //     }
-    //   }
-    // },
-
-    // SOCKET_calcAllParams(state) {
-    //   let clients = (state.roomParams.organicCount * state.roomParams.organicCoef + state.roomParams.contextCount * state.roomParams.contextCoef + state.roomParams.socialsCount * state.roomParams.socialsCoef + state.roomParams.smmCount * state.roomParams.smmCoef + state.roomParams.straightCount * state.roomParams.straightCoef) * state.roomParams.conversion
-    //   state.roomParams.clients = clients
-    //   console.log('Клиенты: ' + clients)
-    //   let commCircul = clients * state.roomParams.averageCheck
-    //   state.roomParams.commCircul = commCircul
-    //   console.log('commCircul: ' + commCircul)
-    //   let expenses = clients * state.roomParams.realCostAttract
-    //   state.roomParams.expenses = expenses
-    //   console.log('expenses: ' + expenses)
-    //   let result = commCircul - expenses
-    //   console.log('result: ' + result)
-    //   let resultPerClient = result / clients
-    //   state.roomParams.moneyPerClient = resultPerClient
-    //   // state.roomParams.money += result;
-    // },
   },
   actions: {
     AUTH_REQUEST: function(context, user) {
@@ -521,8 +393,14 @@ const store = new Vuex.Store({
     TRY_RESET_ROOM: function(state) {
       let there = this;
       return new Promise((resolve, reject) => {
+        // FIXME
+        // room.id на 622 (state: roomId: 622) 
+        // но state.state.roomId = -1 && state.roomId = undefind
+        // console.log(state.roomId)
+        // console.log(state.state.roomId)
+        // отправляется по итогу то что имеем 
         axios({
-          url: `${apiUrl}/rooms/reset`,
+          url: `${apiUrl}/rooms/reset/${state.state.roomId}`,
           method: "GET"
         })
           .then(res => {
@@ -1037,8 +915,4 @@ const store = new Vuex.Store({
     }
   }
 });
-// store.subscribe((mutation, state) => {
-//   // Сохраняем состояние как JSON-строку
-//   localStorage.setItem('store', JSON.stringify(state))
-// })
 export default store;

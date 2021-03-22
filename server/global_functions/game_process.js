@@ -6,6 +6,7 @@ module.exports = {
   // Отправить состояния игроков в комнату
   async sendGamers(io, db, roomId) {
     try {
+      console.log(roomId)
       if (roomId !== null && roomId !== undefined) {
         // Находим пользователей в комнате
         let usersInRoom = await db.UserInRoom.findAll({
