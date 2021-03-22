@@ -481,7 +481,6 @@ function getRoomsRouter(io) {
                     }
                   );
                   // Отправляем состояние пользователей в комнате
-                  console.log(req.params)
                   sendGamers(io, db, req.params.id);
 
                   // #region Добавление имени для победителей в Reset

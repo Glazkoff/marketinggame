@@ -4,10 +4,14 @@ const db = require("../models/index");
 
 module.exports = {
   // Отправить состояния игроков в комнату
+  // FIXME roomId приходит в -1
   async sendGamers(io, db, roomId) {
     try {
-      console.log(roomId)
-      if (roomId !== null && roomId !== undefined) {
+      if (
+        roomId !== null && 
+        roomId !== undefined 
+        // && roomId != -1
+      ) {
         // Находим пользователей в комнате
         let usersInRoom = await db.UserInRoom.findAll({
           where: {
