@@ -1,5 +1,5 @@
 <template>
-  <div id="finish-screen">
+  <div id="finish-screen" class="">
     <div class="container">
       <div class="row" v-if="isLoozer">
         <div class="col-12">
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="row" id="direction-column" v-if="isSomeWinner">
-        <div class="col-lg-4 col">
+        <div class="col-lg-4 col d-flex align-items-center justify-content-center">
           <!-- <div class="gray-block block-winner-img"></div> -->
           <div
             class="gray-block"
@@ -58,7 +58,7 @@
         <div class="col-lg-8 col text-center" v-if="isWinner">
           <h5 class="mb-0">Поздравляю, {{ gamerName }}!</h5>
           <h3 class="mb-0">Вы - победитель</h3>
-          <ul class="list-group offset-lg-1 col-12 col-lg-10 pr-0">
+          <ul class="list-group offset-lg-1 col-12 col-lg-10 pr-0 results rounded">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -118,7 +118,7 @@
                 : thirdPosition.money.toFixed(2)
             }}
           </p>
-          <ul class="list-group col-12 col-lg-10 offset-lg-1 mt-3 pr-0">
+          <ul class="list-group col-12 col-lg-10 offset-lg-1 mt-3 pr-0 results rounded">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"
             >
@@ -444,6 +444,12 @@ export default {
 };
 </script>
 <style>
+@media screen and (max-width: 320px) {
+  .results li {
+    flex-direction: column;
+  }
+}
+
 @media screen and (max-width: 490px) {
   #direction-column-cards, #first-for-looser {
     flex-direction: column;

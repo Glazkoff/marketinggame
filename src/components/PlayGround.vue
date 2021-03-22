@@ -1,6 +1,6 @@
 <template>
   <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
-    <div id="play-field">
+    <div id="play-field" v-bind:class="{started: isStart}">
       <div
         class="play-information">
         <!-- Обёртка случайного события с сервера -->
@@ -21,7 +21,7 @@
             <div class="row h-100 justify-content-center align-items-center">
               <div class="col-12">
                 <h1 class="text-center">Начать игру</h1>
-                <p>
+                <p class="text-center">
                   Если все игроки подключились к комнате, вы можете запустить
                   <mark>первый раунд</mark>
                   в созданной вами комнате.
@@ -136,6 +136,7 @@
       id="card-field"
       style="transition: all 5s, width 0s"
       :style="{ overflowX: stepDone ? 'hidden' : 'scroll' }"
+      v-if="!isStart"
     >
       <div class="loader-wrap h-100" v-if="cardsLoading">
         <Loader></Loader>
@@ -207,12 +208,12 @@
     </div>
     <!-- Конец Поле для карточек -->
     <!-- Список игроков -->
-    <div id="enemy-field">
+    <div id="enemy-field" v-bind:class="{startedG: isStart}" v-if="!isStart">
       <GamerList :usedCards="usedCards" :refreshCards="refreshCards"></GamerList>
     </div>
     <!-- Конец список игроков -->
     <!-- Спиок действующих эффектов -->
-    <div id="effects-field">
+    <div id="effects-field" v-if="!isStart">
       <Effects></Effects>
     </div>
     <!-- Конец списка действующих игроков -->
@@ -523,6 +524,14 @@ export default {
 </script>
 
 <style>
+.started {
+  grid-area: 1/1/span 3/span 3 !important;
+  padding-bottom: 3rem;
+}
+
+/*.startedG{*/
+/*  grid-area: 1/2/span 2/2 !important;*/
+/*}*/
 .card-button {
   border-radius: 8px;
 }
@@ -929,9 +938,7 @@ export default {
 }
 
 @media screen and (max-width: 490px) {
-  .main-side #finish-screen {
-    margin-top: 0rem;
-  }
+
 
   #playground {
     padding: 0;
@@ -1086,6 +1093,12 @@ export default {
   #playground {
     max-height: 100vh;
     height: 100vh;
+  }
+}
+
+@media screen and (max-width: 1000px), (max-height: 580px) {
+  #finish-screen {
+    margin: 1rem auto auto !important;
   }
 }
 
