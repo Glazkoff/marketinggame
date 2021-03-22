@@ -55,6 +55,10 @@
 <script>
 export default {
   name: "gamerlist",
+  props: [
+    'usedCards',
+    'refreshCards'
+  ],
   computed: {
     isStart() {
       return this.$store.state.isStart;
@@ -75,6 +79,15 @@ export default {
   methods: {
     onManualStepClose() {
       this.$socket.emit("manualStepClose", this.roomId);
+      let stepArr = [];
+      for (const val of this.usedCards) {
+        let cardObj = {
+          id: val,
+          title: this.refreshCards.find(el => el.id === val).title
+        };
+        stepArr.push(cardObj);
+      }
+      this.$store.commit("addSteps", stepArr);
     },
     kickUser(gamer) {
       console.log("KICK!", this.roomId, gamer);

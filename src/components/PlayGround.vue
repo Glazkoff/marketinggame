@@ -208,7 +208,7 @@
     <!-- Конец Поле для карточек -->
     <!-- Список игроков -->
     <div id="enemy-field">
-      <GamerList></GamerList>
+      <GamerList :usedCards="usedCards" :refreshCards="refreshCards"></GamerList>
     </div>
     <!-- Конец список игроков -->
     <!-- Спиок действующих эффектов -->
