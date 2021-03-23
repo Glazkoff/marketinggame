@@ -95,24 +95,6 @@ const store = new Vuex.Store({
     SET_ROOM_ID: (state, roomId) => {
       state.roomId = roomId;
     },
-    TRY_RESET_ROOM_PARAMS: state => {
-      axios({
-        url: `${apiUrl}/rooms/reset/${state.state.roomId}`,
-        method: "GET"
-      })
-        .then(
-          resp => {
-            console.log("TRY_RESET_ROOM_PARAMS");
-            
-          },
-          err => {
-            console.log(err);
-          }
-        )
-        .catch(err => {
-          console.log(err);
-        });
-    },
     SET_IS_START(state, isStart) {
       state.isStart = isStart;
     },
@@ -201,7 +183,6 @@ const store = new Vuex.Store({
     },
     SOCKET_setGamers(state, obj) {
       state.gamers = obj.gamers;
-      // state.prevRoomParams = {}
     },
     SOCKET_setToast(state, toast) {},
     SOCKET_setEffects(state, effects) {
@@ -393,14 +374,9 @@ const store = new Vuex.Store({
     TRY_RESET_ROOM: function(state) {
       let there = this;
       return new Promise((resolve, reject) => {
-        // FIXME
-        // room.id на 622 (state: roomId: 622) 
-        // но state.state.roomId = -1 && state.roomId = undefind
-        // console.log(state.roomId)
-        // console.log(state.state.roomId)
-        // отправляется по итогу то что имеем 
+        // FIXME roomId
         axios({
-          url: `${apiUrl}/rooms/reset/${state.state.roomId}`,
+          url: `${apiUrl}/rooms/reset`,
           method: "GET"
         })
           .then(res => {

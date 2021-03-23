@@ -394,7 +394,7 @@ function getRoomsRouter(io) {
 
   // TODO: присылать события и список игроков
   // Попытка переподключения
-  router.get("/reset/:id", async (req, res) => {
+  router.get("/reset", async (req, res) => {
     try {
       await jwt.verify(
         req.headers.authorization,
@@ -480,8 +480,9 @@ function getRoomsRouter(io) {
                       }
                     }
                   );
+                  console.log(room.room_id);
                   // Отправляем состояние пользователей в комнате
-                  sendGamers(io, db, req.params.id);
+                  sendGamers(io, db, room.room_id);
 
                   // #region Добавление имени для победителей в Reset
                   if (room.winners) {
