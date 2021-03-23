@@ -480,7 +480,6 @@ function getRoomsRouter(io) {
                       }
                     }
                   );
-                  console.log(room.room_id);
                   // Отправляем состояние пользователей в комнате
                   sendGamers(io, db, room.room_id);
 
