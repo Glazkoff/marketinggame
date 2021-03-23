@@ -1,6 +1,6 @@
 <template>
   <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
-    <div id="play-field" v-bind:class="{started: isStart}">
+    <div id="play-field" :class="{started: isStart, 'h-100': isStart}">
       <div
         class="play-information">
         <!-- Обёртка случайного события с сервера -->
@@ -650,7 +650,6 @@ export default {
 #play-field,
 #card-field {
   width: 100%;
-  height: 100%;
 }
 
 #play-field {
@@ -879,7 +878,6 @@ export default {
   #play-field {
     margin: 0;
     padding: .5rem 0;
-    min-height: 490px;
   }
 
   #playground {
