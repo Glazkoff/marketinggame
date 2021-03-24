@@ -353,7 +353,7 @@ module.exports = {
           elem => elem.card_id === cardId
         );
         let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId);
-
+        
         // Если карточка не является одноразовой
         if (oneWayCardIndex === -1) {
           // Если эффекта ещё нет (карточка выбрасывается первый раз)
@@ -361,7 +361,7 @@ module.exports = {
             // Занести свойства ещё не применённых изменений
             for (const changes of card.data_change) {
               let changeObj = {};
-              for (var key in changes) {
+              for (let key in changes) {
                 changeObj[key] = changes[key];
               }
               gamer.changes.push(changeObj);
@@ -397,7 +397,6 @@ module.exports = {
           }
         }
       } // Конец обработки пришедшего массива ID карточек
-
       for (let effect of gamer.effects) {
         // Если в пришедшем массиве нет уже существующего эффекта
         // (если не прислали повторно), то удаляем из массива эффектов игрока
@@ -409,6 +408,7 @@ module.exports = {
           gamer.effects.splice(effectIndex, 1);
         }
         gamer = await OnGamerEffects(gamer)
+        
         // Если действие эффекта закончилось
         if (effect.step === effect.duration) {
           let effectIndex = gamer.effects.findIndex(
@@ -417,6 +417,8 @@ module.exports = {
           gamer.effects.splice(effectIndex, 1);
         }
       }
+    } else {
+      gamer.changes = []
     }
     // Если у пользователя не отсутсвуют активные эффекты
     async function OnGamerEffects(gamer) {
