@@ -200,7 +200,7 @@ module.exports = function (socket, io, db) {
                 let changeCoef = changing.change;
                 if (usedCard["amount"] !== 0) {
                   for (let i = 0; i < usedCard["amount"]; i++) {
-                    changeCoef = (1 + changeCoef) / 2;
+                    // changeCoef = (1 + changeCoef) / 2;
                     if (changing.change >= 10) {
                       changeCoef = Math.ceil(changeCoef);
                     }
