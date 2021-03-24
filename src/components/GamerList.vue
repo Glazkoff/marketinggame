@@ -107,7 +107,6 @@ export default {
           this.refreshCards.splice(spliceIndex, 1);
         }
       }
-      this.usedCards = [];
       this.$emit('usedCardsManual');
       this.$store.commit("SET_CARDS", [...this.refreshCards]);
       }
