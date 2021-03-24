@@ -95,24 +95,6 @@ const store = new Vuex.Store({
     SET_ROOM_ID: (state, roomId) => {
       state.roomId = roomId;
     },
-    TRY_RESET_ROOM_PARAMS: state => {
-      axios({
-        url: `${apiUrl}/rooms/reset/${state.state.roomId}`,
-        method: "GET"
-      })
-        .then(
-          resp => {
-            console.log("TRY_RESET_ROOM_PARAMS");
-            
-          },
-          err => {
-            console.log(err);
-          }
-        )
-        .catch(err => {
-          console.log(err);
-        });
-    },
     SET_IS_START(state, isStart) {
       state.isStart = isStart;
     },
@@ -188,12 +170,13 @@ const store = new Vuex.Store({
     },
     //  TODO: Добавить взаимодействие с БД
     addSteps(state, data) {
-      let monthArr = [];
-      for (var val of data) {
-        console.log(val);
-        monthArr.push(val);
+      if (state.steps.length < state.firstRoomParams.month) {
+        let monthArr = [];
+        for (var val of data) {
+          monthArr.push(val);
+        }
+        state.steps.push(monthArr);
       }
-      state.steps.push(monthArr);
     },
     SOCKET_finish(state, winnersObj) {
       state.isFinish = true;
@@ -201,9 +184,9 @@ const store = new Vuex.Store({
     },
     SOCKET_setGamers(state, obj) {
       state.gamers = obj.gamers;
-      // state.prevRoomParams = {}
     },
-    SOCKET_setToast(state, toast) {},
+    SOCKET_setToast(state, toast) {
+    },
     SOCKET_setEffects(state, effects) {
       console.log("EFFECTS!", effects);
       effects.forEach(el => {
@@ -216,7 +199,8 @@ const store = new Vuex.Store({
 
     // Выкинуть пользователя с главного экрана
     SOCKET_kickUser() {
-      router.push("/choose").catch(() => {});
+      router.push("/choose").catch(() => {
+      });
     },
     /* *********************************** */
     resetData(state) {
@@ -306,11 +290,11 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    AUTH_REQUEST: function(context, user) {
+    AUTH_REQUEST: function (context, user) {
       let prom;
       let there = this;
       try {
-        prom = new Promise(function(resolve, reject) {
+        prom = new Promise(function (resolve, reject) {
           // Promise используется для редиректа при входе в систему
           context.commit("AUTH_REQUEST");
           axios({
@@ -364,7 +348,7 @@ const store = new Vuex.Store({
       }
     },
     // Удаление всех данных при выходе из учётной записи
-    AUTH_LOGOUT: function(context) {
+    AUTH_LOGOUT: function (context) {
       return new Promise(resolve => {
         context.commit("AUTH_LOGOUT");
         context.token = "";
@@ -390,17 +374,12 @@ const store = new Vuex.Store({
           });
       });
     },
-    TRY_RESET_ROOM: function(state) {
+    TRY_RESET_ROOM: function (state) {
       let there = this;
       return new Promise((resolve, reject) => {
-        // FIXME
-        // room.id на 622 (state: roomId: 622) 
-        // но state.state.roomId = -1 && state.roomId = undefind
-        // console.log(state.roomId)
-        // console.log(state.state.roomId)
-        // отправляется по итогу то что имеем 
+        // FIXME roomId
         axios({
-          url: `${apiUrl}/rooms/reset/${state.state.roomId}`,
+          url: `${apiUrl}/rooms/reset`,
           method: "GET"
         })
           .then(res => {
@@ -415,10 +394,10 @@ const store = new Vuex.Store({
           });
       });
     },
-    SET_ROOM_PARAMS: function(state, res) {
+    SET_ROOM_PARAMS: function (state, res) {
       state.commit("SET_GAME_PARAMS", res);
     },
-    GET_CARDS: function(state, res) {
+    GET_CARDS: function (state, res) {
       return new Promise((resolve, reject) => {
         axios({
           url: `${apiUrl}/cards`,
@@ -434,7 +413,7 @@ const store = new Vuex.Store({
           });
       });
     },
-    GET_ONEOFF_CARD_LIST: function(state, res) {
+    GET_ONEOFF_CARD_LIST: function (state, res) {
       return new Promise((resolve, reject) => {
         axios({
           url: `${apiUrl}/cards/oneoff`,

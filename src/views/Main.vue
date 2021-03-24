@@ -72,26 +72,23 @@ export default {
       this.$store.state.prevRoomParams = {};
       this.$store.state.roomParams = {};
       this.$store.state.firstRoomParams = {};
-      // this.$store.commit("SOCKET_doNextStep");
       this.$store.commit("resetData");
     }
   },
   // ################  НЕ УДАЛЯТЬ  ###############
   beforeRouteEnter(to, from, next) {
     next(async function(vm) {
-      // console.log(vm.$store.state.roomId);
-      // vm.$store.commit("setStateFromLS");
-      // setTimeout(() => {
-      //   if (vm.$store.state.roomId === -1) {
-      //     next("/choose");
-      //   } else {
-
       if (
         isNaN(vm.$store.state.roomParams.money) ||
-        typeof vm.$store.state.roomParams.money === "undefined"
+        typeof vm.$store.state.roomParams.money
       ) {
         vm.loading = true;
         try {
+
+          let state = JSON.stringify(vm.$store.state)
+          console.log(state)
+          console.log(vm.$store.state.roomId)
+          console.log(vm.$store.state)
           await vm.$store.dispatch("TRY_RESET_ROOM");
           vm.loading = false;
         } catch (error) {
@@ -100,10 +97,6 @@ export default {
         }
       }
       return true;
-      //   }
-      // }, 2000);
-
-      // // return true
     });
   },
   // ######################################################

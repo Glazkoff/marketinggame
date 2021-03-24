@@ -119,7 +119,8 @@
               </div>
               <button
                 class="btn btn-success w-100 mt-1 pr-2 btn-block mb-2"
-                :disabled="isStart || stepDone"
+                :disabled="isStart || stepDone || (firstRoomParams.month - gamerParams.month >=
+                                firstRoomParams.month)"
                 @click="makeStep()"
               >
                 Завершить ход
@@ -209,7 +210,7 @@
     <!-- Конец Поле для карточек -->
     <!-- Список игроков -->
     <div id="enemy-field" v-bind:class="{startedG: isStart}" v-if="!isStart">
-      <GamerList :usedCards="usedCards" :refreshCards="refreshCards"></GamerList>
+      <GamerList :usedCards="usedCards" :refreshCards="refreshCards" @usedCardsManual="usedCardsManualReset"></GamerList>
     </div>
     <!-- Конец список игроков -->
     <!-- Спиок действующих эффектов -->
@@ -433,6 +434,9 @@ export default {
       }
       this.usedCards = [];
       this.$store.commit("SET_CARDS", [...this.refreshCards]);
+    },
+    usedCardsManualReset(){
+      this.usedCards = []
     },
     // **** Ниже необработанные методы ******
     playAnimation() {
