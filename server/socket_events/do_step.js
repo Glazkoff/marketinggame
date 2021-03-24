@@ -168,6 +168,8 @@ module.exports = function (socket, io, db) {
               }
             }
           }
+
+          console.log(changing);
           if (changing.when === 1) {
             if (
               gamer.effects.findIndex(elem => elem.id === changing.id) !== -1 ||
@@ -181,6 +183,7 @@ module.exports = function (socket, io, db) {
                 }
               });
 
+              
               if (usedCard == null) {
                 switch (changing.operation) {
                   case "+":
