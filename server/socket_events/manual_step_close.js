@@ -119,7 +119,7 @@ module.exports = function (socket, io, db) {
         for (const userWithEffects of usersEffects) {
 
           // Обработка карточек на обнуление или прибавление эффектов
-          cardsProcessing(userWithEffects, [])
+          gamer = await cardsProcessing(userWithEffects, [])
           io.sockets
             .to("user" + userWithEffects.user_id)
             .emit("setEffects", userWithEffects.effects);
