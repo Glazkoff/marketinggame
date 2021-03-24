@@ -67,10 +67,11 @@ module.exports = function (socket, io, db) {
             attackersId.push(attackers[index].gamer_room_params.gamer_room_params_id)
           }
 
-          // Для каждого из атакующих возвращаем правильный подсчет месяцев
+          // Для каждого из атакующих возвращаем правильный подсчет месяцев и убираем заработанные деньги
           await db.GamerRoomParams.update(
             {
-              month: Sequelize.literal("month + 1")
+              month: Sequelize.literal("month + 1"),
+              money: Sequelize.literal(`money -${room.budget_per_month}`)
             },
             {
               where: {
