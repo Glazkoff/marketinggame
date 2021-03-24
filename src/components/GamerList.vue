@@ -78,9 +78,12 @@ export default {
     gamerParams() {
       return this.$store.state.roomParams;
     },
+    oneOffCardList() {
+      return this.$store.state.oneOffCardList;
+    },
   },
   methods: {
-    onManualStepClose() {
+    async onManualStepClose() {
       if (this.gamerParams.month > 0) {
         this.$socket.emit("manualStepClose", this.roomId);
         let stepArr = [];
@@ -92,6 +95,21 @@ export default {
           stepArr.push(cardObj);
         }
         this.$store.commit("addSteps", stepArr);
+        // Одноразовые карточки (индексы):
+      await this.$store.dispatch("GET_ONEOFF_CARD_LIST");
+      let oneOffCards = this.oneOffCardList;
+      for (const cardIndex of oneOffCards) {
+        let usedIndex = this.usedCards.findIndex(elem => elem === cardIndex);
+        if (usedIndex !== -1) {
+          let spliceIndex = this.refreshCards.findIndex(
+            elem => elem.id === cardIndex
+          );
+          this.refreshCards.splice(spliceIndex, 1);
+        }
+      }
+      this.usedCards = [];
+      this.$emit('usedCardsManual');
+      this.$store.commit("SET_CARDS", [...this.refreshCards]);
       }
     },
     kickUser(gamer) {
