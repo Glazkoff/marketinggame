@@ -119,7 +119,8 @@
               </div>
               <button
                 class="btn btn-success w-100 mt-1 pr-2 btn-block mb-2"
-                :disabled="isStart || stepDone"
+                :disabled="isStart || stepDone || (firstRoomParams.month - gamerParams.month >=
+                                firstRoomParams.month)"
                 @click="makeStep()"
               >
                 Завершить ход

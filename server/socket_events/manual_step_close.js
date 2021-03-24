@@ -46,111 +46,60 @@ module.exports = function (socket, io, db) {
             }
           }
         );
-      }
 
-      // Поиск игроков, которые сделали ход
-      let attackers = await db.UserInRoom.findAll({
-        where: {
-          isattacker: true,
-          room_id: room.room_id
-        },
-        include: [
-          {
-            model: db.GamerRoomParams,
-            as: "gamer_room_params"
-          }]
-      });
+        // Поиск игроков, которые сделали ход
+        let attackers = await db.UserInRoom.findAll({
+          where: {
+            isattacker: true,
+            room_id: room.room_id
+          },
+          include: [
+            {
+              model: db.GamerRoomParams,
+              as: "gamer_room_params"
+            }]
+        });
 
-      // Получаем gamer_room_params_id каждого из атакующих
-      if (attackers.length > 0) {
-        let attackersId = []
-        for (let index in attackers) {
-          attackersId.push(attackers[index].gamer_room_params.gamer_room_params_id)
+        // Получаем gamer_room_params_id каждого из атакующих
+        if (attackers.length > 0) {
+          let attackersId = []
+          for (let index in attackers) {
+            attackersId.push(attackers[index].gamer_room_params.gamer_room_params_id)
+          }
+
+          // Для каждого из атакующих возвращаем правильный подсчет месяцев
+          await db.GamerRoomParams.update(
+            {
+              month: Sequelize.literal("month + 1")
+            },
+            {
+              where: {
+                gamer_room_params_id: attackersId
+              }
+            }
+          )
         }
 
-        // Для каждого из атакующих возвращаем правильный подсчет месяцев
-        await db.GamerRoomParams.update(
+        // Устанавливаем каждому игроку состояние совершившего ход
+        await db.UserInRoom.update(
           {
-            month: Sequelize.literal("month + 1")
+            isattacker: false
           },
           {
             where: {
-              gamer_room_params_id: attackersId
+              room_id: room.room_id
             }
           }
-        )
-      }
-
-      // Устанавливаем каждому игроку состояние совершившего ход
-      await db.UserInRoom.update(
-        {
-          isattacker: false
-        },
-        {
-          where: {
-            room_id: room.room_id
-          }
-        }
-      );
-
-      // Отправляем состония игроков всем в комнате
-      sendGamers(io, db, room.room_id);
-
-      // Находим все эффекты игроков для всех игроков данной комнаты
-      // TODO: Добить UsedCard и подключить в стягиваемые модели
-      let usersEffects = await db.UserInRoom.findAll({
-        attributes: ["user_id", "effects"],
-        where: {
-          room_id: room.room_id
-        },
-        include: [
-          {
-            model: db.GamerRoomParams,
-            as: "gamer_room_params"
-          },
-          {
-            model: db.PrevRoomParams,
-            as: "prev_room_params"
-          }
-        ]
-      });
-
-      // Отправляем каждому игроку его эффекты
-      for (const userWithEffects of usersEffects) {
-
-        // Обработка карточек на обнуление или прибавление эффектов
-        cardsProcessing(userWithEffects, [])
-        io.sockets
-          .to("user" + userWithEffects.user_id)
-          .emit("setEffects", userWithEffects.effects);
-        // Логируем исходящее событие
-        logSocketOutEvent(
-          `setEffects (user${userWithEffects.user_id})`,
-          "Отправляем игроку его эффекты"
         );
-      }
 
-      // Рассылаем всем в комнате команду о следующем ходе
-      io.in(socket.roomId).emit("doNextStep");
-      // Логируем исходящее событие
-      logSocketOutEvent(`doNextStep`, "Начинаем следующий ход");
+        // Отправляем состония игроков всем в комнате
+        sendGamers(io, db, room.room_id);
 
-      // Получаем массив с ID пользователей в комнате
-      let participants = await db.UserInRoom.findAll({
-        attributes: ["user_id"],
-        where: {
-          room_id: room.room_id
-        }
-      });
-      let participantsArray = participants.map(el => {
-        return el.user_id;
-      });
-
-      // Для каждого пользователя в комнате
-      for (let gamerId of participantsArray) {
-        let userInRoom = await db.UserInRoom.findOne({
+        // Находим все эффекты игроков для всех игроков данной комнаты
+        // TODO: Добить UsedCard и подключить в стягиваемые модели
+        let usersEffects = await db.UserInRoom.findAll({
+          attributes: ["user_id", "effects"],
           where: {
-            user_id: gamerId,
             room_id: room.room_id
           },
           include: [
@@ -165,48 +114,99 @@ module.exports = function (socket, io, db) {
           ]
         });
 
-        userInRoom.gamer_room_params.month--;
-        userInRoom.gamer_room_params.money += room.budget_per_month
+        // Отправляем каждому игроку его эффекты
+        for (const userWithEffects of usersEffects) {
 
-        let obj = {
-          data: {
-            room_id: room.room_id,
-            owner_id: room.owner_id,
-            is_start: room.is_start,
-            first_params: room.first_params,
-            prev_room_params: userInRoom.prev_room_params,
-            gamer_room_params: userInRoom.gamer_room_params
-          }
-        };
-
-        await db.GamerRoomParams.update(
-          {
-            month: userInRoom.gamer_room_params.month,
-            money: userInRoom.gamer_room_params.money
-          },
-          {
-            where: {
-              user_in_room_id: userInRoom.user_in_room_id
-            }
-          }
-        );
-
-        // Отправка новых данных состояния пользователю
-        io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
-
-        // Если игра завершается
-        if (room.current_month >= room.first_params.month) {
-          // Завершение игры
-          await finishGame(io, db, room)
-        } else {
-          // игра продолжается
+          // Обработка карточек на обнуление или прибавление эффектов
+          cardsProcessing(userWithEffects, [])
+          io.sockets
+            .to("user" + userWithEffects.user_id)
+            .emit("setEffects", userWithEffects.effects);
+          // Логируем исходящее событие
+          logSocketOutEvent(
+            `setEffects (user${userWithEffects.user_id})`,
+            "Отправляем игроку его эффекты"
+          );
         }
 
+        // Рассылаем всем в комнате команду о следующем ходе
+        io.in(socket.roomId).emit("doNextStep");
         // Логируем исходящее событие
-        logSocketOutEvent(
-          `SET_GAME_PARAMS (user${gamerId})`,
-          "Начинаем следующий ход"
-        );
+        logSocketOutEvent(`doNextStep`, "Начинаем следующий ход");
+
+        // Получаем массив с ID пользователей в комнате
+        let participants = await db.UserInRoom.findAll({
+          attributes: ["user_id"],
+          where: {
+            room_id: room.room_id
+          }
+        });
+        let participantsArray = participants.map(el => {
+          return el.user_id;
+        });
+
+        // Для каждого пользователя в комнате
+        for (let gamerId of participantsArray) {
+          let userInRoom = await db.UserInRoom.findOne({
+            where: {
+              user_id: gamerId,
+              room_id: room.room_id
+            },
+            include: [
+              {
+                model: db.GamerRoomParams,
+                as: "gamer_room_params"
+              },
+              {
+                model: db.PrevRoomParams,
+                as: "prev_room_params"
+              }
+            ]
+          });
+
+          userInRoom.gamer_room_params.month--;
+          userInRoom.gamer_room_params.money += room.budget_per_month
+
+          let obj = {
+            data: {
+              room_id: room.room_id,
+              owner_id: room.owner_id,
+              is_start: room.is_start,
+              first_params: room.first_params,
+              prev_room_params: userInRoom.prev_room_params,
+              gamer_room_params: userInRoom.gamer_room_params
+            }
+          };
+
+          await db.GamerRoomParams.update(
+            {
+              month: userInRoom.gamer_room_params.month,
+              money: userInRoom.gamer_room_params.money
+            },
+            {
+              where: {
+                user_in_room_id: userInRoom.user_in_room_id
+              }
+            }
+          );
+
+          // Отправка новых данных состояния пользователю
+          io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
+
+          // Если игра завершается
+          if (room.current_month >= room.first_params.month) {
+            // Завершение игры
+            await finishGame(io, db, room)
+          } else {
+            // игра продолжается
+          }
+
+          // Логируем исходящее событие
+          logSocketOutEvent(
+            `SET_GAME_PARAMS (user${gamerId})`,
+            "Начинаем следующий ход"
+          );
+        }
       }
     } catch (error) {
       // Логируем ошибки

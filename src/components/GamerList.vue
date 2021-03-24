@@ -74,20 +74,25 @@ export default {
     },
     roomId() {
       return this.$store.state.roomId;
-    }
+    },
+    gamerParams() {
+      return this.$store.state.roomParams;
+    },
   },
   methods: {
     onManualStepClose() {
-      this.$socket.emit("manualStepClose", this.roomId);
-      let stepArr = [];
-      for (const val of this.usedCards) {
-        let cardObj = {
-          id: val,
-          title: this.refreshCards.find(el => el.id === val).title
-        };
-        stepArr.push(cardObj);
+      if (this.gamerParams.month > 0) {
+        this.$socket.emit("manualStepClose", this.roomId);
+        let stepArr = [];
+        for (const val of this.usedCards) {
+          let cardObj = {
+            id: val,
+            title: this.refreshCards.find(el => el.id === val).title
+          };
+          stepArr.push(cardObj);
+        }
+        this.$store.commit("addSteps", stepArr);
       }
-      this.$store.commit("addSteps", stepArr);
     },
     kickUser(gamer) {
       console.log("KICK!", this.roomId, gamer);
