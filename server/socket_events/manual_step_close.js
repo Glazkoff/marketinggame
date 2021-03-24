@@ -194,14 +194,6 @@ module.exports = function (socket, io, db) {
           // Отправка новых данных состояния пользователю
           io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
 
-          // Если игра завершается
-          if (room.current_month >= room.first_params.month) {
-            // Завершение игры
-            await finishGame(io, db, room)
-          } else {
-            // игра продолжается
-          }
-
           // Логируем исходящее событие
           logSocketOutEvent(
             `SET_GAME_PARAMS (user${gamerId})`,
@@ -209,6 +201,15 @@ module.exports = function (socket, io, db) {
           );
         }
       }
+
+      // Если игра завершается
+      if (room.current_month >= room.first_params.month) {
+        // Завершение игры
+        await finishGame(io, db, room)
+      } else {
+        // игра продолжается
+      }
+
     } catch (error) {
       // Логируем ошибки
       logSocketError("manual_step_close", error);
