@@ -235,23 +235,6 @@ module.exports = function (socket, io, db) {
                 case "contextCoef":
                   analyticsString += 'параметр "Реклама: контекст"';
                   break;
-<<<<<<< HEAD
-              }
-            } else {
-              let changeCoef = changing.change;
-              console.log(usedCard);
-              if (usedCard["amount"] !== 0) {
-                for (let i = 0; i < usedCard["amount"]; i++) {
-                  // changeCoef = (1 + changeCoef) / 2;
-                  if (changing.change >= 10) {
-                    changeCoef = Math.ceil(changeCoef);
-                  }
-                }
-              }
-              switch (changing.operation) {
-                case "+":
-                  gamer.gamer_room_params[changing.param] += changeCoef;
-=======
                 case "socialsCount":
                   analyticsString += 'параметр "Реклама: соцсети"';
                   break;
@@ -266,7 +249,6 @@ module.exports = function (socket, io, db) {
                   break;
                 case "smmCoef":
                   analyticsString += "параметр Соц. медиа";
->>>>>>> 90c00faee94497b9afa2d79182e747ba62ba6c2c
                   break;
                 case "socialsCoef":
                   analyticsString += "параметр Реклама: соцсети";
