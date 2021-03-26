@@ -359,7 +359,9 @@ export default {
       // this.$store.commit("SET_ROOM_ID", res.data.room_id);
       // this.$store.commit("SET_ROOM_PARAMS", res.data.first_params);
       this.$store.dispatch("SET_ROOM_PARAMS", res);
-      this.$socket.emit("subscribeRoom", res.data.room_id);
+
+      // Из-за этого происходило дублирование сообщения об подключении
+      // this.$socket.emit("subscribeRoom", res.data.room_id);
       this.$router.push("main");
     },
     setRoomJoin(roomId) {

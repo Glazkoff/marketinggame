@@ -385,7 +385,7 @@ const store = new Vuex.Store({
           .then(res => {
             console.log("FROM RESETTING ROOM", res);
             state.commit("SET_GAME_PARAMS", res);
-            there._vm.$socket.emit("subscribeRoom", res.data.room_id);
+            there._vm.$socket.emit("subscribeRoom", res.data.room_id, (res.data.first_params.month !== res.data.gamer_room_params.month || !res.data.is_start));
             resolve(res);
           })
           .catch(err => {

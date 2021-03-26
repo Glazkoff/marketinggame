@@ -8,9 +8,10 @@ const { sendAdminMessage } = require("../global_functions/messages");
 
 module.exports = function(socket, io, db) {
   // Прикрепление пользователя к комнате
-  socket.on("subscribeRoom", async roomId => {
+  socket.on("subscribeRoom", async (roomId, isInRoom) => {
     // Логируем входящее событие
     logSocketInEvent("subscribeRoom", "Прикрепление пользователя к комнате");
+
 
     try {
       // Подписываем пользователя к комнате
@@ -29,6 +30,7 @@ module.exports = function(socket, io, db) {
 
       let room;
 
+      // Если существует ластРум, то находим комнату
       if (userLastRoomId) {
         let lastRoomId = userLastRoomId.last_room;
         room = await db.Room.findOne({
@@ -49,6 +51,7 @@ module.exports = function(socket, io, db) {
       }
 
       let usersInRoom = [];
+      // Если комната существует
       if (room !== null) {
         // Находим пользователя в комнате
         usersInRoom = await db.UserInRoom.findAll({
@@ -104,13 +107,18 @@ module.exports = function(socket, io, db) {
         );
       }
 
+      const chatText = (isInRoom) ? `Пользователь ${JSON.stringify(
+        socket.decoded_token.name
+        )} вернулся в комнату #${roomId}` : `Пользователь ${JSON.stringify(
+        socket.decoded_token.name
+      )} подключён к комнате #${roomId}`
+
       sendAdminMessage(
         io,
         roomId,
-        `Пользователь ${JSON.stringify(
-          socket.decoded_token.name
-        )} подключён к комнате #${roomId}`
+        chatText
       );
+
     } catch (error) {
       logSocketError("subscribe_room", error);
     }

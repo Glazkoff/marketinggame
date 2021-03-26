@@ -406,7 +406,7 @@ function getRoomsRouter(io) {
               message: "Вы не авторизованы!"
             });
           } else {
-            // #region Получение последней комнаты
+            // Получение последней комнаты
             let lastRoomId = await db.User.findOne({
               where: {
                 user_id: decoded.id
@@ -433,7 +433,6 @@ function getRoomsRouter(io) {
               ]
             });
 
-            // #endregion
             if (!room) {
               res.status(401).send({
                 status: 401,
