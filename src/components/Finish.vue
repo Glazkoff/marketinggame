@@ -110,14 +110,6 @@
           <h3 class="mb-0">
             Вы на {{ isSecondWinner ? "втором" : "третьем" }} месте
           </h3>
-          <p class="mb-0">
-            Вам удалось заработать:
-            {{
-              isSecondWinner
-                ? secondPosition.money.toFixed(2)
-                : thirdPosition.money.toFixed(2)
-            }}
-          </p>
           <ul class="list-group col-12 col-lg-10 offset-lg-1 mt-3 pr-0 results rounded">
             <li
               class="list-group-item list-group-item-action list-group-item-action-success active d-flex justify-content-between align-items-center"

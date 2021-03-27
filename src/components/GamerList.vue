@@ -1,12 +1,13 @@
 <template>
   <div id="gamerlist">
-    <ul class="list-group" v-if="!isStart">
-      <li
-        class="list-group-item d-flex justify-content-between align-items-center active"
+      <div
+        class="list-group-item d-flex justify-content-between align-items-center active w-100" id="gamerlist-head"
       >
         <h3>Игроки</h3>
-      </li>
-      <li
+      </div>
+      
+      <ul class="list-group" v-if="!isStart">
+        <li
         v-if="isOwner"
         class="list-group-item d-flex justify-content-between align-items-center list-group-item-primary"
       >
@@ -131,10 +132,17 @@ export default {
   margin: auto;
   width: 96%;
   height: 97%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  max-height: 60vh;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+#gamerlist-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 64px;
 }
 
 #gamerlist::-webkit-scrollbar {
@@ -161,6 +169,21 @@ export default {
 
 #gamerlist::-webkit-scrollbar-thumb:active {
   background: linear-gradient(left, #0079fb, #1e98ba);
+}
+
+#gamerlist .list-group{
+  overflow-y: auto;
+  height: calc(100% - 64px);
+  margin-top: 64px;
+  border-radius: 0 !important;
+}
+
+#gamerlist .list-group-item {
+    padding: .5rem !important;
+  }
+  
+.list-group .list-group-item {
+  border-radius: 0 !important;
 }
 
 .list-group-item button:not(#close-step) {

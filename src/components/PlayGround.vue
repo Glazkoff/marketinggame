@@ -893,9 +893,7 @@ export default {
     padding: 2px 0 2px 8px !important;
   }
 
-  #gamerlist .list-group-item:nth-child(2) {
-    padding: .5rem !important;
-  }
+  
 
   #card-field {
     display: flex;
