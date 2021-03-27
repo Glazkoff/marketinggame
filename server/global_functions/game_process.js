@@ -429,11 +429,9 @@ module.exports = {
         !cardArr.includes(idCardChange) &&
         !change.oneOff
       ) {
-        gch = gamer.changes.filter(
+        gamer.changes = gamer.changes.filter(
           a => a.id != idCardChange
         ) 
-        console.log(gch);
-        gamer.changes = gch 
         gamer.effects = gamer.effects.filter(
           a => parseInt(a.id) != idCardChange
         )

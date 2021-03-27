@@ -87,7 +87,6 @@ module.exports = function (socket, io, db) {
         // Находим все эффекты игроков для всех игроков данной комнаты
         // TODO: Добить UsedCard и подключить в стягиваемые модели
         let usersEffects = await db.UserInRoom.findAll({
-          attributes: ["user_id", "effects", 'isattacker'],
           where: {
             room_id: room.room_id
           },
