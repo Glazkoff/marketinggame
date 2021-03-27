@@ -332,7 +332,6 @@ module.exports = {
   },
 
   async cardsProcessing(gamer, cardArr) {
-    console.log(cardArr);
     // Если пришедший массив не пустой
     if (cardArr.length > 0) {
       // Обработка пришедшего массива ID карточек
@@ -421,8 +420,6 @@ module.exports = {
         }
       }
     }
-    console.log(gamer.effects);
-    console.log(gamer.changes);
     for (let change of gamer.changes) {
       let idCardChange = parseInt(change.id)
       if (
@@ -437,8 +434,6 @@ module.exports = {
         )
       }
     } 
-    console.log(gamer.effects);
-    console.log(gamer.changes);
     // Если у пользователя не отсутсвуют активные эффекты
     async function OnGamerEffects(gamer) {
       if (gamer.effects !== null) {
