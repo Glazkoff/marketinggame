@@ -123,7 +123,7 @@ module.exports = function (socket, io, db) {
         gamer.gamer_room_params.month--;
 
         // Обработка карточек на обнуление или прибавление эффектов
-        await cardsProcessing(gamer, cardArr)
+        gamer = await cardsProcessing(gamer, cardArr)
         // Создание массива для всех отсылаемых сообщениях
         let messageArr = [];
 
@@ -169,7 +169,6 @@ module.exports = function (socket, io, db) {
             }
           }
           if (changing.when === 1) {
-            console.log('true');
             if (
               gamer.effects.findIndex(elem => elem.id === changing.id) !== -1 ||
               oneWayChangingId ||

@@ -332,8 +332,9 @@ module.exports = {
   },
 
   async cardsProcessing(gamer, cardArr) {
+    console.log(cardArr);
     // Если пришедший массив не пустой
-    if (cardArr.length !== 0) {
+    if (cardArr.length > 0) {
       // Обработка пришедшего массива ID карточек
       for (const cardId of cardArr) {
         // Находим объект карточки на основе пришедшего ID
@@ -364,6 +365,7 @@ module.exports = {
               for (let key in changes) {
                 changeObj[key] = changes[key];
               }
+              changeObj.oneOff = card.oneOff
               gamer.changes.push(changeObj);
             }
 
@@ -392,6 +394,7 @@ module.exports = {
               for (var k in changes) {
                 changeObj[k] = changes[k];
               }
+              changeObj.oneOff = card.oneOff
               gamer.changes.push(changeObj);
             }
           }
@@ -417,9 +420,27 @@ module.exports = {
           gamer.effects.splice(effectIndex, 1);
         }
       }
-    } else {
-      gamer.changes = []
     }
+    console.log(gamer.effects);
+    console.log(gamer.changes);
+    for (let change of gamer.changes) {
+      let idCardChange = parseInt(change.id)
+      if (
+        !cardArr.includes(idCardChange) &&
+        !change.oneOff
+      ) {
+        gch = gamer.changes.filter(
+          a => a.id != idCardChange
+        ) 
+        console.log(gch);
+        gamer.changes = gch 
+        gamer.effects = gamer.effects.filter(
+          a => parseInt(a.id) != idCardChange
+        )
+      }
+    } 
+    console.log(gamer.effects);
+    console.log(gamer.changes);
     // Если у пользователя не отсутсвуют активные эффекты
     async function OnGamerEffects(gamer) {
       if (gamer.effects !== null) {
@@ -475,8 +496,7 @@ module.exports = {
       }
       return gamer
     }
-
-    
+    return gamer
   }
 };
 

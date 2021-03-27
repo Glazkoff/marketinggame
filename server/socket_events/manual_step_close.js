@@ -81,25 +81,13 @@ module.exports = function (socket, io, db) {
           )
         }
 
-        // Устанавливаем каждому игроку состояние совершившего ход
-        await db.UserInRoom.update(
-          {
-            isattacker: false
-          },
-          {
-            where: {
-              room_id: room.room_id
-            }
-          }
-        );
-
         // Отправляем состония игроков всем в комнате
         sendGamers(io, db, room.room_id);
 
         // Находим все эффекты игроков для всех игроков данной комнаты
         // TODO: Добить UsedCard и подключить в стягиваемые модели
         let usersEffects = await db.UserInRoom.findAll({
-          attributes: ["user_id", "effects"],
+          attributes: ["user_id", "effects", 'isattacker'],
           where: {
             room_id: room.room_id
           },
@@ -114,12 +102,27 @@ module.exports = function (socket, io, db) {
             }
           ]
         });
+        
+        // Устанавливаем каждому игроку состояние совершившего ход
+        await db.UserInRoom.update(
+          {
+            isattacker: false
+          },
+          {
+            where: {
+              room_id: room.room_id
+            }
+          }
+        );
 
         // Отправляем каждому игроку его эффекты
         for (const userWithEffects of usersEffects) {
 
           // Обработка карточек на обнуление или прибавление эффектов
-          gamer = await cardsProcessing(userWithEffects, [])
+          if (!userWithEffects.isattacker) {
+            gamer = await cardsProcessing(userWithEffects, [])
+          }
+          console.log(userWithEffects.isattacker);
           io.sockets
             .to("user" + userWithEffects.user_id)
             .emit("setEffects", userWithEffects.effects);
