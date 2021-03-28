@@ -245,7 +245,6 @@ export default {
     this.$store.commit("SET_NAME", name);
     this.$socket.disconnect();
     this.$socket.query.token = this.$store.state.token;
-    console.log(this.$store.state.token);
     let a = setInterval(() => {
       this.$socket.open();
       if (this.$socket.connected) {
@@ -276,14 +275,11 @@ export default {
               this.$router.push("/");
             },
             err => {
-              console.log("ОШИБКА ВЫХОДА: ", err);
             }
           )
           .catch(err => {
-            console.log("ОШИБКА ВЫХОДА: ", err);
           });
       } catch (error) {
-        console.log(error);
       }
     },
     loadRoomState() {
@@ -294,21 +290,17 @@ export default {
             .dispatch("LOAD_DEFAULT_ROOM")
             .then(
               res => {
-                console.log("ПРИШЁЛ СТЕЙТ ПО УМОЛЧАНИЮ: ", res);
                 this.roomParams = res.data;
                 this.loading = false;
               },
               err => {
-                console.log("ОШИБКА ЗАГРУЗКИ: ", err);
                 this.loading = false;
               }
             )
             .catch(err => {
-              console.log("ОШИБКА ЗАГРУЗКИ: ", err);
               this.loading = false;
             });
         } catch (error) {
-          console.log(error);
           this.loading = false;
         }
       }
@@ -318,7 +310,6 @@ export default {
       this.$http
         .post(apiUrl + "/rooms", this.roomParams)
         .then(res => {
-          console.log("ДАН КОМНАТЫ", res.data);
           this.loading = false;
           if (res.data.status !== 400) {
             this.setRoomParams(res);
@@ -339,7 +330,6 @@ export default {
         this.$http
           .post(apiUrl + "/rooms/join/" + this.roomIdJoin, this.roomParams)
           .then(res => {
-            console.log("ДАН КОМНАТЫ", res.data.first_params);
             console.warn("JOIN RES", res);
             this.setRoomParams(res);
             this.loading = false;
@@ -352,16 +342,7 @@ export default {
       }
     },
     setRoomParams(res) {
-      // this.$store.state.prevRoomParams = {};
-      // this.$store.state.roomParams = {};
-      // this.$store.state.firstRoomParams = {};
-      // this.$store.commit("SET_IS_START", res.data.is_start);
-      // this.$store.commit("SET_ROOM_ID", res.data.room_id);
-      // this.$store.commit("SET_ROOM_PARAMS", res.data.first_params);
       this.$store.dispatch("SET_ROOM_PARAMS", res);
-
-      // Из-за этого происходило дублирование сообщения об подключении
-      // this.$socket.emit("subscribeRoom", res.data.room_id);
       this.$router.push("main");
     },
     setRoomJoin(roomId) {

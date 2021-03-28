@@ -64,7 +64,6 @@ export default {
           this.isDeleteLoading = false;
         },
         err => {
-          console.log(err);
         }
       );
     }

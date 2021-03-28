@@ -121,11 +121,8 @@ export default {
         res => {
           this.isLoading = false;
           this.isSuccess = true;
-          // this.oneOffLoading = false;
         },
         err => {
-          // this.oneOffLoading = false;
-          console.log(err);
         }
       );
     }

@@ -67,8 +67,7 @@ export default {
   sockets: {
     connect: function(connections) {
       this.$store.state.socketId = this.$socket.id;
-      console.log(this.$socket.id);
-      console.log("Socket connected");
+      console.log("Сonnect");
       let token = this.$store.state.token;
       this.$socket.emit("authenticate", { token });
     },
@@ -81,16 +80,7 @@ export default {
         error.data.type === "UnauthorizedError" ||
         error.data.code === "invalid_token"
       ) {
-        // TODO: Пушить роутер на страницу авторизации, если другой путь
-        console.error("Плохой токен");
-        // this.$router.push("Home");
       }
-    },
-    error: function(err) {
-      console.log("SOCKET IO ERROR: ", err);
-    },
-    success: function(data) {
-      console.log("SOCKET IO SUCCESS: ", data);
     },
     setToast: function(toast) {
       switch (toast.type) {
@@ -135,10 +125,7 @@ export default {
         this.$store.commit("changeAdminStatus");
       }
       let name = decode.name;
-      // this.$socket.emit("setName", name);
       this.$store.commit("SET_NAME", name);
-      // console.log("setStateFromLS");
-      // this.$store.commit("setStateFromLS");
       if (this.$store.state.gamerName) {
         this.$socket.emit("setName", this.$store.state.gamerName);
       }
@@ -176,9 +163,6 @@ export default {
     }
     this.$http.interceptors.response.use(undefined, function(err) {
       return new Promise(function() {
-        if (err.response) {
-          console.log(err.response);
-        }
         if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
           // Если ошибка авторизации на сервере, выкинуть пользователя
           this.$store.dispatch("AUTH_LOGOUT");

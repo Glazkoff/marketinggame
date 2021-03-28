@@ -637,7 +637,6 @@ export default {
           return "";
         }
       );
-      console.log(this.newCardDescription.coefs.splice(index, 1));
     },
     onDescriptionSave() {
       this.newCardDescription.id = this.$route.params.id;
@@ -657,7 +656,6 @@ export default {
             this.descriptionSaveLoading = false;
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
             this.getAdminCards();
-            console.log(err);
           }
         );
     },
@@ -690,7 +688,6 @@ export default {
         },
         err => {
           this.oneOffLoading = false;
-          console.log(err);
         }
       );
     },
@@ -740,7 +737,6 @@ export default {
         },
         err => {
           this.modalLoading = false;
-          console.log(err);
         }
       );
     },
@@ -760,7 +756,6 @@ export default {
         },
         err => {
           this.modalVoidLoading = false;
-          console.log(err);
         }
       );
     },
@@ -779,7 +774,6 @@ export default {
           if (this.card === undefined) {
             this.isError = true;
           }
-          console.log(err);
         }
       );
     }
@@ -822,21 +816,6 @@ export default {
     if (this.card !== undefined) {
       this.cardsLoading = false;
     } else {
-      // this.$store.dispatch("GET_ADMIN_CARDS").then(
-      //   res => {
-      //     this.cardsLoading = false;
-      //     if (this.card === undefined) {
-      //       this.isError = true;
-      //     }
-      //   },
-      //   err => {
-      //     this.cardsLoading = false;
-      //     if (this.card === undefined) {
-      //       this.isError = true;
-      //     }
-      //     console.log(err);
-      //   }
-      // );
       this.getAdminCards();
     }
   }

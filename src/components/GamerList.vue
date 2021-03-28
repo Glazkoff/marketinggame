@@ -113,7 +113,6 @@ export default {
       }
     },
     kickUser(gamer) {
-      console.log("KICK!", this.roomId, gamer);
       let obj = {
         roomId: this.roomId,
         gamerId: gamer.id

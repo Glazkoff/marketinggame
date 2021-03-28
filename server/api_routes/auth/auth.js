@@ -81,7 +81,7 @@ router.post("/login", (req, res) => {
             });
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => logRestApiError(err));
     }
   } catch (error) {
     logRestApiError("auth", error);
@@ -125,7 +125,7 @@ router.post("/register", (req, res) => {
                 });
               })
               .catch(err => {
-                console.log(err);
+                logRestApiError(err);
                 res.status(500).send({
                   status: 500,
                   message: "Ошибка сервера!"
@@ -134,7 +134,7 @@ router.post("/register", (req, res) => {
           }
         })
         .catch(err => {
-          console.log(err);
+          logRestApiError(err);
           res.status(500).send({
             status: 500,
             message: "Ошибка сервера!"

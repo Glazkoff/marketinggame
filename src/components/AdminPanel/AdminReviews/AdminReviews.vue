@@ -43,7 +43,6 @@ export default {
       },
       err => {
         this.reviewsLoading = false;
-        console.log(err);
       }
     );
   }

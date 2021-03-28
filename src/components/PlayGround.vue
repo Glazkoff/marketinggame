@@ -492,7 +492,6 @@ export default {
       this.playAnimation();
     },
     getCards() {
-      console.log("GET CARDS!");
       this.cardsLoading = true;
       this.$store.dispatch("GET_CARDS").then(
         res => {
@@ -501,7 +500,6 @@ export default {
         },
         err => {
           this.cardsLoading = false;
-          console.log(err);
         }
       );
     },
@@ -519,7 +517,6 @@ export default {
         },
         err => {
           vm.cardsLoading = false;
-          console.log(err);
         }
       );
     });

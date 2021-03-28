@@ -112,11 +112,9 @@ export default {
       this.$store.dispatch("GET_ADMIN_ROOMS").then(
         res => {
           this.loading = false;
-          console.log(res);
         },
         err => {
           this.loading = false;
-          console.log(err);
         }
       );
     }
@@ -124,17 +122,6 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(async vm => {
       vm.reloadRoomsList();
-      // vm.loading = true;
-      // vm.$store.dispatch("GET_ADMIN_ROOMS").then(
-      //   res => {
-      //     vm.loading = false;
-      //     console.log(res);
-      //   },
-      //   err => {
-      //     vm.loading = false;
-      //     console.log(err);
-      //   }
-      // );
     });
   }
 };

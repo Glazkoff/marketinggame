@@ -247,7 +247,6 @@ export default {
         login: this.login,
         password: this.password
       };
-      console.log("AUTH: ", authData);
       try {
         // Возращает promise
         // Если успешно, перенаправляет на путь "/"
@@ -263,7 +262,6 @@ export default {
             this.errorMessage = err;
             this.serverError = err.data.message;
             this.authLoading = false;
-            console.log("ОШИБКА ВХОДА: ", err.data.message);
           }
         );
       } catch (error) {

@@ -320,7 +320,6 @@ export default {
         },
         err => {
           this.getCards();
-          console.log(err);
         }
       );
     },
@@ -332,7 +331,6 @@ export default {
         },
         err => {
           this.getCards();
-          console.log(err);
         }
       );
     },
@@ -344,7 +342,6 @@ export default {
         },
         err => {
           this.cardsLoading = false;
-          console.log(err);
         }
       );
     },
@@ -358,7 +355,6 @@ export default {
           },
           err => {
             this.getCards();
-            console.log(err);
           }
         );
     },
@@ -372,7 +368,6 @@ export default {
           },
           err => {
             this.getCards();
-            console.log(err);
           }
         );
     }

@@ -429,7 +429,6 @@ export default {
         },
         err => {
           this.modalVoidLoading = false;
-          console.log(err);
         }
       );
     },
@@ -450,7 +449,6 @@ export default {
         },
         err => {
           this.modalLoading = false;
-          console.log(err);
         }
       );
     },
@@ -487,7 +485,6 @@ export default {
           err => {
             this.isSaveLoading = false;
             this.isEdit = false;
-            console.log(err);
           }
         );
     },
@@ -511,7 +508,6 @@ export default {
       try {
         await this.$store.dispatch("GET_ADMIN_EVENTS");
       } catch (error) {
-        console.log(error);
       }
     }
   },

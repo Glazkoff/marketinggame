@@ -121,7 +121,6 @@ module.exports = function (socket, io, db) {
           if (!userWithEffects.isattacker) {
             gamer = await cardsProcessing(userWithEffects, [])
           }
-          console.log(userWithEffects.isattacker);
           io.sockets
             .to("user" + userWithEffects.user_id)
             .emit("setEffects", userWithEffects.effects);

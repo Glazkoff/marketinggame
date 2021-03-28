@@ -1,5 +1,5 @@
 const { logSocketOutEvent, logSocketError, logCommonError } = require("./logs");
-const {sendAdminMessage,} = require("../global_functions/messages");
+const {sendAdminMessage} = require("../global_functions/messages");
 const db = require("../models/index");
 
 module.exports = {

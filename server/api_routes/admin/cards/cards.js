@@ -191,7 +191,6 @@ router.put("/:id/is_draft", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-          console.log(req.body);
           if (req.body.is_draft != null) {
             let a = await db.Card.update(
               {

@@ -133,7 +133,6 @@ export default {
           this.loadUsers();
         },
         err => {
-          console.log(err);
         }
       );
     },
@@ -179,28 +178,6 @@ export default {
       if (this.currentPage !== n) {
         this.currentPage = n;
         this.updateButtonArray(n);
-        // if (
-        //   n > this.buttonArray[Math.ceil(this.buttonArray.length / 2)] &&
-        //   n < this.listSize - 2
-        // ) {
-        //   this.buttonArray = [];
-        //   for (let index = -4; index < 5; index++) {
-        //     let el = n + index;
-        //     this.buttonArray.push(el);
-        //   }
-        // } else if (n > 5 && n < this.listSize - 2) {
-        //   this.buttonArray = [];
-        //   for (let index = -4; index < 5; index++) {
-        //     let el = n + index;
-        //     this.buttonArray.push(el);
-        //   }
-        // } else if (n <= 5) {
-        //   this.buttonArray = [];
-        //   for (let index = 1; index < 11; index++) {
-        //     let el = index;
-        //     this.buttonArray.push(el);
-        //   }
-        // }
         this.loadUsers();
       }
     },
@@ -223,7 +200,6 @@ export default {
         },
         err => {
           this.sizeLoading = false;
-          console.log(err);
         }
       );
     },
@@ -235,7 +211,6 @@ export default {
         },
         err => {
           this.listLoading = false;
-          console.log(err);
         }
       );
     }

@@ -18,10 +18,6 @@ export default {
     };
   },
   computed: {
-    // isConnected: function(old, ne) {
-    //   console.log(this.$socket.connected, old, ne);
-    //   return this.$socket.connected;
-    // },
     isDisconnected() {
       return this.$socket.disconnected;
     }

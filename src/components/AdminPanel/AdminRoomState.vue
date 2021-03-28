@@ -237,7 +237,6 @@ export default {
       this.$store.dispatch("GET_ADMIN_ROOMS").then(
         res => {
           this.roomLoading = false;
-          console.log(res);
           let index = this.$store.state.admin.rooms.findIndex(el => {
             return +el.room_id === +this.$route.params.id;
           });
@@ -252,7 +251,6 @@ export default {
                 },
                 err => {
                   this.loading = false;
-                  console.log(err);
                 }
               );
           } else {
@@ -266,14 +264,12 @@ export default {
                 },
                 err => {
                   this.roomLoading = false;
-                  console.log(err);
                 }
               );
           }
         },
         err => {
           this.roomLoading = false;
-          console.log(err);
         }
       );
     }
@@ -293,19 +289,6 @@ export default {
         }
       } else {
         vm.loadState();
-        // vm.room = vm.$store.state.admin.rooms[index];
-        // vm.loading = true;
-        // vm.$store
-        //   .dispatch("GET_ADMIN_USERS_IN_ROOMS", vm.$route.params.id)
-        //   .then(
-        //     res => {
-        //       vm.loading = false;
-        //     },
-        //     err => {
-        //       vm.loading = false;
-        //       console.log(err);
-        //     }
-        //   );
         return true;
       }
     });
