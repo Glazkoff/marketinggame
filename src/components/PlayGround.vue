@@ -498,7 +498,7 @@ export default {
           this.refreshCards = [...res];
           this.cardsLoading = false;
         },
-        err => {
+        () => {
           this.cardsLoading = false;
         }
       );
@@ -515,7 +515,7 @@ export default {
           vm.refreshCards = [...res];
           vm.cardsLoading = false;
         },
-        err => {
+        () => {
           vm.cardsLoading = false;
         }
       );
@@ -524,7 +524,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="css">
 .started {
   grid-area: 1/1/span 3/span 3 !important;
   padding-bottom: 3rem;

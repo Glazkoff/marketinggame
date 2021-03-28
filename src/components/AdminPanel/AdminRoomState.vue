@@ -249,7 +249,7 @@ export default {
                 res => {
                   this.loading = false;
                 },
-                err => {
+                () => {
                   this.loading = false;
                 }
               );
@@ -262,13 +262,13 @@ export default {
                   this.room = res[1];
                   this.roomLoading = false;
                 },
-                err => {
+                () => {
                   this.roomLoading = false;
                 }
               );
           }
         },
-        err => {
+        () => {
           this.roomLoading = false;
         }
       );
@@ -298,13 +298,9 @@ export default {
 
 <style scoped>
 .users-state-wrap {
-  /* width: 100vw; */
-  /* max-width: 100vw; */
   overflow-x: scroll;
-  /* padding-right: 10rem; */
 }
 .users-state-wrap table {
-  /* width: 90%; */
   display: block;
 }
 .row {

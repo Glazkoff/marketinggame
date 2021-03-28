@@ -427,7 +427,7 @@ export default {
           this.modalVoidLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalVoidLoading = false;
         }
       );
@@ -447,7 +447,7 @@ export default {
           this.modalLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalLoading = false;
         }
       );
@@ -482,7 +482,7 @@ export default {
             this.isSaveLoading = false;
             this.isEdit = false;
           },
-          err => {
+          () => {
             this.isSaveLoading = false;
             this.isEdit = false;
           }

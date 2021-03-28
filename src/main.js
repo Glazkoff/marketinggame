@@ -16,7 +16,8 @@ Vue.use(Vuelidate);
 
 Vue.use(
   new VueSocketIO({
-    debug: process.env.NODE_ENV !== "production",
+    // debug: process.env.NODE_ENV !== "production",
+    debug: false,
     connection: '/',
     vuex: {
       store,

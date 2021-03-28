@@ -132,7 +132,7 @@ export default {
         res => {
           this.loadUsers();
         },
-        err => {
+        () => {
         }
       );
     },
@@ -198,7 +198,7 @@ export default {
             }
           }
         },
-        err => {
+        () => {
           this.sizeLoading = false;
         }
       );
@@ -209,7 +209,7 @@ export default {
         res => {
           this.listLoading = false;
         },
-        err => {
+        () => {
           this.listLoading = false;
         }
       );

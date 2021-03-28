@@ -318,7 +318,7 @@ export default {
         res => {
           this.getCards();
         },
-        err => {
+        () => {
           this.getCards();
         }
       );
@@ -329,7 +329,7 @@ export default {
         res => {
           this.getCards();
         },
-        err => {
+        () => {
           this.getCards();
         }
       );
@@ -340,7 +340,7 @@ export default {
         res => {
           this.cardsLoading = false;
         },
-        err => {
+        () => {
           this.cardsLoading = false;
         }
       );
@@ -353,7 +353,7 @@ export default {
           res => {
             this.getCards();
           },
-          err => {
+          () => {
             this.getCards();
           }
         );
@@ -366,7 +366,7 @@ export default {
           res => {
             this.getCards();
           },
-          err => {
+          () => {
             this.getCards();
           }
         );

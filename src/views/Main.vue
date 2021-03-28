@@ -84,8 +84,6 @@ export default {
       ) {
         vm.loading = true;
         try {
-
-          let state = JSON.stringify(vm.$store.state)
           await vm.$store.dispatch("TRY_RESET_ROOM");
           vm.loading = false;
         } catch (error) {

@@ -273,11 +273,9 @@ export default {
           .then(
             () => {
               this.$router.push("/");
-            },
-            err => {
             }
           )
-          .catch(err => {
+          .catch(() => {
           });
       } catch (error) {
       }
@@ -293,11 +291,11 @@ export default {
                 this.roomParams = res.data;
                 this.loading = false;
               },
-              err => {
+              () => {
                 this.loading = false;
               }
             )
-            .catch(err => {
+            .catch(() => {
               this.loading = false;
             });
         } catch (error) {
@@ -356,12 +354,6 @@ export default {
 </script>
 
 <style>
-@media screen and (max-width: 320px) {
-  .card.p-4 {
-    /*padding: 0.7rem !important;*/
-  }
-}
-
 @media screen and (max-width: 575px) {
   .card.container {
     border: 0px !important;

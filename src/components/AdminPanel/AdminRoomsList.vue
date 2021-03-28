@@ -113,7 +113,7 @@ export default {
         res => {
           this.loading = false;
         },
-        err => {
+        () => {
           this.loading = false;
         }
       );
@@ -135,8 +135,6 @@ export default {
 .card:hover,
 .card:hover * {
   background-color: #ddf5ea;
-}
-.card h5 {
 }
 .card-columns {
   -webkit-column-count: 3;

@@ -302,7 +302,7 @@ export default {
         res => {
           this.eventsLoading = false;
         },
-        err => {
+        () => {
           this.eventsLoading = false;
         }
       );
@@ -323,7 +323,7 @@ export default {
         res => {
           this.getEvents();
         },
-        err => {
+        () => {
           this.getEvents();
         }
       );
@@ -334,7 +334,7 @@ export default {
         res => {
           this.getEvents();
         },
-        err => {
+        () => {
           this.getEvents();
         }
       );
@@ -347,7 +347,7 @@ export default {
           res => {
             this.getEvents();
           },
-          err => {
+          () => {
             this.getEvents();
           }
         );
@@ -360,7 +360,7 @@ export default {
           res => {
             this.getEvents();
           },
-          err => {
+          () => {
             this.getEvents();
           }
         );

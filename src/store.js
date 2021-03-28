@@ -310,7 +310,7 @@ const store = new Vuex.Store({
                 reject(error);
               }
             )
-            .catch(error => {
+            .catch(() => {
               console.log("ОШИБКА СЕРВЕРА");
             });
         });
@@ -353,7 +353,6 @@ const store = new Vuex.Store({
           method: "GET"
         })
           .then(res => {
-            console.log("FROM RESETTING ROOM", res);
             state.commit("SET_GAME_PARAMS", res);
             there._vm.$socket.emit("subscribeRoom", res.data.room_id, (res.data.first_params.month !== res.data.gamer_room_params.month || !res.data.is_start));
             resolve(res);

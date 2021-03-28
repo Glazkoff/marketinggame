@@ -652,7 +652,8 @@ export default {
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
             this.getAdminCards();
           },
-          err => {
+        ).catch(
+          () => {
             this.descriptionSaveLoading = false;
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
             this.getAdminCards();
@@ -686,7 +687,7 @@ export default {
         res => {
           this.oneOffLoading = false;
         },
-        err => {
+        () => {
           this.oneOffLoading = false;
         }
       );
@@ -735,7 +736,7 @@ export default {
           this.modalLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalLoading = false;
         }
       );
@@ -754,7 +755,7 @@ export default {
           this.modalVoidLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalVoidLoading = false;
         }
       );
@@ -769,7 +770,7 @@ export default {
           }
           this.oneOffChange = this.card.oneOff;
         },
-        err => {
+        () => {
           this.cardsLoading = false;
           if (this.card === undefined) {
             this.isError = true;

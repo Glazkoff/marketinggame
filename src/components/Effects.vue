@@ -26,11 +26,6 @@
           }"
         >Шаг: {{ effect.step }} из {{ effect.duration }}</span
         >
-        <!-- <span
-          class="badge badge-primary badge-pill"
-          v-if="gamer.isattacker"
-        >Сделал ход</span>
-        <span class="badge badge-warning badge-pill" v-else="gamer.isattacker">Размышляет</span>-->
       </li>
     </ul>
   </div>
@@ -53,7 +48,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="css">
 #effectslist {
   background-color: #fff;
   margin: auto;
