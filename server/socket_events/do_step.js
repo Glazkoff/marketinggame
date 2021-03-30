@@ -174,6 +174,7 @@ module.exports = function (socket, io, db) {
               oneWayChangingId ||
               changing.event
             ) {
+              // TODO: Возможно, надо добавить проверку, что карта многоразовая
               let usedCard = await db.UsedCards.findOne({
                 where: {
                   user_in_room_id: userInRoom.user_in_room_id,

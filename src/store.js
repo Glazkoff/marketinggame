@@ -255,6 +255,13 @@ const store = new Vuex.Store({
         state.oneOffCardList.push(el.card_id);
       });
     },
+    FILTER_ONEOFF_CARD_LIST(state, usedOneOffCardList){
+      if (usedOneOffCardList.length > 0){
+        usedOneOffCardList.forEach((usedCard) =>{
+          state.cards = state.cards.filter((card) => card.id-0 !== usedCard-0)
+        })
+      }
+    },
     SET_ADMIN_CARD_DESCRIPTION(state, data) {
       let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
       state.admin.cards[cardIndex].coefs = data.coefs;
@@ -388,6 +395,21 @@ const store = new Vuex.Store({
         })
           .then(res => {
             state.commit("SET_ONEOFF_CARD_LIST", res.data);
+            resolve(res.data);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    GET_USED_ONEOFF_CARD_LIST: function (state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/cards/oneoff/used`,
+          method: "GET"
+        })
+          .then(res => {
+            state.commit("FILTER_ONEOFF_CARD_LIST", res.data);
             resolve(res.data);
           })
           .catch(err => {

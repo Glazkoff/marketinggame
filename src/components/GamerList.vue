@@ -5,7 +5,7 @@
       >
         <h3>Игроки</h3>
       </div>
-      
+
       <ul class="list-group" v-if="!isStart">
         <li
         v-if="isOwner"
@@ -180,7 +180,7 @@ export default {
 #gamerlist .list-group-item {
     padding: .5rem !important;
   }
-  
+
 .list-group .list-group-item {
   border-radius: 0 !important;
 }

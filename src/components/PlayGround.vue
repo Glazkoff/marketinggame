@@ -502,6 +502,7 @@ export default {
           this.cardsLoading = false;
         }
       );
+      this.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
     },
     updateWidth() {
       this.width = window.innerWidth;
@@ -519,6 +520,7 @@ export default {
           vm.cardsLoading = false;
         }
       );
+      vm.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
     });
   }
 };
@@ -890,7 +892,6 @@ export default {
     padding: 2px 0 2px 8px !important;
   }
 
-  
 
   #card-field {
     display: flex;
