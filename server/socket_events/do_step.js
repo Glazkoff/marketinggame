@@ -248,17 +248,19 @@ module.exports = function (socket, io, db) {
                   analyticsString += 'параметр "Прямой заход"';
                   break;
                 case "smmCoef":
-                  analyticsString += "параметр Соц. медиа";
+                  analyticsString += 'параметр "Соц. медиа"';
                   break;
                 case "socialsCoef":
-                  analyticsString += "параметр Реклама: соцсети";
+                  analyticsString += 'параметр "Реклама: соцсети"';
                   break;
                 case "averageCheck":
-                  analyticsString += "параметр Средний";
+                  analyticsString += 'параметр "Средний чек"';
                   break;
-
+                case "conversion":
+                  analyticsString += 'параметр "Конверсия"';
+                  break;
                 default:
-                  analyticsString += "параметр " + changing.param;
+                  analyticsString += 'параметр "' + changing.param + '"';
                   break;
               }
               messageArr.push(analyticsString);
