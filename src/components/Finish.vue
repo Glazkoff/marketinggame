@@ -471,6 +471,7 @@ export default {
   width: 96%;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
 }
 
 .finish-table {
