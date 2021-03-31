@@ -113,20 +113,12 @@ const store = new Vuex.Store({
         state.gamers = [...res.data.gamers.gamers];
       }
       if (res.data.effects !== undefined) {
-        let multipleEffects = [];
         res.data.effects.forEach(el => {
           if (el.step === el.duration) {
             state.completedSessions.push(el.id);
-            let card = state.cards.filter(function(card) {
-              if(card.id === el.id)
-              return card;
-          })
-            if(!card.oneOff)
-            multipleEffects.push(card);
-           
           }
         });
-        state.activeEffects = [...multipleEffects];
+        state.activeEffects = [...res.data.effects];
       }
       let decode = await jwt.decode(state.token);
       if (res.data.owner_id === decode.id) {
