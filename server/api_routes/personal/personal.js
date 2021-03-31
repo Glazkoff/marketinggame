@@ -41,11 +41,11 @@ function getPersonalRouter(io) {
         }
       );
 
-      io.emit("kickUser");
+      
       // Отправляем событие пользователю, которого мы хотим выкинуть
       io.in("user" + decodedToken.id).emit("kickUser");
       // Логируем исходящее событие
-      logSocketOutEvent("kickUser", "Сообщаем пользователю, что его выкинули");
+      logSocketOutEvent("lastroom", "Сообщаем пользователю, что его выкинули");
 
       res.send(user);
     } catch (error) {
