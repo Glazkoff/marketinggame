@@ -115,11 +115,12 @@ module.exports = function (socket, io, db) {
         );
 
         // Отправляем каждому игроку его эффекты
-        for (const userWithEffects of usersEffects) {
+        for (let userWithEffects of usersEffects) {
 
           // Обработка карточек на обнуление или прибавление эффектов
           if (!userWithEffects.isattacker) {
-            gamer = await cardsProcessing(userWithEffects, [])
+            userWithEffects = await cardsProcessing(userWithEffects, [])
+            
           }
           io.sockets
             .to("user" + userWithEffects.user_id)

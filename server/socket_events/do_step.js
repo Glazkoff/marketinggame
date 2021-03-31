@@ -710,11 +710,6 @@ module.exports = function (socket, io, db) {
           // игра продолжается
         }
 
-        //  TODO: send effects
-        //     for (const gamer of gamers) {
-        //       io.sockets.to(gamer.id).emit("setEffects", gamer.effects);
-        //     }
-
         // Отправляем сообщение о завершённом ходе
         sendAdminMessage(io, socket.id, "Вы сделали ход!");
       }
