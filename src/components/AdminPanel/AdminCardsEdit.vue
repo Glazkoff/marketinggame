@@ -637,7 +637,6 @@ export default {
           return "";
         }
       );
-      console.log(this.newCardDescription.coefs.splice(index, 1));
     },
     onDescriptionSave() {
       this.newCardDescription.id = this.$route.params.id;
@@ -653,11 +652,11 @@ export default {
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
             this.getAdminCards();
           },
-          err => {
+        ).catch(
+          () => {
             this.descriptionSaveLoading = false;
             this.newCardDescription.isEdit = !this.newCardDescription.isEdit;
             this.getAdminCards();
-            console.log(err);
           }
         );
     },
@@ -688,9 +687,8 @@ export default {
         res => {
           this.oneOffLoading = false;
         },
-        err => {
+        () => {
           this.oneOffLoading = false;
-          console.log(err);
         }
       );
     },
@@ -738,9 +736,8 @@ export default {
           this.modalLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalLoading = false;
-          console.log(err);
         }
       );
     },
@@ -758,9 +755,8 @@ export default {
           this.modalVoidLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalVoidLoading = false;
-          console.log(err);
         }
       );
     },
@@ -774,12 +770,11 @@ export default {
           }
           this.oneOffChange = this.card.oneOff;
         },
-        err => {
+        () => {
           this.cardsLoading = false;
           if (this.card === undefined) {
             this.isError = true;
           }
-          console.log(err);
         }
       );
     }
@@ -822,21 +817,6 @@ export default {
     if (this.card !== undefined) {
       this.cardsLoading = false;
     } else {
-      // this.$store.dispatch("GET_ADMIN_CARDS").then(
-      //   res => {
-      //     this.cardsLoading = false;
-      //     if (this.card === undefined) {
-      //       this.isError = true;
-      //     }
-      //   },
-      //   err => {
-      //     this.cardsLoading = false;
-      //     if (this.card === undefined) {
-      //       this.isError = true;
-      //     }
-      //     console.log(err);
-      //   }
-      // );
       this.getAdminCards();
     }
   }

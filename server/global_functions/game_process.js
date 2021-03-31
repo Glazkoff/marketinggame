@@ -1,5 +1,5 @@
-const { logSocketOutEvent, logSocketError, logCommonError } = require("./logs");
-const {sendAdminMessage,} = require("../global_functions/messages");
+const {logSocketOutEvent, logSocketError, logCommonError} = require("./logs");
+const {sendAdminMessage} = require("../global_functions/messages");
 const db = require("../models/index");
 
 module.exports = {
@@ -7,8 +7,8 @@ module.exports = {
   async sendGamers(io, db, roomId) {
     try {
       if (
-        roomId !== null && 
-        roomId !== undefined 
+        roomId !== null &&
+        roomId !== undefined
       ) {
         // Находим пользователей в комнате
         let usersInRoom = await db.UserInRoom.findAll({
@@ -90,28 +90,28 @@ module.exports = {
       return (
         Math.ceil(
           gamerRoomParams.organicCount *
-            gamerRoomParams.organicCoef *
-            gamerRoomParams.conversion
+          gamerRoomParams.organicCoef *
+          gamerRoomParams.conversion
         ) +
         Math.ceil(
           gamerRoomParams.contextCount *
-            gamerRoomParams.contextCoef *
-            gamerRoomParams.conversion
+          gamerRoomParams.contextCoef *
+          gamerRoomParams.conversion
         ) +
         Math.ceil(
           gamerRoomParams.socialsCount *
-            gamerRoomParams.socialsCoef *
-            gamerRoomParams.conversion
+          gamerRoomParams.socialsCoef *
+          gamerRoomParams.conversion
         ) +
         Math.ceil(
           gamerRoomParams.smmCount *
-            gamerRoomParams.smmCoef *
-            gamerRoomParams.conversion
+          gamerRoomParams.smmCoef *
+          gamerRoomParams.conversion
         ) +
         Math.ceil(
           gamerRoomParams.straightCount *
-            gamerRoomParams.straightCoef *
-            gamerRoomParams.conversion
+          gamerRoomParams.straightCoef *
+          gamerRoomParams.conversion
         )
       );
     } else {
@@ -130,7 +130,7 @@ module.exports = {
     }
   },
 
-  async finishGame(io, db, room){
+  async finishGame(io, db, room) {
     let gamers = await db.UserInRoom.findAll({
       where: {
         room_id: room.room_id
@@ -272,7 +272,7 @@ module.exports = {
     logSocketOutEvent("finish", "Событие о конце игры");
   },
 
-  async isCurrentStepFinished(io, db, room){
+  async isCurrentStepFinished(io, db, room) {
     // Статус хода по умолчанию
     let stepStatus = {
       finished: false, // Закончен ли ход
@@ -325,8 +325,7 @@ module.exports = {
       stepStatus.finished = stepStatus.didStepCurrMonth >= stepStatus.activeParticipants;
 
       return stepStatus
-    }
-    else {
+    } else {
       // Что-то не так с параметрами ходов пользователя
     }
   },
@@ -349,11 +348,9 @@ module.exports = {
 
         // Получаем одноразовые карточки
         let oneWayCards = await module.exports.getOneOffCardsId();
-        let oneWayCardIndex = oneWayCards.findIndex(
-          elem => elem.card_id === cardId
-        );
+        let oneWayCardIndex = oneWayCards.findIndex(elem => elem.card_id === cardId);
         let effectIndex = gamer.effects.findIndex(elem => elem.id === cardId);
-        
+
         // Если карточка не является одноразовой
         if (oneWayCardIndex === -1) {
           // Если эффекта ещё нет (карточка выбрасывается первый раз)
@@ -386,6 +383,7 @@ module.exports = {
         }
         // Иначе, если карточки одноразовые
         else {
+          // Если эффекта ещё нет (карточка выбрасывается первый раз)
           if (effectIndex === -1) {
             // Занести свойства одноразовых карточек
             for (const changes of card.data_change) {
@@ -396,9 +394,19 @@ module.exports = {
               changeObj.oneOff = card.oneOff
               gamer.changes.push(changeObj);
             }
+            // Добавляем в массив эффектов
+            let effectObj = {
+              id: cardId,
+              name: card.title,
+              step: 1,
+              duration: card.duration
+            };
+
+            gamer.effects.push(effectObj);
           }
         }
       } // Конец обработки пришедшего массива ID карточек
+
       for (let effect of gamer.effects) {
         // Если в пришедшем массиве нет уже существующего эффекта
         // (если не прислали повторно), то удаляем из массива эффектов игрока
@@ -410,7 +418,7 @@ module.exports = {
           gamer.effects.splice(effectIndex, 1);
         }
         gamer = await OnGamerEffects(gamer)
-        
+
         // Если действие эффекта закончилось
         if (effect.step === effect.duration) {
           let effectIndex = gamer.effects.findIndex(
@@ -422,18 +430,12 @@ module.exports = {
     }
     for (let change of gamer.changes) {
       let idCardChange = parseInt(change.id)
-      if (
-        !cardArr.includes(idCardChange) &&
-        !change.oneOff
-      ) {
-        gamer.changes = gamer.changes.filter(
-          a => a.id != idCardChange
-        ) 
-        gamer.effects = gamer.effects.filter(
-          a => parseInt(a.id) != idCardChange
-        )
+      if (!cardArr.includes(idCardChange) && !change.oneOff) {
+        gamer.changes = gamer.changes.filter(a => a.id != idCardChange)
+        gamer.effects = gamer.effects.filter(a => parseInt(a.id) != idCardChange)
       }
-    } 
+    }
+
     // Если у пользователя не отсутсвуют активные эффекты
     async function OnGamerEffects(gamer) {
       if (gamer.effects !== null) {
@@ -442,7 +444,7 @@ module.exports = {
         for (let effectId = 0; effectId < gamer.effects.length; effectId++) {
           let effect = gamer.effects[effectId];
           let cardArrIndex = cardArr.findIndex(elem => elem === effect.id);
-  
+
           // Если в пришедшем массиве ID карточек нет эффекта из цикла
           // (если не прислали повторно), то удаляем из массива эффектов игрока
           if (cardArrIndex === -1) {
@@ -455,18 +457,19 @@ module.exports = {
           // Добавление в объект использованных карточек
           if (effect.step === effect.duration) {
             // Находим карту для эффекта
+            // TODO: Возможно, надо добавить проверку, что карта многоразовая
             let usedCard = await db.UsedCards.findOne({
               where: {
                 user_in_room_id: gamer.user_in_room_id,
                 card_id: effect.id
               }
             });
-  
+
             // Если карта нашлась
             if (usedCard) {
               // Увеличиваем счётчик серий использований карты
               await db.UsedCards.update(
-                { amount: usedCard.dataValues.amount + 1 },
+                {amount: usedCard.dataValues.amount + 1},
                 {
                   where: {
                     user_in_room_id: gamer.user_in_room_id,
@@ -485,10 +488,28 @@ module.exports = {
               });
             }
           }
+
+          // Если карточка одноразовая
+          const isOneStepCard = await db.Card.findOne({
+            where: {
+              card_id: gamer.effects[0].id,
+              oneOff: true
+            }
+          })
+
+          if (isOneStepCard) {
+            // Создаем "счетчек" для использованной одноразовой карты
+            await db.UsedCards.create({
+              amount: 1,
+              user_in_room_id: gamer.user_in_room_id,
+              card_id: effect.id
+            });
+          }
         }
       }
       return gamer
     }
+
     return gamer
   }
 };

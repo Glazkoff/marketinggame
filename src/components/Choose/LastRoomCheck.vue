@@ -53,7 +53,6 @@ export default {
         }
         this.checkLoading = false;
       } catch (error) {
-        console.log(error);
         this.checkLoading = false;
         this.isError = true;
       }
@@ -69,7 +68,6 @@ export default {
         this.checkLoading = false;
         this.$emit("setRoomId", "");
       } catch (error) {
-        console.log(error);
         this.checkLoading = false;
         this.isError = true;
       }

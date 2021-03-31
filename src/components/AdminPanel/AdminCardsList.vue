@@ -318,9 +318,8 @@ export default {
         res => {
           this.getCards();
         },
-        err => {
+        () => {
           this.getCards();
-          console.log(err);
         }
       );
     },
@@ -330,9 +329,8 @@ export default {
         res => {
           this.getCards();
         },
-        err => {
+        () => {
           this.getCards();
-          console.log(err);
         }
       );
     },
@@ -342,9 +340,8 @@ export default {
         res => {
           this.cardsLoading = false;
         },
-        err => {
+        () => {
           this.cardsLoading = false;
-          console.log(err);
         }
       );
     },
@@ -356,9 +353,8 @@ export default {
           res => {
             this.getCards();
           },
-          err => {
+          () => {
             this.getCards();
-            console.log(err);
           }
         );
     },
@@ -370,9 +366,8 @@ export default {
           res => {
             this.getCards();
           },
-          err => {
+          () => {
             this.getCards();
-            console.log(err);
           }
         );
     }

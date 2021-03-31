@@ -174,6 +174,7 @@ module.exports = function (socket, io, db) {
               oneWayChangingId ||
               changing.event
             ) {
+              // TODO: Возможно, надо добавить проверку, что карта многоразовая
               let usedCard = await db.UsedCards.findOne({
                 where: {
                   user_in_room_id: userInRoom.user_in_room_id,
@@ -181,7 +182,7 @@ module.exports = function (socket, io, db) {
                 }
               });
 
-              
+
               if (usedCard == null) {
                 switch (changing.operation) {
                   case "+":
@@ -248,67 +249,20 @@ module.exports = function (socket, io, db) {
                   analyticsString += 'параметр "Прямой заход"';
                   break;
                 case "smmCoef":
-                  analyticsString += "параметр Соц. медиа";
+                  analyticsString += 'параметр "Соц. медиа"';
                   break;
                 case "socialsCoef":
-                  analyticsString += "параметр Реклама: соцсети";
+                  analyticsString += 'параметр "Реклама: соцсети"';
                   break;
                 case "averageCheck":
-                  analyticsString += "параметр Средний";
+                  analyticsString += 'параметр "Средний чек"';
                   break;
-
+                case "conversion":
+                  analyticsString += 'параметр "Конверсия"';
+                  break;
                 default:
-                  analyticsString += "параметр " + changing.param;
+                  analyticsString += 'параметр "' + changing.param + '"';
                   break;
-              }
-              if (
-                changing.param === "smmCount" ||
-                changing.param === "socialsCoef"
-              ) {
-                analyticsString +=
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changing.change +
-                  " (Нанять SMM-менеджера)";
-              } else if (changing.param === "smmCoef") {
-                analyticsString +=
-                  " со знаком " +
-                  changing.operation +
-                  " на " +
-                  changing.change +
-                  " (Улучшение юзабилити)";
-              } else {
-                if (usedCard !== null) {
-                  if (usedCard["amount"] >= 1) {
-                    let changeCoef = changing.change;
-                    if (usedCard["amount"] !== 0) {
-                      for (let i = 0; i < usedCard["amount"]; i++) {
-                        changeCoef = (1 + changeCoef) / 2;
-                        if (changing.change >= 10) {
-                          changeCoef = Math.ceil(changeCoef);
-                        }
-                      }
-                    }
-                    analyticsString +=
-                      " со знаком " +
-                      changing.operation +
-                      " на " +
-                      changeCoef +
-                      " (" +
-                      changing.from +
-                      ")";
-                  } else {
-                    analyticsString +=
-                      " со знаком " +
-                      changing.operation +
-                      " на " +
-                      changing.change +
-                      " (" +
-                      changing.from +
-                      ")";
-                  }
-                }
               }
               messageArr.push(analyticsString);
 
@@ -755,11 +709,6 @@ module.exports = function (socket, io, db) {
         } else {
           // игра продолжается
         }
-
-        //  TODO: send effects
-        //     for (const gamer of gamers) {
-        //       io.sockets.to(gamer.id).emit("setEffects", gamer.effects);
-        //     }
 
         // Отправляем сообщение о завершённом ходе
         sendAdminMessage(io, socket.id, "Вы сделали ход!");

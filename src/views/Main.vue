@@ -84,41 +84,24 @@ export default {
       ) {
         vm.loading = true;
         try {
-
-          let state = JSON.stringify(vm.$store.state)
-          console.log(state)
-          console.log(vm.$store.state.roomId)
-          console.log(vm.$store.state)
           await vm.$store.dispatch("TRY_RESET_ROOM");
           vm.loading = false;
         } catch (error) {
-          console.log(error);
           vm.loading = false;
         }
       }
       return true;
     });
   },
-  // ######################################################
   beforeRouteLeave(to, from, next) {
     // вызывается перед переходом от пути, соответствующего текущему компоненту;
     // имеет доступ к контексту экземпляра компонента `this`.
     this.$socket.emit("roomLeave", this.roomNumber);
     this.leaveRoom();
-    // const answer = window.confirm(
-    //   "Вы хотите уйти? У вас есть несохранённые изменения!"
-    // );
-    // if (answer) {
     next();
-    // } else {
-    //   next(false);
-    // }
   },
   mounted() {
-    // if (JSON.stringify(this.$store.state.firstRoomParams) === "{}") {
-    //   console.log("НУЖНО СКАЧАТЬ ДАННЫЕ!");
-    //   this.$store.dispatch();
-    // }
+
   },
   computed: {
     roomNumber() {

@@ -41,9 +41,8 @@ export default {
       res => {
         this.reviewsLoading = false;
       },
-      err => {
+      () => {
         this.reviewsLoading = false;
-        console.log(err);
       }
     );
   }

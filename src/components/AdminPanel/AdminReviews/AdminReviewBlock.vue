@@ -63,8 +63,7 @@ export default {
         res => {
           this.isDeleteLoading = false;
         },
-        err => {
-          console.log(err);
+        () => {
         }
       );
     }

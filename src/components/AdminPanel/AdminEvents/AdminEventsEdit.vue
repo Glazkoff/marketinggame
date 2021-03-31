@@ -427,9 +427,8 @@ export default {
           this.modalVoidLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalVoidLoading = false;
-          console.log(err);
         }
       );
     },
@@ -448,9 +447,8 @@ export default {
           this.modalLoading = false;
           this.onModalClose();
         },
-        err => {
+        () => {
           this.modalLoading = false;
-          console.log(err);
         }
       );
     },
@@ -484,10 +482,9 @@ export default {
             this.isSaveLoading = false;
             this.isEdit = false;
           },
-          err => {
+          () => {
             this.isSaveLoading = false;
             this.isEdit = false;
-            console.log(err);
           }
         );
     },
@@ -511,7 +508,6 @@ export default {
       try {
         await this.$store.dispatch("GET_ADMIN_EVENTS");
       } catch (error) {
-        console.log(error);
       }
     }
   },

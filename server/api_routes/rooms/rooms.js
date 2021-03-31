@@ -466,8 +466,26 @@ function getRoomsRouter(io) {
                     user_in_room_id: userInRoom.user_in_room_id
                   }
                 });
-
-                if (usersState.length !== 0) {
+                // Проверяем, равно ли кол-во ходов
+                // переподключающегося игрока кол-ву ходов других игроков
+                let ownerInRoom = await db.UserInRoom.findOne({
+                  where: {
+                    user_id: room.owner_id,
+                    room_id: room.room_id
+                  }
+                });
+                let ownerState = await db.UserStepState.findAll({
+                  where: {
+                    user_in_room_id: ownerInRoom.user_in_room_id
+                  }
+                });
+                if (
+                  (usersState.length !== 0) && 
+                  (
+                    (ownerState.length == usersState.length && !ownerInRoom.isattacker) ||
+                    (ownerState.length == usersState.length + 1 && ownerInRoom.isattacker)
+                  )
+                ) {
                   // Устанавливаем, что пользователь подключён к комнате
                   await db.UserInRoom.update(
                     {
@@ -482,7 +500,7 @@ function getRoomsRouter(io) {
                   // Отправляем состояние пользователей в комнате
                   sendGamers(io, db, room.room_id);
 
-                  // #region Добавление имени для победителей в Reset
+                  // Добавление имени для победителей в Reset
                   if (room.winners) {
                     for (let index in room.winners) {
                       if (room.winners[index].id !== -1) {
@@ -495,8 +513,6 @@ function getRoomsRouter(io) {
                       }
                     }
                   }
-                  // #endregion
-
                   res.send({
                     room_id: room.room_id,
                     owner_id: room.owner_id,
@@ -509,7 +525,13 @@ function getRoomsRouter(io) {
                     effects: userInRoom.effects
                   });
                 } else {
-                  if (room) {
+                  if (
+                    room && 
+                    (
+                      (ownerState.length == usersState.length && !ownerInRoom.isattacker) ||
+                      (ownerState.length == usersState.length + 1 && ownerInRoom.isattacker)
+                    )
+                  ) {
                     res.send({
                       room_id: room.room_id,
                       owner_id: room.owner_id,
@@ -519,6 +541,14 @@ function getRoomsRouter(io) {
                       gamer_room_params: userInRoom.gamer_room_params,
                       is_finished: room.is_finished,
                       winners: room.winners
+                    });
+                  } else if (
+                    (ownerState.length == usersState.length && !ownerInRoom.isattacker) ||
+                    (ownerState.length == usersState.length + 1 && ownerInRoom.isattacker)
+                  ) {
+                    res.status(403).send({
+                      status: 400,
+                      message: "К сожалению, игра была продолжена без вас."
                     });
                   } else {
                     res.status(404).send({

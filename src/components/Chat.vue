@@ -70,7 +70,6 @@ export default {
       (state, getters) => state.messages,
       (newValue, oldValue) => {
         if (!this.chatOpened) {
-          console.log(newValue.length);
           this.unreadMessCount = newValue.length - this.readCount;
         } else {
           this.readCount = newValue.length;

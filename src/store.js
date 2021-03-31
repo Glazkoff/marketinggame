@@ -86,10 +86,6 @@ const store = new Vuex.Store({
           state.prevRoomParams[k] = state.roomParams[k];
           state.firstRoomParams[k] = state.roomParams[k];
         }
-
-        console.log("FIRST_ROOM_PARAMS: ", state.firstRoomParams);
-        console.log("PREV_ROOM_PARAMS: ", state.prevRoomParams);
-        console.log("ROOM_PARAMS: ", state.roomParams);
       }
     },
     SET_ROOM_ID: (state, roomId) => {
@@ -113,7 +109,6 @@ const store = new Vuex.Store({
       state.ownerId = res.data.owner_id;
       state.isFinish = res.data.is_finished;
       state.winners = res.data.winners;
-      console.log("GAMERS:", res.data);
       if (res.data.gamers !== undefined) {
         state.gamers = [...res.data.gamers.gamers];
       }
@@ -125,15 +120,12 @@ const store = new Vuex.Store({
         });
         state.activeEffects = [...res.data.effects];
       }
-
-      console.log("SET_GAME_PARAMS: ", res);
       let decode = await jwt.decode(state.token);
       if (res.data.owner_id === decode.id) {
         state.isOwner = true;
       }
     },
     SOCKET_SET_GAME_START(state, boolean) {
-      console.log("SET GAME START: ", boolean);
       state.isStart = boolean;
     },
     // Уточнить необходимость
@@ -188,13 +180,19 @@ const store = new Vuex.Store({
     SOCKET_setToast(state, toast) {
     },
     SOCKET_setEffects(state, effects) {
-      console.log("EFFECTS!", effects);
+      let multipleEffects =[];
       effects.forEach(el => {
-        if (el.step === el.duration) {
+        if (el.step === el.duration) 
           state.completedSessions.push(el.id);
-        }
+        let cardOneOff = state.oneOffCardList.find(function(card) {
+          if(card === el.id)
+          return card;
+      })
+        if(!cardOneOff)
+        multipleEffects.push(el);
+        state.activeEffects = [...multipleEffects];
       });
-      state.activeEffects = [...effects];
+
     },
 
     // Выкинуть пользователя с главного экрана
@@ -264,6 +262,13 @@ const store = new Vuex.Store({
         state.oneOffCardList.push(el.card_id);
       });
     },
+    FILTER_ONEOFF_CARD_LIST(state, usedOneOffCardList){
+      if (usedOneOffCardList.length > 0){
+        usedOneOffCardList.forEach((usedCard) =>{
+          state.cards = state.cards.filter((card) => card.id-0 !== usedCard-0)
+        })
+      }
+    },
     SET_ADMIN_CARD_DESCRIPTION(state, data) {
       let cardIndex = state.admin.cards.findIndex(el => +el.id === +data.id);
       state.admin.cards[cardIndex].coefs = data.coefs;
@@ -304,7 +309,6 @@ const store = new Vuex.Store({
           })
             .then(
               resp => {
-                console.log("AUTHORIZATION", resp.data);
                 const token = resp.data.token;
                 localStorage.setItem("user-token", token);
                 axios.defaults.headers.common["Authorization"] = token;
@@ -314,37 +318,19 @@ const store = new Vuex.Store({
                 resolve(token);
               },
               error => {
-                if (error.response) {
-                  console.log(error.response.data);
-                  console.log(error.response.status);
-                  console.log(error.response.headers);
-                  console.log(error.response);
-                  console.log(
-                    `Ошибка сервера ${error.response.status} при ответе`
-                  );
-                } else if (error.request) {
-                  console.log(
-                    `Ошибка сервера ${error.request.status} при запросе`
-                  );
-                  console.log(error.request);
-                } else {
-                  console.log("Error", error.message);
-                }
-                console.log(error.config);
                 context.commit("AUTH_ERROR");
                 delete axios.defaults.headers.common["Authorization"];
                 localStorage.removeItem("user-token"); // если запрос ошибочен, удаление токена в localstorage при возможности
                 reject(error);
               }
             )
-            .catch(error => {
+            .catch(() => {
               console.log("ОШИБКА СЕРВЕРА");
-              console.log(error);
             });
         });
         return prom;
       } catch (err) {
-        console.log(err);
+
       }
     },
     // Удаление всех данных при выходе из учётной записи
@@ -365,11 +351,9 @@ const store = new Vuex.Store({
           method: "GET"
         })
           .then(res => {
-            // console.log(res);
             resolve(res);
           })
           .catch(err => {
-            // console.log('ошибка xзагрузки', err);
             reject(err);
           });
       });
@@ -383,13 +367,11 @@ const store = new Vuex.Store({
           method: "GET"
         })
           .then(res => {
-            console.log("FROM RESETTING ROOM", res);
             state.commit("SET_GAME_PARAMS", res);
             there._vm.$socket.emit("subscribeRoom", res.data.room_id, (res.data.first_params.month !== res.data.gamer_room_params.month || !res.data.is_start));
             resolve(res);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -408,7 +390,6 @@ const store = new Vuex.Store({
             resolve(res.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -424,7 +405,21 @@ const store = new Vuex.Store({
             resolve(res.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
+            reject(err);
+          });
+      });
+    },
+    GET_USED_ONEOFF_CARD_LIST: function (state, res) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/cards/oneoff/used`,
+          method: "GET"
+        })
+          .then(res => {
+            state.commit("FILTER_ONEOFF_CARD_LIST", res.data);
+            resolve(res.data);
+          })
+          .catch(err => {
             reject(err);
           });
       });
@@ -440,7 +435,6 @@ const store = new Vuex.Store({
             resolve(res.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -456,7 +450,6 @@ const store = new Vuex.Store({
             resolve(res.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -471,7 +464,6 @@ const store = new Vuex.Store({
             resolve(res.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -487,7 +479,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -503,10 +494,8 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             resolve(resp);
-            console.log(resp);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -522,7 +511,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -538,7 +526,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -553,7 +540,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -569,7 +555,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -584,7 +569,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -599,7 +583,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -616,7 +599,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -632,7 +614,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -648,7 +629,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -664,7 +644,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -681,7 +660,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -697,7 +675,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -712,7 +689,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -727,7 +703,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -743,7 +718,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -759,7 +733,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -775,7 +748,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -788,12 +760,10 @@ const store = new Vuex.Store({
           data
         })
           .then(resp => {
-            console.log(data);
             state.commit("SET_ADMIN_EVENT_DESCRIPTION", data);
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -810,7 +780,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -826,7 +795,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -842,7 +810,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("ошибка загрузки", err);
             reject(err);
           });
       });
@@ -852,7 +819,6 @@ const store = new Vuex.Store({
       state.commit("SET_GAME_PARAMS", res);
     },
     SOCKET_gameEvent(state, eventObj) {
-      console.log(eventObj);
       state.commit("SOCKET_setGameEvent", eventObj);
     },
 
@@ -867,10 +833,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log(
-              "Ошибка получения информации о последней комнате: ",
-              err
-            );
             reject(err);
           });
       });
@@ -887,7 +849,6 @@ const store = new Vuex.Store({
             resolve(resp.data);
           })
           .catch(err => {
-            console.log("Ошибка выхода из последней комнаты: ", err);
             reject(err);
           });
       });

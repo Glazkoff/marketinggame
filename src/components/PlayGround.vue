@@ -210,7 +210,8 @@
     <!-- Конец Поле для карточек -->
     <!-- Список игроков -->
     <div id="enemy-field" v-bind:class="{startedG: isStart}" v-if="!isStart">
-      <GamerList :usedCards="usedCards" :refreshCards="refreshCards" @usedCardsManual="usedCardsManualReset"></GamerList>
+      <GamerList :usedCards="usedCards" :refreshCards="refreshCards"
+                 @usedCardsManual="usedCardsManualReset"></GamerList>
     </div>
     <!-- Конец список игроков -->
     <!-- Спиок действующих эффектов -->
@@ -435,7 +436,7 @@ export default {
       this.usedCards = [];
       this.$store.commit("SET_CARDS", [...this.refreshCards]);
     },
-    usedCardsManualReset(){
+    usedCardsManualReset() {
       this.usedCards = []
     },
     // **** Ниже необработанные методы ******
@@ -492,18 +493,17 @@ export default {
       this.playAnimation();
     },
     getCards() {
-      console.log("GET CARDS!");
       this.cardsLoading = true;
       this.$store.dispatch("GET_CARDS").then(
         res => {
           this.refreshCards = [...res];
           this.cardsLoading = false;
         },
-        err => {
+        () => {
           this.cardsLoading = false;
-          console.log(err);
         }
       );
+      this.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
     },
     updateWidth() {
       this.width = window.innerWidth;
@@ -517,17 +517,17 @@ export default {
           vm.refreshCards = [...res];
           vm.cardsLoading = false;
         },
-        err => {
+        () => {
           vm.cardsLoading = false;
-          console.log(err);
         }
       );
+      vm.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
     });
   }
 };
 </script>
 
-<style>
+<style lang="css">
 .started {
   grid-area: 1/1/span 3/span 3 !important;
   padding-bottom: 3rem;
@@ -893,9 +893,6 @@ export default {
     padding: 2px 0 2px 8px !important;
   }
 
-  #gamerlist .list-group-item:nth-child(2) {
-    padding: .5rem !important;
-  }
 
   #card-field {
     display: flex;
@@ -908,9 +905,14 @@ export default {
     min-height: 20rem;
   }
 
+  #gamerlist {
+    min-height: 19rem;
+  }
+
   #effects-field {
     display: flex;
     width: 100% !important;
+    min-height: 20rem;
   }
 
   #enemy-field, #effects-field, #card-field {

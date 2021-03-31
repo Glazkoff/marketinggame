@@ -237,7 +237,6 @@ export default {
       this.$store.dispatch("GET_ADMIN_ROOMS").then(
         res => {
           this.roomLoading = false;
-          console.log(res);
           let index = this.$store.state.admin.rooms.findIndex(el => {
             return +el.room_id === +this.$route.params.id;
           });
@@ -250,9 +249,8 @@ export default {
                 res => {
                   this.loading = false;
                 },
-                err => {
+                () => {
                   this.loading = false;
-                  console.log(err);
                 }
               );
           } else {
@@ -264,16 +262,14 @@ export default {
                   this.room = res[1];
                   this.roomLoading = false;
                 },
-                err => {
+                () => {
                   this.roomLoading = false;
-                  console.log(err);
                 }
               );
           }
         },
-        err => {
+        () => {
           this.roomLoading = false;
-          console.log(err);
         }
       );
     }
@@ -293,19 +289,6 @@ export default {
         }
       } else {
         vm.loadState();
-        // vm.room = vm.$store.state.admin.rooms[index];
-        // vm.loading = true;
-        // vm.$store
-        //   .dispatch("GET_ADMIN_USERS_IN_ROOMS", vm.$route.params.id)
-        //   .then(
-        //     res => {
-        //       vm.loading = false;
-        //     },
-        //     err => {
-        //       vm.loading = false;
-        //       console.log(err);
-        //     }
-        //   );
         return true;
       }
     });
@@ -315,13 +298,9 @@ export default {
 
 <style scoped>
 .users-state-wrap {
-  /* width: 100vw; */
-  /* max-width: 100vw; */
   overflow-x: scroll;
-  /* padding-right: 10rem; */
 }
 .users-state-wrap table {
-  /* width: 90%; */
   display: block;
 }
 .row {
