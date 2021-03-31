@@ -113,12 +113,20 @@ const store = new Vuex.Store({
         state.gamers = [...res.data.gamers.gamers];
       }
       if (res.data.effects !== undefined) {
+        let multipleEffects = [];
         res.data.effects.forEach(el => {
           if (el.step === el.duration) {
             state.completedSessions.push(el.id);
+            let card = state.cards.filter(function(card) {
+              if(card.id === el.id)
+              return card;
+          })
+            if(!card.oneOff)
+            multipleEffects.push(card);
+           
           }
         });
-        state.activeEffects = [...res.data.effects];
+        state.activeEffects = [...multipleEffects];
       }
       let decode = await jwt.decode(state.token);
       if (res.data.owner_id === decode.id) {
@@ -180,12 +188,19 @@ const store = new Vuex.Store({
     SOCKET_setToast(state, toast) {
     },
     SOCKET_setEffects(state, effects) {
+      let multipleEffects =[];
       effects.forEach(el => {
-        if (el.step === el.duration) {
+        if (el.step === el.duration) 
           state.completedSessions.push(el.id);
-        }
+        let cardOneOff = state.oneOffCardList.find(function(card) {
+          if(card === el.id)
+          return card;
+      })
+        if(!cardOneOff)
+        multipleEffects.push(el);
+        state.activeEffects = [...multipleEffects];
       });
-      state.activeEffects = [...effects];
+
     },
 
     // Выкинуть пользователя с главного экрана
