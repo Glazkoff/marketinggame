@@ -182,7 +182,7 @@ const store = new Vuex.Store({
     SOCKET_setEffects(state, effects) {
       let multipleEffects =[];
       effects.forEach(el => {
-        if (el.step === el.duration) 
+        if (el.step === el.duration)
           state.completedSessions.push(el.id);
         let cardOneOff = state.oneOffCardList.find(function(card) {
           if(card === el.id)
@@ -265,7 +265,7 @@ const store = new Vuex.Store({
     FILTER_ONEOFF_CARD_LIST(state, usedOneOffCardList){
       if (usedOneOffCardList.length > 0){
         usedOneOffCardList.forEach((usedCard) =>{
-          state.cards = state.cards.filter((card) => card.id-0 !== usedCard-0)
+          state.cards = state.cards.filter((card) => card.id !== usedCard)
         })
       }
     },

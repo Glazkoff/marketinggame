@@ -111,6 +111,7 @@ export default {
       }
       this.$emit('usedCardsManual');
       this.$store.commit("SET_CARDS", [...this.refreshCards]);
+        await this.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
       }
     },
     kickUser(gamer) {

@@ -435,6 +435,7 @@ export default {
       }
       this.usedCards = [];
       this.$store.commit("SET_CARDS", [...this.refreshCards]);
+      await this.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
     },
     usedCardsManualReset() {
       this.usedCards = []
