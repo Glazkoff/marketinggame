@@ -131,14 +131,14 @@ function getRoomsRouter(io) {
               });
             } else {
               // Проверяем, не началась ли игра в комнате
-              if (!findRoom.is_start) {
+              if (!findRoom.is_start && !findRoom.is_finished) {
                 res.status(404).send({
                   status: 404,
                   message: "Игра в комнате уже началась!"
                 });
               } else {
                 // Проверяем, не была ли игра завершена
-                if (findRoom.is_finished) {
+                if (!findRoom.is_start && findRoom.is_finished) {
                   res.status(400).send({
                     status: 400,
                     message: "Игра в комнате была завершена!"
