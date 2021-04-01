@@ -130,35 +130,7 @@ function getRoomsRouter(io) {
                 message: "Такой комнаты не существует!"
               });
             } else {
-              // Проверяем, не началась ли игра в комнате
-              if (!findRoom.is_start && !findRoom.is_finished) {
-                res.status(404).send({
-                  status: 404,
-                  message: "Игра в комнате уже началась!"
-                });
-              } else {
-                // Проверяем, не была ли игра завершена
-                if (!findRoom.is_start && findRoom.is_finished) {
-                  res.status(400).send({
-                    status: 400,
-                    message: "Игра в комнате была завершена!"
-                  });
-                } else {
-                  // Получаем объект пользователя
-                  let user = await db.User.findOne({
-                    where: {
-                      user_id: decoded.id
-                    }
-                  });
-
-                  if (user !== null) {
-                    // Если не было последней комнаты
-                    // или последняя комната равняется искомой
-                    if (
-                      !user.last_room ||
-                      user.last_room === findRoom.room_id
-                    ) {
-                      const Op = Sequelize.Op;
+              const Op = Sequelize.Op;
 
                       // Находим объект, если пользователь выкинут вручную
                       let iskickedUser = await db.Room.findOne({
@@ -179,6 +151,35 @@ function getRoomsRouter(io) {
                           }
                         ]
                       });
+              // Проверяем, не началась ли игра в комнате
+              if (!findRoom.is_start && !findRoom.is_finished && !iskickedUser) {
+                res.status(404).send({
+                  status: 404,
+                  message: "Игра в комнате уже началась!"
+                });
+              } else {
+                // Проверяем, не была ли игра завершена
+                if (!findRoom.is_start && findRoom.is_finished && !iskickedUser) {
+                  res.status(400).send({
+                    status: 400,
+                    message: "Игра в комнате была завершена!"
+                  });
+                } else {
+                  // Получаем объект пользователя
+                  let user = await db.User.findOne({
+                    where: {
+                      user_id: decoded.id
+                    }
+                  });
+
+                  if (user !== null) {
+                    // Если не было последней комнаты
+                    // или последняя комната равняется искомой
+                    if (
+                      !user.last_room ||
+                      user.last_room === findRoom.room_id
+                    ) {
+                      
 
                       // Проверяем, если пользователь не выкинут вручную
                       if (!iskickedUser) {
