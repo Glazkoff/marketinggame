@@ -370,6 +370,7 @@ module.exports = {
               id: cardId,
               name: card.title,
               step: 1,
+              oneOff: card.oneOff,
               duration: card.duration
             };
             gamer.effects.push(effectObj);
@@ -399,6 +400,7 @@ module.exports = {
               id: cardId,
               name: card.title,
               step: 1,
+              oneOff: card.oneOff,
               duration: card.duration
             };
 

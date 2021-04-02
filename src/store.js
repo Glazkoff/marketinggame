@@ -180,19 +180,13 @@ const store = new Vuex.Store({
     SOCKET_setToast(state, toast) {
     },
     SOCKET_setEffects(state, effects) {
-      let multipleEffects =[];
       effects.forEach(el => {
-        if (el.step === el.duration)
+        if (el.step === el.duration && !el.oneOff) {
           state.completedSessions.push(el.id);
-        let cardOneOff = state.oneOffCardList.find(function(card) {
-          if(card === el.id)
-          return card;
-      })
-        if(!cardOneOff)
-        multipleEffects.push(el);
-        state.activeEffects = [...multipleEffects];
+        }
       });
-
+      effects = effects.filter(el => !el.oneOff)
+      state.activeEffects = [...effects];
     },
 
     // Выкинуть пользователя с главного экрана
