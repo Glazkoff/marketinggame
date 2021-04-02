@@ -18,6 +18,7 @@ import AdminEventsList from "./components/AdminPanel/AdminEvents/AdminEventsList
 import AdminReviews from "./components/AdminPanel/AdminReviews/AdminReviews.vue";
 
 import store from "./store";
+import ChooseRate from "@/components/Choose/ChooseRate";
 
 Vue.use(Router);
 
@@ -66,6 +67,11 @@ export default new Router({
           /* webpackChunkName: "registration" */
           "./components/Registration.vue"
         )
+    },
+    {
+      path: "/tarif",
+      name: "ChooseRate",
+      component: ChooseRate
     },
     {
       path: "/admin",

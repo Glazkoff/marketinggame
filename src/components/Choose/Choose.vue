@@ -9,6 +9,10 @@
       @close="onCloseCheckModal()"
       :errorMessage="errorMessage"
     ></CheckModal>
+    <Trial
+      v-if="showTrialModal"
+      @close="onCloseTrialModal()"
+    ></Trial>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
     <LastRoomCheck v-on:setRoomId="setRoomJoin"></LastRoomCheck>
@@ -86,7 +90,51 @@
           Присоединиться
         </button>
       </div>
-      <div class v-if="toggle == 'create' && !loading">
+      <div class="room-create" v-if="toggle == 'create' && !loading">
+        <div class="alert-info rounded p-3 text-center" v-if="!this.isSubscribed">
+          <h2>
+            Создавать игры можно только с подпиской
+          </h2>
+          <div class="btn-group-toggle m-3"
+               :class="{'btn-group-vertical': this.width<500, 'btn-group':this.width>=500 }">
+            <label
+              class="btn btn-lg border"
+              :class="{
+          'btn-info': this.toggle != 'chooseRate',
+          'btn-outline-info': this.toggle == 'getTrial'
+        }"
+              @click="onShowTrialModal()"
+            >
+              <input
+                type="radio"
+                v-model="buy"
+                value="getTrial"
+                name="trial"
+                id="toggle3"
+                autocomplete="off"
+              />
+              Получить пробный период
+            </label>
+
+            <label
+              class="btn btn-lg border border-left"
+              :class="{
+          'btn-info': this.toggle != 'getTrial',
+          'btn-outline-info': this.toggle == 'chooseRate'
+        }"
+            ><router-link to="tarif">
+              <input
+                type="radio"
+                v-model="buy"
+                value="chooseRate"
+                name="trial"
+                id="toggle4"
+                autocomplete="off"
+              /></router-link>Выбрать тариф
+            </label>
+          </div>
+        </div>
+        <div v-if="this.isSubscribed">
         <label for="month" class>Количество месяцев</label>
         <br/>
         <input
@@ -173,6 +221,7 @@
           Создать
         </button>
       </div>
+      </div>
     </transition>
     <div class="loader-wrap" v-if="loading">
       <Loader></Loader>
@@ -180,6 +229,7 @@
     <button class="btn btn-link text-right mt-2" @click="onShowReviewModal()">
       Оставить отзыв
     </button>
+    
   </div>
 </template>
 
@@ -189,7 +239,9 @@ import Loader from "@/components/Loader.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
 import CheckModal from "@/components/CheckModal.vue";
 import LastRoomCheck from "@/components/Choose/LastRoomCheck.vue";
+import Trial from "@/components/Choose/Trial";
 import {required} from "vuelidate/lib/validators";
+
 
 let apiUrl = "/api";
 export default {
@@ -197,6 +249,9 @@ export default {
   data() {
     return {
       toggle: "join",
+      buy: "getRate",
+      isSubscribed: false,
+      showTrialModal: false,
       roomIdJoin: "",
       roomParams: "",
       loading: false,
@@ -221,6 +276,7 @@ export default {
     }
   },
   components: {
+    Trial,
     Loader,
     ReviewModal,
     CheckModal,
@@ -254,6 +310,13 @@ export default {
     window.addEventListener('resize', this.updateWidth);
   },
   methods: {
+    onCloseTrialModal() {
+      this.showTrialModal = false;
+    },
+    onShowTrialModal() {
+      this.showTrialModal = true;
+      this.isSubscribed = true;
+    },
     onCloseReviewModal() {
       this.showReviewModal = false;
     },
@@ -354,6 +417,8 @@ export default {
 </script>
 
 <style>
+
+
 @media screen and (max-width: 575px) {
   .card.container {
     border: 0px !important;
