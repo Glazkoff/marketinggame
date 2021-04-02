@@ -5,7 +5,7 @@
         <h5>Пробный период</h5>
       </template>
       <template v-slot:body>
-        <h1 class="text-success">Тут будет таймер до окончания пробного периода</h1>
+        <p>Тут будет таймер до окончания пробного периода</p>
       </template>
       <template v-slot:footer>
         <button type="button" class="btn btn-success" @click="sendClose()">
