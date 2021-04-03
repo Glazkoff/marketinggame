@@ -4,14 +4,17 @@
       <div class="col-xs p-3">
       <div class="step d-flex flex-column align-items-center">
         <h3 :class="{
-            'text-success': this.action == 'domen' || this.action == 'final'
-        }" class="text-center text-primary">Выберите тариф</h3>
+            'text-success': this.action == 'domen' || this.action == 'final',
+            'text-info': this.action == 'tarif'
+        }" class=" text-center ">Выберите тариф</h3>
         <div
          :class="{
             active: this.action == 'tarif',
-            'bg-success': this.action == 'domen' || this.action == 'final'
+            'bg-info': this.action == 'tarif',
+            'bg-success': this.action == 'domen' || this.action == 'final',
+            
         }"
-          class="step-round bg-primary text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>1</h1></div>
+          class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>1</h1></div>
       </div>
       <div v-if="this.action == 'tarif'" class="choose-tarif">
         <div class="card text-center">
@@ -27,32 +30,36 @@
             </div>
           </div>
           <div class="card-footer">
-            <button type="button" class="btn btn-primary" @click="changeAction()">Выбрать тариф</button>
+            <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
           </div>
         </div>
         </div>
       </div>
       <div class="col-xs d-flex justify-content-between mini-round-wrapper">
       <div :class="{
-            'border-success': this.action == 'domen' || this.action == 'final'
-        }" class="mini-round border border-primary rounded-circle m-1"></div>
+            'border-success': this.action == 'domen' || this.action == 'final',
+            'border-info': this.action == 'tarif'
+        }" class="mini-round border rounded-circle m-1"></div>
       <div :class="{
             'bg-success': this.action == 'domen' || this.action == 'final',
-            'border-success': this.action == 'domen' || this.action == 'final'
-        }" class="mini-round border border-primary rounded-circle m-1"></div>
+            'border-success': this.action == 'domen' || this.action == 'final',
+            'border-info': this.action == 'tarif'
+        }" class="mini-round border rounded-circle m-1"></div>
       </div>
       
       <div class="col-xs p-3">
       <div class="step d-flex flex-column align-items-center">
         <h3 :class="{
-            'text-success': this.action == 'final'
-        }" class="text-center text-primary">Выберите поддомен</h3>
+            'text-success': this.action == 'final',
+            'text-info': this.action == 'domen' || this.action == 'tarif'
+        }" class="text-center">Выберите поддомен</h3>
         <div
           :class="{
             active: this.action == 'domen',
+            'bg-info': this.action == 'domen' || this.action == 'tarif',
             'bg-success': this.action == 'final'
         }"
-          class="step-round bg-primary text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>2</h1></div>
+          class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>2</h1></div>
       </div>
       <div v-if="this.action == 'tarif'" class="choose-tarif">
       <div class="card text-center">
@@ -68,28 +75,29 @@
             </div>
           </div>
           <div class="card-footer">
-            <button type="button" class="btn btn-primary">Выбрать тариф</button>
+            <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
           </div>
         </div>
         </div>
        </div>
         <div class="col-xs d-flex justify-content-between mini-round-wrapper">
       <div :class="{
-            'border-success': this.action == 'final'
-        }" class="mini-round border border-primary rounded-circle m-1"></div>
+            'border-success': this.action == 'final',
+             'border-info': this.action == 'tarif' || this.action == 'domen'
+        }" class="mini-round border rounded-circle m-1"></div>
       <div :class="{
             'bg-success': this.action == 'final',
             'border-success': this.action == 'final'
-        }" class="mini-round border border-primary rounded-circle m-1"></div>
+        }" class="mini-round border border-info rounded-circle m-1"></div>
       </div>
       <div class="col-xs p-3">
       <div class="step d-flex flex-column align-items-center">
-        <h3 class="text-center text-primary">Оплатите подписку</h3>
+        <h3 class="text-center text-info">Оплатите подписку</h3>
         <div
           :class="{
           active: this.action == 'final'
         }"
-          class="step-round bg-primary text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>3</h1></div>
+          class="step-round bg-info text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>3</h1></div>
       </div>
       <div v-if="this.action == 'tarif'" class="choose-tarif">
        <div class="card text-center">
@@ -105,7 +113,7 @@
             </div>
           </div>
           <div class="card-footer">
-            <button type="button" class="btn btn-primary">Выбрать тариф</button>
+            <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
           </div>
         </div>
       </div>
@@ -120,7 +128,7 @@
               <span class="input-group-text" id="basic-addon2">.imgames.ru</span>
             </div>
           </div>
-          <button class="btn btn-dark" @click="changeAction()">Выбрать</button>
+          <button class="btn btn-outline-info w-100 mt-2" @click="changeAction()">Выбрать</button>
         </div>
       </div>
     </div>
@@ -176,7 +184,7 @@ animation: pulse 2s ease-in-out infinite;
   
 }
 .mini-round:nth-child(2n){
-  background-color: #007bff;
+  background-color: #5bc0de;
   opacity: 0.5;
 }
 @keyframes pulse {
