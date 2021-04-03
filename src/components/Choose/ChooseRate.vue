@@ -1,12 +1,12 @@
 <template>
-<div class="container">
+<div class="container d-flex flex-column justify-content-center align-items-center">
     <div class="justify-content-center align-items-center mx-5 row">
-      <div class="col-xs p-3">
+      <div class="col-sm p-3">
       <div class="step d-flex flex-column align-items-center">
         <h3 :class="{
             'text-success': this.action == 'domen' || this.action == 'final',
             'text-info': this.action == 'tarif'
-        }" class=" text-center ">Выберите тариф</h3>
+        }" class=" text-center" style="white-space: nowrap">Выберите тариф</h3>
         <div
          :class="{
             active: this.action == 'tarif',
@@ -35,7 +35,7 @@
         </div>
         </div>
       </div>
-      <div class="col-xs d-flex justify-content-between mini-round-wrapper">
+      <div class="d-flex justify-content-between mini-round-wrapper">
       <div :class="{
             'border-success': this.action == 'domen' || this.action == 'final',
             'border-info': this.action == 'tarif'
@@ -47,12 +47,12 @@
         }" class="mini-round border rounded-circle m-1"></div>
       </div>
       
-      <div class="col-xs p-3">
+      <div class="col-sm p-3">
       <div class="step d-flex flex-column align-items-center">
         <h3 :class="{
             'text-success': this.action == 'final',
             'text-info': this.action == 'domen' || this.action == 'tarif'
-        }" class="text-center">Выберите поддомен</h3>
+        }" class="text-center" style="white-space: nowrap">Выберите поддомен</h3>
         <div
           :class="{
             active: this.action == 'domen',
@@ -80,7 +80,7 @@
         </div>
         </div>
        </div>
-        <div class="col-xs d-flex justify-content-between mini-round-wrapper">
+        <div class="d-flex justify-content-between mini-round-wrapper">
       <div :class="{
             'border-success': this.action == 'final',
              'border-info': this.action == 'tarif' || this.action == 'domen'
@@ -90,9 +90,9 @@
             'border-success': this.action == 'final'
         }" class="mini-round border border-info rounded-circle m-1"></div>
       </div>
-      <div class="col-xs p-3">
+      <div class="col-sm p-3">
       <div class="step d-flex flex-column align-items-center">
-        <h3 class="text-center text-info">Оплатите подписку</h3>
+        <h3 class="text-center text-info" style="white-space: nowrap">Оплатите подписку</h3>
         <div
           :class="{
           active: this.action == 'final'
@@ -118,8 +118,8 @@
         </div>
       </div>
       </div>
-    
-    <div v-if="this.action == 'domen'" class="choose-domen">
+    </div>
+    <div v-if="this.action == 'domen'" class="choose-domen w-50">
       <div class="card">
         <div class="card-body">
           <div class="input-group">
@@ -134,7 +134,6 @@
     </div>
     <div v-if="this.action == 'final'" class="final">
       <h1>*процесс оплаты*</h1>
-    </div>
     </div>
     </div>
 </template>
@@ -174,6 +173,7 @@ export default {
   height: 100px;
   
 }
+
 .active{
 animation: pulse 2s ease-in-out infinite;
 
