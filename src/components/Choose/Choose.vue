@@ -226,10 +226,14 @@
     <div class="loader-wrap" v-if="loading">
       <Loader></Loader>
     </div>
-    <button class="btn btn-link text-right mt-2" @click="onShowReviewModal()">
+    <div class="d-flex justify-content-between">
+     <button class="btn btn-link" v-if="isSubscribed" @click="onUnsubscribe()">
+      Отменить подписку
+    </button>
+    <button class="btn btn-link" @click="onShowReviewModal()">
       Оставить отзыв
     </button>
-    
+    </div>
   </div>
 </template>
 
@@ -329,6 +333,9 @@ export default {
     onShowCheckModal() {
       this.showCheckModal = true;
     },
+    onUnsubscribe(){
+      this.isSubscribed = false;
+    }, 
     logout() {
       try {
         this.$store
