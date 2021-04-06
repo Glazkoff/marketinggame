@@ -478,8 +478,8 @@ animation: pulse 2s ease-in-out infinite;
   background-color: #000;
   z-index: -1;
   border-radius: 8px;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.2);
 }
 </style>
