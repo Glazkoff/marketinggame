@@ -133,19 +133,90 @@
       </div>
     </div>
     <div v-if="this.action == 'final'" class="final">
-      <h1>*процесс оплаты*</h1>
+      <div id="card-success" class="hidden">
+  <i class="fa fa-check"></i>
+  <p>Оплата прошла успешно!</p>
+</div>
+<div id="form-errors" class="hidden">
+  <i class="fa fa-exclamation-triangle"></i>
+  <p id="card-error">Ошибка!</p>
+</div>
+<div id="form-container" :style="{color: cardInfo.textColor}">
+
+  <div id="card-front" :style="{'background-color': cardInfo.backgroundColor}">
+    <div id="shadow"></div>
+    <div id="image-container">
+      <span id="amount">К оплате: <strong>много денег</strong></span>
+        <img v-if="cardInfo.bankLogo" id="card-image" :src="cardInfo.bankLogo" alt="logo of bank">
+
+    </div>
+    <!--- end card image container --->
+
+    <label for="card-number">
+        Номер карты
+      </label>
+    <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number" placeholder="1234 5678 9101 1112" length="16">
+    <div class="d-flex justify-content-between row">
+    <div id="cardholder-container" class="col-8">
+      <label for="card-holder">Владелец карты
+      </label>
+      <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV" />
+    </div>
+    <!--- end card holder container --->
+    <div id="exp-container" class="col-4">
+      <label for="card-exp">
+          Срок действия
+        </label>
+        <div class="row">
+      <input id="card-month" class="col mr-1"  type="number"  placeholder="MM" length="2">
+      <input id="card-year" class="col" type="number" placeholder="YY" length="2">
+      </div>
+    </div>
+    </div>
+        <div id="cvc-container">
+      <label for="card-cvc">{{cardInfo.codeName}}</label>
+      <input id="card-cvc" placeholder="XXX-X" type="text" :length="cardInfo.codeLength">
+    </div>
+    <!--- end CVC container --->
+    <!--- end exp container --->
+  </div>
+  <!--- end card front --->
+  <div id="card-back" :style="{'background-color': cardInfo.backgroundColor}">
+    <div id="card-stripe">
+    </div>
+
+  </div>
+  <!--- end card back --->
+  <input type="text" id="card-token" />
+  <button type="button" id="card-btn" class="btn btn-light">Подтвердить</button>
+
+</div>
     </div>
     </div>
 </template>
-
 <script>
-
+import CardInfo from 'card-info'
 export default {
   name: "ChooseRate",
   data() {
     return {
       action: "tarif",
+      number: this.number,
+      mm: this.mm,
+      yy: this.yy
+
     }
+  },
+  computed:{
+    cardInfo: function(){
+      CardInfo.setDefaultOptions({
+      banksLogosPath: '/banks-logos/',
+      brandsLogosPath: '/brands-logos/'
+    });
+    let cardInfo = new CardInfo(this.number);
+    return cardInfo;
+    },
+
   },
   components: {},
   methods: {
@@ -206,5 +277,216 @@ animation: pulse 2s ease-in-out infinite;
 .done{
   background: green;
   color: white;
+}
+#amount {
+  font-size: 12px;
+}
+
+#card-back {
+  top: 40px;
+  right: 0;
+  z-index: -2;
+}
+
+#card-btn {
+  position: absolute;
+  bottom: -55px;
+  right: 0;
+  width: 150px;
+  border-radius: 8px;
+  height: 42px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+#card-cvc {
+  width: 60px;
+  margin-bottom: 0;
+}
+
+#card-front,
+#card-back {
+  position: absolute;
+  width: 390px;
+  height: 250px;
+  border-radius: 6px;
+  padding: 20px 30px 0;
+  box-sizing: border-box;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 300;
+}
+
+#card-image {
+  float: right;
+  height: 100%;
+  width: 50%;
+}
+
+#card-number,
+#card-holder {
+  width: 100%;
+}
+
+#card-stripe {
+  width: 100%;
+  height: 55px;
+  background-color: #3d5266;
+  position: absolute;
+  right: 0;
+}
+
+#card-token {
+  display: none;
+}
+
+
+
+
+#cvc-container {
+  position: absolute;
+  width: 110px;
+  right: -115px;
+  bottom: -10px;
+  padding-left: 20px;
+  box-sizing: border-box;
+}
+
+#cvc-container label {
+  width: 100%;
+}
+
+#cvc-container p {
+  font-size: 6px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  letter-spacing: .5px;
+}
+
+#form-container {
+  margin: auto;
+  width: 500px;
+  height: 290px;
+  position: relative;
+}
+
+#form-errors {
+  color: #eb0000;
+}
+
+#form-errors,
+#card-success {
+  width: 500px;
+  margin: 0 auto 10px;
+  height: 50px;
+  border-radius: 8px;
+  padding: 0 20px;
+  font-weight: 400;
+  box-sizing: border-box;
+  line-height: 46px;
+  letter-spacing: .5px;
+  text-transform: none;
+}
+
+#form-errors p,
+#card-success p {
+  margin: 0 5px;
+  display: inline-block;
+}
+
+.hidden {
+  display: none;
+}
+
+#image-container {
+  width: 100%;
+  position: relative;
+  height: 55px;
+  margin-bottom: 5px;
+  line-height: 55px;
+}
+
+#image-container img {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+input {
+  border: none;
+  outline: none;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  margin: 0 0 25px;
+  font-size: 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  letter-spacing: .7px;
+}
+
+input::-webkit-input-placeholder {
+  color: #fff;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+
+input:-moz-placeholder {
+  color: #fff;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+
+input::-moz-placeholder {
+  color: #fff;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+
+input:-ms-input-placeholder {
+  color: #fff;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+
+input.invalid {
+  border: solid 2px #eb0000;
+  height: 34px;
+}
+
+label {
+  display: block;
+  margin: 0 auto 7px;
+}
+
+#shadow {
+  position: absolute;
+  right: 0;
+  width: 284px;
+  height: 214px;
+  top: 36px;
+  background-color: #000;
+  z-index: -1;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 </style>
