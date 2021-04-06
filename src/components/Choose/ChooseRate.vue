@@ -143,7 +143,7 @@
 </div>
 <div id="form-container" :style="{color: cardInfo.textColor}">
 
-  <div id="card-front" :style="{'background-color': cardInfo.backgroundColor}">
+  <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
     <div id="shadow"></div>
     <div id="image-container">
       <span id="amount">К оплате: <strong>много денег</strong></span>
@@ -181,14 +181,14 @@
     <!--- end exp container --->
   </div>
   <!--- end card front --->
-  <div id="card-back" :style="{'background-color': cardInfo.backgroundColor}">
+  <div id="card-back" :style="{'background': cardInfo.backgroundGradient}">
     <div id="card-stripe">
     </div>
 
   </div>
   <!--- end card back --->
   <input type="text" id="card-token" />
-  <button type="button" id="card-btn" class="btn btn-light">Подтвердить</button>
+  <button type="button" id="card-btn" class="btn btn-success">Подтвердить</button>
 
 </div>
     </div>
