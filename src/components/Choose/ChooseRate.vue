@@ -345,9 +345,6 @@ animation: pulse 2s ease-in-out infinite;
   display: none;
 }
 
-
-
-
 #cvc-container {
   position: absolute;
   width: 110px;
@@ -355,10 +352,6 @@ animation: pulse 2s ease-in-out infinite;
   bottom: -10px;
   padding-left: 20px;
   box-sizing: border-box;
-}
-
-#cvc-container label {
-  width: 100%;
 }
 
 #cvc-container p {
@@ -417,7 +410,7 @@ animation: pulse 2s ease-in-out infinite;
   top: 0;
 }
 
-input {
+#form-container input {
   border: none;
   outline: none;
   height: 30px;
@@ -430,7 +423,7 @@ input {
   letter-spacing: .7px;
 }
 
-input::-webkit-input-placeholder {
+#form-container input::-webkit-input-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -439,7 +432,7 @@ input::-webkit-input-placeholder {
   font-size: 10px;
 }
 
-input:-moz-placeholder {
+#form-container input:-moz-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -448,7 +441,7 @@ input:-moz-placeholder {
   font-size: 10px;
 }
 
-input::-moz-placeholder {
+#form-container input::-moz-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -457,7 +450,7 @@ input::-moz-placeholder {
   font-size: 10px;
 }
 
-input:-ms-input-placeholder {
+#form-container input:-ms-input-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -466,12 +459,12 @@ input:-ms-input-placeholder {
   font-size: 10px;
 }
 
-input.invalid {
+#form-container input.invalid {
   border: solid 2px #eb0000;
   height: 34px;
 }
 
-label {
+#form-container label {
   display: block;
   margin: 0 auto 7px;
 }
