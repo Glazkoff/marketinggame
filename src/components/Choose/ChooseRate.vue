@@ -170,7 +170,10 @@
     </div>
   </div>
   <button type="button" id="card-btn" class="btn btn-success" @click="onShowPaymentModal">Подтвердить</button>
-   <Modal v-if="showPaymentModal" @close="sendClose()">
+   
+</div>
+    </div>
+    <Modal v-if="showPaymentModal" @close="sendClose()">
       <template v-slot:header>
         <h5>Оплата прошла успешно!</h5>
       </template>
@@ -179,13 +182,12 @@
       </template>
       <template v-slot:footer>
         <button type="button" class="btn btn-success" @click="onClosePaymentModal">
-          Спасибо
+          Спасибо!
         </button>
       </template>
     </Modal>
-</div>
     </div>
-    </div>
+    
 </template>
 <script>
 import CardInfo from 'card-info'
