@@ -125,7 +125,7 @@
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Введите поддомен">
             <div class="input-group-append">
-              <span class="input-group-text" id="basic-addon2">.imgames.ru</span>
+              <span class="input-group-text">.imgames.ru</span>
             </div>
           </div>
           <button class="btn btn-outline-info w-100 mt-2" @click="changeAction()">Выбрать</button>
@@ -133,61 +133,42 @@
       </div>
     </div>
     <div v-if="this.action == 'final'" class="final">
-      <div id="card-success" class="hidden">
-  <i class="fa fa-check"></i>
-  <p>Оплата прошла успешно!</p>
-</div>
-<div id="form-errors" class="hidden">
-  <i class="fa fa-exclamation-triangle"></i>
-  <p id="card-error">Ошибка!</p>
-</div>
 <div id="form-container" :style="{color: cardInfo.textColor}">
-
   <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
     <div id="shadow"></div>
     <div id="image-container">
       <span id="amount">К оплате: <strong>много денег</strong></span>
         <img v-if="cardInfo.bankLogo" id="card-image" :src="cardInfo.bankLogo" alt="logo of bank">
-
     </div>
-    <!--- end card image container --->
-
     <label for="card-number">
         Номер карты
       </label>
-    <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number" placeholder="1234 5678 9101 1112" length="16">
+    <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number" :placeholder="cardInfo.numberMask" :maxlength="cardInfo.numberLengths">
     <div class="d-flex justify-content-between row">
     <div id="cardholder-container" class="col-8">
       <label for="card-holder">Владелец карты
       </label>
       <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV" />
     </div>
-    <!--- end card holder container --->
     <div id="exp-container" class="col-4">
       <label for="card-exp">
           Срок действия
         </label>
         <div class="row">
-      <input id="card-month" class="col mr-1"  type="number"  placeholder="MM" length="2">
-      <input id="card-year" class="col" type="number" placeholder="YY" length="2">
+      <input id="card-month" class="col mr-1"  type="text"  placeholder="MM" maxlength="2">
+      <input id="card-year" class="col" type="text" placeholder="YY" maxlength="2">
       </div>
     </div>
     </div>
         <div id="cvc-container">
       <label for="card-cvc">{{cardInfo.codeName}}</label>
-      <input id="card-cvc" placeholder="XXX-X" type="text" :length="cardInfo.codeLength">
+      <input id="card-cvc"  type="text" :maxlength="cardInfo.codeLength">
     </div>
-    <!--- end CVC container --->
-    <!--- end exp container --->
   </div>
-  <!--- end card front --->
   <div id="card-back" :style="{'background': cardInfo.backgroundGradient}">
     <div id="card-stripe">
     </div>
-
   </div>
-  <!--- end card back --->
-  <input type="text" id="card-token" />
   <button type="button" id="card-btn" class="btn btn-success" @click="onShowPaymentModal">Подтвердить</button>
    <Modal v-if="showPaymentModal" @close="sendClose()">
       <template v-slot:header>
@@ -364,10 +345,6 @@ animation: pulse 2s ease-in-out infinite;
   right: 0;
 }
 
-#card-token {
-  display: none;
-}
-
 #cvc-container {
   position: absolute;
   width: 110px;
@@ -391,10 +368,6 @@ animation: pulse 2s ease-in-out infinite;
   position: relative;
 }
 
-#form-errors {
-  color: #eb0000;
-}
-
 #form-errors,
 #card-success {
   width: 500px;
@@ -413,10 +386,6 @@ animation: pulse 2s ease-in-out infinite;
 #card-success p {
   margin: 0 5px;
   display: inline-block;
-}
-
-.hidden {
-  display: none;
 }
 
 #image-container {
