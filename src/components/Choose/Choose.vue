@@ -12,6 +12,7 @@
     <Trial
       v-if="showTrialModal"
       @close="onCloseTrialModal()"
+      v-bind:is-subscribed="isSubscribed"
     ></Trial>
     <h1 class="mb-1">Привет, {{ gamerName }}!</h1>
     <a href="" @click.prevent="logout()">Выйти</a>
@@ -104,6 +105,7 @@
           'btn-outline-info': this.toggle == 'getTrial'
         }"
               @click="onShowTrialModal()"
+              v-if="!this.timeIsUp"
             >
               <input
                 type="radio"
@@ -122,92 +124,94 @@
           'btn-info': this.toggle != 'getTrial',
           'btn-outline-info': this.toggle == 'chooseRate'
         }"
-            ><router-link to="tarif">
-              <input
-                type="radio"
-                v-model="buy"
-                value="chooseRate"
-                name="trial"
-                id="toggle4"
-                autocomplete="off"
-              /></router-link>Выбрать тариф
+            >
+              <router-link to="tarif">
+                <input
+                  type="radio"
+                  v-model="buy"
+                  value="chooseRate"
+                  name="trial"
+                  id="toggle4"
+                  autocomplete="off"
+                /></router-link>
+              Выбрать тариф
             </label>
           </div>
         </div>
-        <div v-if="this.isSubscribed">
-        <label for="month" class>Количество месяцев</label>
-        <br/>
-        <input
-          type="number"
-          min="3"
-          step="3"
-          v-model.number="roomParams.month"
-          name="month"
-          id="month"
-          class="form-control form-control-lg mb-3"
-          placeholder="3"
-          :class="{
+        <div v-if="this.isSubscribed && !this.timeIsUp">
+          <label for="month" class>Количество месяцев</label>
+          <br/>
+          <input
+            type="number"
+            min="3"
+            step="3"
+            v-model.number="roomParams.month"
+            name="month"
+            id="month"
+            class="form-control form-control-lg mb-3"
+            placeholder="3"
+            :class="{
             'is-invalid':
               this.roomParams.month < 3 ||
               this.roomParams.month > 120 ||
               this.roomParams.month % 3 !== 0 ||
               this.roomParams.month - Math.floor(roomParams.month) !== 0
           }"
-          @keypress.enter="createGame()"
-        />
-        <div v-if="this.roomParams.month % 3 !== 0" class="invalid-feedback mb-3">
-          Количество месяцев должно быть кратно 3!
-        </div>
-        <div v-if="this.roomParams.month < 3" class="invalid-feedback mb-3">
-          Количество месяцев должно быть больше 2!
-        </div>
-        <div v-if="this.roomParams.month > 120" class="invalid-feedback mb-3">
-          Количество месяцев должно быть меньше или равно 120!
-        </div>
-        <div
-          v-if="this.roomParams.month - Math.floor(roomParams.month) !== 0"
-          class="invalid-feedback mb-3"
-        >
-          Количество месяцев должно быть целым числом!
-        </div>
-        <label for="money" class>Бюджет за месяц</label>
-        <br/>
-        <input
-          type="number"
-          min="15000"
-          step="15000"
-          v-model.number="roomParams.money"
-          name="money"
-          id="money"
-          class="form-control form-control-lg mb-3"
-          placeholder="15000"
-          :class="{
+            @keypress.enter="createGame()"
+          />
+          <div v-if="this.roomParams.month % 3 !== 0" class="invalid-feedback mb-3">
+            Количество месяцев должно быть кратно 3!
+          </div>
+          <div v-if="this.roomParams.month < 3" class="invalid-feedback mb-3">
+            Количество месяцев должно быть больше 2!
+          </div>
+          <div v-if="this.roomParams.month > 120" class="invalid-feedback mb-3">
+            Количество месяцев должно быть меньше или равно 120!
+          </div>
+          <div
+            v-if="this.roomParams.month - Math.floor(roomParams.month) !== 0"
+            class="invalid-feedback mb-3"
+          >
+            Количество месяцев должно быть целым числом!
+          </div>
+          <label for="money" class>Бюджет за месяц</label>
+          <br/>
+          <input
+            type="number"
+            min="15000"
+            step="15000"
+            v-model.number="roomParams.money"
+            name="money"
+            id="money"
+            class="form-control form-control-lg mb-3"
+            placeholder="15000"
+            :class="{
             'is-invalid':
               this.roomParams.money <= 14999 ||
               this.roomParams.money >= 1000000000 ||
               this.roomParams.money - Math.floor(roomParams.money) !== 0
           }"
-          @keypress.enter="createGame()"
-        />
-        <div v-if="this.roomParams.money < 15000" class="invalid-feedback mb-3">
-          Бюджет на месяц должен быть больше 14 999!
-        </div>
-        <div
-          v-if="this.roomParams.money >= 1000000000"
-          class="invalid-feedback mb-3"
-        >
-          Бюджет на месяц должен быть меньше 1 000 000 000!
-        </div>
-        <div
-          v-if="this.roomParams.money - Math.floor(roomParams.money) !== 0"
-          class="invalid-feedback mb-3"
-        >
-          Бюджет на месяц должен быть целым числом!
-        </div>
-        <button
-          class="btn btn-lg btn-danger btn-block"
-          @click="createGame()"
-          :disabled="
+            @keypress.enter="createGame()"
+          />
+          <div v-if="this.roomParams.money < 15000" class="invalid-feedback mb-3">
+            Бюджет на месяц должен быть больше 14 999!
+          </div>
+          <div
+            v-if="this.roomParams.money >= 1000000000"
+            class="invalid-feedback mb-3"
+          >
+            Бюджет на месяц должен быть меньше 1 000 000 000!
+          </div>
+          <div
+            v-if="this.roomParams.money - Math.floor(roomParams.money) !== 0"
+            class="invalid-feedback mb-3"
+          >
+            Бюджет на месяц должен быть целым числом!
+          </div>
+          <button
+            class="btn btn-lg btn-danger btn-block"
+            @click="createGame()"
+            :disabled="
             $v.roomParams.$invalid ||
               roomParams.month < 3 ||
               roomParams.money < 15000 ||
@@ -217,22 +221,23 @@
               roomParams.month - Math.floor(roomParams.month) !== 0 ||
               this.roomParams.money - Math.floor(roomParams.money) !== 0
           "
-        >
-          Создать
-        </button>
-      </div>
+          >
+            Создать
+          </button>
+          <Timer v-bind:deadline="Date.parse(new Date()) + 21600000" v-on:timeisup="onUnsubscribe()"></Timer>
+        </div>
       </div>
     </transition>
     <div class="loader-wrap" v-if="loading">
       <Loader></Loader>
     </div>
     <div class="d-flex justify-content-between">
-     <button class="btn btn-link" v-if="isSubscribed" @click="onUnsubscribe()">
-      Отменить подписку
-    </button>
-    <button class="btn btn-link" @click="onShowReviewModal()">
-      Оставить отзыв
-    </button>
+      <button class="btn btn-link" v-if="isSubscribed" @click="onUnsubscribe()">
+        Отменить подписку
+      </button>
+      <button class="btn btn-link" @click="onShowReviewModal()">
+        Оставить отзыв
+      </button>
     </div>
   </div>
 </template>
@@ -245,6 +250,7 @@ import CheckModal from "@/components/CheckModal.vue";
 import LastRoomCheck from "@/components/Choose/LastRoomCheck.vue";
 import Trial from "@/components/Choose/Trial";
 import {required} from "vuelidate/lib/validators";
+import Timer from "@/components/Timer";
 
 
 let apiUrl = "/api";
@@ -263,7 +269,8 @@ export default {
       showReviewModal: false,
       showCheckModal: false,
       errorMessage: "",
-      width: window.innerWidth
+      width: window.innerWidth,
+      timeIsUp: false
     };
   },
   validations: {
@@ -280,6 +287,7 @@ export default {
     }
   },
   components: {
+    Timer,
     Trial,
     Loader,
     ReviewModal,
@@ -314,12 +322,16 @@ export default {
     window.addEventListener('resize', this.updateWidth);
   },
   methods: {
+    onTimeIsUp() {
+      this.timeIsUp = true
+    },
     onCloseTrialModal() {
       this.showTrialModal = false;
     },
     onShowTrialModal() {
       this.showTrialModal = true;
       this.isSubscribed = true;
+      this.$emit('is-subscribed', true)
     },
     onCloseReviewModal() {
       this.showReviewModal = false;
@@ -333,9 +345,10 @@ export default {
     onShowCheckModal() {
       this.showCheckModal = true;
     },
-    onUnsubscribe(){
+    onUnsubscribe() {
       this.isSubscribed = false;
-    }, 
+      this.timeIsUp = true
+    },
     logout() {
       try {
         this.$store

@@ -5,23 +5,32 @@
         <h5>Пробный период</h5>
       </template>
       <template v-slot:body>
-        <p>Тут будет таймер до окончания пробного периода</p>
+        <Timer v-bind:deadline="Date.parse(new Date()) +21600000"></Timer>
       </template>
       <template v-slot:footer>
         <button type="button" class="btn btn-success" @click="sendClose()">
           Закрыть
         </button>
       </template>
+
     </Modal>
   </div>
 </template>
 
 <script>
 import Modal from "@/components/Modal.vue";
+import Timer from "@/components/Timer";
+
 export default {
   name: "Trial",
   components: {
-    Modal
+    Modal, Timer
+  },
+  props: {
+    isSubscribed: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     sendClose() {
