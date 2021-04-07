@@ -868,7 +868,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 876px),(max-height: 729px) {
+@media screen and (max-width: 876px),(max-height: 670px) {
   .main-side {
     display: flex;
     flex-direction: column;
