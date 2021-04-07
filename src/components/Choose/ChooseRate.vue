@@ -188,22 +188,35 @@
   </div>
   <!--- end card back --->
   <input type="text" id="card-token" />
-  <button type="button" id="card-btn" class="btn btn-success">Подтвердить</button>
-
+  <button type="button" id="card-btn" class="btn btn-success" @click="onShowPaymentModal">Подтвердить</button>
+   <Modal v-if="showPaymentModal" @close="sendClose()">
+      <template v-slot:header>
+        <h5>Оплата прошла успешно!</h5>
+      </template>
+      <template v-slot:body>
+        <p>Поздравляем с приобретением подписки!</p>
+      </template>
+      <template v-slot:footer>
+        <button type="button" class="btn btn-success" @click="onClosePaymentModal">
+          Спасибо
+        </button>
+      </template>
+    </Modal>
 </div>
     </div>
     </div>
 </template>
 <script>
 import CardInfo from 'card-info'
+import Modal from "@/components/Modal.vue";
+
 export default {
   name: "ChooseRate",
   data() {
     return {
       action: "tarif",
       number: this.number,
-      mm: this.mm,
-      yy: this.yy
+      showPaymentModal: false
 
     }
   },
@@ -218,7 +231,9 @@ export default {
     },
 
   },
-  components: {},
+  components: {
+    Modal
+  },
   methods: {
     changeAction() {
       switch (this.action) {
@@ -229,7 +244,15 @@ export default {
           this.action = "final"
           break
       }
-    }
+    },
+    onShowPaymentModal(){
+      this.showPaymentModal = true
+    },
+    onClosePaymentModal() {
+      this.showPaymentModal = false;
+      this.$router.push("/choose");
+
+    },
   }
 }
 </script>
