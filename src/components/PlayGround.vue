@@ -668,7 +668,6 @@ export default {
   overflow-x: scroll;
   overflow-y: hidden;
   height: calc(96% - 40px);
-  min-height: 240px;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
@@ -868,7 +867,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 876px),(max-height: 729px) {
+@media screen and (max-width: 876px),(max-height: 650px) {
   .main-side {
     display: flex;
     flex-direction: column;
