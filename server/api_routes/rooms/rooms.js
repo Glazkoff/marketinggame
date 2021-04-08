@@ -544,12 +544,12 @@ function getRoomsRouter(io) {
                       winners: room.winners
                     });
                   } else if (
-                    (ownerState.length == usersState.length && !ownerInRoom.isattacker) ||
-                    (ownerState.length == usersState.length + 1 && ownerInRoom.isattacker)
+                    (ownerState.length == usersState.length && ownerInRoom.isattacker) ||
+                    (ownerState.length != usersState.length && !ownerInRoom.isattacker)
                   ) {
-                    res.status(403).send({
+                    res.status(400).send({
                       status: 400,
-                      message: "К сожалению, игра была продолжена без вас."
+                      message: "К сожалению, игра была продолжена без вас.",
                     });
                   } else {
                     res.status(404).send({
