@@ -137,7 +137,6 @@ module.exports = function (socket, io, db) {
         let expenses = clients * realCostAttract;
         gamer.gamer_room_params.expenses = expenses;
         let result = commCircul - expenses;
-
         gamer.gamer_room_params.money += room.budget_per_month;
 
         messageArr.push(
@@ -324,12 +323,12 @@ module.exports = function (socket, io, db) {
         });
 
         // TODO: Посылаем событие на изменение статуса участника
-        io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
+        // io.sockets.to(socket.roomId).emit("changeGamerStatus", socket.id);
         // Логируем исходящее событие
-        logSocketOutEvent(
-          "changeGamerStatus",
-          "Отправляем комнате изменение статуса участника"
-        );
+        // logSocketOutEvent(
+        //   "changeGamerStatus",
+        //   "Отправляем комнате изменение статуса участника"
+        // );
 
         // Подсчёт всех ходов в комнате
         let allUsersStepsStateCount = await db.UserStepState.count({
@@ -650,37 +649,36 @@ module.exports = function (socket, io, db) {
           // Отправляем случайное событие
           sendEventMessage(io, room.room_id, randomEvent.description);
         }
-        for (let gamerId of participantsArray) {
-          let userInRoom = await db.UserInRoom.findOne({
-            where: {
-              user_id: gamerId,
-              room_id: room.room_id
+
+        let userData = await db.UserInRoom.findOne({
+          where: {
+            user_id: socket.decoded_token.id,
+            room_id: room.room_id
+          },
+          include: [
+            {
+              model: db.GamerRoomParams,
+              as: "gamer_room_params"
             },
-            include: [
-              {
-                model: db.GamerRoomParams,
-                as: "gamer_room_params"
-              },
-              {
-                model: db.PrevRoomParams,
-                as: "prev_room_params"
-              }
-            ]
-          });
-          userInRoom = userInRoom.dataValues;
-          let obj = {
-            data: {
-              room_id: room.room_id,
-              owner_id: room.owner_id,
-              is_start: room.is_start,
-              first_params: room.first_params,
-              prev_room_params: userInRoom.prev_room_params,
-              gamer_room_params: userInRoom.gamer_room_params
+            {
+              model: db.PrevRoomParams,
+              as: "prev_room_params"
             }
-          };
-          io.sockets.to("user" + gamerId).emit("SET_GAME_PARAMS", obj);
-          // Отправка новых данных состояния пользователю
-        }
+          ]
+        });
+        let obj = {
+          data: {
+            room_id: room.room_id,
+            owner_id: room.owner_id,
+            is_start: room.is_start,
+            first_params: room.first_params,
+            prev_room_params: userData.prev_room_params,
+            gamer_room_params: userData.gamer_room_params
+          }
+        };
+        
+        io.sockets.to("user" + socket.decoded_token.id).emit("SET_GAME_PARAMS", obj);
+
 
         for (let index = 0; index < gamer.changes.length; index++) {
           const changing = gamer.changes[index];
