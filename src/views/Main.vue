@@ -20,6 +20,11 @@
         v-if="showReviewModal"
         @close="onHideReviewModal()"
       ></ReviewModal>
+       <CheckModal
+      v-if="showCheckModal"
+      @close="onCloseCheckModal()"
+      :errorMessage="errorMessage"
+    ></CheckModal>
       <transition name="fade" mode="out-in">
         <PlayGround v-if="!isFinish"></PlayGround>
         <Finish v-else @showReviewModal="onShowReviewModal()"></Finish>
@@ -36,6 +41,7 @@ import Finish from "@/components/Finish.vue";
 import Loader from "@/components/Loader.vue";
 import SocketStatus from "@/components/SocketStatus.vue";
 import ReviewModal from "@/components/ReviewModal.vue";
+import CheckModal from "@/components/CheckModal.vue";
 
 require("bootstrap/dist/css/bootstrap.css");
 
@@ -44,7 +50,9 @@ export default {
   data() {
     return {
       loading: false,
-      showReviewModal: false
+      showReviewModal: false,
+      errorMessage: "",
+      showCheckModal: false
     };
   },
   components: {
@@ -53,7 +61,8 @@ export default {
     Finish,
     Loader,
     SocketStatus,
-    ReviewModal
+    ReviewModal,
+    CheckModal
   },
   methods: {
     onShowReviewModal() {
@@ -61,6 +70,10 @@ export default {
     },
     onHideReviewModal() {
       this.showReviewModal = false;
+    },
+    onCloseCheckModal() {
+      this.showCheckModal = false;
+      this.$router.push('/choose')
     },
     leaveRoom() {
       console.log("Ушёл из комнаты!");
@@ -87,7 +100,11 @@ export default {
           await vm.$store.dispatch("TRY_RESET_ROOM");
           vm.loading = false;
         } catch (error) {
+          vm.showCheckModal = true;
+          vm.errorMessage = error.data.message;
           vm.loading = false;
+          
+
         }
       }
       return true;
