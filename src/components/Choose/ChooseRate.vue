@@ -1,177 +1,207 @@
 <template>
-<div class="container d-flex flex-column justify-content-center align-items-center">
-    <div class="justify-content-center align-items-center mx-5 row">
-      <div class="col-sm p-3">
-      <div class="step d-flex flex-column align-items-center">
-        <h3 :class="{
+  <div class=""
+       :class="{container: this.width>=992 || this.width<768,
+       'container-fluid': this.width>=768 && this.width<992
+       }">
+    <div class="justify-content-center align-items-center row">
+      <div class="col-md-4 col-xl-3"
+           :class="{'is-active-action': this.width<=876 && this.action != 'tarif'}"
+      >
+        <div class="step d-flex flex-column align-items-center">
+          <h3 :class="{
             'text-success': this.action == 'domen' || this.action == 'final',
             'text-info': this.action == 'tarif'
-        }" class=" text-center" style="white-space: nowrap">Выберите тариф</h3>
-        <div
-         :class="{
+        }" class="text-center" style="white-space: nowrap">Выберите тариф</h3>
+          <div
+            :class="{
             active: this.action == 'tarif',
             'bg-info': this.action == 'tarif',
             'bg-success': this.action == 'domen' || this.action == 'final',
-            
+
         }"
-          class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>1</h1></div>
-      </div>
-      <div v-if="this.action == 'tarif'" class="choose-tarif">
-        <div class="card text-center">
-          <div class="card-header"><h2 class="card-title">Тариф</h2></div>
-          <div class="card-body">
-            <h3 class="tarif-price">$5</h3>
-            <div class="card-text">
-              <ul class="list-group">
-                <li class="list-group-item">Преимущество 1</li>
-                <li class="list-group-item">Преимущество 2</li>
-                <li class="list-group-item">Преимущество 3</li>
-              </ul>
-            </div>
-          </div>
-          <div class="card-footer">
-            <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
-          </div>
-        </div>
+            class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
+            <h1>1</h1></div>
         </div>
       </div>
-      <div class="d-flex justify-content-between mini-round-wrapper">
-      <div :class="{
+
+      <div class="d-flex justify-content-between mini-round-wrapper ">
+        <div :class="{
             'border-success': this.action == 'domen' || this.action == 'final',
             'border-info': this.action == 'tarif'
         }" class="mini-round border rounded-circle m-1"></div>
-      <div :class="{
+        <div :class="{
             'bg-success': this.action == 'domen' || this.action == 'final',
             'border-success': this.action == 'domen' || this.action == 'final',
             'border-info': this.action == 'tarif'
         }" class="mini-round border rounded-circle m-1"></div>
       </div>
-      
-      <div class="col-sm p-3">
-      <div class="step d-flex flex-column align-items-center">
-        <h3 :class="{
+
+      <div class="col-md-4 col-xl-3"
+           :class="{'is-active-action': this.width<=876 && this.action != 'domen'}"
+      >
+        <div class="step d-flex flex-column align-items-center">
+          <h3 :class="{
             'text-success': this.action == 'final',
             'text-info': this.action == 'domen' || this.action == 'tarif'
         }" class="text-center" style="white-space: nowrap">Выберите поддомен</h3>
-        <div
-          :class="{
+          <div
+            :class="{
             active: this.action == 'domen',
             'bg-info': this.action == 'domen' || this.action == 'tarif',
             'bg-success': this.action == 'final'
         }"
-          class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>2</h1></div>
+            class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>
+            2</h1></div>
+        </div>
       </div>
-      <div v-if="this.action == 'tarif'" class="choose-tarif">
-      <div class="card text-center">
-          <div class="card-header"><h2 class="card-title">Тариф</h2></div>
-          <div class="card-body">
-            <h3 class="tarif-price">$5</h3>
-            <div class="card-text">
-              <ul class="list-group">
-                <li class="list-group-item">Преимущество 1</li>
-                <li class="list-group-item">Преимущество 2</li>
-                <li class="list-group-item">Преимущество 3</li>
-              </ul>
-            </div>
-          </div>
-          <div class="card-footer">
-            <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
-          </div>
-        </div>
-        </div>
-       </div>
-        <div class="d-flex justify-content-between mini-round-wrapper">
-      <div :class="{
+
+      <div class="d-flex justify-content-between mini-round-wrapper">
+        <div :class="{
             'border-success': this.action == 'final',
              'border-info': this.action == 'tarif' || this.action == 'domen'
         }" class="mini-round border rounded-circle m-1"></div>
-      <div :class="{
+        <div :class="{
             'bg-success': this.action == 'final',
             'border-success': this.action == 'final'
         }" class="mini-round border border-info rounded-circle m-1"></div>
       </div>
-      <div class="col-sm p-3">
-      <div class="step d-flex flex-column align-items-center">
-        <h3 class="text-center text-info" style="white-space: nowrap">Оплатите подписку</h3>
-        <div
-          :class="{
+
+      <div class="col-md-4 col-xl-3"
+           :class="{'is-active-action': this.width<=876 && this.action != 'final'}"
+      >
+        <div class="step d-flex flex-column align-items-center">
+          <h3 class="text-center text-info" style="white-space: nowrap">Оплатите подписку</h3>
+          <div
+            :class="{
           active: this.action == 'final'
         }"
-          class="step-round bg-info text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>3</h1></div>
+            class="step-round bg-info text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
+            <h1>3</h1></div>
+        </div>
       </div>
-      <div v-if="this.action == 'tarif'" class="choose-tarif">
-       <div class="card text-center">
-          <div class="card-header"><h2 class="card-title">Тариф</h2></div>
-          <div class="card-body">
-            <h3 class="tarif-price">$5</h3>
-            <div class="card-text">
-              <ul class="list-group">
-                <li class="list-group-item">Преимущество 1</li>
-                <li class="list-group-item">Преимущество 2</li>
-                <li class="list-group-item">Преимущество 3</li>
-              </ul>
+
+    </div>
+    <div v-if="this.action == 'tarif'" class=" justify-content-center align-items-center row">
+      <div class="col-md-4 my-3 col-12 col-sm-9">
+        <div class="choose-tarif">
+          <div class="card text-center">
+            <div class="card-header"><h2 class="card-title">Тариф</h2></div>
+            <div class="card-body">
+              <h3 class="tarif-price">$5</h3>
+              <div class="card-text">
+                <ul class="list-group">
+                  <li class="list-group-item">Преимущество 1</li>
+                  <li class="list-group-item">Преимущество 2</li>
+                  <li class="list-group-item">Преимущество 3</li>
+                </ul>
+              </div>
             </div>
-          </div>
-          <div class="card-footer">
-            <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+            <div class="card-footer">
+              <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="col-md-4 my-3 col-12 col-sm-9">
+        <div class="choose-tarif">
+          <div class="card text-center">
+            <div class="card-header"><h2 class="card-title">Тариф</h2></div>
+            <div class="card-body">
+              <h3 class="tarif-price">$5</h3>
+              <div class="card-text">
+                <ul class="list-group">
+                  <li class="list-group-item">Преимущество 1</li>
+                  <li class="list-group-item">Преимущество 2</li>
+                  <li class="list-group-item">Преимущество 3</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 my-3 col-12 col-sm-9">
+        <div class="choose-tarif">
+          <div class="card text-center">
+            <div class="card-header"><h2 class="card-title">Тариф</h2></div>
+            <div class="card-body">
+              <h3 class="tarif-price">$5</h3>
+              <div class="card-text">
+                <ul class="list-group">
+                  <li class="list-group-item">Преимущество 1</li>
+                  <li class="list-group-item">Преимущество 2</li>
+                  <li class="list-group-item">Преимущество 3</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div v-if="this.action == 'domen'" class="choose-domen w-50">
+    <div v-if="this.action == 'domen'" class="choose-domen mx-auto col-md-8 col-lg-8 col-12 mt-3">
       <div class="card">
         <div class="card-body">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Введите поддомен">
-            <div class="input-group-append">
-              <span class="input-group-text">.imgames.ru</span>
-            </div>
+            <input type="text" class="form-control" placeholder="Введите поддомен" v-model="poddomen">
+
           </div>
+          <small><span>Ссылка:</span> <span v-if="this.poddomen==''">example</span>{{poddomen}}.imgames.ru</small>
           <button class="btn btn-outline-info w-100 mt-2" @click="changeAction()">Выбрать</button>
         </div>
       </div>
     </div>
-    <div v-if="this.action == 'final'" class="final">
-<div id="form-container" :style="{color: cardInfo.textColor}">
-  <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
-    <div id="shadow"></div>
-    <div id="image-container">
-      <span id="amount">К оплате: <strong>много денег</strong></span>
-        <img v-if="cardInfo.bankLogo" id="card-image" :src="cardInfo.bankLogo" alt="logo of bank">
-    </div>
-    <label for="card-number">
-        Номер карты
-      </label>
-    <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number" :placeholder="cardInfo.numberMask" :maxlength="cardInfo.numberLengths">
-    <div class="d-flex justify-content-between row">
-    <div id="cardholder-container" class="col-8">
-      <label for="card-holder">Владелец карты
-      </label>
-      <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV" />
-    </div>
-    <div id="exp-container" class="col-4">
-      <label for="card-exp">
-          Срок действия
-        </label>
-        <div class="row">
-      <input id="card-month" class="col mr-1"  type="text"  placeholder="MM" maxlength="2">
-      <input id="card-year" class="col" type="text" placeholder="YY" maxlength="2">
+    <div v-if="this.action == 'final'" class="final d-flex justify-content-center">
+      <div id="form-container" :style="{color: cardInfo.textColor}">
+        <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
+          <div id="shadow"></div>
+          <div id="image-container">
+            <span id="amount">К оплате: <strong>много денег</strong></span>
+            <img v-if="cardInfo.bankLogo" id="card-image" :src="cardInfo.bankLogo" alt="logo of bank">
+          </div>
+          <label for="card-number">
+            Номер карты
+          </label>
+          <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number"
+                 :placeholder="cardInfo.numberMask" :maxlength="cardInfo.numberLengths">
+          <div class="d-flex justify-content-between row">
+            <div id="cardholder-container" class="col-5">
+              <label for="card-holder">Владелец карты
+              </label>
+              <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV"/>
+            </div>
+            <div id="exp-container" class="col-4">
+              <label for="card-exp">
+                Срок действия
+              </label>
+              <div class="row">
+                <input id="card-month" class="col mr-1" type="text" placeholder="MM" maxlength="2">
+                <input id="card-year" class="col" type="text" placeholder="YY" maxlength="2">
+              </div>
+            </div>
+            <div id="cvc-container-inner" class="col-3" v-if="this.width<530">
+              <label for="card-cvc-inner">CVC</label>
+              <input id="card-cvc-inner" style="width: 60px" type="text" :maxlength="cardInfo.codeLength">
+            </div>
+          </div>
+          <div id="cvc-container" v-if="this.width>=530">
+            <label for="card-cvc">CVC</label>
+            <input id="card-cvc" type="text" :maxlength="cardInfo.codeLength">
+          </div>
+        </div>
+        <div id="card-back" :style="{'background': cardInfo.backgroundGradient}" v-if="this.width>=530">
+          <div id="card-stripe">
+          </div>
+        </div>
+        <button type="button" id="card-btn" class="btn btn-success" :class="{'card-btn-back':this.width>=530,'card-btn-front':this.width<530}" @click="onShowPaymentModal">Подтвердить</button>
+
       </div>
-    </div>
-    </div>
-        <div id="cvc-container">
-      <label for="card-cvc">{{cardInfo.codeName}}</label>
-      <input id="card-cvc"  type="text" :maxlength="cardInfo.codeLength">
-    </div>
-  </div>
-  <div id="card-back" :style="{'background': cardInfo.backgroundGradient}">
-    <div id="card-stripe">
-    </div>
-  </div>
-  <button type="button" id="card-btn" class="btn btn-success" @click="onShowPaymentModal">Подтвердить</button>
-   
-</div>
     </div>
     <Modal v-if="showPaymentModal" @close="sendClose()">
       <template v-slot:header>
@@ -186,8 +216,8 @@
         </button>
       </template>
     </Modal>
-    </div>
-    
+  </div>
+
 </template>
 <script>
 import CardInfo from 'card-info'
@@ -199,20 +229,24 @@ export default {
     return {
       action: "tarif",
       number: this.number,
-      showPaymentModal: false
-
+      showPaymentModal: false,
+      poddomen: "",
+      width: window.innerWidth,
     }
   },
-  computed:{
-    cardInfo: function(){
+  computed: {
+    cardInfo: function () {
       CardInfo.setDefaultOptions({
-      banksLogosPath: '/banks-logos/',
-      brandsLogosPath: '/brands-logos/'
-    });
-    let cardInfo = new CardInfo(this.number);
-    return cardInfo;
+        banksLogosPath: '/banks-logos/',
+        brandsLogosPath: '/brands-logos/'
+      });
+      let cardInfo = new CardInfo(this.number);
+      return cardInfo;
     },
 
+  },
+  created() {
+    window.addEventListener('resize', this.updateWidth);
   },
   components: {
     Modal
@@ -228,19 +262,25 @@ export default {
           break
       }
     },
-    onShowPaymentModal(){
+    onShowPaymentModal() {
       this.showPaymentModal = true
     },
     onClosePaymentModal() {
       this.showPaymentModal = false;
       this.$router.push("/choose");
-
+    },
+    updateWidth() {
+      this.width = window.innerWidth;
     },
   }
 }
 </script>
 
 <style scoped>
+.is-active-action {
+  display: none;
+}
+
 .steps {
   overflow: hidden;
 }
@@ -248,22 +288,25 @@ export default {
 .step-round {
   width: 100px;
   height: 100px;
-  
-}
-
-.active{
-animation: pulse 2s ease-in-out infinite;
 
 }
+
+.active {
+  animation: pulse 2s ease-in-out infinite;
+
+}
+
 .mini-round {
   width: 20px;
   height: 20px;
-  
+
 }
-.mini-round:nth-child(2n){
+
+.mini-round:nth-child(2n) {
   background-color: #5bc0de;
   opacity: 0.5;
 }
+
 @keyframes pulse {
   from {
     transform: scale(.95);
@@ -275,15 +318,31 @@ animation: pulse 2s ease-in-out infinite;
     transform: scale(.95);
   }
 }
+
 @media screen and (max-width: 1200px) {
-  .mini-round{
+  .mini-round {
     display: none;
   }
 }
-.done{
+
+@media screen and (max-width: 280px){
+  .step h3{
+    white-space: normal !important;
+  }
+}
+@media screen and (max-width: 530px){
+  #form-container{
+    width: 390px !important;
+  }
+  #shadow{
+    display: none;
+  }
+}
+.done {
   background: green;
   color: white;
 }
+
 #amount {
   font-size: 12px;
 }
@@ -296,8 +355,6 @@ animation: pulse 2s ease-in-out infinite;
 
 #card-btn {
   position: absolute;
-  bottom: -55px;
-  right: 0;
   width: 150px;
   border-radius: 8px;
   height: 42px;
@@ -309,7 +366,14 @@ animation: pulse 2s ease-in-out infinite;
   border: none;
   cursor: pointer;
 }
-
+.card-btn-back{
+  bottom: -55px;
+  right: 0;
+}
+.card-btn-front{
+  bottom: -10px;
+  right: 0;
+}
 #card-cvc {
   width: 60px;
   margin-bottom: 0;
