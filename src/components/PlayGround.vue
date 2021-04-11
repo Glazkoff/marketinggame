@@ -410,6 +410,7 @@ export default {
       this.playAnimation();
     },
     async makeStep() {
+      this.$store.commit("SET_STEP_TYPE", false)
       this.$store.commit("doStep"); //
       this.$socket.emit("doStep", this.usedCards);
       let stepArr = [];

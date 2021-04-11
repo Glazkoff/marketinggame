@@ -85,6 +85,7 @@ export default {
   },
   methods: {
     async onManualStepClose() {
+      this.$store.commit("SET_STEP_TYPE", true)
       this.$store.commit("doStep"); //
       if (this.gamerParams.month > 0) {
         this.$socket.emit("manualStepClose", this.roomId);

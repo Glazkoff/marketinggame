@@ -46,7 +46,8 @@ const store = new Vuex.Store({
       usersCount: 1,
       cards: [],
       events: []
-    }
+    },
+    isManualStep: false
   },
   getters: {
     // Логическое значение - авторизован или нет
@@ -99,6 +100,9 @@ const store = new Vuex.Store({
     },
     SET_NAME(state, name) {
       state.gamerName = name;
+    },
+    SET_STEP_TYPE(state, pref){
+      state.isManualStep = pref
     },
     async SET_GAME_PARAMS(state, res) {
       state.prevRoomParams = res.data.prev_room_params;
