@@ -104,7 +104,7 @@
           'btn-info': this.toggle != 'chooseRate',
           'btn-outline-info': this.toggle == 'getTrial'
         }"
-              @click="onShowTrialModal()"
+              @click="startTrial()"
               v-if="!this.timeIsUp"
             >
               <input
@@ -328,11 +328,6 @@ export default {
     onCloseTrialModal() {
       this.showTrialModal = false;
     },
-    onShowTrialModal() {
-      this.showTrialModal = true;
-      this.isSubscribed = true;
-      this.$emit('is-subscribed', true)
-    },
     onCloseReviewModal() {
       this.showReviewModal = false;
     },
@@ -342,8 +337,9 @@ export default {
     onCloseCheckModal() {
       this.showCheckModal = false;
     },
-    onShowCheckModal() {
+    onShowCheckModal(message) {
       this.showCheckModal = true;
+      this.errorMessage = message
     },
     onUnsubscribe() {
       this.isSubscribed = false;
@@ -395,13 +391,11 @@ export default {
           if (res.data.status !== 400) {
             this.setRoomParams(res);
           } else {
-            this.errorMessage = res.data.message;
-            this.showCheckModal = true;
+            this.onShowCheckModal(res.data.message)
           }
         })
         .catch(err => {
-          this.errorMessage = err;
-          this.showCheckModal = true;
+          this.onShowCheckModal(err)
           this.loading = false;
         });
     },
@@ -416,8 +410,7 @@ export default {
             this.loading = false;
           })
           .catch(err => {
-            this.showCheckModal = true;
-            this.errorMessage = err.data.message;
+            this.onShowCheckModal(err.data.message)
             this.loading = false;
           });
       }
@@ -431,6 +424,17 @@ export default {
     },
     updateWidth() {
       this.width = window.innerWidth;
+    },
+    startTrial() {
+      // Типа отправление данных о начале триала
+      this.$store.dispatch('TRIAL_REQUEST').then(() => {
+        // Если триал предоставлен, то показывается модалка триала
+        this.showTrialModal = true;
+        this.isSubscribed = true;
+      }).catch((err) => {
+        this.onShowCheckModal(err.data.message)
+        this.loading = false;
+      })
     },
   }
 };

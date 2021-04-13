@@ -27,6 +27,9 @@ function getRouter(io) {
   // Работа с информацией об обновлениях
   router.use("/updates", require("./updates/updates"));
 
+  // Работа с подписками
+  router.use("/payment", require("./payment/payment"));
+
   router.use("*", notFound);
 
   return router;

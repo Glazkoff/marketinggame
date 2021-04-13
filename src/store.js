@@ -815,7 +815,6 @@ const store = new Vuex.Store({
     SOCKET_gameEvent(state, eventObj) {
       state.commit("SOCKET_setGameEvent", eventObj);
     },
-
     // Получить информацию о последней комнате
     GET_LAST_ROOM(state) {
       return new Promise((resolve, reject) => {
@@ -831,7 +830,6 @@ const store = new Vuex.Store({
           });
       });
     },
-
     // Послать запрос на выход из последней комнаты пользователя
     POST_GO_OUT_LAST_ROOM(state) {
       return new Promise((resolve, reject) => {
@@ -841,6 +839,21 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             resolve(resp.data);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    // Запрос на предоставление триала
+    TRIAL_REQUEST(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/payment/trial`,
+          method: "POST"
+        })
+          .then((res) => {
+            resolve(res)
           })
           .catch(err => {
             reject(err);
