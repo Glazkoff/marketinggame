@@ -37,5 +37,36 @@ router.post("/trial", async (req, res) => {
   }
 });
 
+// Запрос на покупку подписки
+router.post("/subscription", async (req, res) => {
+  try {
+    await jwt.verify(
+      req.headers.authorization,
+      JWTCONFIG.SECRET,
+      async (err, decoded) => {
+        if (err) {
+          res.status(401).send({
+            status: 401,
+            message: "Вы не авторизованы!"
+          });
+        } else {
+          // TODO: Добавить в базу данных информацию о всех тарифах, сделать проверку на наличие активной подписки
+
+          // res.sendStatus(200)
+          res.status(501).send({
+            status: 501,
+            message: "Функционал пока не реализован!"
+          });
+        }
+      }
+    );
+  } catch (error) {
+    logRestApiError("payment", error);
+    res.status(500).send({
+      status: 500,
+      message: "Ошибка сервера!"
+    });
+  }
+});
 
 module.exports = router;

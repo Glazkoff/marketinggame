@@ -199,7 +199,7 @@
           <div id="card-stripe">
           </div>
         </div>
-        <button type="button" id="card-btn" class="btn btn-success" :class="{'card-btn-back':this.width>=530,'card-btn-front':this.width<530}" @click="onShowPaymentModal">Подтвердить</button>
+        <button type="button" id="card-btn" class="btn btn-success" :class="{'card-btn-back':this.width>=530,'card-btn-front':this.width<530}" @click="makePayment">Подтвердить</button>
 
       </div>
     </div>
@@ -272,6 +272,15 @@ export default {
     updateWidth() {
       this.width = window.innerWidth;
     },
+    // Завершить покупку
+    makePayment(){
+      this.$store.dispatch('PAYMENT_REQUEST').then(() => {
+        this.onShowPaymentModal()
+      }).catch((err) => {
+        console.log(err.data.message)
+        this.$router.push("/choose");
+      })
+    }
   }
 }
 </script>

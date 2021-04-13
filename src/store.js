@@ -859,6 +859,22 @@ const store = new Vuex.Store({
             reject(err);
           });
       });
+    },
+    // Запрос на покупку
+    PAYMENT_REQUEST(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/payment/subscription`,
+          method: "POST",
+          data
+        })
+          .then((res) => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
     }
   }
 });
