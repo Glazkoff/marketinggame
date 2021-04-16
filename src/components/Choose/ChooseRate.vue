@@ -4,10 +4,10 @@
        'container-fluid': this.width>=768 && this.width<992
        }">
     <div class="justify-content-center align-items-center row">
-      <div class="col-md-4 col-xl-3"
+      <div @click="changeAction('tarif')" class="pointer col-md-4 col-xl-3"
            :class="{'is-active-action': this.width<=876 && this.action != 'tarif'}"
       >
-        <div class="step d-flex flex-column align-items-center">
+        <div  class=" step d-flex flex-column align-items-center">
           <h3 :class="{
             'text-success': this.action == 'domen' || this.action == 'final',
             'text-info': this.action == 'tarif'
@@ -36,8 +36,9 @@
         }" class="mini-round border rounded-circle m-1"></div>
       </div>
 
-      <div class="col-md-4 col-xl-3"
+      <div class="pointer col-md-4 col-xl-3"
            :class="{'is-active-action': this.width<=876 && this.action != 'domen'}"
+           @click="changeAction('domen')"
       >
         <div class="step d-flex flex-column align-items-center">
           <h3 :class="{
@@ -66,8 +67,9 @@
         }" class="mini-round border border-info rounded-circle m-1"></div>
       </div>
 
-      <div class="col-md-4 col-xl-3"
+      <div  class="pointer col-md-4 col-xl-3"
            :class="{'is-active-action': this.width<=876 && this.action != 'final'}"
+           @click="changeAction('final')"
       >
         <div class="step d-flex flex-column align-items-center">
           <h3 class="text-center text-info" style="white-space: nowrap">Оплатите подписку</h3>
@@ -81,6 +83,7 @@
       </div>
 
     </div>
+    <hr v-if="this.action == 'tarif'">
     <div v-if="this.action == 'tarif'" class=" justify-content-center align-items-center row">
       <div class="col-md-4 my-3 col-12 col-sm-9">
         <div class="choose-tarif">
@@ -97,7 +100,7 @@
               </div>
             </div>
             <div class="card-footer">
-              <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+              <button type="button" class="btn btn-info" @click="changeAction('domen')">Выбрать тариф</button>
             </div>
           </div>
         </div>
@@ -118,7 +121,7 @@
               </div>
             </div>
             <div class="card-footer">
-              <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+              <button type="button" class="btn btn-info" @click="changeAction('domen')">Выбрать тариф</button>
             </div>
           </div>
         </div>
@@ -139,7 +142,7 @@
               </div>
             </div>
             <div class="card-footer">
-              <button type="button" class="btn btn-info" @click="changeAction()">Выбрать тариф</button>
+              <button type="button" class="btn btn-info" @click="changeAction('domen')">Выбрать тариф</button>
             </div>
           </div>
         </div>
@@ -153,7 +156,7 @@
 
           </div>
           <small><span>Ссылка:</span> <span v-if="this.poddomen==''">example</span>{{poddomen}}.imgames.ru</small>
-          <button class="btn btn-outline-info w-100 mt-2" @click="changeAction()">Выбрать</button>
+          <button class="btn btn-outline-info w-100 mt-2" @click="changeAction('final')">Выбрать</button>
         </div>
       </div>
     </div>
@@ -203,6 +206,11 @@
 
       </div>
     </div>
+    <nav class="nav justify-content-between">
+      <span :class="{'hidden': this.action =='tarif'}" class="pointer nav-text text-secondary" @click="navAction('back')">Назад</span>
+      <span :class="{'hidden': this.action =='final'}" class="pointer nav-text text-secondary" @click="navAction('forward')">Вперед</span>
+    </nav>
+    
     <Modal v-if="showPaymentModal" @close="sendClose()">
       <template v-slot:header>
         <h5>Оплата прошла успешно!</h5>
@@ -252,7 +260,8 @@ export default {
     Modal
   },
   methods: {
-    changeAction() {
+    navAction(direction) {
+      if(direction === 'forward'){
       switch (this.action) {
         case "tarif":
           this.action = "domen"
@@ -260,7 +269,20 @@ export default {
         case "domen":
           this.action = "final"
           break
+      }}
+      else{
+        switch (this.action) {
+        case "domen":
+          this.action = "tarif"
+          break
+        case "final":
+          this.action = "domen"
+          break
       }
+      }
+    },
+    changeAction(actionChange) {
+      this.action=actionChange
     },
     onShowPaymentModal() {
       this.showPaymentModal = true
@@ -286,6 +308,12 @@ export default {
 </script>
 
 <style scoped>
+.pointer{
+  cursor: pointer;
+}
+.hidden{
+  visibility: hidden;
+}
 .is-active-action {
   display: none;
 }
@@ -314,6 +342,11 @@ export default {
 .mini-round:nth-child(2n) {
   background-color: #5bc0de;
   opacity: 0.5;
+}
+
+.nav-text:hover{
+  color: black !important;
+  transition: 300ms ease;
 }
 
 @keyframes pulse {
