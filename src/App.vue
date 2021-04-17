@@ -14,26 +14,9 @@
           </h3>
         </div>
       </template>
-      <!-- <template v-slot:[offlineSlot] :slot-name="offlineSlot">
-        <div class="container-fluid">
-          <div class="row">
-            <h1>Офлайн!</h1>
-          </div>
-        </div>
-        ( Online: {{ onLine }} )
-      </template> -->
     </Offline>
 
     <Toasts></Toasts>
-    <!-- <button
-      class="admin-btn"
-      @click="changeAdminNav"
-      title="Доступ администратора"
-      :disabled="!isAdmin"
-    >
-      <span v-if="!adminNav">↓</span>
-      <span v-else>↑</span>
-    </button> -->
     <div id="nav" :class="{ 'admin-show': adminNav, 'admin-hide': !adminNav }">
       <router-link to="/">Вход</router-link>|
       <router-link to="/choose">Создать игру</router-link>|
