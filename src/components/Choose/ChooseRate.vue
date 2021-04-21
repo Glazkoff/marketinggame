@@ -161,56 +161,65 @@
       </div>
     </div>
     <div v-if="this.action == 'final'" class="final d-flex justify-content-center">
-      <div id="form-container" :style="{color: cardInfo.textColor}">
-        <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
-          <div id="shadow"></div>
-          <div id="image-container">
-            <span id="amount">К оплате: <strong>много денег</strong></span>
-            <img v-if="cardInfo.bankLogo" id="card-image" :src="cardInfo.bankLogo" alt="logo of bank">
-          </div>
-          <label for="card-number">
-            Номер карты
-          </label>
-          <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number"
-                 :placeholder="cardInfo.numberMask" :maxlength="cardInfo.numberLengths">
-          <div class="d-flex justify-content-between row">
-            <div id="cardholder-container" class="col-5">
-              <label for="card-holder">Владелец карты
-              </label>
-              <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV"/>
+      <div id="form-container">
+        <div id="card-container" :style="{color: cardInfo.textColor}">
+          <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
+            <div id="shadow"></div>
+            <div id="image-container">
+              <span id="amount">К оплате: <strong>много денег</strong></span>
+              <img v-if="cardInfo.bankLogo" id="card-image" :src="cardInfo.bankLogo" alt="logo of bank">
             </div>
-            <div id="exp-container" class="col-4">
-              <label for="card-exp">
-                Срок действия
-              </label>
-              <div class="row">
-                <input id="card-month" class="col mr-1" type="text" placeholder="MM" maxlength="2">
-                <input id="card-year" class="col" type="text" placeholder="YY" maxlength="2">
+            <label for="card-number">
+              Номер карты
+            </label>
+            <input :pattern="cardInfo.numberMusk" type="text" v-model="number" id="card-number"
+                   :placeholder="cardInfo.numberMask" :maxlength="cardInfo.numberLengths">
+            <div class="d-flex justify-content-between row">
+              <div id="cardholder-container" class="col-5">
+                <label for="card-holder">Владелец карты
+                </label>
+                <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV"/>
+              </div>
+              <div id="exp-container" class="col-4">
+                <label for="card-exp">
+                  Срок действия
+                </label>
+                <div class="row">
+                  <input id="card-month" class="col mr-1" type="text" placeholder="MM" maxlength="2">
+                  <input id="card-year" class="col" type="text" placeholder="YY" maxlength="2">
+                </div>
+              </div>
+              <div id="cvc-container-inner" class="col-3" v-if="this.width<530">
+                <label for="card-cvc-inner">CVC</label>
+                <input id="card-cvc-inner" style="width: 60px" type="text" :maxlength="cardInfo.codeLength">
               </div>
             </div>
-            <div id="cvc-container-inner" class="col-3" v-if="this.width<530">
-              <label for="card-cvc-inner">CVC</label>
-              <input id="card-cvc-inner" style="width: 60px" type="text" :maxlength="cardInfo.codeLength">
+            <div id="cvc-container" v-if="this.width>=530">
+              <label for="card-cvc">CVC</label>
+              <input id="card-cvc" type="text" :maxlength="cardInfo.codeLength">
             </div>
           </div>
-          <div id="cvc-container" v-if="this.width>=530">
-            <label for="card-cvc">CVC</label>
-            <input id="card-cvc" type="text" :maxlength="cardInfo.codeLength">
+          <div id="card-back" :style="{'background': cardInfo.backgroundGradient}" v-if="this.width>=530">
+            <div id="card-stripe">
+            </div>
           </div>
         </div>
-        <div id="card-back" :style="{'background': cardInfo.backgroundGradient}" v-if="this.width>=530">
-          <div id="card-stripe">
+        <div class="card">
+          <div class="card-body">
+            <small><span>Введите e-mail, на который придет информация о совершенной оплате:</span></small>
+            <div class="input-group mt-2">
+              <input type="email" class="form-control" placeholder="Введите вашу почту" v-model="email">
+            </div>
+            <button type="button" id="card-btn" class="btn btn-success mt-2" :class="{'card-btn-back':this.width>=530,'card-btn-front':this.width<530}" @click="makePayment">Подтвердить</button>
           </div>
         </div>
-        <button type="button" id="card-btn" class="btn btn-success" :class="{'card-btn-back':this.width>=530,'card-btn-front':this.width<530}" @click="makePayment">Подтвердить</button>
-
       </div>
     </div>
     <nav class="nav justify-content-between">
       <span :class="{'hidden': this.action =='tarif'}" class="pointer nav-text text-secondary" @click="navAction('back')">Назад</span>
       <span :class="{'hidden': this.action =='final'}" class="pointer nav-text text-secondary" @click="navAction('forward')">Вперед</span>
     </nav>
-    
+
     <Modal v-if="showPaymentModal" @close="sendClose()">
       <template v-slot:header>
         <h5>Оплата прошла успешно!</h5>
@@ -239,6 +248,7 @@ export default {
       number: this.number,
       showPaymentModal: false,
       poddomen: "",
+      email: "",
       width: window.innerWidth,
     }
   },
@@ -373,7 +383,7 @@ export default {
   }
 }
 @media screen and (max-width: 530px){
-  #form-container{
+  #card-container{
     width: 390px !important;
   }
   #shadow{
@@ -396,8 +406,7 @@ export default {
 }
 
 #card-btn {
-  position: absolute;
-  width: 150px;
+  width: 100%;
   border-radius: 8px;
   height: 42px;
   font-size: 12px;
@@ -472,6 +481,10 @@ export default {
 #form-container {
   margin: auto;
   width: 500px;
+}
+
+ #card-container {
+   margin: auto auto 30px;
   height: 290px;
   position: relative;
 }
@@ -510,7 +523,7 @@ export default {
   top: 0;
 }
 
-#form-container input {
+#card-container input {
   border: none;
   outline: none;
   height: 30px;
@@ -523,7 +536,7 @@ export default {
   letter-spacing: .7px;
 }
 
-#form-container input::-webkit-input-placeholder {
+#card-container input::-webkit-input-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -532,7 +545,7 @@ export default {
   font-size: 10px;
 }
 
-#form-container input:-moz-placeholder {
+#card-container input:-moz-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -541,7 +554,7 @@ export default {
   font-size: 10px;
 }
 
-#form-container input::-moz-placeholder {
+#card-container input::-moz-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -550,7 +563,7 @@ export default {
   font-size: 10px;
 }
 
-#form-container input:-ms-input-placeholder {
+#card-container input:-ms-input-placeholder {
   color: #fff;
   opacity: 0.7;
   letter-spacing: 1px;
@@ -559,12 +572,12 @@ export default {
   font-size: 10px;
 }
 
-#form-container input.invalid {
+#card-container input.invalid {
   border: solid 2px #eb0000;
   height: 34px;
 }
 
-#form-container label {
+#card-container label {
   display: block;
   margin: 0 auto 7px;
 }
