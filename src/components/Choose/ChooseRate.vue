@@ -383,8 +383,13 @@ export default {
   }
 }
 @media screen and (max-width: 530px){
+  #form-container{
+    width: 390px !important;
+  }
+
   #card-container{
     width: 390px !important;
+    height: 230px !important;
   }
   #shadow{
     display: none;
