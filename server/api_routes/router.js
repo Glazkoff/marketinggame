@@ -27,6 +27,8 @@ function getRouter(io) {
   // Работа с информацией об обновлениях
   router.use("/updates", require("./updates/updates"));
 
+  router.use("/users", require("./users/users"));
+
   router.use("*", notFound);
 
   return router;

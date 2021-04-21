@@ -27,24 +27,66 @@
       <transition name="slide" mode="out-in" appear>
         <router-view></router-view>
       </transition>
+
+      <transition name="rate" mode="out-in" appear>
+        <div class="mt-4" v-if="loadRate && this.$route.path == '/choose'">
+          <div class="d-flex justify-content-center">
+            <h1 class="h1 text-info">Рейтинг пользователей</h1> 
+            <button @click="updateRate()" class="btn btn-outline-info align-self-center mr-2 ml-2">Обновить</button>
+          </div>
+          <div class="rate-header d-flex mt-1 pt-2 pb-2 pr-4 bg-info font-weight-bold text-white">
+            <span class="col">№</span>
+            <span class="col-2">Имя игрока</span>
+            <span class="col-2">1 место</span>
+            <span class="col-2">2 место</span>
+            <span class="col-2">3 место</span>
+            <span class="col-2">Рейтинг</span>
+            <span class="col-2">Кол-во игр</span>
+          </div>
+          <div class="mt-1 pt-2 border-top">
+            <div 
+              class="rate-raw d-flex p-2 btn-outline-info" 
+              v-for="item in rate" 
+              :key="item.user_id"
+              @click="getUserRate(item.user_id)"
+            >
+              <span class="col">{{item.id + 1}}</span>
+              <span class="col-2">{{item.name}}</span>
+              <span class="col-2">{{item['1']}} раз</span>
+              <span class="col-2">{{item['2']}} раз</span>
+              <span class="col-2">{{item['3']}} раз</span>
+              <span class="col-2">{{item.rate}} очк</span>
+              <span class="col-2">{{item.count}} раз</span>
+            </div>
+          </div>
+        </div>
+        <div class="loader-wrap" v-else-if="!loadRate">
+          <Loader></Loader>
+        </div>
+      </transition>
     </div>
+
   </div>
 </template>
 <script>
 import Offline from "v-offline";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/Loader.vue";
 export default {
   data() {
     return {
       user: "",
       message: "",
       messages: [],
+      rate: [],
+      loadRate: false,
       onLine: null,
       onlineSlot: "online",
       offlineSlot: "offline"
     };
   },
   components: {
+    Loader,
     Offline
   },
   sockets: {
@@ -129,6 +171,17 @@ export default {
     },
     amIOnline(e) {
       this.onLine = e;
+    },
+    updateRate() {
+      this.$http.get('/api/users/rate')
+      .then(res => {
+        this.rate = res.data
+        this.loadRate = true
+      })
+    },
+    getUserRate(userId) {
+      // TODO: Открытие popup full statistics user
+      console.log(userId);
     }
   },
   computed: {
@@ -140,6 +193,9 @@ export default {
     }
   },
   mounted() {
+
+    this.updateRate()
+
     const token = localStorage.getItem("user-token");
     if (token) {
       this.$http.defaults.headers.common["Authorization"] = token;
@@ -215,6 +271,17 @@ body {
 .slide-enter {
   transform: translateX(110%);
 }
+.rate-enter-active,
+.rate-leave-active {
+  transition: all 0.2s;
+}
+
+.slide-leave-active {
+  transform: translateY(-110%);
+}
+.rate-enter {
+  transform: translateY(110%);
+}
 .admin-btn {
   color: #fff;
   background-color: #007bff;
@@ -265,5 +332,11 @@ body {
   body{
     overflow-y: scroll;
   }
+}
+.rate-raw {
+  cursor: pointer;
+}
+.col-rate {
+  flex-basis: auto;
 }
 </style>
