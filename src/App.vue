@@ -29,11 +29,12 @@
       </transition>
 
       <transition name="rate" mode="out-in" appear>
-        <div class="mt-4" v-if="loadRate && this.$route.path == '/choose'">
+        <div class="mt-4 container" v-if="loadRate && this.$route.path == '/choose'">
           <div class="d-flex justify-content-center">
             <h1 class="h1 text-info">Рейтинг пользователей</h1> 
             <button @click="updateRate()" class="btn btn-outline-info align-self-center mr-2 ml-2">Обновить</button>
           </div>
+          <!-- TODO: Настроить колонки, чтобы не плавали -->
           <div class="rate-header d-flex mt-1 pt-2 pb-2 pr-4 bg-info font-weight-bold text-white">
             <span class="col">№</span>
             <span class="col-2">Имя игрока</span>
