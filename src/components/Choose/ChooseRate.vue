@@ -3,9 +3,11 @@
        :class="{container: this.width>=992 || this.width<768,
        'container-fluid': this.width>=768 && this.width<992
        }">
-    <div class="justify-content-center align-items-center row">
-      <div @click="changeAction('tarif')" class="pointer col-md-4 col-xl-3"
-           :class="{'is-active-action': this.width<=876 && this.action != 'tarif'}"
+        <h3 v-if="this.width<=866 && this.action=='tarif'" class="text-center text-info" style="white-space: nowrap">Выберите тариф</h3>
+        <h3 v-if="this.width<=866 && this.action=='domen'" class="text-center text-info" style="white-space: nowrap">Выберите поддомен</h3>
+        <h3 v-if="this.width<=866 && this.action=='final'" class="text-center text-info" style="white-space: nowrap">Оплатите подписку</h3>
+    <div class="justify-content-center align-items-center row m-2">
+      <div @click="changeAction('tarif')" class="pointer col-4 col-xl-3"
       >
         <div  class=" step d-flex flex-column align-items-center">
           <h3 :class="{
@@ -20,7 +22,7 @@
 
         }"
             class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
-            <h1>1</h1></div>
+            <span>1</span></div>
         </div>
       </div>
 
@@ -36,8 +38,7 @@
         }" class="mini-round border rounded-circle m-1"></div>
       </div>
 
-      <div class="pointer col-md-4 col-xl-3"
-           :class="{'is-active-action': this.width<=876 && this.action != 'domen'}"
+      <div class="pointer col-4 col-xl-3"
            @click="changeAction('domen')"
       >
         <div class="step d-flex flex-column align-items-center">
@@ -51,8 +52,8 @@
             'bg-info': this.action == 'domen' || this.action == 'tarif',
             'bg-success': this.action == 'final'
         }"
-            class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><h1>
-            2</h1></div>
+            class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><span>
+            2</span></div>
         </div>
       </div>
 
@@ -67,8 +68,7 @@
         }" class="mini-round border border-info rounded-circle m-1"></div>
       </div>
 
-      <div  class="pointer col-md-4 col-xl-3"
-           :class="{'is-active-action': this.width<=876 && this.action != 'final'}"
+      <div  class="pointer col-4 col-xl-3"
            @click="changeAction('final')"
       >
         <div class="step d-flex flex-column align-items-center">
@@ -78,13 +78,17 @@
           active: this.action == 'final'
         }"
             class="step-round bg-info text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
-            <h1>3</h1></div>
+            <span>3</span></div>
         </div>
       </div>
 
     </div>
+    <nav class="nav justify-content-between m-3">
+      <span :class="{'hidden': this.action =='tarif'}" class="pointer nav-text text-secondary" @click="navAction('back')">Назад</span>
+      <span :class="{'hidden': this.action =='final'}" class="pointer nav-text text-secondary" @click="navAction('forward')">Вперед</span>
+    </nav>
     <hr v-if="this.action == 'tarif'">
-    <div v-if="this.action == 'tarif'" class=" justify-content-center align-items-center row">
+    <div v-if="this.action == 'tarif'" class="justify-content-center align-items-center row">
       <div class="col-md-4 my-3 col-12 col-sm-9">
         <div class="choose-tarif">
           <div class="card text-center">
@@ -215,10 +219,7 @@
         </div>
       </div>
     </div>
-    <nav class="nav justify-content-between">
-      <span :class="{'hidden': this.action =='tarif'}" class="pointer nav-text text-secondary" @click="navAction('back')">Назад</span>
-      <span :class="{'hidden': this.action =='final'}" class="pointer nav-text text-secondary" @click="navAction('forward')">Вперед</span>
-    </nav>
+    
 
     <Modal v-if="showPaymentModal" @close="sendClose()">
       <template v-slot:header>
@@ -324,9 +325,6 @@ export default {
 .hidden{
   visibility: hidden;
 }
-.is-active-action {
-  display: none;
-}
 
 .steps {
   overflow: hidden;
@@ -335,7 +333,10 @@ export default {
 .step-round {
   width: 100px;
   height: 100px;
-
+}
+.step-round span{
+  line-height: 100%;
+  font-size: 2rem;
 }
 
 .active {
@@ -382,7 +383,7 @@ export default {
     white-space: normal !important;
   }
 }
-@media screen and (max-width: 530px){
+@media screen and (max-width: 867px){
   #form-container{
     width: 390px !important;
   }
@@ -394,7 +395,21 @@ export default {
   #shadow{
     display: none;
   }
+   .step h3{
+    display: none;
+  }
+  .step-round:not(.active) span{
+  font-size: 1rem;
 }
+  .step-round:not(.active){
+    width: 50px;
+    height: 50px;
+  }
+  .step-round:not(.active, .bg-success){
+    opacity: 0.6;
+  } 
+}
+
 .done {
   background: green;
   color: white;
