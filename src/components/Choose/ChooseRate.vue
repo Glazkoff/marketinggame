@@ -100,15 +100,16 @@
       >
         <div class="choose-tariff">
           <div class="card text-center">
-            <div class="card-header"><h2 class="card-title">{{tariff.title}}</h2></div>
+            <div class="card-header"><h2 class="card-title">{{ tariff.title }}</h2></div>
             <div class="card-body">
-              <h3 class="tariff-price">{{tariff.price}} $</h3>
+              <h3 class="tariff-price">{{ tariff.price }} $</h3>
               <div class="card-text">
                 <ul class="list-group">
                   <li class="list-group-item"
                       v-for="advantage in tariff.advantages"
                       :key="advantage"
-                  >{{advantage}}</li>
+                  >{{ advantage }}
+                  </li>
                 </ul>
               </div>
             </div>
@@ -126,7 +127,9 @@
             <input type="text" class="form-control" placeholder="Введите поддомен" v-model="information.subdomain">
 
           </div>
-          <small><span>Ссылка:</span> <span v-if="this.information.subdomain==''">example</span>{{ information.subdomain }}.imgames.ru</small>
+          <small><span>Ссылка:</span> <span v-if="this.information.subdomain==''">example</span>{{
+              information.subdomain
+            }}.imgames.ru</small>
           <button class="btn btn-outline-info w-100 mt-2" @click="changeAction('final')">Выбрать</button>
         </div>
       </div>
@@ -296,7 +299,7 @@ export default {
       this.width = window.innerWidth;
     },
     // Выбор тарифа
-    chooseTariff(tariff){
+    chooseTariff(tariff) {
       this.information.tariff = tariff.id
       this.changeAction('domain')
     },
@@ -382,7 +385,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 867px) {
+@media screen and (max-width: 530px) {
   #form-container {
     width: 390px !important;
   }
@@ -395,7 +398,9 @@ export default {
   #shadow {
     display: none;
   }
+}
 
+@media screen and (max-width: 867px) {
   .step h3 {
     display: none;
   }
