@@ -69,7 +69,7 @@ export default new Router({
         )
     },
     {
-      path: "/tarif",
+      path: "/tariff",
       name: "ChooseRate",
       component: ChooseRate
     },

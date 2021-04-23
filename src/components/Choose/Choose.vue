@@ -125,7 +125,7 @@
           'btn-outline-info': this.toggle == 'chooseRate'
         }"
             >
-              <router-link to="tarif">
+              <router-link to="tariff">
                 <input
                   type="radio"
                   v-model="buy"
