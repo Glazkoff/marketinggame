@@ -1,27 +1,27 @@
 <template>
   <div class=""
-       :class="{container: this.width>=992 || this.width<768,
-       'container-fluid': this.width>=768 && this.width<992
+       :class="{container: width>=992 || width<768,
+       'container-fluid': width>=768 && width<992
        }">
-    <h3 v-if="this.width<=866 && this.action=='tariff'" class="text-center text-info" style="white-space: nowrap">
+    <h3 v-if="width<=866 && action=='tariff'" class="text-center text-info" style="white-space: nowrap">
       Выберите тариф</h3>
-    <h3 v-if="this.width<=866 && this.action=='domain'" class="text-center text-info" style="white-space: nowrap">
+    <h3 v-if="width<=866 && action=='domain'" class="text-center text-info" style="white-space: nowrap">
       Выберите поддомен</h3>
-    <h3 v-if="this.width<=866 && this.action=='final'" class="text-center text-info" style="white-space: nowrap">
+    <h3 v-if="width<=866 && action=='final'" class="text-center text-info" style="white-space: nowrap">
       Оплатите подписку</h3>
     <div class="justify-content-center align-items-center row m-2">
       <div @click="changeAction('tariff')" class="pointer col-4 col-xl-3"
       >
         <div class=" step d-flex flex-column align-items-center">
           <h3 :class="{
-            'text-success': this.action == 'domain' || this.action == 'final',
-            'text-info': this.action == 'tariff'
+            'text-success': action == 'domain' || action == 'final',
+            'text-info': action == 'tariff'
         }" class="text-center" style="white-space: nowrap">Выберите тариф</h3>
           <div
             :class="{
-            active: this.action == 'tariff',
-            'bg-info': this.action == 'tariff',
-            'bg-success': this.action == 'domain' || this.action == 'final',
+            active: action == 'tariff',
+            'bg-info': action == 'tariff',
+            'bg-success': action == 'domain' || action == 'final',
 
         }"
             class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
@@ -31,13 +31,13 @@
 
       <div class="d-flex justify-content-between mini-round-wrapper ">
         <div :class="{
-            'border-success': this.action == 'domain' || this.action == 'final',
-            'border-info': this.action == 'tariff'
+            'border-success': action == 'domain' || action == 'final',
+            'border-info': action == 'tariff'
         }" class="mini-round border rounded-circle m-1"></div>
         <div :class="{
-            'bg-success': this.action == 'domain' || this.action == 'final',
-            'border-success': this.action == 'domain' || this.action == 'final',
-            'border-info': this.action == 'tariff'
+            'bg-success': action == 'domain' || action == 'final',
+            'border-success': action == 'domain' || action == 'final',
+            'border-info': action == 'tariff'
         }" class="mini-round border rounded-circle m-1"></div>
       </div>
 
@@ -46,14 +46,14 @@
       >
         <div class="step d-flex flex-column align-items-center">
           <h3 :class="{
-            'text-success': this.action == 'final',
-            'text-info': this.action == 'domain' || this.action == 'tariff'
+            'text-success': action == 'final',
+            'text-info': action == 'domain' || action == 'tariff'
         }" class="text-center" style="white-space: nowrap">Выберите поддомен</h3>
           <div
             :class="{
-            active: this.action == 'domain',
-            'bg-info': this.action == 'domain' || this.action == 'tariff',
-            'bg-success': this.action == 'final'
+            active: action == 'domain',
+            'bg-info': action == 'domain' || action == 'tariff',
+            'bg-success': action == 'final'
         }"
             class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><span>
             2</span></div>
@@ -62,12 +62,12 @@
 
       <div class="d-flex justify-content-between mini-round-wrapper">
         <div :class="{
-            'border-success': this.action == 'final',
-             'border-info': this.action == 'tariff' || this.action == 'domain'
+            'border-success': action == 'final',
+             'border-info': action == 'tariff' || action == 'domain'
         }" class="mini-round border rounded-circle m-1"></div>
         <div :class="{
-            'bg-success': this.action == 'final',
-            'border-success': this.action == 'final'
+            'bg-success': action == 'final',
+            'border-success': action == 'final'
         }" class="mini-round border border-info rounded-circle m-1"></div>
       </div>
 
@@ -78,7 +78,7 @@
           <h3 class="text-center text-info" style="white-space: nowrap">Оплатите подписку</h3>
           <div
             :class="{
-          active: this.action == 'final'
+          active: action == 'final'
         }"
             class="step-round bg-info text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
             <span>3</span></div>
@@ -87,13 +87,13 @@
 
     </div>
     <nav class="nav justify-content-between m-3">
-      <span :class="{'hidden': this.action =='tariff'}" class="pointer nav-text text-secondary"
+      <span :class="{'hidden': action =='tariff'}" class="pointer nav-text text-secondary"
             @click="navAction('back')">Назад</span>
-      <span :class="{'hidden': this.action =='final'}" class="pointer nav-text text-secondary"
+      <span :class="{'hidden': action =='final'}" class="pointer nav-text text-secondary"
             @click="navAction('forward')">Вперед</span>
     </nav>
-    <hr v-if="this.action == 'tariff'">
-    <div v-if="this.action == 'tariff'" class="justify-content-center align-items-start row">
+    <hr v-if="action == 'tariff'">
+    <div v-if="action == 'tariff'" class="justify-content-center align-items-start row">
       <div class="col-md-4 my-3 col-12 col-sm-9"
            v-for="tariff in tariffs"
            :key="tariff.id"
@@ -120,21 +120,21 @@
         </div>
       </div>
     </div>
-    <div v-if="this.action == 'domain'" class="choose-domain mx-auto col-md-8 col-lg-8 col-12 mt-3">
+    <div v-if="action == 'domain'" class="choose-domain mx-auto col-md-8 col-lg-8 col-12 mt-3">
       <div class="card">
         <div class="card-body">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Введите поддомен" v-model="information.subdomain">
 
           </div>
-          <small><span>Ссылка:</span> <span v-if="this.information.subdomain==''">example</span>{{
+          <small><span>Ссылка:</span> <span v-if="information.subdomain==''">example</span>{{
               information.subdomain
             }}.imgames.ru</small>
           <button class="btn btn-outline-info w-100 mt-2" @click="changeAction('final')">Выбрать</button>
         </div>
       </div>
     </div>
-    <div v-if="this.action == 'final'" class="final d-flex justify-content-center">
+    <div v-if="action == 'final'" class="final d-flex justify-content-center">
       <div id="form-container">
         <div id="card-container" :style="{color: cardInfo.textColor}">
           <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
@@ -163,17 +163,17 @@
                   <input id="card-year" class="col" type="text" placeholder="YY" maxlength="2">
                 </div>
               </div>
-              <div id="cvc-container-inner" class="col-3" v-if="this.width<530">
+              <div id="cvc-container-inner" class="col-3" v-if="width<530">
                 <label for="card-cvc-inner">CVC</label>
                 <input id="card-cvc-inner" style="width: 60px" type="text" :maxlength="cardInfo.codeLength">
               </div>
             </div>
-            <div id="cvc-container" v-if="this.width>=530">
+            <div id="cvc-container" v-if="width>=530">
               <label for="card-cvc">CVC</label>
               <input id="card-cvc" type="text" :maxlength="cardInfo.codeLength">
             </div>
           </div>
-          <div id="card-back" :style="{'background': cardInfo.backgroundGradient}" v-if="this.width>=530">
+          <div id="card-back" :style="{'background': cardInfo.backgroundGradient}" v-if="width>=530">
             <div id="card-stripe">
             </div>
           </div>
@@ -185,7 +185,7 @@
               <input type="email" class="form-control" placeholder="Введите вашу почту" v-model="information.email">
             </div>
             <button type="button" id="card-btn" class="btn btn-success mt-2"
-                    :class="{'card-btn-back':this.width>=530,'card-btn-front':this.width<530}" @click="makePayment">
+                    :class="{'card-btn-back':width>=530,'card-btn-front':width<530}" @click="makePayment">
               Подтвердить
             </button>
           </div>
