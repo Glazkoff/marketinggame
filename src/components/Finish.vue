@@ -1,5 +1,5 @@
 <template>
-  <div id="finish-screen" class="">
+  <div id="finish-screen">
     <div class="container">
       <div class="row" v-if="isLoozer">
         <div class="col-12">
@@ -45,7 +45,6 @@
       </div>
       <div class="row" id="direction-column" v-if="isSomeWinner">
         <div class="col-lg-4 col d-flex align-items-center justify-content-center">
-          <!-- <div class="gray-block block-winner-img"></div> -->
           <div
             class="gray-block"
             :class="{

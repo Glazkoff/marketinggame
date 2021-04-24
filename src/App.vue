@@ -58,9 +58,8 @@
                 alt="Обновить"> 
             </div>
             <div class="rate-header d-flex mt-1 pt-2 pb-2 pr-4 bg-info font-weight-bold text-white">
-              <span class="col-2">№</span>
-              <span class="col-7">Имя игрока</span>
-              <span class="col-3">Рейтинг</span>
+              <span class="col-2">Место</span>
+              <span class="col-10">Имя игрока</span>
             </div>
             <div class="mt-1 pt-2 border-top">
               <div 
@@ -75,11 +74,8 @@
                   <img width="32px" src="./assets/noplacerate.svg" v-else alt="NPR">
                   {{item.id + 1}}
                 </span>
-                <span class="col-7">
+                <span class="col-10">
                   {{item.name}}
-                </span>
-                <span class="col-3">
-                  {{item.rate}} очк
                 </span>
               </div>
             </div>
