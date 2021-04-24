@@ -134,7 +134,24 @@
         </div>
       </div>
     </div>
-    <div v-if="action == 'final'" class="final d-flex justify-content-center">
+    <div v-if="action == 'final'" class="final d-md-flex justify-content-center mt-3">
+      <div class="tariff-information card mr-md-5 mb-md-0 mb-4 mx-md-0 mx-auto">
+        <div class="card-header"><h4 class="card-title">Информация</h4></div>
+        <div class="card-body">
+          <div class="card-text">
+            <h5>Ваш тариф:</h5>
+            <p>{{information.tariff.id !== -1 ? information.tariff.title : 'Тариф не выбран'}}</p>
+            <span class="pointer nav-text text-secondary"
+                  @click="changeAction('tariff')">Изменить</span>
+          </div>
+          <div class="card-text mt-4">
+            <h5>Ваш поддомен:</h5>
+            <p>{{ (information.subdomain !== '') ? `${information.subdomain}.imgames.ru` : 'Поддомен не выбран' }} </p>
+            <span class="pointer nav-text text-secondary"
+                  @click="changeAction('domain')">Изменить</span>
+          </div>
+        </div>
+      </div>
       <div id="form-container">
         <div id="card-container" :style="{color: cardInfo.textColor}">
           <div id="card-front" :style="{'background': cardInfo.backgroundGradient}">
@@ -384,7 +401,20 @@ export default {
   }
 }
 
+@media screen and (max-width: 767px) {
+  .tariff-information {
+    width: 500px !important;
+  }
+  #form-container {
+    margin: auto !important;
+  }
+}
+
 @media screen and (max-width: 530px) {
+  .tariff-information{
+    width: 390px !important;
+  }
+
   #form-container {
     width: 390px !important;
   }
@@ -509,13 +539,16 @@ export default {
   letter-spacing: .5px;
 }
 
+.tariff-information{
+  width: 200px
+}
+
 #form-container {
-  margin: auto;
   width: 500px;
 }
 
 #card-container {
-  margin: auto auto 30px;
+  margin-bottom: 30px;
   height: 290px;
   position: relative;
 }
