@@ -1,8 +1,11 @@
 <template>
+<div>
+<router-link to="/choose" class="text-muted">На главную</router-link>
   <div class=""
        :class="{container: width>=992 || width<768,
        'container-fluid': width>=768 && width<992
        }">
+       
     <h3 v-if="width<=866 && action=='tariff'" class="text-center text-info" style="white-space: nowrap">
       Выберите тариф</h3>
     <h3 v-if="width<=866 && action=='domain'" class="text-center text-info" style="white-space: nowrap">
@@ -216,6 +219,7 @@
 
       @tryAgain="[changeAction('tariff'), onClosePaymentModal()]"
     />
+  </div>
   </div>
 </template>
 <script>
