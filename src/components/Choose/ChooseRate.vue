@@ -381,6 +381,9 @@ export default {
   transition: 300ms ease;
   text-decoration: none;
 }
+.card-body{
+  padding: 1rem !important;
+}
 
 @keyframes pulse {
   from {
