@@ -1,6 +1,6 @@
 <template>
 <div>
-<router-link to="/choose" class="text-muted">На главную</router-link>
+<router-link to="/choose" class="text-muted nav-text">На главную</router-link>
   <div class=""
        :class="{container: width>=992 || width<768,
        'container-fluid': width>=768 && width<992
@@ -379,6 +379,7 @@ export default {
 .nav-text:hover {
   color: black !important;
   transition: 300ms ease;
+  text-decoration: none;
 }
 
 @keyframes pulse {
