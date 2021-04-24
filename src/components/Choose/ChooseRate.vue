@@ -192,32 +192,24 @@
         </div>
       </div>
     </div>
-    <Modal v-if="showPaymentModal" @close="sendClose()">
-      <template v-slot:header>
-        <h5>Оплата прошла успешно!</h5>
-      </template>
-      <template v-slot:body>
-        <p>Поздравляем с приобретением подписки!</p>
-        <hr>
-        <h5 class="mb-3">Информация о произведенной покупке:</h5>
-        <p><b>Тарифный план</b>: {{(information.tariff.id !== -1) ? information.tariff.title : 'тариф не выбран в рамках тестирования'}}</p>
-        <p><b>Поддомен</b>: {{information.subdomain !== '' ? information.subdomain : 'поддомен не выбран в рамках тестирования'}}</p>
-        <p><b>Почта</b>: {{information.email !== '' ? information.email : 'почта не выбрана в рамках тестирования'}}</p>
-      </template>
-      <template v-slot:footer>
-        <button type="button" class="btn btn-success" @click="onClosePaymentModal">
-          Спасибо!
-        </button>
-      </template>
-    </Modal>
+    <PaymentModal
+      v-show="showPaymentModal"
+      :paymentModalData="paymentModalData"
+      :subscriptionData="information"
+
+      @tryAgain="[changeAction('tariff'), onClosePaymentModal()]"
+    />
   </div>
 </template>
 <script>
 import CardInfo from 'card-info'
-import Modal from "@/components/Modal.vue";
+import PaymentModal from "./PaymentModal";
 
 export default {
   name: "ChooseRate",
+  components: {
+    PaymentModal
+  },
   data() {
     return {
       action: "tariff",
@@ -251,6 +243,10 @@ export default {
         email: ''
       },
       showPaymentModal: false,
+      paymentModalData: {
+        status: 500,
+        message: 'Информация об ошибке'
+      },
       width: window.innerWidth,
     }
   },
@@ -267,9 +263,6 @@ export default {
   },
   created() {
     window.addEventListener('resize', this.updateWidth);
-  },
-  components: {
-    Modal
   },
   methods: {
     navAction(direction) {
@@ -296,12 +289,12 @@ export default {
     changeAction(actionChange) {
       this.action = actionChange
     },
-    onShowPaymentModal() {
+    onShowPaymentModal(data) {
+      this.paymentModalData = data
       this.showPaymentModal = true
     },
     onClosePaymentModal() {
-      this.showPaymentModal = false;
-      this.$router.push("/choose");
+      this.showPaymentModal = false
     },
     updateWidth() {
       this.width = window.innerWidth;
@@ -313,12 +306,10 @@ export default {
     },
     // Завершить покупку
     makePayment() {
-      console.log(this.information)
-      this.$store.dispatch('PAYMENT_REQUEST').then(() => {
-        this.onShowPaymentModal()
+      this.$store.dispatch('PAYMENT_REQUEST', this.information).then((res) => {
+        this.onShowPaymentModal(res.data)
       }).catch((err) => {
-        console.log(err.data.message)
-        this.$router.push("/choose");
+        this.onShowPaymentModal(err.data)
       })
     }
   }

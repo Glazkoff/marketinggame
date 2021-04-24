@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const JWTCONFIG = require("../../secret.config");
 const db = require("../../models/index");
-const { logRestApiError } = require("../../global_functions/logs");
+const {logRestApiError} = require("../../global_functions/logs");
 
 // Запрос на триал
 router.post("/trial", async (req, res) => {
@@ -18,9 +18,9 @@ router.post("/trial", async (req, res) => {
             message: "Вы не авторизованы!"
           });
         } else {
-         // TODO: Добавить в базу данных информацию о триалах и сделать проверку
+          // TODO: Добавить в базу данных информацию о триалах и сделать проверку
 
-          // res.sendStatus(200)
+          // res.send({ status: 200, message: "OK" });
           res.status(501).send({
             status: 501,
             message: "Функционал пока не реализован!"
@@ -51,12 +51,15 @@ router.post("/subscription", async (req, res) => {
           });
         } else {
           // TODO: Добавить в базу данных информацию о всех тарифах, сделать проверку на наличие активной подписки
-
-          res.sendStatus(200)
-          /* res.status(501).send({
-            status: 501,
-            message: "Функционал пока не реализован!"
-          }); */
+          if (req.body.tariff.id !== -1) {
+            // Если имеется тариф, то УСПЕХ! Выбрано для тестирования
+            res.send({ status: 200, message: "OK" });
+          } else {
+            res.status(501).send({
+              status: 501,
+              message: "Функционал пока не реализован!"
+            });
+          }
         }
       }
     );
