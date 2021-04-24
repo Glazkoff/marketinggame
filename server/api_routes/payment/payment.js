@@ -52,11 +52,11 @@ router.post("/subscription", async (req, res) => {
         } else {
           // TODO: Добавить в базу данных информацию о всех тарифах, сделать проверку на наличие активной подписки
 
-          // res.sendStatus(200)
-          res.status(501).send({
+          res.sendStatus(200)
+          /* res.status(501).send({
             status: 501,
             message: "Функционал пока не реализован!"
-          });
+          }); */
         }
       }
     );

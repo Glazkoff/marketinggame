@@ -198,6 +198,11 @@
       </template>
       <template v-slot:body>
         <p>Поздравляем с приобретением подписки!</p>
+        <hr>
+        <h5 class="mb-3">Информация о произведенной покупке:</h5>
+        <p><b>Тарифный план</b>: {{(information.tariff.id !== -1) ? information.tariff.title : 'тариф не выбран в рамках тестирования'}}</p>
+        <p><b>Поддомен</b>: {{information.subdomain !== '' ? information.subdomain : 'поддомен не выбран в рамках тестирования'}}</p>
+        <p><b>Почта</b>: {{information.email !== '' ? information.email : 'почта не выбрана в рамках тестирования'}}</p>
       </template>
       <template v-slot:footer>
         <button type="button" class="btn btn-success" @click="onClosePaymentModal">
@@ -237,7 +242,10 @@ export default {
         }
       ],
       information: {
-        tariff: -1,
+        tariff: {
+          id: -1,
+          title: ''
+        },
         cardNumber: this.number,
         subdomain: '',
         email: ''
@@ -300,7 +308,7 @@ export default {
     },
     // Выбор тарифа
     chooseTariff(tariff) {
-      this.information.tariff = tariff.id
+      this.information.tariff = {id: tariff.id, title: tariff.title}
       this.changeAction('domain')
     },
     // Завершить покупку
