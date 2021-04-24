@@ -40,7 +40,7 @@
       <router-link to="/main">Главный экран</router-link>|
       <router-link to="/about">Об игре</router-link>
     </div>
-    <div id="view" :class="{ 'full-screen': !adminNav }">
+    <div id="view" :class="{ 'full-screen': !adminNav }" class="p-sm-3">
       <transition name="slide" mode="out-in" appear>
         <router-view></router-view>
       </transition>
@@ -278,9 +278,9 @@ body {
     max-width: calc(100vw - 2rem) !important;
   }
 }
-@media screen and (max-height: 600px), (max-width: 500px){
+@media screen and (max-height: 600px), (max-width: 768px){
   body{
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 }
 </style>

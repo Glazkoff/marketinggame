@@ -1,5 +1,5 @@
 <template>
-  <div class="card container col-lg-4 col-md-5 col-sm-10 col-xs-8 mt-sm-5 p-4 mt-0">
+  <div class="card container col-xl-4 col-lg-8 col-sm-10 col-xs-8 p-4 mt-0">
     <ReviewModal
       v-if="showReviewModal"
       @close="onCloseReviewModal()"
