@@ -212,7 +212,6 @@ const store = new Vuex.Store({
       state.roomId = -1;
       state.steps = [];
       state.havePrevData = false;
-      // state.roomParams = Object.assign(state.firstRoomParams)
       state.roomParams = {};
       state.prevRoomParams = {};
       for (var key in state.firstRoomParams) {

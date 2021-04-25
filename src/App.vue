@@ -14,26 +14,9 @@
           </h3>
         </div>
       </template>
-      <!-- <template v-slot:[offlineSlot] :slot-name="offlineSlot">
-        <div class="container-fluid">
-          <div class="row">
-            <h1>Офлайн!</h1>
-          </div>
-        </div>
-        ( Online: {{ onLine }} )
-      </template> -->
     </Offline>
 
     <Toasts></Toasts>
-    <!-- <button
-      class="admin-btn"
-      @click="changeAdminNav"
-      title="Доступ администратора"
-      :disabled="!isAdmin"
-    >
-      <span v-if="!adminNav">↓</span>
-      <span v-else>↑</span>
-    </button> -->
     <div id="nav" :class="{ 'admin-show': adminNav, 'admin-hide': !adminNav }">
       <router-link to="/">Вход</router-link>|
       <router-link to="/choose">Создать игру</router-link>|
@@ -44,24 +27,150 @@
       <transition name="slide" mode="out-in" appear>
         <router-view></router-view>
       </transition>
+      
+      <div 
+        v-if="this.$route.path == '/choose' && !showRate" 
+        class="bg-info h-100 btn-rate d-flex cursour-pointer" 
+        @click="showRate = !showRate">
+        <img
+          width="32px"
+          class="align-self-center"
+          src="./assets/rating.svg" 
+          alt="Обновить"> 
+        <span class="align-self-center text-white font-weight-bold font-size-large">
+          >
+        </span>
+      </div>
+      <transition name="rate">
+        <div class="rate-container overflow-auto h-100" v-if="this.$route.path == '/choose' && showRate">
+          <div class="mt-4" v-if="loadRate">
+            <div class="d-flex justify-content-center">
+              <h1 class="h1 text-info">Рейтинг пользователей</h1> 
+              <img @click="updateRate()"
+                width="32px"
+                class="mr-2 ml-2 btn btn-outline-info rounded-circle align-self-center p-0"
+                src="./assets/updateRate.svg" 
+                alt="Обновить"> 
+              <img @click="showRate = !showRate"
+                width="32px"
+                class="mr-2 btn btn-outline-info rounded-circle align-self-center p-0"
+                src="./assets/closeRate.svg" 
+                alt="Обновить"> 
+            </div>
+            <div class="rate-header d-flex mt-1 pt-2 pb-2 pr-4 bg-info font-weight-bold text-white">
+              <span class="col-2">Место</span>
+              <span class="col-10">Имя игрока</span>
+            </div>
+            <div class="mt-1 pt-2 border-top">
+              <div 
+                class="rate-raw d-flex p-2 btn-outline-info" 
+                v-for="item in rate" 
+                :key="item.user_id"
+                @click="getUserRate(item.user_id)">
+                <span class="col-2">
+                  <img width="32px" src="./assets/1.svg" v-if="item.id + 1 == 1" alt="First">
+                  <img width="32px" src="./assets/2.svg" v-else-if="item.id + 1 == 2" alt="Second">
+                  <img width="32px" src="./assets/3.svg" v-else-if="item.id + 1 == 3" alt="Third">
+                  <img width="32px" src="./assets/noplacerate.svg" v-else alt="NPR">
+                  {{item.id + 1}}
+                </span>
+                <span class="col-10">
+                  {{item.name}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="loader-wrap" v-else-if="!loadRate">
+            <Loader></Loader>
+          </div>
+        </div>
+      </transition>
+      <transition name="popup" mode="in-out">
+        <div 
+          class="popup-screen"
+          v-if="userRate">
+            <div class="popup p-2">
+              <div class="d-flex justify-content-between align-self-center">
+                <img width="32px"  class="cp" 
+                  src="./assets/update.svg" alt="">
+                <div class="h1 text-center " id="name">
+                  {{userState.name}}
+                </div>
+                <img 
+                  @click="userRate = !userRate" class="cp"
+                  width="32px" src="./assets/close.svg" alt="">
+              </div>
+              <div class="popup-body">
+                <div class="statics w-100 border rounded-lg d-flex">
+                  <div :style="'width:' + 
+                    userState.countFirst / userState.countGames * 100
+                   + '%;'" class="bg-success"></div>
+                  <div :style="'width:' + 
+                    userState.countSecond / userState.countGames * 100
+                   + '%;'" class="bg-primary"></div>
+                  <div :style="'width:' + 
+                    userState.countThird / userState.countGames * 100
+                   + '%;'" class="bg-warning"></div>
+                  <div :style="'width:' + 
+                    (userState.countGames - (
+                      userState.countFirst +
+                      userState.countSecond + 
+                      userState.countThird
+                    )) / userState.countGames * 100
+                   + '%;'" class="bg-danger"></div>
+                </div>
+                <div class="legend-rate ml-2">
+                  <div class="border-bottom">
+                    <div style="height: 10px; width: 10px;" class="bg-success rounded-circle d-inline-block"> </div> <span>Первых мест: {{userState.countFirst}}</span>
+                  </div>
+                  <div class="border-bottom">
+                    <div style="height: 10px; width: 10px;" class="bg-primary rounded-circle d-inline-block"> </div> <span>Вторых мест: {{userState.countSecond}}</span>
+                  </div>
+                  <div class="border-bottom">
+                    <div style="height: 10px; width: 10px;" class="bg-warning rounded-circle d-inline-block"> </div> <span>Третьих мест: {{userState.countThird}}</span>
+                  </div>
+                  <div class="border-bottom">
+                    <div style="height: 10px; width: 10px;" class="bg-secondary rounded-circle d-inline-block"> </div> <span>Без мест: {{
+                        userState.countGames - (userState.countFirst + userState.countSecond + userState.countThird)
+                      }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </transition>
     </div>
+
   </div>
 </template>
 <script>
 import Offline from "v-offline";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/Loader.vue";
 export default {
   data() {
     return {
       user: "",
       message: "",
       messages: [],
+      rate: [],
+      loadRate: false,
+      userRate: false,
+      userState: {
+        name: '',
+        countGames: 0,
+        countFirst: 0,
+        countSecond: 0,
+        countThird: 0
+      },
+      showRate: false,
       onLine: null,
       onlineSlot: "online",
       offlineSlot: "offline"
     };
   },
   components: {
+    Loader,
     Offline
   },
   sockets: {
@@ -146,6 +255,23 @@ export default {
     },
     amIOnline(e) {
       this.onLine = e;
+    },
+    updateRate() {
+      this.$http.get('/api/users/rate')
+      .then(res => {
+        this.rate = res.data
+        this.loadRate = true
+      })
+    },
+    getUserRate(userId) {
+      this.userRate = true
+      userId = parseInt(userId)
+      let user = this.rate.find(a => a.user_id === userId)
+      this.userState.name = user.name
+      this.userState.countGames = user.count
+      this.userState.countFirst = user['1']
+      this.userState.countSecond = user['2']
+      this.userState.countThird = user['3']
     }
   },
   computed: {
@@ -157,6 +283,9 @@ export default {
     }
   },
   mounted() {
+
+    this.updateRate()
+
     const token = localStorage.getItem("user-token");
     if (token) {
       this.$http.defaults.headers.common["Authorization"] = token;
@@ -235,6 +364,17 @@ body {
 .slide-enter {
   transform: translateX(110%);
 }
+.rate-enter-active,
+.rate-leave-active {
+  transition: all 0.2s;
+}
+
+.slide-leave-active {
+  transform: translateX(-110%);
+}
+.rate-enter {
+  transform: translateX(110%);
+}
 .admin-btn {
   color: #fff;
   background-color: #007bff;
@@ -286,4 +426,53 @@ body {
     overflow-y: auto;
   }
 }
+
+.rate-container {
+  position: absolute;
+  top: -70px;
+  left: 0;
+  background-color: rgb(255, 255, 255);
+  border-right: 1px solid #6c757d;
+}
+
+.btn-rate {
+  position: absolute;
+  left: 0; 
+  top: -48px;
+  cursor: pointer;
+}
+
+.rate-raw {
+  cursor: pointer;
+}
+
+.col-rate {
+  flex-basis: auto;
+}
+
+.popup-screen {
+  position: fixed;
+  width: 100vw;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .5);
+  padding: 20% 20%;
+}
+
+.popup {
+  background: rgb(255, 255, 255);
+}
+
+.popup img {
+  cursor: pointer;
+}
+.cp {
+  cursor: pointer;
+}
+
+.statics div {
+  height: 6px;
+}
+
 </style>
