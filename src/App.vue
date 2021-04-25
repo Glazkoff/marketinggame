@@ -64,18 +64,18 @@
             <div class="mt-1 pt-2 border-top">
               <div 
                 class="rate-raw d-flex p-2 btn-outline-info" 
-                v-for="item in rate" 
-                :key="item.user_id"
-                @click="getUserRate(item.user_id)">
+                v-for="index in 10" 
+                :key="index"
+                @click="getUserRate(rate[index-1].user_id)">
                 <span class="col-2">
-                  <img width="32px" src="./assets/1.svg" v-if="item.id + 1 == 1" alt="First">
-                  <img width="32px" src="./assets/2.svg" v-else-if="item.id + 1 == 2" alt="Second">
-                  <img width="32px" src="./assets/3.svg" v-else-if="item.id + 1 == 3" alt="Third">
+                  <img width="32px" src="./assets/1.svg" v-if="rate[index-1].id + 1 == 1" alt="First">
+                  <img width="32px" src="./assets/2.svg" v-else-if="rate[index-1].id + 1 == 2" alt="Second">
+                  <img width="32px" src="./assets/3.svg" v-else-if="rate[index-1].id + 1 == 3" alt="Third">
                   <img width="32px" src="./assets/noplacerate.svg" v-else alt="NPR">
-                  {{item.id + 1}}
+                  {{rate[index-1].id + 1}}
                 </span>
                 <span class="col-10">
-                  {{item.name}}
+                  {{rate[index-1].name}}
                 </span>
               </div>
             </div>
