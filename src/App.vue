@@ -30,7 +30,7 @@
       
       <div 
         v-if="this.$route.path == '/choose' && !showRate" 
-        class="bg-info h-100 btn-rate d-flex cursour-pointer" 
+        class="bg-info full-screen btn-rate d-flex" 
         @click="showRate = !showRate">
         <img
           width="32px"
@@ -426,7 +426,7 @@ body {
 
 .rate-container {
   position: absolute;
-  top: -70px;
+  top: 0;
   left: 0;
   background-color: rgb(255, 255, 255);
   border-right: 1px solid #6c757d;
@@ -435,7 +435,7 @@ body {
 .btn-rate {
   position: absolute;
   left: 0; 
-  top: -48px;
+  top: 0;
   cursor: pointer;
 }
 
