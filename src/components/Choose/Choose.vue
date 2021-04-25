@@ -1,5 +1,6 @@
 <template>
-  <div class="card container col-xl-4 col-lg-8 col-sm-10 col-xs-8 p-4 mt-0">
+<div class="pt-5">
+<div class="card container col-xl-4 col-lg-8 col-sm-10 col-xs-8 p-4">
     <ReviewModal
       v-if="showReviewModal"
       @close="onCloseReviewModal()"
@@ -239,6 +240,7 @@
         Оставить отзыв
       </button>
     </div>
+  </div>
   </div>
 </template>
 

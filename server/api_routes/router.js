@@ -29,6 +29,8 @@ function getRouter(io) {
 
   // Работа с подписками
   router.use("/payment", require("./payment/payment"));
+  
+  router.use("/users", require("./users/users"));
 
   router.use("*", notFound);
 
