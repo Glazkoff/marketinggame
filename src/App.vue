@@ -179,6 +179,9 @@ export default {
 };
 </script>
 <style>
+*{
+  box-sizing: border-box;
+}
 .centered-content {
   margin: auto;
 }
@@ -278,9 +281,9 @@ body {
     max-width: calc(100vw - 2rem) !important;
   }
 }
-@media screen and (max-height: 600px), (max-width: 500px){
+@media screen and (max-height: 600px), (max-width: 768px){
   body{
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 }
 </style>
