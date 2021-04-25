@@ -29,7 +29,7 @@
       </transition>
       
       <div 
-        v-if="this.$route.path == '/choose' && !showRate" 
+        v-if="this.$route.path == '/choose' && !showRate" style="display: none !important"
         class="bg-info full-screen btn-rate d-flex" 
         @click="showRate = !showRate">
         <img
@@ -418,7 +418,7 @@ body {
     max-width: calc(100vw - 2rem) !important;
   }
 }
-@media screen and (max-height: 600px), (max-width: 768px){
+@media screen and (max-height: 600px), (max-width: 992px){
   body{
     overflow-y: auto;
   }
