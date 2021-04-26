@@ -128,7 +128,9 @@
         <div class="card-body">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Введите поддомен" v-model="information.subdomain">
-
+              <div class="input-group-append">
+                <span class="input-group-text">.imgames.ru</span>
+              </div>
           </div>
           <small><span>Ссылка:</span> <span v-if="information.subdomain==''">example</span>{{
               information.subdomain
@@ -420,18 +422,24 @@ export default {
 
 @media screen and (max-width: 530px) {
   .tariff-information{
-    width: 390px !important;
+    width: 90vw !important;
   }
 
   #form-container {
-    width: 390px !important;
+    width: 90vw !important;
   }
 
   #card-container {
-    width: 390px !important;
+    width: 90vw !important;
     height: 230px !important;
   }
-
+#card-front{
+   width: 90vw !important;
+}
+#exp-container{
+ padding-right: 0.5rem !important;
+  padding-left: 0.5rem !important;
+}
   #shadow {
     display: none;
   }
