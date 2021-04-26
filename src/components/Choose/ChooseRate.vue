@@ -1,6 +1,6 @@
 <template>
 <div>
-<router-link to="/choose" class="text-muted nav-text">На главную</router-link>
+<router-link to="/choose" class="text-muted nav-text d-block pt-2 pl-3">На главную</router-link>
   <div class=""
        :class="{container: width>=992 || width<768,
        'container-fluid': width>=768 && width<992
