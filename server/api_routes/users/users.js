@@ -34,20 +34,20 @@ router.get('/rate', async (req, res) => {
               }
             ]
           })
-          newWinners = []
-          count = [10, 5, 2]
-          winners.forEach((winner, i) => {
-            username = winner.winners_user ? 
-                       winner.winners_user.name : 
+          let newWinners = []
+          const count = [10, 5, 2]
+          winners.forEach((winner) => {
+            const username = winner.winners_user ?
+                       winner.winners_user.name :
                        'Deleted user'
-            index = newWinners.findIndex(a => a.name == username)
-            if (index != -1) {
+            const index = newWinners.findIndex(a => a.name === username)
+            if (index !== -1) {
               newWinners[index].rate += count[winner.place - 1]
               newWinners[index][(winner.place).toString()] += 1
               newWinners[index].count += 1
             } else {
               newWinners.push({
-                user_id: i,
+                user_id: winner.user_id,
                 name: username,
                 rate: count[winner.place - 1],
                 '1': 0,
