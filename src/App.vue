@@ -142,9 +142,6 @@ export default {
     }
   },
   mounted() {
-
-    this.updateRate()
-
     const token = localStorage.getItem("user-token");
     if (token) {
       this.$http.defaults.headers.common["Authorization"] = token;
