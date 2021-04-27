@@ -268,7 +268,7 @@
       </div>
     </div>
     <!--  Блок о рейтинге-->
-    <div class="col-xl-7 col-lg-10 col-sm-10 col-xs-8 p-4 mt-lg-5">
+    <div class="col-xl-7 col-lg-10 col-sm-10 col-xs-8 p-4">
       <rating/>
     </div>
   </div>
