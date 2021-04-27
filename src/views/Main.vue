@@ -13,18 +13,19 @@
       <div class="pg-header align-items-center">
         <h3 class="ml-1 mb-0">Комната #{{ roomNumber }}</h3>
         <router-link to="choose" class="ml-1"
-          >Выйти из комнаты</router-link
+        >Выйти из комнаты
+        </router-link
         >
       </div>
       <ReviewModal
         v-if="showReviewModal"
         @close="onHideReviewModal()"
       ></ReviewModal>
-       <CheckModal
-      v-if="showCheckModal"
-      @close="onCloseCheckModal()"
-      :errorMessage="errorMessage"
-    ></CheckModal>
+      <CheckModal
+        v-if="showCheckModal"
+        @close="onCloseCheckModal()"
+        :errorMessage="errorMessage"
+      ></CheckModal>
       <transition name="fade" mode="out-in">
         <PlayGround v-if="!isFinish"></PlayGround>
         <Finish v-else @showReviewModal="onShowReviewModal()"></Finish>
@@ -90,7 +91,7 @@ export default {
   },
   // ################  НЕ УДАЛЯТЬ  ###############
   beforeRouteEnter(to, from, next) {
-    next(async function(vm) {
+    next(async function (vm) {
       if (
         isNaN(vm.$store.state.roomParams.money) ||
         typeof vm.$store.state.roomParams.money
@@ -103,7 +104,7 @@ export default {
           vm.showCheckModal = true;
           vm.errorMessage = error.data.message;
           vm.loading = false;
-          
+
 
         }
       }
@@ -141,6 +142,7 @@ export default {
 </script>
 
 <style>
+
 .modal-enter {
   opacity: 0;
 }
@@ -154,14 +156,17 @@ export default {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.4s;
 }
+
 .fade-enter-to {
   transform: scale(1);
   opacity: 0.9;
 }
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
@@ -171,6 +176,7 @@ export default {
   opacity: 0;
   transform: scale(0.9);
 }
+
 #splitScr {
   display: grid;
   grid-template-rows: 1fr;
@@ -178,10 +184,12 @@ export default {
   width: 100vw;
   height: 100%;
 }
+
 .main-side {
   flex-direction: column;
   max-height: calc(100vh - 40px);
 }
+
 .pg-header {
   position: relative;
   z-index: 100;
@@ -204,7 +212,8 @@ export default {
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .pg-header h3{
+
+  .pg-header h3 {
     font-size: 1.5em;
   }
 }
