@@ -667,7 +667,6 @@ export default {
   grid-area: 2/1/3/2;
   overflow-x: scroll;
   overflow-y: hidden;
-  height: calc(96% - 40px);
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
@@ -746,7 +745,6 @@ export default {
   grid-area: 2/2/3/3;
   height: 100%;
   min-height: 50%;
-  max-height: calc(96% - 40px);
   display: flex;
   overflow: auto;
 }
@@ -854,7 +852,6 @@ export default {
   #enemy-field {
     grid-area: 2/3/3/4;
     min-height: 50%;
-    max-height: calc(96% - 40px);
   }
 
   #enemy-field, #effects-field, #card-field {

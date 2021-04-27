@@ -7,7 +7,7 @@
     >
       <template v-slot:[onlineSlot] :slot-name="onlineSlot">
         <div class="centered-content text-center">
-          <img src="./assets/cloud-off.svg" alt="" height="96" width="96" />
+          <img src="./assets/cloud-off.svg" alt="" height="96" width="96"/>
           <h1 class="text-light">Офлайн!</h1>
           <h3 class="text-light">
             Дождитесь, когда у вас снова будет доступ в интернет
@@ -18,25 +18,28 @@
 
     <Toasts></Toasts>
     <div id="nav" :class="{ 'admin-show': adminNav, 'admin-hide': !adminNav }">
-      <router-link to="/">Вход</router-link>|
-      <router-link to="/choose">Создать игру</router-link>|
-      <router-link to="/main">Главный экран</router-link>|
+      <router-link to="/">Вход</router-link>
+      |
+      <router-link to="/choose">Создать игру</router-link>
+      |
+      <router-link to="/main">Главный экран</router-link>
+      |
       <router-link to="/about">Об игре</router-link>
     </div>
     <div id="view" :class="{ 'full-screen': !adminNav }">
       <transition name="slide" mode="out-in" appear>
         <router-view></router-view>
       </transition>
-      
-      <div 
+
+      <div
         v-if="this.$route.path == '/choose' && !showRate" style="display: none !important"
-        class="bg-info full-screen btn-rate d-flex" 
+        class="bg-info full-screen btn-rate d-flex"
         @click="showRate = !showRate">
         <img
           width="32px"
           class="align-self-center"
-          src="./assets/rating.svg" 
-          alt="Обновить"> 
+          src="./assets/rating.svg"
+          alt="Обновить">
         <span class="align-self-center text-white font-weight-bold font-size-large">
           >
         </span>
@@ -45,26 +48,26 @@
         <div class="rate-container overflow-auto h-100" v-if="this.$route.path == '/choose' && showRate">
           <div class="mt-4" v-if="loadRate">
             <div class="d-flex justify-content-center">
-              <h1 class="h1 text-info">Рейтинг пользователей</h1> 
+              <h1 class="h1 text-info">Рейтинг пользователей</h1>
               <img @click="updateRate()"
-                width="32px"
-                class="mr-2 ml-2 btn btn-outline-info rounded-circle align-self-center p-0"
-                src="./assets/updateRate.svg" 
-                alt="Обновить"> 
+                   width="32px"
+                   class="mr-2 ml-2 btn btn-outline-info rounded-circle align-self-center p-0"
+                   src="./assets/updateRate.svg"
+                   alt="Обновить">
               <img @click="showRate = !showRate"
-                width="32px"
-                class="mr-2 btn btn-outline-info rounded-circle align-self-center p-0"
-                src="./assets/closeRate.svg" 
-                alt="Обновить"> 
+                   width="32px"
+                   class="mr-2 btn btn-outline-info rounded-circle align-self-center p-0"
+                   src="./assets/closeRate.svg"
+                   alt="Обновить">
             </div>
             <div class="rate-header d-flex mt-1 pt-2 pb-2 pr-4 bg-info font-weight-bold text-white">
               <span class="col-2">Место</span>
               <span class="col-10">Имя игрока</span>
             </div>
             <div class="mt-1 pt-2 border-top">
-              <div 
-                class="rate-raw d-flex p-2 btn-outline-info" 
-                v-for="item in rate" 
+              <div
+                class="rate-raw d-flex p-2 btn-outline-info"
+                v-for="item in rate"
                 :key="item.user_id"
                 @click="getUserRate(item.user_id)">
                 <span class="col-2">
@@ -72,10 +75,10 @@
                   <img width="32px" src="./assets/2.svg" v-else-if="item.id + 1 == 2" alt="Second">
                   <img width="32px" src="./assets/3.svg" v-else-if="item.id + 1 == 3" alt="Third">
                   <img width="32px" src="./assets/noplacerate.svg" v-else alt="NPR">
-                  {{item.id + 1}}
+                  {{ item.id + 1 }}
                 </span>
                 <span class="col-10">
-                  {{item.name}}
+                  {{ item.name }}
                 </span>
               </div>
             </div>
@@ -86,67 +89,71 @@
         </div>
       </transition>
       <transition name="popup" mode="in-out">
-        <div 
+        <div
           class="popup-screen"
           v-if="userRate">
-            <div class="popup p-2">
-              <div class="d-flex justify-content-between align-self-center">
-                <img width="32px"  class="cp" 
-                  src="./assets/update.svg" alt="">
-                <div class="h1 text-center " id="name">
-                  {{userState.name}}
-                </div>
-                <img 
-                  @click="userRate = !userRate" class="cp"
-                  width="32px" src="./assets/close.svg" alt="">
+          <div class="popup p-2">
+            <div class="d-flex justify-content-between align-self-center">
+              <img width="32px" class="cp"
+                   src="./assets/update.svg" alt="">
+              <div class="h1 text-center " id="name">
+                {{ userState.name }}
               </div>
-              <div class="popup-body">
-                <div class="statics w-100 border rounded-lg d-flex">
-                  <div :style="'width:' + 
+              <img
+                @click="userRate = !userRate" class="cp"
+                width="32px" src="./assets/close.svg" alt="">
+            </div>
+            <div class="popup-body">
+              <div class="statics w-100 border rounded-lg d-flex">
+                <div :style="'width:' +
                     userState.countFirst / userState.countGames * 100
                    + '%;'" class="bg-success"></div>
-                  <div :style="'width:' + 
+                <div :style="'width:' +
                     userState.countSecond / userState.countGames * 100
                    + '%;'" class="bg-primary"></div>
-                  <div :style="'width:' + 
+                <div :style="'width:' +
                     userState.countThird / userState.countGames * 100
                    + '%;'" class="bg-warning"></div>
-                  <div :style="'width:' + 
+                <div :style="'width:' +
                     (userState.countGames - (
                       userState.countFirst +
-                      userState.countSecond + 
+                      userState.countSecond +
                       userState.countThird
                     )) / userState.countGames * 100
                    + '%;'" class="bg-danger"></div>
+              </div>
+              <div class="legend-rate ml-2">
+                <div class="border-bottom">
+                  <div style="height: 10px; width: 10px;" class="bg-success rounded-circle d-inline-block"></div>
+                  <span>Первых мест: {{ userState.countFirst }}</span>
                 </div>
-                <div class="legend-rate ml-2">
-                  <div class="border-bottom">
-                    <div style="height: 10px; width: 10px;" class="bg-success rounded-circle d-inline-block"> </div> <span>Первых мест: {{userState.countFirst}}</span>
-                  </div>
-                  <div class="border-bottom">
-                    <div style="height: 10px; width: 10px;" class="bg-primary rounded-circle d-inline-block"> </div> <span>Вторых мест: {{userState.countSecond}}</span>
-                  </div>
-                  <div class="border-bottom">
-                    <div style="height: 10px; width: 10px;" class="bg-warning rounded-circle d-inline-block"> </div> <span>Третьих мест: {{userState.countThird}}</span>
-                  </div>
-                  <div class="border-bottom">
-                    <div style="height: 10px; width: 10px;" class="bg-secondary rounded-circle d-inline-block"> </div> <span>Без мест: {{
-                        userState.countGames - (userState.countFirst + userState.countSecond + userState.countThird)
-                      }}</span>
-                  </div>
+                <div class="border-bottom">
+                  <div style="height: 10px; width: 10px;" class="bg-primary rounded-circle d-inline-block"></div>
+                  <span>Вторых мест: {{ userState.countSecond }}</span>
+                </div>
+                <div class="border-bottom">
+                  <div style="height: 10px; width: 10px;" class="bg-warning rounded-circle d-inline-block"></div>
+                  <span>Третьих мест: {{ userState.countThird }}</span>
+                </div>
+                <div class="border-bottom">
+                  <div style="height: 10px; width: 10px;" class="bg-secondary rounded-circle d-inline-block"></div>
+                  <span>Без мест: {{
+                      userState.countGames - (userState.countFirst + userState.countSecond + userState.countThird)
+                    }}</span>
                 </div>
               </div>
             </div>
+          </div>
         </div>
       </transition>
     </div>
-
   </div>
 </template>
 <script>
 import Offline from "v-offline";
 import jwt from "jsonwebtoken";
 import Loader from "@/components/Loader.vue";
+
 export default {
   data() {
     return {
@@ -174,16 +181,16 @@ export default {
     Offline
   },
   sockets: {
-    connect: function(connections) {
+    connect: function (connections) {
       this.$store.state.socketId = this.$socket.id;
       console.log("Сonnect");
       let token = this.$store.state.token;
-      this.$socket.emit("authenticate", { token });
+      this.$socket.emit("authenticate", {token});
     },
-    authenticated: function() {
+    authenticated: function () {
       console.log("ПОДКЛЮЧЕНО!");
     },
-    unauthorized: function(error) {
+    unauthorized: function (error) {
       console.error("НЕ АВТОРИЗОВАН!");
       if (
         error.data.type === "UnauthorizedError" ||
@@ -191,7 +198,7 @@ export default {
       ) {
       }
     },
-    setToast: function(toast) {
+    setToast: function (toast) {
       switch (toast.type) {
         case "success":
           this.$toast.success(toast.body, {
@@ -258,10 +265,10 @@ export default {
     },
     updateRate() {
       this.$http.get('/api/users/rate')
-      .then(res => {
-        this.rate = res.data
-        this.loadRate = true
-      })
+        .then(res => {
+          this.rate = res.data
+          this.loadRate = true
+        })
     },
     getUserRate(userId) {
       this.userRate = true
@@ -290,8 +297,8 @@ export default {
     if (token) {
       this.$http.defaults.headers.common["Authorization"] = token;
     }
-    this.$http.interceptors.response.use(undefined, function(err) {
-      return new Promise(function() {
+    this.$http.interceptors.response.use(undefined, function (err) {
+      return new Promise(function () {
         if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
           // Если ошибка авторизации на сервере, выкинуть пользователя
           this.$store.dispatch("AUTH_LOGOUT");
@@ -301,16 +308,23 @@ export default {
       });
     });
     history.pushState(null, null, location.href);
-    window.onpopstate = function(event) {
+    window.onpopstate = function (event) {
       history.go(1);
     };
   }
 };
 </script>
+
 <style>
+@media screen and (max-width: 876px) {
+  .full-screen{
+    max-height: calc(100vh - 00px) !important;
+  }
+}
 .centered-content {
   margin: auto;
 }
+
 .offline {
   background-color: #fc9842;
   background-image: linear-gradient(315deg, #fc9842 0%, #fe5f75 74%);
@@ -322,20 +336,24 @@ export default {
   z-index: 10000;
   display: flex;
 }
+
 .online {
   display: none;
 }
+
 body {
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
   padding: 0;
   margin: 0;
   height: 100vh;
 }
+
 #app {
   height: 100%;
   position: relative;
 }
+
 #nav {
   box-sizing: border-box;
   padding: 8px;
@@ -343,13 +361,16 @@ body {
 
   width: 100%;
 }
+
 #view {
   height: calc(100vh - 40px);
 }
+
 .full-screen {
-  height: calc(100vh - 00px) !important;
-  max-height: calc(100vh - 00px) !important;
+  height: calc(100vh - 00px);
+  max-height: calc(100vh - 50px);
 }
+
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.2s;
@@ -358,9 +379,11 @@ body {
 .slide-leave-active {
   transform: translateX(-110%);
 }
+
 .slide-enter {
   transform: translateX(110%);
 }
+
 .rate-enter-active,
 .rate-leave-active {
   transition: all 0.2s;
@@ -369,9 +392,11 @@ body {
 .slide-leave-active {
   transform: translateX(-110%);
 }
+
 .rate-enter {
   transform: translateX(110%);
 }
+
 .admin-btn {
   color: #fff;
   background-color: #007bff;
@@ -385,44 +410,53 @@ body {
   font-size: 1.4rem;
   z-index: 1000;
 }
+
 .admin-btn[disabled] {
   background-color: #6bb3ff;
   visibility: hidden;
 }
+
 .admin-show {
   position: relative;
 }
+
 .admin-hide {
   position: static;
   position: fixed;
   top: -36px;
   left: 0;
 }
+
 .loader-wrap {
   width: 100%;
   display: flex;
 }
+
 .loader-wrap > * {
   margin: auto;
 }
+
 .toast-container {
   top: 2rem !important;
 }
+
 @media (max-width: 930px) {
   .toast-container {
     right: 1rem !important;
     width: calc(100vw - 2rem) !important;
     min-width: calc(100vw - 2rem) !important;
   }
+
   .toast {
     max-width: calc(100vw - 2rem) !important;
   }
 }
-@media screen and (max-height: 600px), (max-width: 992px){
+
+/* @media screen and (max-height: 600px), (max-width: 1240px){
   body{
     overflow-y: auto;
   }
-}
+} */
 
 .rate-container {
   position: absolute;
@@ -434,7 +468,7 @@ body {
 
 .btn-rate {
   position: absolute;
-  left: 0; 
+  left: 0;
   top: 0;
   cursor: pointer;
 }
@@ -464,6 +498,7 @@ body {
 .popup img {
   cursor: pointer;
 }
+
 .cp {
   cursor: pointer;
 }
