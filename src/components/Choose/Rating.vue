@@ -2,8 +2,8 @@
   <div class="card p-xl-4 p-3">
     <h3 class="mb-1">Рейтинг игроков</h3>
       <div class="d-flex mt-1 pt-2 pb-2 text-info font-weight-bolder text-center align-items-center">
-        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2">№</span>
-        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">Игрок</span>
+        <span class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-2">№</span>
+        <span class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-4">Игрок</span>
         <span class="col-2 places"><img width="32px" src="@/assets/1.svg" alt="First"
                                                    title="Первые места"></span>
         <span class="col-2 places"><img width="32px" src="@/assets/2.svg" alt="Second" title="Вторые места"></span>
@@ -14,11 +14,11 @@
            v-for="(user, index) in usersRating"
            :key="user.user_id"
       >
-          <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2 font-weight-bolder"
+          <span class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-2 font-weight-bolder"
                 :style="{color: placeColor[index]}"
           >
             {{ user.id + 1 }}</span>
-          <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">{{ user.name }}</span>
+          <span class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-4">{{ user.name }}</span>
           <span class="col-2 places"
                 v-for="i in 3"
                 :key="i"
@@ -62,11 +62,6 @@ export default {
 
 <style scoped>
 
-@media screen and (min-width: 992px) and (max-width: 1210px) {
-  .places{
-    display: none;
-  }
-}
 @media screen and (max-width: 570px) {
   .places{
     display: none;
