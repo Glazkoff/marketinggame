@@ -258,7 +258,7 @@
             </li>
           </ul>
         </div>
-          <button class="btn btn-link text-left">
+          <button class="btn btn-link text-left" @click="viewPayment()">
             Управление подпиской
           </button>
       </div>
@@ -466,6 +466,13 @@ export default {
         this.loading = false;
       })
     },
+    viewPayment() {
+      this.$store.dispatch('PAYMENT_VIEW', this.information).then((res) => {
+        this.onShowCheckModal(res.data)
+      }).catch((err) => {
+        this.onShowCheckModal(err.data)
+      })
+    }
   }
 };
 </script>

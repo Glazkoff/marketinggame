@@ -874,6 +874,22 @@ const store = new Vuex.Store({
             reject(err);
           });
       });
+    },
+    // Запрос на просмотр данных о подписке
+    // TODO: прописать путь для api о подписках пользователя
+    PAYMENT_VIEW(state, userId){
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/somepath`,
+          method: "GET"
+        })
+          .then((res) => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
     }
   }
 });
