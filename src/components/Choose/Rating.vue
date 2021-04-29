@@ -1,7 +1,6 @@
 <template>
   <div class="card p-xl-4 p-3">
     <h3 class="mb-1">Рейтинг игроков</h3>
-    <div class="">
       <div class="d-flex mt-1 pt-2 pb-2 text-info font-weight-bolder text-center align-items-center">
         <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2">№</span>
         <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">Игрок</span>
@@ -15,20 +14,17 @@
            v-for="(user, index) in usersRating"
            :key="user.user_id"
       >
-      <hr>
-        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2 font-weight-bolder"
-              :style="{color: placeColor[index]}"
-        >
-          {{ user.id + 1 }}</span>
-        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">{{ user.name }}</span>
-        <span class="col-2 places"
-              v-for="i in 3"
-              :key="i"
-        >{{ user[i] }}</span>
-        
+          <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2 font-weight-bolder"
+                :style="{color: placeColor[index]}"
+          >
+            {{ user.id + 1 }}</span>
+          <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">{{ user.name }}</span>
+          <span class="col-2 places"
+                v-for="i in 3"
+                :key="i"
+          >{{ user[i] }}</span>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
