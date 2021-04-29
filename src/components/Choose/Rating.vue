@@ -3,28 +3,29 @@
     <h3 class="mb-1">Рейтинг игроков</h3>
     <div class="">
       <div class="d-flex mt-1 pt-2 pb-2 text-info font-weight-bolder text-center align-items-center">
-        <span class="col-6 col-sm-3 col-md-2">Место</span>
-        <span class="col-6 col-sm-3 col-md-4">Игрок</span>
-        <span class="col-2 d-none d-sm-block"><img width="32px" src="@/assets/1.svg" alt="First"
+        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2">№</span>
+        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">Игрок</span>
+        <span class="col-2 places"><img width="32px" src="@/assets/1.svg" alt="First"
                                                    title="Первые места"></span>
-        <span class="col-2 d-none d-sm-block"><img width="32px" src="@/assets/2.svg" alt="Second" title="Вторые места"></span>
-        <span class="col-2 d-none d-sm-block"><img width="32px" src="@/assets/3.svg" alt="Third"
+        <span class="col-2 places"><img width="32px" src="@/assets/2.svg" alt="Second" title="Вторые места"></span>
+        <span class="col-2 places"><img width="32px" src="@/assets/3.svg" alt="Third"
                                                    title="Третьи места"></span>
       </div>
-      <div class="d-flex mt-1 pt-2 pb-2 text-center align-items-center"
+      <div class="d-flex mt-1 pt-1 pb-1 text-center align-items-center border-top"
            v-for="(user, index) in usersRating"
            :key="user.user_id"
-           :class="{'border-top mt-2 mt-2': index === 3}"
       >
-        <span class="col-6 col-sm-3 col-md-2 font-weight-bolder"
+      <hr>
+        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-2 font-weight-bolder"
               :style="{color: placeColor[index]}"
         >
           {{ user.id + 1 }}</span>
-        <span class="col-6 col-sm-3 col-md-4">{{ user.name }}</span>
-        <span class="col-2 d-none d-sm-block"
+        <span class="col-6 col-sm-3 col-md-3 col-lg-6 col-xl-4">{{ user.name }}</span>
+        <span class="col-2 places"
               v-for="i in 3"
               :key="i"
         >{{ user[i] }}</span>
+        
       </div>
     </div>
   </div>
@@ -38,7 +39,7 @@ export default {
   data() {
     return {
       usersRating: [],
-      placeColor: ['#e49034', '#639fa7', '#dc314b', '#17a2b8']
+      placeColor: ['#e49034', '#639fa7', '#dc314b']
     }
   },
   mounted() {
@@ -48,7 +49,7 @@ export default {
     updateRate() {
       this.$http.get('/api/users/rate')
         .then(res => {
-          this.usersRating = (res.data).slice(0, 3)
+          this.usersRating = (res.data).slice(0, 10)
           let decode = jwt.decode(this.$store.state.token);
           if (decode) {
             res.data.forEach(data => {
@@ -65,4 +66,14 @@ export default {
 
 <style scoped>
 
+@media screen and (min-width: 992px) and (max-width: 1210px) {
+  .places{
+    display: none;
+  }
+}
+@media screen and (max-width: 570px) {
+  .places{
+    display: none;
+  }
+}
 </style>

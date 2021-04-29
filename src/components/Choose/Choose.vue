@@ -1,7 +1,7 @@
 <template>
   <div class="pt-sm-5 row justify-content-center align-baseline">
     <!--  Основной блок-->
-    <div class="col-xl-4 col-lg-6 col-sm-10 col-xs-8 p-4 ">
+     <div class="col-xl-4 col-lg-6 col-md-10 col-sm-10 col-xs-8 p-4 ">
       <div class="card p-4">
         <ReviewModal
           v-if="showReviewModal"
@@ -246,7 +246,7 @@
       </div>
     </div>
     <!--  Блок о тарифе-->
-    <div class="col-xl-3 col-lg-4 col-sm-10 col-xs-8 p-4 mt-lg-5">
+    <div class="col-xl-3 col-lg-3 col-md-10 col-sm-10 col-xs-8 p-4 order-lg-first">
       <div class="card p-xl-4 p-3">
         <h3 class="mb-1">О подписке</h3>
         <h5>Ваш тариф: <b>Стандартный</b></h5>
@@ -258,17 +258,13 @@
             </li>
           </ul>
         </div>
-        <div class="btn-group-toggle mt-3 mb-3"
-             :class="{'btn-group-vertical': this.width<500, 'btn-group':this.width>=500 }">
-          <button class="btn btn-danger">Отменить подписку</button>
-          <button class="btn btn-info">
-            <router-link style="color: white; text-decoration: none" to="tariff">Поменять тариф</router-link>
+          <button class="btn btn-link text-left">
+            Управление подпиской
           </button>
-        </div>
       </div>
     </div>
     <!--  Блок о рейтинге-->
-    <div class="col-xl-7 col-lg-10 col-sm-10 col-xs-8 p-4">
+    <div class="col-xl-4 col-lg-3 col-md-10 col-sm-10 p-4 order-lg-last">
       <rating/>
     </div>
   </div>

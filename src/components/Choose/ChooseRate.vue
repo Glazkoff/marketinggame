@@ -171,7 +171,7 @@
             <input :pattern="cardInfo.numberMusk" type="text" v-model="information.cardNumber" id="card-number"
                    :placeholder="cardInfo.numberMask" :maxlength="cardInfo.numberLengths">
             <div class="d-flex justify-content-between row">
-              <div id="cardholder-container" class="col-5">
+              <div id="cardholder-container" class="col-sm-8 col-5">
                 <label for="card-holder">Владелец карты
                 </label>
                 <input type="text" style="text-transform: uppercase" id="card-holder" placeholder="IVAN IVANOV"/>
@@ -206,7 +206,7 @@
             <div class="input-group mt-2">
               <input type="email" class="form-control" placeholder="Введите вашу почту" v-model="information.email">
             </div>
-            <button type="button" id="card-btn" class="btn btn-success mt-2"
+            <button type="button" class="btn btn-success mt-2 w-100"
                     :class="{'card-btn-back':width>=530,'card-btn-front':width<530}" @click="makePayment">
               Подтвердить
             </button>
@@ -364,13 +364,15 @@ export default {
 
 .active {
   animation: pulse 2s ease-in-out infinite;
+}
 
+.step-round:not(.active, .bg-success) {
+    opacity: 0.6;
 }
 
 .mini-round {
   width: 20px;
   height: 20px;
-
 }
 
 .mini-round:nth-child(2n) {
@@ -459,9 +461,7 @@ export default {
     height: 50px;
   }
 
-  .step-round:not(.active, .bg-success) {
-    opacity: 0.6;
-  }
+ 
 }
 
 .done {
@@ -484,7 +484,6 @@ export default {
   border-radius: 8px;
   height: 42px;
   font-size: 12px;
-  text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 400;
   outline: none;
