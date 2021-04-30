@@ -4,10 +4,10 @@
       <div class="d-flex mt-1 pt-2 pb-2 text-info font-weight-bolder text-center align-items-center">
         <span class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-2">№</span>
         <span class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-4">Игрок</span>
-        <span class="col-2 places"><img width="32px" src="@/assets/medals/1.svg" alt="First"
+        <span class="col-2 d-none d-sm-block"><img width="32px" src="@/assets/medals/1.svg" alt="First"
                                                    title="Первые места"></span>
-        <span class="col-2 places"><img width="32px" src="@/assets/medals/2.svg" alt="Second" title="Вторые места"></span>
-        <span class="col-2 places"><img width="32px" src="@/assets/medals/3.svg" alt="Third"
+        <span class="col-2 d-none d-sm-block"><img width="32px" src="@/assets/medals/2.svg" alt="Second" title="Вторые места"></span>
+        <span class="col-2 d-none d-sm-block"><img width="32px" src="@/assets/medals/3.svg" alt="Third"
                                                    title="Третьи места"></span>
       </div>
       <div class="d-flex mt-1 pt-1 pb-1 text-center align-items-center border-top"
@@ -23,7 +23,7 @@
             <small v-show="userId === user.user_id"
                    class="text-secondary">(вы)</small>
           </span>
-          <span class="col-2 places"
+          <span class="col-2 d-none d-sm-block"
                 v-for="i in 3"
                 :key="i"
           >{{ user[i] }}</span>
@@ -68,9 +68,4 @@ export default {
 
 <style scoped>
 
-@media screen and (max-width: 570px) {
-  .places{
-    display: none;
-  }
-}
 </style>
