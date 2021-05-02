@@ -92,7 +92,10 @@
     <nav class="nav justify-content-between m-3">
       <span :class="{'hidden': action =='tariff'}" class="pointer nav-text text-secondary"
             @click="navAction('back')">Назад</span>
-      <span :class="{'hidden': action =='final'}" class="pointer nav-text text-secondary"
+      <span 
+      v-if="(information.tariff.id !== -1 && action=='tariff' )||(information.tariff.id !== -1 && information.subdomain !== '')" 
+      :class="{'hidden': action =='final'}" 
+      class="pointer nav-text text-secondary"
             @click="navAction('forward')">Вперед</span>
     </nav>
     <hr v-if="action == 'tariff'">
@@ -310,6 +313,8 @@ export default {
       }
     },
     changeAction(actionChange) {
+      if((this.information.tariff.id !== -1 && this.action === 'tariff' ) ||
+      (this.information.tariff.id !== -1 && this.information.subdomain !== ''))
       this.action = actionChange
     },
     onShowPaymentModal(data) {
