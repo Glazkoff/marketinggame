@@ -483,14 +483,15 @@ function getRoomsRouter(io) {
                 if (
                   (usersState.length !== 0) && 
                   (
-                    (ownerState.length == usersState.length && !ownerInRoom.isattacker) ||
-                    (ownerState.length == usersState.length + 1 && ownerInRoom.isattacker)
+                    (room.current_month == usersState.length && !userInRoom.isattacker) ||
+                    (room.current_month + 1 == usersState.length && userInRoom.isattacker) 
                   )
                 ) {
                   // Устанавливаем, что пользователь подключён к комнате
                   await db.UserInRoom.update(
                     {
-                      isdisconnected: false
+                      isdisconnected: false,
+                      isattacker: true
                     },
                     {
                       where: {
@@ -529,8 +530,8 @@ function getRoomsRouter(io) {
                   if (
                     room && 
                     (
-                      (ownerState.length == usersState.length && !ownerInRoom.isattacker) ||
-                      (ownerState.length == usersState.length + 1 && ownerInRoom.isattacker)
+                      (room.current_month == usersState.length && !userInRoom.isattacker) ||
+                      (room.current_month == usersState.length + 1 && userInRoom.isattacker)
                     )
                   ) {
                     res.send({
