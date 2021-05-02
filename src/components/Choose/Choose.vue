@@ -96,7 +96,7 @@
             </button>
           </div>
           <div class="room-create" v-if="toggle == 'create' && !loading">
-            <div class="alert-info rounded p-3 text-center" v-if="!this.isSubscribed">
+            <div class="alert-info rounded p-3 text-center" v-if="this.displaySubscriptions">
               <h2>
                 Создавать игры можно только с подпиской
               </h2>
@@ -142,7 +142,7 @@
                 </label>
               </div>
             </div>
-            <div v-if="this.isSubscribed && !this.timeIsUp">
+            <div v-else>
               <label for="month" class>Количество месяцев</label>
               <br/>
               <input
@@ -228,7 +228,7 @@
               >
                 Создать
               </button>
-              <Timer v-bind:deadline="Date.parse(new Date()) + 21600000" v-on:timeisup="onUnsubscribe()"></Timer>
+              <Timer v-if="displaySubscriptions" v-bind:deadline="Date.parse(new Date()) + 21600000" v-on:timeisup="onUnsubscribe()"></Timer>
             </div>
           </div>
         </transition>
@@ -246,7 +246,7 @@
       </div>
     </div>
     <!--  Блок о тарифе-->
-    <div class="col-xl-3 col-lg-4 col-md-10 col-sm-10 p-4 order-xl-first">
+    <div class="col-xl-3 col-lg-4 col-md-10 col-sm-10 p-4 order-xl-first" v-if="displaySubscriptions">
       <div class="card p-xl-4 p-3">
         <h3 class="mb-1">О подписке</h3>
         <h5>Ваш тариф: <b>Стандартный</b></h5>
@@ -330,6 +330,9 @@ export default {
     },
     stateFirstParams() {
       return this.$store.state.firstRoomParams;
+    },
+    displaySubscriptions(){
+      return this.$store.state.admin.globalConfig.display_subscriptions;
     }
   },
   created() {
@@ -352,6 +355,21 @@ export default {
     window.addEventListener('resize', this.updateWidth);
   },
   methods: {
+    loadConfig() {
+      let there = this;
+      this.loading = true;
+      this.$store
+        .dispatch("GET_ADMIN_CONFIG")
+        .then(res => {
+          this.loading = false;
+        })
+        .catch(function(err) {
+          there.$toast.error(err, {
+            showProgress: true,
+            timeOut: 2000
+          });
+        });
+    },
     onTimeIsUp() {
       this.timeIsUp = true
     },
@@ -454,6 +472,7 @@ export default {
     },
     updateWidth() {
       this.width = window.innerWidth;
+      console.log(this.displaySubscriptions)
     },
     startTrial() {
       // Типа отправление данных о начале триала
@@ -473,6 +492,9 @@ export default {
         this.onShowCheckModal(err.data)
       })
     }
+  },
+  mounted() {
+    this.loadConfig();
   }
 };
 </script>

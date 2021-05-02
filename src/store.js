@@ -482,7 +482,8 @@ const store = new Vuex.Store({
           url: `${apiUrl}/admin/config`,
           method: "POST",
           data: {
-            event_chance: data.event_chance
+            event_chance: data.event_chance,
+            display_subscriptions: data.display_subscriptions
           }
         })
           .then(resp => {

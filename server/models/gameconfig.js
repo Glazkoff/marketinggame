@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       event_chance: {
         type: DataTypes.DECIMAL,
         allowNull: false
+      },
+      display_subscriptions: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
       }
     },
     {
