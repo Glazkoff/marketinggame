@@ -52,6 +52,7 @@
             <input type="checkbox" class="form-check-input" id="subscription_check" v-model="config.display_subscriptions">
             <label class="form-check-label" for="subscription_check">Данные о подписке</label>
           </div>
+          <hr />
           <a
             @click.prevent="saveEdit()"
             href="#"
