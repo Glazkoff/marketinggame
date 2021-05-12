@@ -251,10 +251,10 @@
         <h3 class="mb-1">О подписке</h3>
         <h5>Ваш тариф: <b>Стандартный</b></h5>
         <div class="card-text">
-          <ul class="list-group">
-            <li class="list-group-item">Преимущество 1
+          <ul class="list-subscriptions">
+            <li>Преимущество 1
             </li>
-            <li class="list-group-item">Преимущество 2
+            <li>Преимущество 2 с большим объёмом текста
             </li>
           </ul>
         </div>
@@ -503,7 +503,18 @@ export default {
 </script>
 
 <style>
-
+.list-subscriptions {
+    padding:0;
+    list-style: none;
+}
+.list-subscriptions li{
+    padding:6px;
+}
+.list-subscriptions li:before {
+    padding-right:5px;
+    font-weight: bold;
+    content: "\2B50";
+}
 
 @media screen and (max-width: 575px) {
   .card.container {
