@@ -264,8 +264,8 @@
       </div>
     </div>
     <!--  Блок о рейтинге-->
-    <div class="col-xl-4 col-lg-10 col-md-10 col-sm-10 p-4 order-lg-last">
-      <rating  v-if="displayRating"/>
+    <div class="col-xl-4 col-lg-10 col-md-10 col-sm-10 p-4 order-lg-last"  v-if="displayRating">
+      <rating />
     </div>
   </div>
 </template>
