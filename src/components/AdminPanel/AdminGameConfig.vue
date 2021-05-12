@@ -47,19 +47,32 @@
       </div>
       <div class="alert alert-dark" role="alert">
         <h4 class="alert-heading">Управление отображением элементов главного меню</h4>
-          <div class="form-group">
+        <div v-if="!subscriptionEdit.isEdit">
+          Сведения о подписке: <b v-if="config.display_subscriptions">вкл</b> <b v-else>выкл</b>
+        </div>
+          <div class="form-group" v-else>
           <div class="form-check">
             <input type="checkbox" class="form-check-input" id="subscription_check" v-model="config.display_subscriptions">
             <label class="form-check-label" for="subscription_check">Данные о подписке</label>
           </div>
           <hr />
+          </div>
+           <p class="mb-0">
+          <a
+            @click.prevent="letSubscriptionEdit()"
+            href="#"
+            v-if="!subscriptionEdit.isEdit"
+            class="alert-link"
+            >Нажмите, чтобы изменить</a
+          >
           <a
             @click.prevent="saveEdit()"
             href="#"
             class="alert-link"
+            v-else
             >Нажмите, чтобы сохранить</a
           >
-          </div>
+        </p>
       </div>
     </div>
   </div>
@@ -76,6 +89,10 @@ export default {
         isEdit: false,
         isLoading: false,
         value: 0
+      },
+      subscriptionEdit: {
+        isEdit: false,
+        isLoading: false
       }
     };
   },
@@ -102,6 +119,9 @@ export default {
       this.chanceEdit.value = this.config.event_chance;
       this.chanceEdit.isEdit = true;
     },
+    letSubscriptionEdit() {
+      this.subscriptionEdit.isEdit = true;
+    },
     saveEdit() {
       let there = this;
       this.$store
@@ -111,11 +131,12 @@ export default {
         })
         .then(res => {
           this.chanceEdit.isEdit = false;
+          this.subscriptionEdit.isEdit = false;
           this.loadConfig();
         })
         .catch(function(err) {
           this.chanceEdit.isEdit = false;
-
+          this.subscriptionEdit.isEdit = false;
           this.loadConfig();
           there.$toast.error(err, {
             showProgress: true,
