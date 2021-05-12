@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       display_subscriptions: {
         type: DataTypes.BOOLEAN,
         allowNull: false
+      },
+      display_rating: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
       }
     },
     {

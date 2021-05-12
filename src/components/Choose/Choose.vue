@@ -265,7 +265,7 @@
     </div>
     <!--  Блок о рейтинге-->
     <div class="col-xl-4 col-lg-10 col-md-10 col-sm-10 p-4 order-lg-last">
-      <rating/>
+      <rating  v-if="displayRating"/>
     </div>
   </div>
 </template>
@@ -333,7 +333,10 @@ export default {
     },
     displaySubscriptions(){
       return this.$store.state.admin.globalConfig.display_subscriptions;
-    }
+    },
+    displayRating(){
+      return this.$store.state.admin.globalConfig.display_rating;
+    },
   },
   created() {
     let token = this.$store.state.token;

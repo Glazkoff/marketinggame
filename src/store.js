@@ -483,7 +483,8 @@ const store = new Vuex.Store({
           method: "POST",
           data: {
             event_chance: data.event_chance,
-            display_subscriptions: data.display_subscriptions
+            display_subscriptions: data.display_subscriptions,
+            display_rating: data.display_rating
           }
         })
           .then(resp => {
