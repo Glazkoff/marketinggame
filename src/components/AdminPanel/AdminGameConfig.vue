@@ -49,7 +49,7 @@
         <h4 class="alert-heading">Управление отображением элементов главного меню</h4>
         <div id="display_subscriptions">
         <div v-if="!subscriptionEdit.isEdit">
-          Сведения о подписке: <b v-if="config.display_subscriptions">вкл</b> <b v-else>выкл</b>
+          Данные о подписке: <b v-if="config.display_subscriptions">вкл</b> <b v-else>выкл</b>
         </div>
           <div class="form-group" v-else>
           <div class="form-check">
