@@ -285,7 +285,14 @@ export default {
       let cardInfo = new CardInfo(this.information.cardNumber);
       return cardInfo;
     },
-
+  },
+  mounted() {
+    if (localStorage.information) {
+      this.information = JSON.parse(localStorage.getItem("information"));
+    }
+    if (localStorage.action) {
+      this.action = JSON.parse(localStorage.getItem("action"));
+    }
   },
   created() {
     window.addEventListener('resize', this.updateWidth);
@@ -314,8 +321,11 @@ export default {
     },
     changeAction(actionChange) {
       if((this.information.tariff.id !== -1 && this.action === 'tariff' ) ||
-      (this.information.tariff.id !== -1 && this.information.subdomain !== ''))
-      this.action = actionChange
+      (this.information.tariff.id !== -1 && this.information.subdomain !== '')) {
+        this.action = actionChange;
+        localStorage.setItem("information", JSON.stringify(this.information));
+        localStorage.setItem("action", JSON.stringify(this.action));
+        }
     },
     onShowPaymentModal(data) {
       this.paymentModalData = data
@@ -329,13 +339,16 @@ export default {
     },
     // Выбор тарифа
     chooseTariff(tariff) {
-      this.information.tariff = {id: tariff.id, title: tariff.title}
+      this.information.tariff = {id: tariff.id, title: tariff.title};
+      localStorage.setItem("information", JSON.stringify(this.information));
       this.changeAction('domain')
     },
     // Завершить покупку
     makePayment() {
       this.$store.dispatch('PAYMENT_REQUEST', this.information).then((res) => {
         this.onShowPaymentModal(res.data)
+        localStorage.removeItem("information");
+        localStorage.removeItem("action");
       }).catch((err) => {
         this.onShowPaymentModal(err.data)
       })
