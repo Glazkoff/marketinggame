@@ -5,7 +5,7 @@
        :class="{container: width>=992 || width<768,
        'container-fluid': width>=768 && width<992
        }">
-       
+
     <h3 v-if="width<=866 && action=='tariff'" class="text-center text-info" style="white-space: nowrap">
       Выберите тариф</h3>
     <h3 v-if="width<=866 && action=='domain'" class="text-center text-info" style="white-space: nowrap">
@@ -36,12 +36,16 @@
         <div :class="{
             'border-success': action == 'domain' || action == 'final',
             'border-info': action == 'tariff'
-        }" class="mini-round border rounded-circle m-1"></div>
+        }" class="mini-round border rounded-circle m-1 pointer"
+             @click="changeAction('tariff')"
+        ></div>
         <div :class="{
             'bg-success': action == 'domain' || action == 'final',
             'border-success': action == 'domain' || action == 'final',
             'border-info': action == 'tariff'
-        }" class="mini-round border rounded-circle m-1"></div>
+        }" class="mini-round border rounded-circle m-1 pointer"
+             @click="changeAction('domain')"
+        ></div>
       </div>
 
       <div class="pointer col-4 col-xl-3"
@@ -67,11 +71,15 @@
         <div :class="{
             'border-success': action == 'final',
              'border-info': action == 'tariff' || action == 'domain'
-        }" class="mini-round border rounded-circle m-1"></div>
+        }" class="mini-round border rounded-circle m-1 pointer"
+             @click="changeAction('domain')"
+        ></div>
         <div :class="{
             'bg-success': action == 'final',
             'border-success': action == 'final'
-        }" class="mini-round border border-info rounded-circle m-1"></div>
+        }" class="mini-round border border-info rounded-circle m-1 pointer"
+             @click="changeAction('final')"
+        ></div>
       </div>
 
       <div class="pointer col-4 col-xl-3"
@@ -92,9 +100,9 @@
     <nav class="nav justify-content-between m-3">
       <span :class="{'hidden': action =='tariff'}" class="pointer nav-text text-secondary"
             @click="navAction('back')">Назад</span>
-      <span 
-      v-if="(information.tariff.id !== -1 && action=='tariff' )||(information.tariff.id !== -1 && information.subdomain !== '')" 
-      :class="{'hidden': action =='final'}" 
+      <span
+      v-if="(information.tariff.id !== -1 && action=='tariff' )||(information.tariff.id !== -1 && information.subdomain !== '')"
+      :class="{'hidden': action =='final'}"
       class="pointer nav-text text-secondary"
             @click="navAction('forward')">Вперед</span>
     </nav>
@@ -479,7 +487,7 @@ export default {
     height: 50px;
   }
 
- 
+
 }
 
 .done {
