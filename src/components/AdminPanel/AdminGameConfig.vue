@@ -9,10 +9,7 @@
       <h6>Конфигурация под редакцией #{{ config.config_id }}</h6>
       <div class="alert alert-dark" role="alert">
         <h4 class="alert-heading">Шанс случайного события</h4>
-        <div class="loader-wrap" v-if="chanceEdit.isLoading">
-          <Loader></Loader>
-        </div>
-        <p v-else-if="!chanceEdit.isEdit">
+        <p v-if="!chanceEdit.isEdit">
           Текущее значение: {{ config.event_chance }}
         </p>
         <div class="form-group" v-else>
@@ -31,7 +28,7 @@
           >
         </div>
         <hr />
-        <p class="mb-0" v-if="!chanceEdit.isLoading">
+        <p class="mb-0">
           <a
             @click.prevent="letChanceEdit()"
             href="#"
@@ -40,7 +37,7 @@
             >Нажмите, чтобы изменить</a
           >
           <a
-            @click.prevent="saveChanceEdit()"
+            @click.prevent="saveEdit()"
             href="#"
             class="alert-link"
             v-else
@@ -48,6 +45,64 @@
           >
         </p>
       </div>
+      <div class="alert alert-dark" role="alert">
+        <h4 class="alert-heading">Управление отображением элементов главного меню</h4>
+        <div id="display_subscriptions">
+        <div v-if="!subscriptionEdit.isEdit">
+          Данные о подписке: <b v-if="config.display_subscriptions">вкл</b> <b v-else>выкл</b>
+        </div>
+          <div class="form-group" v-else>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="subscription_check" v-model="config.display_subscriptions">
+            <label class="form-check-label" for="subscription_check">Данные о подписке</label>
+          </div>
+          </div>
+           <p class="mb-0">
+          <a
+            @click.prevent="letSubscriptionEdit()"
+            href="#"
+            v-if="!subscriptionEdit.isEdit"
+            class="alert-link"
+            >Нажмите, чтобы изменить</a
+          >
+          <a
+            @click.prevent="saveEdit()"
+            href="#"
+            class="alert-link"
+            v-else
+            >Нажмите, чтобы сохранить</a
+          >
+        </p>
+      </div>
+      <hr />
+    <div id="display_rating">
+        <div v-if="!ratingEdit.isEdit">
+          Рейтинг игроков: <b v-if="config.display_rating">вкл</b> <b v-else>выкл</b>
+        </div>
+          <div class="form-group" v-else>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="rating_check" v-model="config.display_rating">
+            <label class="form-check-label" for="rating_check">Рейтинг игроков</label>
+          </div>
+          </div>
+           <p class="mb-0">
+          <a
+            @click.prevent="letRatingEdit()"
+            href="#"
+            v-if="!ratingEdit.isEdit"
+            class="alert-link"
+            >Нажмите, чтобы изменить</a
+          >
+          <a
+            @click.prevent="saveEdit()"
+            href="#"
+            class="alert-link"
+            v-else
+            >Нажмите, чтобы сохранить</a
+          >
+        </p>
+      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -63,6 +118,14 @@ export default {
         isEdit: false,
         isLoading: false,
         value: 0
+      },
+      subscriptionEdit: {
+        isEdit: false,
+        isLoading: false
+      },
+      ratingEdit: {
+        isEdit: false,
+        isLoading: false
       }
     };
   },
@@ -89,22 +152,30 @@ export default {
       this.chanceEdit.value = this.config.event_chance;
       this.chanceEdit.isEdit = true;
     },
-    saveChanceEdit() {
+    letSubscriptionEdit() {
+      this.subscriptionEdit.isEdit = true;
+    },
+    letRatingEdit() {
+      this.ratingEdit.isEdit = true;
+    },
+    saveEdit() {
       let there = this;
-      this.chanceEdit.isLoading = true;
       this.$store
         .dispatch("POST_ADMIN_CONFIG", {
-          event_chance: this.chanceEdit.value
+          event_chance: this.chanceEdit.value,
+          display_subscriptions: this.config.display_subscriptions,
+          display_rating: this.config.display_rating
         })
         .then(res => {
-          this.chanceEdit.isLoading = false;
           this.chanceEdit.isEdit = false;
+          this.subscriptionEdit.isEdit = false;
+          this.ratingEdit.isEdit = false;
           this.loadConfig();
         })
         .catch(function(err) {
-          this.chanceEdit.isLoading = false;
           this.chanceEdit.isEdit = false;
-
+          this.subscriptionEdit.isEdit = false;
+          this.ratingEdit.isEdit = false;
           this.loadConfig();
           there.$toast.error(err, {
             showProgress: true,

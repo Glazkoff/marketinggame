@@ -46,7 +46,8 @@ const store = new Vuex.Store({
       usersCount: 1,
       cards: [],
       events: []
-    }
+    },
+    isManualStep: false
   },
   getters: {
     // Логическое значение - авторизован или нет
@@ -99,6 +100,9 @@ const store = new Vuex.Store({
     },
     SET_NAME(state, name) {
       state.gamerName = name;
+    },
+    SET_STEP_TYPE(state, pref){
+      state.isManualStep = pref
     },
     async SET_GAME_PARAMS(state, res) {
       state.prevRoomParams = res.data.prev_room_params;
@@ -482,7 +486,9 @@ const store = new Vuex.Store({
           url: `${apiUrl}/admin/config`,
           method: "POST",
           data: {
-            event_chance: data.event_chance
+            event_chance: data.event_chance,
+            display_subscriptions: data.display_subscriptions,
+            display_rating: data.display_rating
           }
         })
           .then(resp => {
@@ -814,7 +820,6 @@ const store = new Vuex.Store({
     SOCKET_gameEvent(state, eventObj) {
       state.commit("SOCKET_setGameEvent", eventObj);
     },
-
     // Получить информацию о последней комнате
     GET_LAST_ROOM(state) {
       return new Promise((resolve, reject) => {
@@ -830,7 +835,6 @@ const store = new Vuex.Store({
           });
       });
     },
-
     // Послать запрос на выход из последней комнаты пользователя
     POST_GO_OUT_LAST_ROOM(state) {
       return new Promise((resolve, reject) => {
@@ -840,6 +844,53 @@ const store = new Vuex.Store({
         })
           .then(resp => {
             resolve(resp.data);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    // Запрос на предоставление триала
+    TRIAL_REQUEST(state) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/payment/trial`,
+          method: "POST"
+        })
+          .then((res) => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    // Запрос на покупку
+    PAYMENT_REQUEST(state, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/payment/subscription`,
+          method: "POST",
+          data
+        })
+          .then((res) => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    // Запрос на просмотр данных о подписке
+    // TODO: прописать путь для api о подписках пользователя
+    PAYMENT_VIEW(state, userId){
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `${apiUrl}/somepath`,
+          method: "GET"
+        })
+          .then((res) => {
+            resolve(res)
           })
           .catch(err => {
             reject(err);

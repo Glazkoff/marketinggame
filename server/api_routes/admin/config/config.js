@@ -23,7 +23,9 @@ router.post("/", async (req, res) => {
             order: [["createdAt", "DESC"]]
           });
           let result = await db.GameConfig.create({
-            event_chance: req.body.event_chance || lastConfig.event_chance
+            event_chance: req.body.event_chance || lastConfig.event_chance,
+            display_subscriptions: req.body.display_subscriptions,
+            display_rating: req.body.display_rating,
           });
           res.send(result);
         }

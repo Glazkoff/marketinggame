@@ -32,14 +32,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.organicCount > prevParams.organicCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCount > firstParams.organicCount &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.organicCount < prevParams.organicCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCount < firstParams.organicCount &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -50,14 +50,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.organicCoef > prevParams.organicCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCoef > firstParams.organicCoef &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.organicCoef < prevParams.organicCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCoef < firstParams.organicCoef &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -69,21 +69,21 @@
               'arrow-up':
                 (Math.ceil(gamerParams.organicCount * gamerParams.organicCoef) >
                   Math.ceil(prevParams.organicCount * prevParams.organicCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.organicCount * gamerParams.organicCoef) >
                   Math.ceil(
                     firstParams.organicCount * firstParams.organicCoef
                   ) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(gamerParams.organicCount * gamerParams.organicCoef) <
                   Math.ceil(prevParams.organicCount * prevParams.organicCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.organicCount * gamerParams.organicCoef) <
                   Math.ceil(
                     firstParams.organicCount * firstParams.organicCoef
                   ) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -94,14 +94,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.conversion > prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion > firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.conversion < prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion < firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -123,14 +123,14 @@
                   prevParams.organicCount *
                     prevParams.organicCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCount *
                   gamerParams.organicCoef *
                   gamerParams.conversion >
                   firstParams.organicCount *
                     firstParams.organicCoef *
                     firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.organicCount *
                   gamerParams.organicCoef *
@@ -138,14 +138,14 @@
                   prevParams.organicCount *
                     prevParams.organicCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCount *
                   gamerParams.organicCoef *
                   gamerParams.conversion <
                   firstParams.organicCount *
                     firstParams.organicCoef *
                     firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -172,14 +172,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.contextCount > prevParams.contextCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.contextCount > firstParams.contextCount &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.contextCount < prevParams.contextCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.contextCount < firstParams.contextCount &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -190,14 +190,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.contextCoef > prevParams.contextCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.contextCoef > firstParams.contextCoef &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.contextCoef < prevParams.contextCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.contextCoef < firstParams.contextCoef &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -209,21 +209,21 @@
               'arrow-up':
                 (Math.ceil(gamerParams.contextCount * gamerParams.contextCoef) >
                   Math.ceil(prevParams.contextCount * prevParams.contextCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.contextCount * gamerParams.contextCoef) >
                   Math.ceil(
                     firstParams.contextCount * firstParams.contextCoef
                   ) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(gamerParams.contextCount * gamerParams.contextCoef) <
                   Math.ceil(prevParams.contextCount * prevParams.contextCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.contextCount * gamerParams.contextCoef) <
                   Math.ceil(
                     firstParams.contextCount * firstParams.contextCoef
                   ) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -234,14 +234,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.conversion > prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion > firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.conversion < prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion < firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -263,14 +263,14 @@
                   prevParams.contextCount *
                     prevParams.contextCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.contextCount *
                   gamerParams.contextCoef *
                   gamerParams.conversion >
                   firstParams.contextCount *
                     firstParams.contextCoef *
                     firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.contextCount *
                   gamerParams.contextCoef *
@@ -278,14 +278,14 @@
                   prevParams.contextCount *
                     prevParams.contextCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.contextCount *
                   gamerParams.contextCoef *
                   gamerParams.conversion <
                   firstParams.contextCount *
                     firstParams.contextCoef *
                     firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -312,14 +312,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.socialsCount > prevParams.socialsCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.socialsCount > firstParams.socialsCount &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.socialsCount < prevParams.socialsCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.socialsCount < firstParams.socialsCount &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -330,14 +330,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.socialsCoef > prevParams.socialsCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.socialsCoef > firstParams.socialsCoef &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.socialsCoef < prevParams.socialsCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.socialsCoef < firstParams.socialsCoef &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -349,21 +349,21 @@
               'arrow-up':
                 (Math.ceil(gamerParams.socialsCount * gamerParams.socialsCoef) >
                   Math.ceil(prevParams.socialsCount * prevParams.socialsCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.socialsCount * gamerParams.socialsCoef) >
                   Math.ceil(
                     firstParams.socialsCount * firstParams.socialsCoef
                   ) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(gamerParams.socialsCount * gamerParams.socialsCoef) <
                   Math.ceil(prevParams.socialsCount * prevParams.socialsCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.socialsCount * gamerParams.socialsCoef) <
                   Math.ceil(
                     firstParams.socialsCount * firstParams.socialsCoef
                   ) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -374,14 +374,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.conversion > prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion > firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.conversion < prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion < firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -403,14 +403,14 @@
                   prevParams.socialsCount *
                     prevParams.socialsCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.socialsCount *
                   gamerParams.socialsCoef *
                   gamerParams.conversion >
                   firstParams.socialsCount *
                     firstParams.socialsCoef *
                     firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.socialsCount *
                   gamerParams.socialsCoef *
@@ -418,14 +418,14 @@
                   prevParams.socialsCount *
                     prevParams.socialsCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.socialsCount *
                   gamerParams.socialsCoef *
                   gamerParams.conversion <
                   firstParams.socialsCount *
                     firstParams.socialsCoef *
                     firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -452,12 +452,12 @@
             :class="{
               'arrow-up':
                 (gamerParams.smmCount > prevParams.smmCount &&
-                  !isFinishTable) ||
-                (gamerParams.smmCount > firstParams.smmCount && isFinishTable),
+                  !isFinishTable && !isManualStep) ||
+                (gamerParams.smmCount > firstParams.smmCount && isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.smmCount < prevParams.smmCount &&
-                  !isFinishTable) ||
-                (gamerParams.smmCount < firstParams.smmCount && isFinishTable)
+                  !isFinishTable && !isManualStep) ||
+                (gamerParams.smmCount < firstParams.smmCount && isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -467,11 +467,11 @@
             class="arrow"
             :class="{
               'arrow-up':
-                (gamerParams.smmCoef > prevParams.smmCoef && !isFinishTable) ||
-                (gamerParams.smmCoef > firstParams.smmCoef && isFinishTable),
+                (gamerParams.smmCoef > prevParams.smmCoef && !isFinishTable && !isManualStep) ||
+                (gamerParams.smmCoef > firstParams.smmCoef && isFinishTable && !isManualStep),
               'arrow-down':
-                (gamerParams.smmCoef < prevParams.smmCoef && !isFinishTable) ||
-                (gamerParams.smmCoef < firstParams.smmCoef && isFinishTable)
+                (gamerParams.smmCoef < prevParams.smmCoef && !isFinishTable && !isManualStep) ||
+                (gamerParams.smmCoef < firstParams.smmCoef && isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -483,17 +483,17 @@
               'arrow-up':
                 (Math.ceil(gamerParams.smmCount * gamerParams.smmCoef) >
                   Math.ceil(prevParams.smmCount * prevParams.smmCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.smmCount * gamerParams.smmCoef) >
                   Math.ceil(firstParams.smmCount * firstParams.smmCoef) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(gamerParams.smmCount * gamerParams.smmCoef) <
                   Math.ceil(prevParams.smmCount * prevParams.smmCoef) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.smmCount * gamerParams.smmCoef) <
                   Math.ceil(firstParams.smmCount * firstParams.smmCoef) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -504,14 +504,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.conversion > prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion > firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.conversion < prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion < firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -533,14 +533,14 @@
                   prevParams.smmCount *
                     prevParams.smmCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.smmCount *
                   gamerParams.smmCoef *
                   gamerParams.conversion >
                   firstParams.smmCount *
                     firstParams.smmCoef *
                     firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.smmCount *
                   gamerParams.smmCoef *
@@ -548,14 +548,14 @@
                   prevParams.smmCount *
                     prevParams.smmCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.smmCount *
                   gamerParams.smmCoef *
                   gamerParams.conversion <
                   firstParams.smmCount *
                     firstParams.smmCoef *
                     firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -582,14 +582,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.straightCount > prevParams.straightCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.straightCount > firstParams.straightCount &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.straightCount < prevParams.straightCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.straightCount < firstParams.straightCount &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -600,14 +600,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.straightCoef > prevParams.straightCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.straightCoef > firstParams.straightCoef &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.straightCoef < prevParams.straightCoef &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.straightCoef < firstParams.straightCoef &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -623,14 +623,14 @@
                   Math.ceil(
                     prevParams.straightCount * prevParams.straightCoef
                   ) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(
                   gamerParams.straightCount * gamerParams.straightCoef
                 ) >
                   Math.ceil(
                     firstParams.straightCount * firstParams.straightCoef
                   ) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(
                   gamerParams.straightCount * gamerParams.straightCoef
@@ -638,14 +638,14 @@
                   Math.ceil(
                     prevParams.straightCount * prevParams.straightCoef
                   ) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(
                   gamerParams.straightCount * gamerParams.straightCoef
                 ) <
                   Math.ceil(
                     firstParams.straightCount * firstParams.straightCoef
                   ) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -656,14 +656,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.conversion > prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion > firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.conversion < prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.conversion < firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -685,14 +685,14 @@
                   prevParams.straightCount *
                     prevParams.straightCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.straightCount *
                   gamerParams.straightCoef *
                   gamerParams.conversion >
                   firstParams.straightCount *
                     firstParams.straightCoef *
                     firstParams.conversion &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.straightCount *
                   gamerParams.straightCoef *
@@ -700,14 +700,14 @@
                   prevParams.straightCount *
                     prevParams.straightCoef *
                     prevParams.conversion &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.straightCount *
                   gamerParams.straightCoef *
                   gamerParams.conversion <
                   firstParams.straightCount *
                     firstParams.straightCoef *
                     firstParams.conversion &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -749,7 +749,7 @@
                     prevParams.socialsCount +
                     prevParams.smmCount +
                     prevParams.straightCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCount +
                   gamerParams.contextCount +
                   gamerParams.socialsCount +
@@ -760,7 +760,7 @@
                     firstParams.socialsCount +
                     firstParams.smmCount +
                     firstParams.straightCount &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.organicCount +
                   gamerParams.contextCount +
@@ -772,7 +772,7 @@
                     prevParams.socialsCount +
                     prevParams.smmCount +
                     prevParams.straightCount &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.organicCount +
                   gamerParams.contextCount +
                   gamerParams.socialsCount +
@@ -783,7 +783,7 @@
                     firstParams.socialsCount +
                     firstParams.smmCount +
                     firstParams.straightCount &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -851,7 +851,7 @@
                       prevParams.straightCount)
                   ).toFixed(2) *
                     100 &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 ((
                   (Math.ceil(
                     gamerParams.organicCoef * gamerParams.organicCount
@@ -894,7 +894,7 @@
                       firstParams.straightCount)
                   ).toFixed(2) *
                     100 &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 ((
                   (Math.ceil(
@@ -938,7 +938,7 @@
                       prevParams.straightCount)
                   ).toFixed(2) *
                     100 &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 ((
                   (Math.ceil(
                     gamerParams.organicCoef * gamerParams.organicCount
@@ -981,7 +981,7 @@
                       firstParams.straightCount)
                   ).toFixed(2) *
                     100 &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -1019,7 +1019,7 @@
                     Math.ceil(
                       prevParams.straightCoef * prevParams.straightCount
                     ) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.organicCoef * gamerParams.organicCount) +
                   Math.ceil(
                     gamerParams.contextCoef * gamerParams.contextCount
@@ -1044,7 +1044,7 @@
                     Math.ceil(
                       firstParams.straightCoef * firstParams.straightCount
                     ) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(gamerParams.organicCoef * gamerParams.organicCount) +
                   Math.ceil(
@@ -1068,7 +1068,7 @@
                     Math.ceil(
                       prevParams.straightCoef * prevParams.straightCount
                     ) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(gamerParams.organicCoef * gamerParams.organicCount) +
                   Math.ceil(
                     gamerParams.contextCoef * gamerParams.contextCount
@@ -1093,7 +1093,7 @@
                     Math.ceil(
                       firstParams.straightCoef * firstParams.straightCount
                     ) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -1180,7 +1180,7 @@
                         prevParams.straightCoef *
                         prevParams.conversion
                     ) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(
                   gamerParams.organicCount *
                     gamerParams.organicCoef *
@@ -1231,7 +1231,7 @@
                         firstParams.straightCoef *
                         firstParams.conversion
                     ) &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (Math.ceil(
                   gamerParams.organicCount *
@@ -1283,7 +1283,7 @@
                         prevParams.straightCoef *
                         prevParams.conversion
                     ) &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (Math.ceil(
                   gamerParams.organicCount *
                     gamerParams.organicCoef *
@@ -1334,7 +1334,7 @@
                         firstParams.straightCoef *
                         firstParams.conversion
                     ) &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -1345,14 +1345,14 @@
             :class="{
               'arrow-up':
                 (gamerParams.averageCheck > prevParams.averageCheck &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.averageCheck > firstParams.averageCheck &&
-                  isFinishTable),
+                  isFinishTable && !isManualStep),
               'arrow-down':
                 (gamerParams.averageCheck < prevParams.averageCheck &&
-                  !isFinishTable) ||
+                  !isFinishTable && !isManualStep) ||
                 (gamerParams.averageCheck < firstParams.averageCheck &&
-                  isFinishTable)
+                  isFinishTable && !isManualStep)
             }"
           ></div>
         </td>
@@ -1518,6 +1518,9 @@ export default {
     },
     firstParams() {
       return this.$store.state.firstRoomParams;
+    },
+    isManualStep(){
+      return this.$store.state.isManualStep
     }
   }
 };
