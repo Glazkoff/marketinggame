@@ -18,7 +18,7 @@ import AdminEventsList from "./components/AdminPanel/AdminEvents/AdminEventsList
 import AdminReviews from "./components/AdminPanel/AdminReviews/AdminReviews.vue";
 
 import store from "./store";
-import ChooseRate from "@/components/Choose/ChooseRate";
+import ChooseRate from "./components/TariffSelection/ChooseRate";
 
 Vue.use(Router);
 

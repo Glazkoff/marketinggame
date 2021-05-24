@@ -6,24 +6,19 @@
        'container-fluid': width>=768 && width<992
        }">
 
-      <h3 v-if="width<=866 && action==='tariff'" class="text-center text-info" style="white-space: nowrap">
-        Выберите тариф</h3>
-      <h3 v-if="width<=866 && action==='domain'" class="text-center text-info" style="white-space: nowrap">
-        Выберите поддомен</h3>
-      <h3 v-if="width<=866 && action==='final'" class="text-center text-info" style="white-space: nowrap">
-        Оплатите подписку</h3>
+      <h3 v-if="width<=866 && action==='tariff'" class="text-center text-info text-nowrap">Выберите тариф</h3>
+      <h3 v-if="width<=866 && action==='domain'" class="text-center text-info text-nowrap">Выберите поддомен</h3>
+      <h3 v-if="width<=866 && action==='final'" class="text-center text-info text-nowrap">Оплатите подписку</h3>
+
       <div class="justify-content-center align-items-center row m-2">
-        <div @click="changeAction('tariff')" class="pointer col-4 col-xl-3"
-        >
-          <div class=" step d-flex flex-column align-items-center">
-            <h3 :class="(information.tariff.id !== -1) ? 'text-success' : 'text-info'"
-                class="text-center" style="white-space: nowrap">Выберите тариф</h3>
-            <div
-              :class="[{active: action === 'tariff'}, (information.tariff.id !== -1) ? 'bg-success' : 'bg-info']"
-              class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
-              <span>1</span></div>
-          </div>
-        </div>
+        <action-circle
+          header='Выберите тариф'
+          step="1"
+          :isCurrent="'tariff' === action"
+          :isSuccess="information.tariff.id !== -1"
+          :isDisabled="false"
+          @checkClick="changeAction('tariff')"
+        />
 
         <div class="d-flex justify-content-between mini-round-wrapper ">
           <div :class="(information.tariff.id !== -1) ? 'border-success' : 'border-info'"
@@ -36,18 +31,14 @@
           ></div>
         </div>
 
-        <div class="pointer col-4 col-xl-3"
-             @click="changeAction('domain')"
-        >
-          <div class="step d-flex flex-column align-items-center">
-            <h3 :class="(information.subdomain !== '') ? 'text-success' : 'text-info'"
-                class="text-center" style="white-space: nowrap">Выберите поддомен</h3>
-            <div
-              :class="[{active: action === 'domain'}, (information.subdomain !== '') ? 'bg-success' : 'bg-info']"
-              class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3"><span>
-            2</span></div>
-          </div>
-        </div>
+        <action-circle
+          header='Выберите поддомен'
+          step="2"
+          :isCurrent="'domain' === action"
+          :isSuccess="information.subdomain"
+          :isDisabled="information.tariff.id === -1"
+          @checkClick="changeAction('domain')"
+        />
 
         <div class="d-flex justify-content-between mini-round-wrapper">
           <div :class="(information.subdomain !== '') ? 'border-success' : 'border-info'"
@@ -61,20 +52,17 @@
           ></div>
         </div>
 
-        <div class="pointer col-4 col-xl-3"
-             @click="changeAction('final')"
-        >
-          <div class="step d-flex flex-column align-items-center">
-            <h3 :class="(information.cardNumber !== '' && information.email !== '') ? 'text-success' : 'text-info'"
-                class="text-center" style="white-space: nowrap">Оплатите подписку</h3>
-            <div
-              :class="[{active: action === 'final'}, (information.cardNumber !== '' && information.email !== '') ? 'bg-success' : 'bg-info']"
-              class="step-round text-white rounded-circle d-flex justify-content-center align-items-center mb-3">
-              <span>3</span></div>
-          </div>
-        </div>
+        <action-circle
+          header='Оплатите подписку'
+          step="3"
+          :isCurrent="'final' === action"
+          :isSuccess="information.email && information.cardNumber"
+          :isDisabled="(information.tariff.id === -1 || !information.subdomain) && (!information.cardNumber)"
+          @checkClick="changeAction('final')"
+        />
 
       </div>
+
       <nav class="nav justify-content-between m-3">
       <span :class="{'hidden': action ==='tariff'}" class="pointer nav-text text-secondary"
             @click="navAction('back')">Назад</span>
@@ -84,6 +72,7 @@
           class="pointer nav-text text-secondary"
           @click="navAction('forward')">Вперед</span>
       </nav>
+
       <hr v-if="action === 'tariff'">
       <div v-if="action === 'tariff'" class="justify-content-center align-items-start row">
         <div class="col-md-4 my-3 col-12 col-sm-9"
@@ -227,10 +216,12 @@
 <script>
 import CardInfo from 'card-info'
 import PaymentModal from "./PaymentModal";
+import ActionCircle from "./ActionStep";
 
 export default {
   name: "ChooseRate",
   components: {
+    ActionCircle,
     PaymentModal
   },
   data() {
@@ -316,12 +307,9 @@ export default {
       }
     },
     changeAction(actionChange) {
-      if((this.information.tariff.id !== -1 && this.action === 'tariff' ) ||
-        (this.information.tariff.id !== -1 && this.information.subdomain !== '')) {
-        this.action = actionChange;
-        localStorage.setItem("information", JSON.stringify(this.information));
-        localStorage.setItem("action", JSON.stringify(this.action));
-      }
+      this.action = actionChange;
+      localStorage.setItem("information", JSON.stringify(this.information));
+      localStorage.setItem("action", JSON.stringify(this.action));
     },
     onShowPaymentModal(data) {
       this.paymentModalData = data
@@ -362,28 +350,6 @@ export default {
   visibility: hidden;
 }
 
-.steps {
-  overflow: hidden;
-}
-
-.step-round {
-  width: 100px;
-  height: 100px;
-}
-
-.step-round span {
-  line-height: 100%;
-  font-size: 2rem;
-}
-
-.active {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.step-round:not(.active, .bg-success) {
-  opacity: 0.6;
-}
-
 .mini-round {
   width: 20px;
   height: 20px;
@@ -404,27 +370,9 @@ export default {
   padding: 1rem !important;
 }
 
-@keyframes pulse {
-  from {
-    transform: scale(.95);
-  }
-  50% {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(.95);
-  }
-}
-
 @media screen and (max-width: 1200px) {
   .mini-round {
     display: none;
-  }
-}
-
-@media screen and (max-width: 280px) {
-  .step h3 {
-    white-space: normal !important;
   }
 }
 
@@ -470,17 +418,6 @@ export default {
   .step h3 {
     display: none;
   }
-
-  .step-round:not(.active) span {
-    font-size: 1rem;
-  }
-
-  .step-round:not(.active) {
-    width: 50px;
-    height: 50px;
-  }
-
-
 }
 
 .done {
