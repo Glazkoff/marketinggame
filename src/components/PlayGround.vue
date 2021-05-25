@@ -1,5 +1,10 @@
 <template>
   <div id="playground" :class="{ 'full-screen': !adminNav }" v-cloak>
+      <CardModal
+          v-if="showCardModal"
+          @close="onCloseCardModal()"
+          :cardModal="cardModal"
+        ></CardModal>
     <div id="play-field" :class="{started: isStart, 'h-100': isStart}">
       <div
         class="play-information">
@@ -192,6 +197,7 @@
                 </h6>
               </div>
               <small class="card-text text-center">{{ card.text }}</small>
+              <small @click="onShowCardModal(card.id)" class="card-text text-center btn btn-link">Подробнее...</small>
               <h3 class="card-text text-center">
                 {{ card.cost | formatNumber }} ₽
               </h3>
@@ -228,6 +234,7 @@ import Effects from "@/components/Effects.vue";
 import DataTable from "@/components/DataTable.vue";
 import Loader from "@/components/Loader.vue";
 import Event from "@/components/Event.vue";
+import CardModal from "@/components/CardModal.vue";
 import numeral from "numeral";
 import Vue from "vue";
 
@@ -241,7 +248,8 @@ export default {
     Effects,
     DataTable,
     Loader,
-    Event
+    Event,
+    CardModal
   },
   created() {
     this.$store.watch(
@@ -316,6 +324,7 @@ export default {
     );
     this.$store.commit("SET_CARDS", this.shuffle(this.cards));
     this.refreshCards = [...this.cards];
+    this.cardsRus = this.cardsRusMethod();
     window.addEventListener('resize', this.updateWidth);
   },
   data() {
@@ -327,7 +336,10 @@ export default {
       refreshCards: [],
       number: 0,
       tweenedNumber: 0,
-      width: window.innerWidth
+      width: window.innerWidth,
+      cardsRus: [],
+      showCardModal: false,
+      cardModal: {}
     };
   },
   mounted() {
@@ -506,6 +518,63 @@ export default {
         }
       );
       this.$store.dispatch("GET_USED_ONEOFF_CARD_LIST")
+    },
+    onCloseCardModal() {
+      this.showCardModal = false;
+    },
+    onShowCardModal(idCard) {
+      this.showCardModal = true;
+      this.cardModal = this.cardsRus.find(card => card.id === idCard)
+    },
+    cardsRusMethod(){
+      let newCardsRus = [];
+      this.cards.forEach(function (card, i, newCards){
+      card.data_change.forEach(function (mounth, j){
+        switch (mounth.param) {
+                case "organicCoef":
+                  newCards[i].data_change[j].param = 'параметр "Органика"';
+                  break;
+                case "organicCount":
+                  newCards[i].data_change[j].param = 'параметр "Органика"';
+                  break;
+                case "contextCount":
+                  newCards[i].data_change[j].param = 'параметр "Реклама: контекст"';
+                  break;
+                case "contextCoef":
+                  newCards[i].data_change[j].param = 'параметр "Реклама: контекст"';
+                  break;
+                case "socialsCount":
+                  newCards[i].data_change[j].param = 'параметр "Реклама: соцсети"';
+                  break;
+                case "smmCount":
+                  newCards[i].data_change[j].param = 'параметр "Соц. медиа"';
+                  break;
+                case "straightCount":
+                  newCards[i].data_change[j].param = 'параметр "Прямой заход"';
+                  break;
+                case "straightCoef":
+                  newCards[i].data_change[j].param = 'параметр "Прямой заход"';
+                  break;
+                case "smmCoef":
+                  newCards[i].data_change[j].param = 'параметр "Соц. медиа"';
+                  break;
+                case "socialsCoef":
+                  newCards[i].data_change[j].param = 'параметр "Реклама: соцсети"';
+                  break;
+                case "averageCheck":
+                  newCards[i].data_change[j].param = 'параметр "Средний чек"';
+                  break;
+                case "conversion":
+                  newCards[i].data_change[j].param = 'параметр "Конверсия"';
+                  break;
+                default:
+                  newCards[i].data_change[j].param = 'параметр "' + mounth.param + '"';
+                  break;
+      }
+    })
+    newCardsRus = newCards;
+    })
+    return newCardsRus
     },
     updateWidth() {
       this.width = window.innerWidth;

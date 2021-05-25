@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
               "templateText",
               "cost",
               "duration",
+              "data_change",
               "oneOff"
             ],
             order: [["card_id", "ASC"]],
