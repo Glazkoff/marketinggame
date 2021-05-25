@@ -475,7 +475,6 @@ export default {
     },
     updateWidth() {
       this.width = window.innerWidth;
-      console.log(this.displaySubscriptions)
     },
     startTrial() {
       // Типа отправление данных о начале триала
