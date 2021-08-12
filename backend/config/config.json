@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgresuser",
+    "password": "mysecretpass",
+    "database": "project",
+    "host": "postgres",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "test": {
+    "username": "polywebage_test",
+    "password": "Polyweb2021",
+    "database": "polywebage_test",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "production": {
+    "username": "polywebage_test",
+    "password": "Polyweb2021",
+    "database": "polywebage_test",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres",
+    "logging": false
+  }
+}
