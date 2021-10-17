@@ -22,6 +22,7 @@ router.post("/", async (req, res) => {
             limit: 1,
             order: [["createdAt", "DESC"]]
           });
+          console.log("TRY CATCH ERROR: " + req.body);
           let result = await db.GameConfig.create({
             event_chance: req.body.event_chance || lastConfig.event_chance,
             display_subscriptions: req.body.display_subscriptions,

@@ -21,6 +21,7 @@
             class="form-control form-control-lg"
             placeholder="Введите имя"
             @click="onFormClick()"
+            autocomplete="name"
           />
           <div v-if="!$v.name.required" class="invalid-feedback">
             Обязательно введите имя!
@@ -38,6 +39,7 @@
             placeholder="Введите логин"
             v-model.trim="$v.login.$model"
             @click="onFormClick()"
+            autocomplete="username"
           />
           <div v-if="!$v.login.required" class="invalid-feedback">
             Обязательно введите логин!
@@ -58,6 +60,7 @@
             placeholder="Введите пароль"
             v-model.trim="$v.password.$model"
             @click="onFormClick()"
+            autocomplete="new-password"
           />
           <div v-if="!$v.password.required" class="invalid-feedback">
             Обязательно введите пароль!

@@ -1,15 +1,9 @@
-version: "3.7"
+version: "3.3"
+
+volumes:
+  postgres_data: {}
 
 services:
-  # База данных
-  postgres:
-    container_name: imgames_postgres
-    image: postgres:10-alpine
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    env_file: .env
-
-  # Серверная часть
   backend:
     container_name: imgames_nodejs
     build:
@@ -23,32 +17,19 @@ services:
       - ./backend:/app
     restart: on-failure
 
-  # Сборка фронтенда
-  frontend:
-    container_name: imgames_frontend
-    image: node:14-alpine
-    command: npm run serve
+  postgres:
+    image: postgres:10-alpine
     volumes:
-      - ./.env:/app/.env:ro
-      - ./frontend:/app
-    working_dir: /app
-    restart: on-failure
-    depends_on:
-      - backend
+      - postgres_data:/var/lib/postgresql/data
+    env_file: .env
 
-  # Веб-сервер
   nginx:
-    container_name: imgames_nginx
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
       - "8005:80"
     depends_on:
       - backend
-      - frontend
     volumes:
-      - ./backend/media/:/media/
-      - ./backend/staticfiles/:/staticfiles/
-      - ./nginx/dev.conf:/etc/nginx/nginx.conf:ro
-
-volumes:
-  db_data: {}
+      - ./nginx/prod.conf:/etc/nginx/nginx.conf:ro
