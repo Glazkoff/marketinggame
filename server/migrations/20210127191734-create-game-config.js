@@ -12,6 +12,14 @@ module.exports = {
         type: Sequelize.DECIMAL,
         allowNull: false
       },
+      display_subscriptions: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+      },
+      display_rating: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
