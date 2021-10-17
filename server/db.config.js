@@ -1,6 +1,6 @@
 module.exports = {
-  HOST: "pg2.sweb.ru",
-  USER: "polywebage",
-  PASSWORD: "Polyweb2020",
-  DB: "polywebage"
+  HOST: "37.140.192.53",
+  USER: "u1503522_default",
+  PASSWORD: "o5KnS778sGxP9NoG",
+  DB: "u1503522_default",
 };

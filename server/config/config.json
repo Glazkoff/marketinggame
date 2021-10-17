@@ -1,25 +1,25 @@
 {
   "development": {
-    "username": "polywebage_test",
-    "password": "Polyweb2021",
-    "database": "polywebage_test",
-    "host": "pg2.sweb.ru",
+    "username": "u1503522_default",
+    "password": "o5KnS778sGxP9NoG",
+    "database": "u1503522_default",
+    "host": "37.140.192.53",
     "dialect": "postgres",
     "logging": false
   },
   "test": {
-    "username": "polywebage_test",
-    "password": "Polyweb2021",
-    "database": "polywebage_test",
-    "host": "pg2.sweb.ru",
+    "username": "u1503522_default",
+    "password": "o5KnS778sGxP9NoG",
+    "database": "u1503522_default",
+    "host": "37.140.192.53",
     "dialect": "postgres",
     "logging": false
   },
   "production": {
-    "username": "polywebage_test",
-    "password": "Polyweb2021",
-    "database": "polywebage_test",
-    "host": "pg2.sweb.ru",
+    "username": "u1503522_default",
+    "password": "o5KnS778sGxP9NoG",
+    "database": "u1503522_default",
+    "host": "37.140.192.53",
     "dialect": "postgres",
     "logging": false
   }
