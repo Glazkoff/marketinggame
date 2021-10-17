@@ -2,7 +2,7 @@
   "development": {
     "username": "u1503522_ngl",
     "password": "u1503522_ngl",
-    "database": "u1503522_ngl",
+    "database": "u1503522_default",
     "host": "37.140.192.53",
     "dialect": "mysql",
     "logging": false
@@ -10,7 +10,7 @@
   "test": {
     "username": "u1503522_ngl",
     "password": "u1503522_ngl",
-    "database": "u1503522_ngl",
+    "database": "u1503522_default",
     "host": "37.140.192.53",
     "dialect": "mysql",
     "logging": false
@@ -18,7 +18,7 @@
   "production": {
     "username": "u1503522_ngl",
     "password": "u1503522_ngl",
-    "database": "u1503522_ngl",
+    "database": "u1503522_default",
     "host": "37.140.192.53",
     "dialect": "mysql",
     "logging": false
