@@ -4,7 +4,7 @@
     "password": "o5KnS778sGxP9NoG",
     "database": "u1503522_default",
     "host": "37.140.192.53",
-    "dialect": "postgres",
+    "dialect": "mysql",
     "logging": false
   },
   "test": {
@@ -12,7 +12,7 @@
     "password": "o5KnS778sGxP9NoG",
     "database": "u1503522_default",
     "host": "37.140.192.53",
-    "dialect": "postgres",
+    "dialect": "mysql",
     "logging": false
   },
   "production": {
@@ -20,7 +20,7 @@
     "password": "o5KnS778sGxP9NoG",
     "database": "u1503522_default",
     "host": "37.140.192.53",
-    "dialect": "postgres",
+    "dialect": "mysql",
     "logging": false
   }
 }
