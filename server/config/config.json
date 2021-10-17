@@ -1,26 +1,26 @@
 {
   "development": {
-    "username": "u1503522_ngl",
-    "password": "u1503522_ngl",
-    "database": "u1503522_default",
-    "host": "37.140.192.53",
-    "dialect": "mysql",
+    "username": "zitrnikgm3",
+    "password": "NGlazkov2021",
+    "database": "zitrnikgm3",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres",
     "logging": false
   },
   "test": {
-    "username": "u1503522_ngl",
-    "password": "u1503522_ngl",
-    "database": "u1503522_default",
-    "host": "37.140.192.53",
-    "dialect": "mysql",
+    "username": "zitrnikgm3",
+    "password": "NGlazkov2021",
+    "database": "zitrnikgm3",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres",
     "logging": false
   },
   "production": {
-    "username": "u1503522_ngl",
-    "password": "u1503522_ngl",
-    "database": "u1503522_default",
-    "host": "37.140.192.53",
-    "dialect": "mysql",
+    "username": "zitrnikgm3",
+    "password": "NGlazkov2021",
+    "database": "zitrnikgm3",
+    "host": "pg2.sweb.ru",
+    "dialect": "postgres",
     "logging": false
   }
 }
